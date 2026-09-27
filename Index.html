@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Kalender Kerja Wilayah II</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f5fb; --bg2:#eceefa; --card:rgba(255,255,255,.72); --card-solid:#fff; --line:rgba(20,20,60,.08);
+  --text:#16172b; --muted:#6b6f8a; --accent:#6d5dfc; --accent2:#22c3e6; --accent-soft:rgba(109,93,252,.12);
+  --danger:#f0476b; --ok:#16b981; --warn:#f5a524; --shadow:0 10px 40px -12px rgba(40,30,120,.25);
+  --r:18px; --blur:saturate(180%) blur(18px);
+}
+:root[data-theme=dark]{
+  --bg:#0c0d17; --bg2:#12131f; --card:rgba(26,27,44,.72); --card-solid:#181a2b; --line:rgba(255,255,255,.08);
+  --text:#eceefe; --muted:#9296b8; --accent-soft:rgba(109,93,252,.22); --shadow:0 10px 40px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;font-size:14px}
+body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;
+  background:radial-gradient(40% 35% at 15% 10%,rgba(109,93,252,.28),transparent 70%),
+             radial-gradient(35% 30% at 90% 15%,rgba(34,195,230,.22),transparent 70%),
+             radial-gradient(40% 40% at 70% 95%,rgba(240,71,107,.14),transparent 70%);
+  animation:aurora 22s ease-in-out infinite alternate}
+@keyframes aurora{to{transform:translate3d(3%,-2%,0) rotate(6deg) scale(1.05)}}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.glass{background:var(--card);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--line);box-shadow:var(--shadow)}
+.app{display:grid;grid-template-columns:290px 1fr;height:100dvh;gap:16px;padding:16px}
+/* sidebar */
+.side{border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:18px;overflow:auto}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;color:#fff;font-weight:800;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 8px 20px -6px var(--accent)}
+.brand b{display:block;font-size:15px}.brand small{color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;font-weight:600;transition:.2s}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#8b7dff);color:#fff;box-shadow:0 8px 20px -8px var(--accent)}
+.btn-ghost{background:var(--accent-soft);color:var(--accent)}
+.btn-soft{background:var(--bg2);border:1px solid var(--line)}
+.btn-danger{background:rgba(240,71,107,.12);color:var(--danger)}
+.icon-btn{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;transition:.2s}
+.icon-btn:hover{background:var(--accent-soft);color:var(--accent)}
+.sec-title{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px}
+.mini{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:12px}
+.mini span{padding:6px 0;border-radius:8px;cursor:pointer;position:relative}
+.mini .h{color:var(--muted);font-weight:700;cursor:default}
+.mini .o{opacity:.35}.mini .t{background:var(--accent);color:#fff;font-weight:700}
+.mini span.has::after{content:"";position:absolute;bottom:2px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--accent2)}
+.mini span:not(.h):hover{background:var(--accent-soft)}
+.cats label{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:10px;cursor:pointer}
+.cats label:hover{background:var(--accent-soft)}
+.cats input{display:none}
+.cats .sw{width:14px;height:14px;border-radius:5px;border:2px solid;transition:.2s}
+.cats input:checked+.sw{background:currentColor}
+.cats .n{margin-left:auto;color:var(--muted);font-size:12px}
+.up{display:flex;flex-direction:column;gap:8px}
+.up .it{display:flex;gap:10px;align-items:center;padding:8px;border-radius:12px;cursor:pointer}
+.up .it:hover{background:var(--accent-soft)}
+.up .d{width:40px;text-align:center;border-radius:10px;padding:4px 0;background:var(--bg2);font-size:11px;color:var(--muted)}
+.up .d b{display:block;font-size:16px;color:var(--text)}
+.up .it div:last-child{min-width:0}.up .it b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* main */
+.main{display:flex;flex-direction:column;min-width:0;gap:14px}
+.top{border-radius:20px;padding:10px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.top h1{font-size:22px;margin:0 8px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+.top h1 span{color:var(--muted);font-weight:500}
+.seg{display:flex;background:var(--bg2);border-radius:12px;padding:3px;border:1px solid var(--line)}
+.seg button{padding:7px 12px;border-radius:9px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--card-solid);color:var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.grow{flex:1}
+.search{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:0 12px;height:38px;min-width:200px}
+.search input{border:0;background:none;outline:none;width:100%}
+kbd{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--muted);background:var(--card-solid)}
+.quick{border-radius:18px;padding:6px 6px 6px 16px;display:flex;align-items:center;gap:10px}
+.quick input{flex:1;border:0;background:none;outline:none;padding:10px 0}
+.quick .hint{font-size:12px;color:var(--muted)}
+.view{flex:1;border-radius:24px;overflow:hidden;display:flex;flex-direction:column;min-height:0;position:relative}
+.avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:12px;flex:none}
+.avatar.sm{width:22px;height:22px;font-size:10px}
+.live{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 var(--ok);animation:pulse 2s infinite}
+.live.off i{background:var(--warn);animation:none}
+@keyframes pulse{70%{box-shadow:0 0 0 8px transparent}}
+/* month */
+.dow{display:grid;grid-template-columns:repeat(7,1fr);padding:12px 12px 6px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.dow div{padding-left:10px}
+.month{flex:1;display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:1fr;gap:6px;padding:0 12px 12px;min-height:0}
+.cell{border-radius:14px;padding:6px;background:var(--card-solid);border:1px solid var(--line);display:flex;flex-direction:column;gap:3px;min-height:0;overflow:hidden;cursor:pointer;transition:.15s;position:relative}
+.cell:hover{border-color:var(--accent);box-shadow:0 6px 18px -10px var(--accent)}
+.cell.out{opacity:.45}.cell.we .num{color:var(--danger)}
+.cell.drop{background:var(--accent-soft);border-color:var(--accent);border-style:dashed}
+.cell .num{font-weight:700;font-size:13px;width:26px;height:26px;display:grid;place-items:center;border-radius:9px}
+.cell.today .num{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.cell .heat{position:absolute;top:10px;right:10px;display:flex;gap:2px}
+.cell .heat i{width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:.5}
+.chip{font-size:12px;padding:3px 7px;border-radius:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;border-left:3px solid;cursor:grab;flex:none}
+.chip.done{text-decoration:line-through;opacity:.6}
+.more{font-size:11px;color:var(--muted);padding-left:6px;font-weight:600}
+/* week */
+.week{flex:1;display:grid;grid-template-columns:repeat(7,minmax(140px,1fr));gap:8px;padding:12px;overflow:auto}
+.wcol{background:var(--card-solid);border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:300px}
+.wcol.today{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.wcol h4{margin:0 0 4px;display:flex;justify-content:space-between;align-items:baseline}
+.wcol h4 b{font-size:22px}
+.card{border-radius:12px;padding:10px;border-left:4px solid;cursor:pointer;transition:.15s}
+.card:hover{transform:translateY(-2px)}
+.card b{display:block;margin-bottom:2px}.card small{color:var(--muted);display:block}
+/* agenda & board */
+.scroll{flex:1;overflow:auto;padding:16px}
+.agday{display:grid;grid-template-columns:90px 1fr;gap:14px;margin-bottom:16px}
+.agday .dt{position:sticky;top:0;align-self:start;text-align:center;padding:10px;border-radius:14px;background:var(--card-solid);border:1px solid var(--line)}
+.agday .dt b{display:block;font-size:26px}.agday .dt small{color:var(--muted)}
+.agday .list{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--card-solid);border:1px solid var(--line);cursor:pointer}
+.row:hover{border-color:var(--accent)}
+.row .bar{width:4px;align-self:stretch;border-radius:4px}
+.row .meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--muted);font-size:12px;margin-top:3px}
+.tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.board{flex:1;display:grid;grid-template-columns:repeat(4,minmax(240px,1fr));gap:12px;padding:12px;overflow:auto}
+.lane{background:var(--bg2);border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:8px;border:1px solid var(--line)}
+.lane.drop{outline:2px dashed var(--accent)}
+.lane h4{margin:4px 6px 6px;display:flex;justify-content:space-between}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.kpi{padding:16px;border-radius:18px;background:var(--card-solid);border:1px solid var(--line)}
+.kpi b{font-size:30px;display:block;letter-spacing:-.02em}.kpi small{color:var(--muted)}
+.panel{padding:16px;border-radius:18px;background:var(--card-solid);border:1px solid var(--line);margin-top:12px}
+.panel h3{margin:0 0 12px;font-size:15px}
+.hbar{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:13px}
+.hbar span:first-child{width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar .tr{flex:1;height:10px;border-radius:10px;background:var(--bg2);overflow:hidden}
+.hbar .tr i{display:block;height:100%;border-radius:10px}
+.heatmap{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,12px);gap:3px;overflow:auto;padding-bottom:4px}
+.heatmap i{width:12px;height:12px;border-radius:3px;background:var(--bg2)}
+.log{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.log .what{font-size:13px}.log small{color:var(--muted)}
+.log pre{white-space:pre-wrap;font-size:11px;background:var(--bg2);padding:8px;border-radius:10px;margin:6px 0 0;max-height:140px;overflow:auto}
+.todo-g h3{font-size:13px;margin:18px 0 8px;display:flex;gap:8px;align-items:center}
+.todo{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--card-solid);border:1px solid var(--line);margin-bottom:6px}
+.todo input{width:20px;height:20px;accent-color:var(--accent);flex:none}
+.todo.done .tt{text-decoration:line-through;color:var(--muted)}
+.todo .tt{flex:1;min-width:0}.todo small{color:var(--muted);display:block;cursor:pointer}
+.ai-doc{border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;background:var(--bg2)}
+.ai-doc pre{white-space:pre-wrap;font-family:inherit;font-size:12px;background:var(--card-solid);padding:10px;border-radius:10px;max-height:180px;overflow:auto}
+.ai-hero{border-radius:18px;padding:16px;margin-bottom:14px;color:#fff;background:linear-gradient(135deg,#6d5dfc,#e654c8,#22c3e6);background-size:200% 200%;animation:grad 6s ease infinite}
+@keyframes grad{50%{background-position:100% 50%}}
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(10,10,30,.45);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.overlay.show{display:flex;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.modal{width:min(760px,100%);max-height:92dvh;display:flex;flex-direction:column;border-radius:26px;background:var(--card-solid);border:1px solid var(--line);box-shadow:var(--shadow);animation:pop .25s cubic-bezier(.2,.9,.3,1.3)}
+@keyframes pop{from{transform:translateY(20px) scale(.97);opacity:0}}
+.mh{padding:18px 20px 0;display:flex;align-items:center;gap:10px}
+.mh h2{margin:0;font-size:18px;flex:1}
+.tabs{display:flex;gap:4px;padding:12px 20px 0;border-bottom:1px solid var(--line);overflow:auto}
+.tabs button{padding:10px 12px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.tabs button.on{color:var(--accent);border-color:var(--accent)}
+.mb{padding:18px 20px;overflow:auto;flex:1}
+.mf{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.full{grid-column:1/-1}
+.f label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.f input,.f select,.f textarea{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);outline:none;transition:.2s}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.f textarea{min-height:90px;resize:vertical}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pills button{padding:7px 12px;border-radius:20px;border:1px solid var(--line);font-weight:600;font-size:12px}
+.pills button.on{color:#fff;border-color:transparent}
+.switch{display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600}
+.switch input{display:none}
+.switch i{width:40px;height:22px;border-radius:20px;background:var(--line);position:relative;transition:.2s}
+.switch i::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch input:checked+i{background:var(--accent)}.switch input:checked+i::after{left:20px}
+.chk{display:flex;gap:8px;align-items:center;padding:6px 0}
+.chk input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent)}
+.chk input[type=text]{flex:1}
+.chk.done span{text-decoration:line-through;color:var(--muted)}
+.warn{padding:10px 12px;border-radius:12px;background:rgba(245,165,36,.14);color:#b77400;font-size:13px;margin-bottom:12px;display:none}
+.drop-zone{border:2px dashed var(--line);border-radius:18px;padding:22px;text-align:center;color:var(--muted);transition:.2s;cursor:pointer}
+.drop-zone.hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.files{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:14px}
+.file{border-radius:14px;border:1px solid var(--line);overflow:hidden;background:var(--bg2);cursor:pointer;position:relative;transition:.2s}
+.file:hover{transform:translateY(-2px);border-color:var(--accent)}
+.file .th{height:92px;display:grid;place-items:center;font-size:30px;background-size:cover;background-position:center}
+.file .nm{padding:8px;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file .nm small{display:block;color:var(--muted);font-weight:500}
+.file .x{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:8px;background:rgba(0,0,0,.5);color:#fff;display:none;place-items:center}
+.file:hover .x{display:grid}
+.prog{height:6px;border-radius:6px;background:var(--bg2);overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+.hover-card{position:fixed;z-index:80;width:300px;border-radius:16px;overflow:hidden;pointer-events:none;display:none;background:var(--card-solid);border:1px solid var(--line);box-shadow:var(--shadow)}
+.hover-card img{width:100%;display:block;max-height:260px;object-fit:cover;background:var(--bg2)}
+.hover-card div{padding:10px 12px;font-size:12px}
+.viewer{position:fixed;inset:0;z-index:90;background:rgba(5,5,15,.88);display:none;flex-direction:column}
+.viewer.show{display:flex}
+.viewer header{display:flex;align-items:center;gap:10px;padding:12px 16px;color:#fff}
+.viewer header b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.viewer iframe,.viewer img{flex:1;border:0;width:100%;background:#111;object-fit:contain}
+.viewer header a,.viewer header button{color:#fff}
+.cmt{display:flex;gap:10px;margin-bottom:14px}
+.cmt .bub{background:var(--bg2);padding:10px 12px;border-radius:4px 14px 14px 14px;flex:1}
+.cmt small{color:var(--muted)}
+.detail-hero{border-radius:18px;padding:16px;color:#fff;margin-bottom:14px}
+.detail-hero h3{margin:6px 0;font-size:20px}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:8px 12px;font-size:13px}
+.kv span:nth-child(odd){color:var(--muted)}
+/* palette & toast */
+.palette{position:fixed;inset:0;z-index:95;background:rgba(10,10,30,.4);backdrop-filter:blur(3px);display:none;justify-content:center;padding-top:12vh}
+.palette.show{display:flex}
+.palette .box{width:min(620px,92vw);border-radius:20px;background:var(--card-solid);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden;align-self:flex-start}
+.palette input{width:100%;padding:18px 20px;border:0;outline:none;background:none;font-size:16px;border-bottom:1px solid var(--line)}
+.palette .res{max-height:50vh;overflow:auto;padding:6px}
+.palette .opt{padding:10px 14px;border-radius:12px;display:flex;gap:10px;align-items:center;cursor:pointer}
+.palette .opt.on,.palette .opt:hover{background:var(--accent-soft)}
+.palette .opt small{margin-left:auto;color:var(--muted)}
+.toasts{position:fixed;bottom:20px;right:20px;z-index:99;display:flex;flex-direction:column;gap:8px}
+.toast{padding:12px 16px;border-radius:14px;background:#1d1e33;color:#fff;box-shadow:var(--shadow);animation:pop .3s;display:flex;gap:10px;align-items:center;max-width:360px}
+.toast button{color:#9d93ff;font-weight:700}
+.loader{position:fixed;inset:0;display:grid;place-items:center;z-index:100;background:var(--bg)}
+.loader div{width:46px;height:46px;border-radius:50%;border:4px solid var(--accent-soft);border-top-color:var(--accent);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;color:var(--muted);padding:50px 20px}
+.empty b{display:block;font-size:40px;margin-bottom:8px}
+.fab,.bnav{display:none}
+.now-badge{font-size:10px;font-weight:800;color:#fff;background:var(--danger);padding:2px 6px;border-radius:6px;animation:pulse 2s infinite}
+/* mobile */
+@media (max-width:900px){
+  body{font-size:15px}
+  .app{grid-template-columns:1fr;padding:10px 10px 84px;gap:10px}
+  .side{display:none;position:fixed;inset:0 0 70px 0;z-index:40;border-radius:0 0 24px 24px}
+  .side.open{display:flex;animation:fade .2s}
+  .top{padding:8px}.top h1{font-size:18px;margin:0 4px;order:-1;flex:1}
+  .top .hide-m{display:none}
+  .search{min-width:0;flex:1;order:5;width:100%}
+  .quick .hint{display:none}
+  .dow{padding:8px 6px 4px}.dow div{padding:0;text-align:center}
+  .month{gap:3px;padding:0 6px 6px}
+  .cell{padding:3px;border-radius:10px;align-items:center}
+  .cell .num{font-size:12px;width:24px;height:24px}
+  .cell .chip{display:none}.cell .more{display:none}.cell .heat{position:static}
+  .cell .heat i{width:6px;height:6px}
+  .week{grid-template-columns:1fr;}
+  .wcol{min-height:auto}
+  .board{grid-template-columns:repeat(4,85vw);scroll-snap-type:x mandatory}.lane{scroll-snap-align:start}
+  .agday{grid-template-columns:60px 1fr;gap:10px}
+  .overlay{padding:0;align-items:flex-end}
+  .modal{border-radius:26px 26px 0 0;max-height:94dvh;animation:sheet .3s cubic-bezier(.2,.9,.3,1)}
+  @keyframes sheet{from{transform:translateY(100%)}}
+  .grid2{grid-template-columns:1fr}
+  .kv{grid-template-columns:100px 1fr}
+  .fab{display:grid;position:fixed;right:18px;bottom:84px;width:58px;height:58px;border-radius:20px;z-index:30;place-items:center;color:#fff;font-size:28px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 12px 30px -8px var(--accent)}
+  .bnav{display:flex;position:fixed;left:10px;right:10px;bottom:10px;height:62px;border-radius:22px;z-index:45;justify-content:space-around;align-items:center;padding-bottom:env(safe-area-inset-bottom)}
+  .bnav button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:700;color:var(--muted);padding:6px 10px;border-radius:14px}
+  .bnav button.on{color:var(--accent);background:var(--accent-soft)}
+  .bnav svg{width:22px;height:22px}
+  .toasts{left:10px;right:10px;bottom:84px}
+  .mobile-day{padding:10px 6px 0;max-height:34%;overflow:auto}
+}
+@media (min-width:901px){.mobile-day{display:none}}
+@media print{.side,.top,.quick,.bnav,.fab{display:none!important}.app{display:block}body{overflow:visible}}
+.search svg{flex:none}
+svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+<div class="loader" id="loader"><div></div></div>
+
+<div class="app">
+  <aside class="side glass" id="side">
+    <div class="brand">
+      <div class="logo">W2</div>
+      <div><b>Kalender Kerja</b><small>Wilayah II</small></div>
+    </div>
+    <button class="btn btn-primary" onclick="openForm()"><svg><path d="M12 5v14M5 12h14"/></svg>Kegiatan Baru</button>
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="sec-title" id="miniTitle" style="margin:0"></div>
+        <div><button class="icon-btn" onclick="shift(-1)">‹</button><button class="icon-btn" onclick="shift(1)">›</button></div>
+      </div>
+      <div class="mini" id="mini"></div>
+    </div>
+    <div>
+      <div class="sec-title">Kategori</div>
+      <div class="cats" id="cats"></div>
+    </div>
+    <div>
+      <div class="sec-title">Filter</div>
+      <label class="switch"><input type="checkbox" id="onlyMine" onchange="render()"><i></i>Hanya milik saya</label>
+    </div>
+    <div>
+      <div class="sec-title">Akan Datang</div>
+      <div class="up" id="upcoming"></div>
+    </div>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:6px">
+      <a class="btn btn-soft" id="driveLink" target="_blank">📁 Folder Google Drive</a>
+      <a class="btn btn-soft" id="sheetLink" target="_blank">📊 Database &amp; Log (Sheets)</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="top glass">
+      <button class="icon-btn" onclick="shift(-1)" title="Sebelumnya (←)"><svg><path d="m15 18-6-6 6-6"/></svg></button>
+      <button class="icon-btn" onclick="shift(1)" title="Berikutnya (→)"><svg><path d="m9 18 6-6-6-6"/></svg></button>
+      <button class="btn btn-soft hide-m" onclick="goToday()">Hari ini</button>
+      <h1 id="title"></h1>
+      <div class="seg hide-m" id="seg">
+        <button data-v="month">Bulan</button><button data-v="week">Minggu</button><button data-v="agenda">Agenda</button><button data-v="todo">To Do</button>
+        <button data-v="board">Papan</button><button data-v="stats">Statistik</button><button data-v="log">Log</button>
+      </div>
+      <div class="grow hide-m"></div>
+      <div class="search"><svg><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="q" placeholder="Cari kegiatan, lokasi, orang…" oninput="render()"><kbd class="hide-m">Ctrl K</kbd></div>
+      <div class="live" id="live" title="Sinkron realtime"><i></i><span class="hide-m">Live</span></div>
+      <button class="icon-btn" onclick="toggleTheme()" title="Tema"><svg><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+      <button class="icon-btn hide-m" onclick="openPalette()" title="Menu cepat"><svg><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+      <div class="avatar" id="me"></div>
+    </div>
+
+    <div class="quick glass">
+      <span>✨</span>
+      <input id="quick" placeholder='Tambah cepat: "Rapat evaluasi besok 09:00-11:00 @Aula #Rapat !tinggi"' onkeydown="if(event.key==='Enter')quickAdd()">
+      <span class="hint">Enter ↵</span>
+      <button class="btn btn-primary" onclick="quickAdd()">Tambah</button>
+    </div>
+
+    <section class="view glass" id="view"></section>
+  </main>
+</div>
+
+<button class="fab" onclick="openForm()">+</button>
+<nav class="bnav glass" id="bnav">
+  <button data-v="month"><svg><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Bulan</button>
+  <button data-v="agenda"><svg><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Agenda</button>
+  <button data-v="todo"><svg><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>To Do</button>
+  <button data-v="stats"><svg><path d="M3 3v18h18M7 15l4-4 4 4 5-6"/></svg>Statistik</button>
+  <button data-v="more" onclick="document.getElementById('side').classList.toggle('open')"><svg><path d="M4 6h16M4 12h16M4 18h16"/></svg>Menu</button>
+</nav>
+
+<!-- Modal kegiatan -->
+<div class="overlay" id="ov" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal"></div>
+</div>
+
+<div class="hover-card" id="hover"></div>
+<div class="viewer" id="viewer">
+  <header><b id="vTitle"></b><a id="vOpen" target="_blank" class="btn btn-soft" style="background:rgba(255,255,255,.1)">Buka di Drive ↗</a>
+    <button class="icon-btn" onclick="closeViewer()">✕</button></header>
+  <div id="vBody" style="flex:1;display:flex"></div>
+</div>
+<div class="palette" id="palette" onclick="if(event.target===this)closePalette()">
+  <div class="box"><input id="pq" placeholder="Ketik perintah atau cari kegiatan…" oninput="renderPalette()" onkeydown="paletteKey(event)"><div class="res" id="pres"></div></div>
+</div>
+<div class="toasts" id="toasts"></div>
+<input type="file" id="fileInput" multiple hidden onchange="uploadFiles(this.files);this.value=''">
+
+<script>
+/* ============================================================ backend bridge
+ * Di Apps Script memakai google.script.run; jika dibuka sebagai file lokal
+ * (tanpa Apps Script) otomatis memakai mode DEMO berbasis localStorage. */
+const IS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
+function call(fn, ...args) {
+  if (IS_GAS) return new Promise((res, rej) =>
+    google.script.run.withSuccessHandler(res).withFailureHandler(e => rej(new Error(e.message || e)))[fn](...args));
+  return new Promise((res, rej) => setTimeout(() => { try { res(Demo[fn](...args)); } catch (e) { rej(e); } }, 120));
+}
+
+const Demo = (() => {
+  const K = 'kkw2-demo';
+  const db = JSON.parse(localStorage.getItem(K) || 'null') || seed();
+  const me = 'demo@gmail.com';
+  function save() { db.version++; localStorage.setItem(K, JSON.stringify(db)); }
+  function id() { return Math.random().toString(36).slice(2, 14); }
+  function log(aksi, ev, detail) { db.logs.push({ waktu: new Date().toISOString(), pengguna: me, aksi, eventId: ev.id, judul: ev.judul || '', detail: detail || '' }); }
+  function seed() {
+    const d = (o) => { const x = new Date(); x.setDate(x.getDate() + o); return x.toISOString().slice(0, 10); };
+    const mk = (judul, o, len, jm, js, kat, pr, st, lok, by) => ({ id: Math.random().toString(36).slice(2, 14), judul, deskripsi: 'Contoh kegiatan demo.', mulai: d(o), selesai: d(o + len),
+      jamMulai: jm, jamSelesai: js, seharian: !jm, lokasi: lok, kategori: kat, prioritas: pr, status: st, peserta: [], checklist: [{ t: 'Siapkan materi', d: true }, { t: 'Undangan', d: false }], tautan: [],
+      dibuatOleh: by, dibuatPada: new Date().toISOString(), diubahOleh: by, diubahPada: new Date().toISOString() });
+    return { version: 1, files: [], comments: [], logs: [], events: [
+      mk('Rapat Koordinasi Wilayah', 0, 0, '09:00', '11:00', 'Rapat', 'Tinggi', 'Berjalan', 'Aula Kantor', 'andi@gmail.com'),
+      mk('Kunjungan Lapangan Desa A', 2, 1, '', '', 'Lapangan', 'Sedang', 'Direncanakan', 'Desa A', 'sari@gmail.com'),
+      mk('Laporan Bulanan', 5, 0, '13:00', '15:00', 'Laporan', 'Tinggi', 'Direncanakan', 'Online', 'demo@gmail.com'),
+      mk('Pelatihan SDM', -3, 0, '08:00', '16:00', 'Pelatihan', 'Rendah', 'Selesai', 'Balai Diklat', 'budi@gmail.com'),
+      mk('Monitoring Proyek', 9, 0, '10:00', '12:00', 'Lapangan', 'Sedang', 'Direncanakan', 'Lokasi Proyek', 'andi@gmail.com'),
+    ] };
+  }
+  const alive = () => db.events.filter(e => !e.dihapus);
+  return {
+    apiBootstrap: () => ({ events: alive(), files: db.files.filter(f => !f.dihapus), comments: db.comments, version: db.version, user: me, rootUrl: '#', sheetUrl: '#', maxUploadMb: 5 }),
+    apiData: () => ({ events: alive(), files: db.files.filter(f => !f.dihapus), comments: db.comments, version: db.version }),
+    apiVersion: () => db.version,
+    apiSaveEvent(inp) {
+      if (!inp.judul) throw new Error('Judul kegiatan wajib diisi');
+      const t = new Date().toISOString();
+      if (inp.id) { const e = db.events.find(x => x.id === inp.id); Object.assign(e, inp, { diubahOleh: me, diubahPada: t }); log('UBAH', e, ''); save(); return e; }
+      const e = Object.assign({}, inp, { id: id(), dibuatOleh: me, dibuatPada: t, diubahOleh: me, diubahPada: t });
+      if (!e.selesai || e.selesai < e.mulai) e.selesai = e.mulai;
+      db.events.push(e); log('BUAT', e, ''); save(); return e;
+    },
+    apiMoveEvent(i, mulai) { const e = db.events.find(x => x.id === i); const span = dayDiff(e.mulai, e.selesai); e.mulai = mulai; e.selesai = addDays(mulai, span); log('PINDAH', e, mulai); save(); return e; },
+    apiDeleteEvent(i) { const e = db.events.find(x => x.id === i); e.dihapus = true; log('HAPUS', e, ''); save(); return true; },
+    apiRestoreEvent(i) { const e = db.events.find(x => x.id === i); e.dihapus = false; log('PULIHKAN', e, ''); save(); return true; },
+    apiDuplicateEvent(i, mulai) { const e = db.events.find(x => x.id === i); return this.apiSaveEvent(Object.assign({}, e, { id: '', mulai, selesai: addDays(mulai, dayDiff(e.mulai, e.selesai)), status: 'Direncanakan' })); },
+    apiToggleChecklist(i, n) { const e = db.events.find(x => x.id === i); e.checklist[n].d = !e.checklist[n].d; log('CHECKLIST', e, e.checklist[n].t); save(); return e; },
+    apiUpload(eventId, nama, mime, b64) { const f = { id: id(), eventId, fileId: '', nama, mime, ukuran: Math.round(b64.length * .75), url: 'data:' + mime + ';base64,' + b64, oleh: me, pada: new Date().toISOString() };
+      db.files.push(f); log('UNGGAH', { id: eventId }, nama); try { save(); } catch (e) { db.files.pop(); throw new Error('Penyimpanan demo penuh — pakai file kecil'); } return f; },
+    apiDeleteFile(i) { const f = db.files.find(x => x.id === i); f.dihapus = true; log('HAPUS_FILE', { id: f.eventId }, f.nama); save(); return true; },
+    apiComment(eventId, isi) { const c = { id: id(), eventId, oleh: me, pada: new Date().toISOString(), isi }; db.comments.push(c); log('KOMENTAR', { id: eventId }, isi); save(); return c; },
+    apiAiDocs(i) { const e = db.events.find(x => x.id === i); const info = `Kegiatan: ${e.judul}\nTanggal: ${e.mulai}\nTempat: ${e.lokasi || '[....]'}`;
+      const base = { Rapat: ['Surat Undangan', 'Daftar Hadir', 'Notulen Rapat', 'Laporan Kegiatan'], Lapangan: ['Surat Tugas / SPPD', 'Daftar Hadir', 'Dokumentasi Foto Kegiatan', 'Laporan Kegiatan'],
+        Pelatihan: ['Kerangka Acuan Kerja (KAK/TOR)', 'Surat Undangan', 'Materi / Bahan Paparan', 'Daftar Hadir', 'Laporan Kegiatan'], Cuti: ['Formulir Permohonan Cuti'] }[e.kategori] || ['Kerangka Acuan Kerja (KAK/TOR)', 'Surat Undangan', 'Daftar Hadir', 'Laporan Kegiatan'];
+      log('AI_DOKUMEN', e, base.join(', ')); save();
+      return { sumber: 'template', docs: base.map((n, k) => ({ nama: n, tahap: /Laporan|Dokumentasi/.test(n) ? 'Sesudah' : /Hadir|Notulen/.test(n) ? 'Saat' : 'Sebelum', alasan: 'Kebutuhan administrasi kegiatan ' + e.kategori.toLowerCase(), isi: n.toUpperCase() + '\n\n' + info + '\n\n1. [....]\n2. [....]' })) }; },
+    apiCreateDoc(i, nama, isi) { return this.apiUpload(i, nama + '.txt', 'text/plain', btoa(unescape(encodeURIComponent(isi)))); },
+    apiAddChecklist(i, items) { const e = db.events.find(x => x.id === i); [].concat(items).forEach(t => { if (!e.checklist.some(c => c.t === t)) e.checklist.push({ t, d: false }); }); log('CHECKLIST', e, '+ ' + items); save(); return e; },
+    apiLogs(limit, eventId) { return db.logs.filter(l => !eventId || l.eventId === eventId).slice(-(limit || 300)).reverse(); },
+  };
+})();
+
+/* ============================================================ constants & state */
+const CATS = { Umum: '#6d5dfc', Rapat: '#22a3e6', Lapangan: '#16b981', Laporan: '#f5a524', Pelatihan: '#e654c8', Cuti: '#f0476b', Lainnya: '#8a8fa8' };
+const PRI = { Rendah: '#16b981', Sedang: '#f5a524', Tinggi: '#f0476b' };
+const STAT = ['Direncanakan', 'Berjalan', 'Selesai', 'Dibatalkan'];
+const STAT_C = { Direncanakan: '#6d5dfc', Berjalan: '#22a3e6', Selesai: '#16b981', Dibatalkan: '#8a8fa8' };
+const BLN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+const HR = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+const S = { events: [], files: [], comments: [], user: '', version: 0, view: 'month', cursor: new Date(), sel: todayKey(),
+  hidden: new Set(JSON.parse(localStorage.getItem('kkw2-hidden') || '[]')), maxUploadMb: 25 };
+let current = null; // event being viewed/edited
+
+/* ============================================================ date utils */
+function key(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function todayKey() { return key(new Date()); }
+function parse(k) { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); }
+function addDays(k, n) { const d = parse(k); d.setDate(d.getDate() + n); return key(d); }
+function dayDiff(a, b) { return Math.round((parse(b) - parse(a)) / 864e5); }
+function fmtLong(k) { const d = parse(k); return HR[d.getDay()] + ', ' + d.getDate() + ' ' + BLN[d.getMonth()] + ' ' + d.getFullYear(); }
+function fmtShort(k) { const d = parse(k); return d.getDate() + ' ' + BLN[d.getMonth()].slice(0, 3); }
+function ago(iso) {
+  const s = (Date.now() - new Date(iso)) / 1000;
+  if (s < 60) return 'baru saja'; if (s < 3600) return Math.floor(s / 60) + ' mnt lalu';
+  if (s < 86400) return Math.floor(s / 3600) + ' jam lalu'; if (s < 604800) return Math.floor(s / 86400) + ' hari lalu';
+  return new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]); }
+function hue(s) { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; }
+function avatar(email, sm) { const n = String(email || '?').split('@')[0]; return `<div class="avatar ${sm ? 'sm' : ''}" title="${esc(email)}" style="background:hsl(${hue(email)} 65% 55%)">${esc(n.slice(0, 2).toUpperCase())}</div>`; }
+function color(e) { return CATS[e.kategori] || CATS.Umum; }
+function soft(c, a = .14) { const n = parseInt(c.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
+function size(b) { b = Number(b); return b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
+function timeStr(e) { return e.seharian || !e.jamMulai ? 'Seharian' : e.jamMulai + (e.jamSelesai ? '–' + e.jamSelesai : ''); }
+function isNow(e) {
+  const t = todayKey(); if (t < e.mulai || t > e.selesai) return false;
+  if (e.seharian || !e.jamMulai) return false;
+  const n = new Date().toTimeString().slice(0, 5); return n >= e.jamMulai && n <= (e.jamSelesai || '23:59');
+}
+
+/* ============================================================ data */
+function visible() {
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const mine = document.getElementById('onlyMine').checked;
+  return S.events.filter(e => !S.hidden.has(e.kategori))
+    .filter(e => !mine || e.dibuatOleh === S.user || (e.peserta || []).includes(S.user))
+    .filter(e => !q || [e.judul, e.deskripsi, e.lokasi, e.kategori, e.dibuatOleh, (e.peserta || []).join(' ')].join(' ').toLowerCase().includes(q))
+    .sort((a, b) => (a.mulai + (a.jamMulai || '00')).localeCompare(b.mulai + (b.jamMulai || '00')));
+}
+function eventsOn(k, list) { return (list || visible()).filter(e => e.mulai <= k && e.selesai >= k); }
+function filesOf(id) { return S.files.filter(f => f.eventId === id); }
+function commentsOf(id) { return S.comments.filter(c => c.eventId === id); }
+
+function applyData(d) {
+  S.events = d.events; S.files = d.files; S.comments = d.comments; S.version = d.version;
+  try { localStorage.setItem('kkw2-cache', JSON.stringify(d)); } catch (e) {}
+}
+async function refresh(silent) {
+  const d = await call('apiData');
+  const before = S.version; applyData(d); render();
+  if (current && current.id) { const upd = S.events.find(e => e.id === current.id); if (upd) current = upd; }
+  if (!silent && before && d.version !== before) toast('🔄 Data diperbarui oleh anggota tim');
+}
+
+/* ============================================================ render */
+function render() {
+  document.querySelectorAll('#seg button,#bnav button').forEach(b => b.classList.toggle('on', b.dataset.v === S.view));
+  renderSide();
+  const v = document.getElementById('view');
+  const c = S.cursor;
+  const title = document.getElementById('title');
+  title.innerHTML = `${BLN[c.getMonth()]} <span>${c.getFullYear()}</span>`;
+  ({ month: renderMonth, week: renderWeek, agenda: renderAgenda, todo: renderTodo, board: renderBoard, stats: renderStats, log: renderLog }[S.view] || renderMonth)(v);
+}
+
+function renderSide() {
+  const c = S.cursor, y = c.getFullYear(), m = c.getMonth();
+  document.getElementById('miniTitle').textContent = BLN[m] + ' ' + y;
+  const start = new Date(y, m, 1 - new Date(y, m, 1).getDay());
+  const has = new Set(); S.events.forEach(e => { for (let k = e.mulai; k <= e.selesai; k = addDays(k, 1)) has.add(k); });
+  let h = HR.map(x => `<span class="h">${x[0]}</span>`).join('');
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i); const k = key(d);
+    h += `<span class="${d.getMonth() !== m ? 'o' : ''} ${k === todayKey() ? 't' : ''} ${has.has(k) ? 'has' : ''}" onclick="pickDay('${k}')">${d.getDate()}</span>`;
+  }
+  document.getElementById('mini').innerHTML = h;
+  document.getElementById('cats').innerHTML = Object.entries(CATS).map(([n, col]) =>
+    `<label style="color:${col}"><input type="checkbox" ${S.hidden.has(n) ? '' : 'checked'} onchange="toggleCat('${n}')"><span class="sw"></span>
+     <span style="color:var(--text)">${n}</span><span class="n">${S.events.filter(e => e.kategori === n).length}</span></label>`).join('');
+  const up = S.events.filter(e => e.selesai >= todayKey() && e.status !== 'Selesai' && e.status !== 'Dibatalkan')
+    .sort((a, b) => (a.mulai + a.jamMulai).localeCompare(b.mulai + b.jamMulai)).slice(0, 6);
+  document.getElementById('upcoming').innerHTML = up.length ? up.map(e => {
+    const d = parse(e.mulai < todayKey() ? todayKey() : e.mulai);
+    return `<div class="it" onclick="openDetail('${e.id}')"><div class="d" style="border-left:3px solid ${color(e)}">${HR[d.getDay()]}<b>${d.getDate()}</b></div>
+      <div><b>${esc(e.judul)} ${isNow(e) ? '<span class="now-badge">LIVE</span>' : ''}</b><small style="color:var(--muted)">${timeStr(e)}${e.lokasi ? ' · ' + esc(e.lokasi) : ''}</small></div></div>`;
+  }).join('') : '<small style="color:var(--muted)">Tidak ada kegiatan mendatang 🎉</small>';
+}
+
+function renderMonth(v) {
+  const c = S.cursor, y = c.getFullYear(), m = c.getMonth();
+  const start = new Date(y, m, 1 - new Date(y, m, 1).getDay());
+  const list = visible();
+  const weeks = Math.ceil((new Date(y, m, 1).getDay() + new Date(y, m + 1, 0).getDate()) / 7);
+  let h = `<div class="dow">${HR.map(x => `<div>${x}</div>`).join('')}</div><div class="month" style="grid-template-rows:repeat(${weeks},1fr)">`;
+  for (let i = 0; i < weeks * 7; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i); const k = key(d);
+    const ev = eventsOn(k, list);
+    const cls = [d.getMonth() !== m && 'out', k === todayKey() && 'today', (d.getDay() === 0) && 'we', k === S.sel && 'sel'].filter(Boolean).join(' ');
+    h += `<div class="cell ${cls}" data-k="${k}" onclick="cellClick(event,'${k}')" ondragover="dragOver(event)" ondragleave="this.classList.remove('drop')" ondrop="dropDay(event,'${k}')">
+      <div class="num">${d.getDate()}</div>
+      ${ev.length ? `<div class="heat">${ev.slice(0, 4).map(e => `<i style="background:${color(e)};opacity:1"></i>`).join('')}</div>` : ''}
+      ${ev.slice(0, 3).map(e => chip(e)).join('')}
+      ${ev.length > 3 ? `<div class="more">+${ev.length - 3} lainnya</div>` : ''}
+    </div>`;
+  }
+  h += '</div>';
+  // Di HP: daftar kegiatan hari terpilih di bawah grid
+  const sel = eventsOn(S.sel, list);
+  h += `<div class="mobile-day"><div class="sec-title">${fmtLong(S.sel)}</div>${sel.length ? sel.map(rowHtml).join('<div style="height:6px"></div>') : '<small style="color:var(--muted)">Belum ada kegiatan. Ketuk + untuk menambah.</small>'}</div>`;
+  v.innerHTML = h;
+}
+function chip(e) {
+  const c = color(e);
+  return `<div class="chip ${e.status === 'Selesai' ? 'done' : ''}" draggable="true" ondragstart="dragStart(event,'${e.id}')"
+    onclick="event.stopPropagation();openDetail('${e.id}')" style="background:${soft(c)};border-color:${c};color:${c}"
+    title="${esc(e.judul)} • ${timeStr(e)}">${e.jamMulai && !e.seharian ? e.jamMulai + ' ' : ''}${esc(e.judul)}</div>`;
+}
+function rowHtml(e) {
+  const c = color(e), nf = filesOf(e.id).length, nc = commentsOf(e.id).length;
+  const ck = (e.checklist || []), done = ck.filter(x => x.d).length;
+  return `<div class="row" onclick="openDetail('${e.id}')"><div class="bar" style="background:${c}"></div>
+    <div style="flex:1;min-width:0"><b>${esc(e.judul)}</b> ${isNow(e) ? '<span class="now-badge">LIVE</span>' : ''}
+      <div class="meta"><span>🕒 ${timeStr(e)}</span>${e.lokasi ? `<span>📍 ${esc(e.lokasi)}</span>` : ''}
+      ${ck.length ? `<span>☑ ${done}/${ck.length}</span>` : ''}${nf ? `<span>📎 ${nf}</span>` : ''}${nc ? `<span>💬 ${nc}</span>` : ''}</div></div>
+    <span class="tag" style="background:${soft(STAT_C[e.status] || '#888')};color:${STAT_C[e.status] || '#888'}">${esc(e.status)}</span>
+    ${avatar(e.dibuatOleh, true)}</div>`;
+}
+
+function renderWeek(v) {
+  const c = S.cursor; const s = new Date(c); s.setDate(c.getDate() - c.getDay());
+  const list = visible(); let h = '<div class="week">';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(s); d.setDate(s.getDate() + i); const k = key(d);
+    const ev = eventsOn(k, list);
+    h += `<div class="wcol ${k === todayKey() ? 'today' : ''}" ondragover="dragOver(event)" ondragleave="this.classList.remove('drop')" ondrop="dropDay(event,'${k}')">
+      <h4><span style="color:var(--muted)">${HR[d.getDay()]}</span><b>${d.getDate()}</b></h4>
+      ${ev.map(e => `<div class="card" draggable="true" ondragstart="dragStart(event,'${e.id}')" onclick="openDetail('${e.id}')" style="background:${soft(color(e))};border-color:${color(e)}">
+        <b>${esc(e.judul)}</b><small>🕒 ${timeStr(e)}</small>${e.lokasi ? `<small>📍 ${esc(e.lokasi)}</small>` : ''}</div>`).join('')}
+      <button class="btn btn-ghost" style="justify-content:center;margin-top:auto" onclick="openForm(null,'${k}')">+ Tambah</button></div>`;
+  }
+  v.innerHTML = h + '</div>';
+}
+
+function renderAgenda(v) {
+  const c = S.cursor, y = c.getFullYear(), m = c.getMonth();
+  const first = key(new Date(y, m, 1)), last = key(new Date(y, m + 1, 0));
+  const list = visible().filter(e => e.selesai >= first && e.mulai <= last);
+  const days = {}; list.forEach(e => { const k = e.mulai < first ? first : e.mulai; (days[k] = days[k] || []).push(e); });
+  const ks = Object.keys(days).sort();
+  v.innerHTML = `<div class="scroll">${ks.length ? ks.map(k => { const d = parse(k); return `<div class="agday"><div class="dt" style="${k === todayKey() ? 'border-color:var(--accent)' : ''}">
+    <small>${HR[d.getDay()]}</small><b>${d.getDate()}</b><small>${BLN[d.getMonth()].slice(0, 3)}</small></div>
+    <div class="list">${days[k].map(rowHtml).join('')}</div></div>`; }).join('')
+    : '<div class="empty"><b>🗓️</b>Belum ada kegiatan di bulan ini.<br><br><button class="btn btn-primary" onclick="openForm()">Buat kegiatan</button></div>'}</div>`;
+}
+
+function renderTodo(v) {
+  const t = todayKey(), wk = addDays(t, 7), items = [];
+  visible().filter(e => e.status !== 'Dibatalkan').forEach(e => (e.checklist || []).forEach((c, i) => items.push({ e, c, i })));
+  const f = S.todoFilter || 'open';
+  const list = items.filter(x => f === 'all' || (f === 'open' ? !x.c.d : x.c.d));
+  const groups = [['🔴 Terlambat', x => !x.c.d && x.e.selesai < t], ['📍 Hari ini', x => x.e.mulai <= t && x.e.selesai >= t], ['📆 7 hari ke depan', x => x.e.mulai > t && x.e.mulai <= wk],
+    ['🗂️ Nanti', x => x.e.mulai > wk], ['✅ Lewat', x => x.e.selesai < t]];
+  const used = new Set(); const done = items.filter(x => x.c.d).length;
+  const noCk = visible().filter(e => e.selesai >= t && !(e.checklist || []).length && e.status !== 'Dibatalkan').slice(0, 5);
+  v.innerHTML = `<div class="scroll"><div class="stats">
+    <div class="kpi"><small>Total tugas</small><b>${items.length}</b></div>
+    <div class="kpi"><small>Selesai</small><b style="color:var(--ok)">${done}</b><div class="prog"><i style="width:${items.length ? done / items.length * 100 : 0}%"></i></div></div>
+    <div class="kpi"><small>Terlambat</small><b style="color:var(--danger)">${items.filter(x => !x.c.d && x.e.selesai < t).length}</b></div></div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center"><div class="seg">${[['open', 'Belum'], ['done', 'Selesai'], ['all', 'Semua']].map(([k, l]) => `<button class="${f === k ? 'on' : ''}" onclick="S.todoFilter='${k}';render()">${l}</button>`).join('')}</div>
+    <div class="grow"></div><button class="btn btn-primary" onclick="openTodoAdd()">+ Tugas</button></div>
+    ${noCk.length ? `<div class="panel ai-hero" style="color:#fff"><b>✨ AI Asisten</b><div style="font-size:13px;margin:4px 0 10px;opacity:.9">Kegiatan ini belum punya daftar tugas. Biarkan AI menentukan dokumen apa saja yang perlu disiapkan:</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${noCk.map(e => `<button class="btn" style="background:rgba(255,255,255,.22);color:#fff" onclick="openDetail('${e.id}','ai')">📄 ${esc(e.judul)}</button>`).join('')}</div></div>` : ''}
+    <div class="todo-g">${groups.map(([title, fn]) => { const g = list.filter(x => !used.has(x) && fn(x)); g.forEach(x => used.add(x)); return g.length ? `<h3>${title} <span class="tag" style="background:var(--bg2)">${g.length}</span></h3>` +
+      g.map(x => `<div class="todo ${x.c.d ? 'done' : ''}"><input type="checkbox" ${x.c.d ? 'checked' : ''} onchange="todoToggle('${x.e.id}',${x.i})">
+        <div class="tt"><b>${esc(x.c.t)}</b><small onclick="openDetail('${x.e.id}')"><span style="color:${color(x.e)}">●</span> ${esc(x.e.judul)} · ${fmtShort(x.e.mulai)} · ${countdown(x.e)}</small></div>
+        <button class="icon-btn" title="Buat dokumen dengan AI" onclick="openDetail('${x.e.id}','ai')">✨</button></div>`).join('') : ''; }).join('')
+      || '<div class="empty"><b>🎉</b>Tidak ada tugas di sini.</div>'}</div></div>`;
+}
+async function todoToggle(id, i) { const e = S.events.find(x => x.id === id); e.checklist[i].d = !e.checklist[i].d; render(); try { await call('apiToggleChecklist', id, i); refresh(true); } catch (err) { toast('⚠️ ' + err.message); refresh(true); } }
+function openTodoAdd() {
+  const evs = S.events.filter(e => e.selesai >= addDays(todayKey(), -30)).sort((a, b) => a.mulai.localeCompare(b.mulai));
+  if (!evs.length) return toast('Buat kegiatan dulu, lalu tambahkan tugasnya');
+  openModal(`<div class="mh"><h2>✅ Tambah tugas</h2><button class="icon-btn" onclick="closeModal()">✕</button></div><div class="mb"><div class="f"><label>Kegiatan</label>
+    <select id="tdE">${evs.map(e => `<option value="${e.id}">${fmtShort(e.mulai)} — ${esc(e.judul)}</option>`).join('')}</select></div><br>
+    <div class="f"><label>Tugas (satu per baris)</label><textarea id="tdT" placeholder="Siapkan surat undangan&#10;Pesan ruangan"></textarea></div></div>
+    <div class="mf"><button class="btn btn-soft" onclick="openDetail(document.getElementById('tdE').value,'ai')">✨ Minta saran AI</button><div class="grow"></div>
+    <button class="btn btn-primary" onclick="todoAdd()">Simpan</button></div>`);
+}
+async function todoAdd() {
+  const id = document.getElementById('tdE').value, items = document.getElementById('tdT').value.split('\n').map(x => x.trim()).filter(Boolean);
+  if (!items.length) return toast('Tulis tugasnya');
+  await call('apiAddChecklist', id, items); closeModal(); toast('✅ Tugas ditambahkan'); refresh(true);
+}
+
+function renderBoard(v) {
+  const c = S.cursor, y = c.getFullYear(), m = c.getMonth();
+  const first = key(new Date(y, m, 1)), last = key(new Date(y, m + 1, 0));
+  const list = visible().filter(e => e.selesai >= first && e.mulai <= last);
+  v.innerHTML = `<div class="board">${STAT.map(st => { const ev = list.filter(e => e.status === st); return `
+    <div class="lane" ondragover="event.preventDefault();this.classList.add('drop')" ondragleave="this.classList.remove('drop')" ondrop="dropStatus(event,'${st}')">
+      <h4><span><span style="color:${STAT_C[st]}">●</span> ${st}</span><span class="tag" style="background:var(--card-solid)">${ev.length}</span></h4>
+      ${ev.map(e => `<div class="card" draggable="true" ondragstart="dragStart(event,'${e.id}')" onclick="openDetail('${e.id}')" style="background:var(--card-solid);border-color:${color(e)}">
+        <b>${esc(e.judul)}</b><small>📅 ${fmtShort(e.mulai)}${e.selesai !== e.mulai ? ' – ' + fmtShort(e.selesai) : ''} · ${timeStr(e)}</small>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <span class="tag" style="background:${soft(PRI[e.prioritas] || '#888')};color:${PRI[e.prioritas] || '#888'}">${esc(e.prioritas)}</span>${avatar(e.dibuatOleh, true)}</div></div>`).join('')}
+    </div>`; }).join('')}</div>`;
+}
+
+function renderStats(v) {
+  const ev = S.events, t = todayKey();
+  const y = S.cursor.getFullYear(), m = S.cursor.getMonth();
+  const mk = key(new Date(y, m, 1)).slice(0, 7);
+  const monthEv = ev.filter(e => e.mulai.slice(0, 7) === mk);
+  const done = monthEv.filter(e => e.status === 'Selesai').length;
+  const late = ev.filter(e => e.selesai < t && e.status !== 'Selesai' && e.status !== 'Dibatalkan').length;
+  const bars = (obj, colors) => { const max = Math.max(1, ...Object.values(obj)); return Object.entries(obj).sort((a, b) => b[1] - a[1]).map(([k, n]) =>
+    `<div class="hbar"><span>${esc(k)}</span><div class="tr"><i style="width:${n / max * 100}%;background:${(colors && colors[k]) || `hsl(${hue(k)} 65% 55%)`}"></i></div><b>${n}</b></div>`).join('') || '<small style="color:var(--muted)">Belum ada data</small>'; };
+  const count = (arr, f) => arr.reduce((o, e) => (o[f(e)] = (o[f(e)] || 0) + 1, o), {});
+  // heatmap 1 tahun terakhir
+  const per = {}; ev.forEach(e => { for (let k = e.mulai; k <= e.selesai; k = addDays(k, 1)) per[k] = (per[k] || 0) + 1; });
+  let hm = ''; let s = addDays(t, -364); s = addDays(s, -parse(s).getDay());
+  for (let k = s; k <= t; k = addDays(k, 1)) { const n = per[k] || 0; hm += `<i title="${fmtLong(k)}: ${n} kegiatan" style="${n ? `background:var(--accent);opacity:${Math.min(1, .25 + n * .2)}` : ''}"></i>`; }
+  const rate = monthEv.length ? Math.round(done / monthEv.length * 100) : 0;
+  v.innerHTML = `<div class="scroll"><div class="stats">
+    <div class="kpi"><small>Kegiatan ${BLN[m]}</small><b>${monthEv.length}</b></div>
+    <div class="kpi"><small>Tingkat penyelesaian</small><b style="color:var(--ok)">${rate}%</b><div class="prog"><i style="width:${rate}%"></i></div></div>
+    <div class="kpi"><small>Terlambat / belum selesai</small><b style="color:var(--danger)">${late}</b></div>
+    <div class="kpi"><small>Lampiran di Drive</small><b>${S.files.length}</b><small>${size(S.files.reduce((a, f) => a + Number(f.ukuran || 0), 0))}</small></div>
+  </div>
+  <div class="panel"><h3>🔥 Peta aktivitas 12 bulan</h3><div class="heatmap">${hm}</div></div>
+  <div class="grid2"><div class="panel"><h3>Per kategori (${BLN[m]})</h3>${bars(count(monthEv, e => e.kategori), CATS)}</div>
+  <div class="panel"><h3>Per status (${BLN[m]})</h3>${bars(count(monthEv, e => e.status), STAT_C)}</div>
+  <div class="panel"><h3>👥 Kontributor teraktif</h3>${bars(count(ev, e => e.dibuatOleh.split('@')[0]))}</div>
+  <div class="panel"><h3>Prioritas</h3>${bars(count(monthEv, e => e.prioritas), PRI)}</div></div>
+  <div class="panel" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-soft" onclick="exportCSV()">⬇️ Ekspor CSV (Excel)</button>
+  <button class="btn btn-soft" onclick="exportICS()">📅 Ekspor .ics (Google/Outlook Calendar)</button><button class="btn btn-soft" onclick="window.print()">🖨️ Cetak</button></div></div>`;
+}
+
+async function renderLog(v) {
+  v.innerHTML = '<div class="scroll"><div class="empty">Memuat log…</div></div>';
+  const logs = await call('apiLogs', 400);
+  const icon = { BUAT: '🟢', AI_DOKUMEN: '✨', BUAT_DOKUMEN: '📄', UBAH: '✏️', HAPUS: '🗑️', PULIHKAN: '♻️', PINDAH: '↔️', UNGGAH: '📎', HAPUS_FILE: '❌', KOMENTAR: '💬', CHECKLIST: '☑️' };
+  v.innerHTML = `<div class="scroll"><div class="panel" style="margin:0"><h3>📜 Log aktivitas (audit trail) — semua perubahan tercatat permanen di Google Sheets</h3>
+    ${logs.map(l => logItem(l, icon)).join('') || '<div class="empty">Belum ada log</div>'}</div></div>`;
+}
+function logItem(l, icon) {
+  icon = icon || {};
+  let det = l.detail; try { const o = JSON.parse(det); det = Object.entries(o).map(([k, x]) => x && typeof x === 'object' && 'ke' in x ? `${k}: ${JSON.stringify(x.dari)} → ${JSON.stringify(x.ke)}` : `${k}: ${JSON.stringify(x)}`).join('\n'); } catch (e) {}
+  const ev = S.events.find(e => e.id === l.eventId);
+  return `<div class="log">${avatar(l.pengguna)}<div style="flex:1;min-width:0"><div class="what">${icon[l.aksi] || '•'} <b>${esc(l.pengguna)}</b> ${esc(l.aksi.toLowerCase().replace('_', ' '))}
+    ${l.eventId ? `<a href="#" onclick="event.preventDefault();${ev ? `openDetail('${l.eventId}')` : `restore('${l.eventId}')`}">${esc(l.judul || (ev && ev.judul) || 'kegiatan')}</a>` : ''}
+    ${!ev && l.aksi === 'HAPUS' ? '<small>(klik untuk pulihkan)</small>' : ''}</div>
+    <small>${new Date(l.waktu).toLocaleString('id-ID')} · ${ago(l.waktu)}</small>${det ? `<pre>${esc(det)}</pre>` : ''}</div></div>`;
+}
+
+/* ============================================================ interactions */
+function setView(v) { S.view = v; localStorage.setItem('kkw2-view', v); document.getElementById('side').classList.remove('open'); render(); }
+function shift(n) { const c = S.cursor; S.view === 'week' ? c.setDate(c.getDate() + 7 * n) : c.setMonth(c.getMonth() + n, 1); render(); }
+function goToday() { S.cursor = new Date(); S.sel = todayKey(); render(); }
+function pickDay(k) { S.cursor = parse(k); S.sel = k; if (S.view !== 'week') S.view = S.view === 'month' ? 'month' : S.view; document.getElementById('side').classList.remove('open'); render(); }
+function toggleCat(n) { S.hidden.has(n) ? S.hidden.delete(n) : S.hidden.add(n); localStorage.setItem('kkw2-hidden', JSON.stringify([...S.hidden])); render(); }
+function cellClick(ev, k) {
+  if (matchMedia('(max-width:900px)').matches) { S.sel = k; render(); return; }
+  openForm(null, k);
+}
+let dragId = null;
+function dragStart(ev, id) { dragId = id; ev.dataTransfer.effectAllowed = 'move'; }
+function dragOver(ev) { ev.preventDefault(); ev.currentTarget.classList.add('drop'); }
+async function dropDay(ev, k) {
+  ev.preventDefault(); ev.currentTarget.classList.remove('drop'); if (!dragId) return;
+  const e = S.events.find(x => x.id === dragId); dragId = null; if (!e || e.mulai === k) return;
+  const old = e.mulai, span = dayDiff(e.mulai, e.selesai); e.mulai = k; e.selesai = addDays(k, span); render(); // optimistic
+  try { await call('apiMoveEvent', e.id, k); toast(`↔️ "${e.judul}" dipindah ke ${fmtShort(k)}`, 'Batal', () => call('apiMoveEvent', e.id, old).then(() => refresh(true))); refresh(true); }
+  catch (err) { toast('⚠️ ' + err.message); refresh(true); }
+}
+async function dropStatus(ev, st) {
+  ev.preventDefault(); ev.currentTarget.classList.remove('drop');
+  const e = S.events.find(x => x.id === dragId); dragId = null; if (!e || e.status === st) return;
+  e.status = st; render();
+  try { await call('apiSaveEvent', Object.assign({}, e, { status: st })); toast(`✅ Status "${e.judul}" → ${st}`); refresh(true); } catch (err) { toast('⚠️ ' + err.message); }
+}
+
+/* ---------- quick add (bahasa alami) */
+function parseQuick(txt) {
+  let s = ' ' + txt + ' ', t = todayKey();
+  const o = { mulai: t, selesai: t, seharian: true, kategori: 'Umum', prioritas: 'Sedang', status: 'Direncanakan', checklist: [], peserta: [], tautan: [] };
+  const rm = re => { const m = s.match(re); if (m) s = s.replace(m[0], ' '); return m; };
+  let m;
+  if ((m = rm(/\s#(\w+)/))) { const c = Object.keys(CATS).find(k => k.toLowerCase() === m[1].toLowerCase()); o.kategori = c || 'Lainnya'; }
+  if ((m = rm(/\s!(rendah|sedang|tinggi|penting|urgent)/i))) o.prioritas = /rendah/i.test(m[1]) ? 'Rendah' : /sedang/i.test(m[1]) ? 'Sedang' : 'Tinggi';
+  if ((m = rm(/\s@([^#!]+?)(?=\s[#!]|\s*$)/))) o.lokasi = m[1].trim();
+  if ((m = rm(/\s(?:jam\s)?(\d{1,2})[:.](\d{2})(?:\s*[-–sd.]+\s*(\d{1,2})[:.](\d{2}))?/i))) {
+    o.seharian = false; o.jamMulai = m[1].padStart(2, '0') + ':' + m[2]; if (m[3]) o.jamSelesai = m[3].padStart(2, '0') + ':' + m[4];
+  }
+  if (rm(/\slusa\b/i)) o.mulai = addDays(t, 2);
+  else if (rm(/\sbesok\b/i)) o.mulai = addDays(t, 1);
+  else if (rm(/\shari ini\b/i)) o.mulai = t;
+  else if ((m = rm(/\s(senin|selasa|rabu|kamis|jumat|sabtu|minggu)(?:\s+depan)?\b/i))) {
+    const idx = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'].indexOf(m[1].toLowerCase());
+    let diff = (idx - new Date().getDay() + 7) % 7 || 7; o.mulai = addDays(t, diff);
+  } else if ((m = rm(/\s(?:tgl\s|tanggal\s)?(\d{1,2})[\/\s-](\d{1,2}|jan\w*|feb\w*|mar\w*|apr\w*|mei|jun\w*|jul\w*|agu\w*|sep\w*|okt\w*|nov\w*|des\w*)(?:[\/\s-](\d{4}))?\b/i))) {
+    let mo = isNaN(m[2]) ? ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des'].indexOf(m[2].slice(0, 3).toLowerCase()) : Number(m[2]) - 1;
+    const yr = m[3] ? Number(m[3]) : new Date().getFullYear();
+    if (mo >= 0) o.mulai = key(new Date(yr, mo, Number(m[1])));
+  }
+  o.selesai = o.mulai;
+  o.judul = s.replace(/\s+/g, ' ').trim();
+  return o;
+}
+async function quickAdd() {
+  const inp = document.getElementById('quick'); if (!inp.value.trim()) return inp.focus();
+  const o = parseQuick(inp.value); if (!o.judul) return toast('Tulis judul kegiatannya ya');
+  inp.value = '';
+  try { const e = await call('apiSaveEvent', o); toast(`✨ "${e.judul}" ditambahkan · ${fmtLong(e.mulai)} ${timeStr(e)}`, 'Buka', () => openDetail(e.id)); S.cursor = parse(e.mulai); await refresh(true); }
+  catch (err) { toast('⚠️ ' + err.message); }
+}
+
+/* ---------- modal: form */
+function openModal(html) { document.getElementById('modal').innerHTML = html; document.getElementById('ov').classList.add('show'); }
+function closeModal() { document.getElementById('ov').classList.remove('show'); current = null; }
+
+function openForm(id, k) {
+  const e = id ? JSON.parse(JSON.stringify(S.events.find(x => x.id === id))) : {
+    judul: '', deskripsi: '', mulai: k || S.sel || todayKey(), selesai: k || S.sel || todayKey(), jamMulai: '09:00', jamSelesai: '10:00', seharian: false,
+    lokasi: '', kategori: 'Umum', prioritas: 'Sedang', status: 'Direncanakan', peserta: [], checklist: [], tautan: [] };
+  current = e;
+  const pills = (name, opts, colors) => `<div class="pills" data-name="${name}">${opts.map(o => `<button type="button" data-val="${o}" class="${e[name] === o ? 'on' : ''}" style="${e[name] === o ? `background:${colors[o]}` : `color:${colors[o]}`}" onclick="pick(this,'${name}')">${o}</button>`).join('')}</div>`;
+  openModal(`<div class="mh"><h2>${id ? '✏️ Ubah kegiatan' : '✨ Kegiatan baru'}</h2><button class="icon-btn" onclick="closeModal()">✕</button></div>
+  <form class="mb" id="form" onsubmit="event.preventDefault();saveForm()">
+    <div class="warn" id="conflict"></div>
+    <div class="grid2">
+      <div class="f full"><label>Judul kegiatan *</label><input name="judul" required maxlength="200" value="${esc(e.judul)}" placeholder="mis. Rapat koordinasi program" autofocus></div>
+      <div class="f"><label>Tanggal mulai *</label><input type="date" name="mulai" value="${e.mulai}" required onchange="checkConflict()"></div>
+      <div class="f"><label>Tanggal selesai</label><input type="date" name="selesai" value="${e.selesai}" onchange="checkConflict()"></div>
+      <div class="full"><label class="switch"><input type="checkbox" name="seharian" ${e.seharian ? 'checked' : ''} onchange="document.getElementById('times').style.display=this.checked?'none':'';checkConflict()"><i></i>Sepanjang hari</label></div>
+      <div class="grid2 full" id="times" style="${e.seharian ? 'display:none' : ''}">
+        <div class="f"><label>Jam mulai</label><input type="time" name="jamMulai" value="${e.jamMulai || ''}" onchange="checkConflict()"></div>
+        <div class="f"><label>Jam selesai</label><input type="time" name="jamSelesai" value="${e.jamSelesai || ''}" onchange="checkConflict()"></div>
+      </div>
+      <div class="f full"><label>Lokasi</label><input name="lokasi" value="${esc(e.lokasi)}" placeholder="Kantor / alamat / link meeting"></div>
+      <div class="f full"><label>Kategori</label>${pills('kategori', Object.keys(CATS), CATS)}</div>
+      <div class="f"><label>Prioritas</label>${pills('prioritas', Object.keys(PRI), PRI)}</div>
+      <div class="f"><label>Status</label>${pills('status', STAT, STAT_C)}</div>
+      <div class="f full"><label>Deskripsi / catatan</label><textarea name="deskripsi" placeholder="Tujuan, agenda, hasil yang diharapkan…">${esc(e.deskripsi)}</textarea></div>
+      <div class="f full"><label>Peserta (email Google, pisahkan koma)</label><input name="peserta" value="${esc((e.peserta || []).join(', '))}" placeholder="nama@gmail.com, rekan@gmail.com"></div>
+      <div class="f full"><label>Tautan terkait (satu per baris)</label><textarea name="tautan" style="min-height:60px" placeholder="https://meet.google.com/...">${esc((e.tautan || []).join('\n'))}</textarea></div>
+      <div class="f full"><label>Checklist tugas</label><div id="cklist"></div>
+        <button type="button" class="btn btn-ghost" onclick="addCk()">+ Tambah item</button></div>
+    </div>
+  </form>
+  <div class="mf">${id ? `<button class="btn btn-danger" onclick="delEvent('${id}')">🗑️ Hapus</button>` : ''}<div class="grow"></div>
+    <button class="btn btn-soft" onclick="${id ? `openDetail('${id}')` : 'closeModal()'}">Batal</button>
+    <button class="btn btn-primary" onclick="saveForm()" id="saveBtn">💾 Simpan</button></div>`);
+  renderCk(); checkConflict();
+}
+function pick(btn, name) {
+  current[name] = btn.dataset.val;
+  btn.parentNode.querySelectorAll('button').forEach(b => { const on = b === btn; b.classList.toggle('on', on); const c = getComputedStyle(b).color; });
+  const map = { kategori: CATS, prioritas: PRI, status: STAT_C }[name];
+  btn.parentNode.querySelectorAll('button').forEach(b => { b.style.cssText = b === btn ? `background:${map[b.dataset.val]}` : `color:${map[b.dataset.val]}`; });
+}
+function renderCk() {
+  document.getElementById('cklist').innerHTML = (current.checklist || []).map((c, i) => `<div class="chk"><input type="checkbox" ${c.d ? 'checked' : ''} onchange="current.checklist[${i}].d=this.checked">
+    <div class="f" style="flex:1"><input type="text" value="${esc(c.t)}" oninput="current.checklist[${i}].t=this.value"></div><button type="button" class="icon-btn" onclick="current.checklist.splice(${i},1);renderCk()">✕</button></div>`).join('');
+}
+function addCk() { current.checklist.push({ t: '', d: false }); renderCk(); const ins = document.querySelectorAll('#cklist input[type=text]'); ins[ins.length - 1].focus(); }
+function formData() {
+  const f = document.getElementById('form'), g = n => f.elements[n];
+  return Object.assign({}, current, {
+    judul: g('judul').value.trim(), mulai: g('mulai').value, selesai: g('selesai').value || g('mulai').value, seharian: g('seharian').checked,
+    jamMulai: g('jamMulai').value, jamSelesai: g('jamSelesai').value, lokasi: g('lokasi').value.trim(), deskripsi: g('deskripsi').value,
+    peserta: g('peserta').value.split(/[,;\s]+/).map(x => x.trim().toLowerCase()).filter(x => x.includes('@')),
+    tautan: g('tautan').value.split('\n').map(x => x.trim()).filter(Boolean),
+    checklist: (current.checklist || []).filter(c => c.t.trim()),
+  });
+}
+function checkConflict() {
+  const d = formData(), w = document.getElementById('conflict');
+  const clash = S.events.filter(e => e.id !== d.id && e.mulai <= d.selesai && e.selesai >= d.mulai && (d.seharian || e.seharian || !e.jamMulai ||
+    ((d.jamMulai || '00:00') < (e.jamSelesai || '23:59') && (e.jamMulai || '00:00') < (d.jamSelesai || '23:59'))));
+  w.style.display = clash.length ? 'block' : 'none';
+  w.innerHTML = `⚠️ Bentrok jadwal dengan ${clash.length} kegiatan: ${clash.slice(0, 3).map(e => `<b>${esc(e.judul)}</b> (${timeStr(e)})`).join(', ')}`;
+}
+async function saveForm() {
+  const d = formData();
+  if (!d.judul) return toast('Judul wajib diisi');
+  if (d.selesai < d.mulai) return toast('Tanggal selesai tidak boleh sebelum tanggal mulai');
+  const b = document.getElementById('saveBtn'); b.disabled = true; b.textContent = 'Menyimpan…';
+  try { const e = await call('apiSaveEvent', d); toast(d.id ? '✅ Perubahan tersimpan & tercatat di log' : '🎉 Kegiatan dibuat'); await refresh(true); openDetail(e.id, d.id ? 'detail' : 'files'); }
+  catch (err) { toast('⚠️ ' + err.message); b.disabled = false; b.textContent = '💾 Simpan'; }
+}
+async function delEvent(id) {
+  const e = S.events.find(x => x.id === id);
+  if (!confirm(`Hapus "${e.judul}"?\nData tetap tersimpan di log dan bisa dipulihkan.`)) return;
+  await call('apiDeleteEvent', id); closeModal();
+  toast('🗑️ Kegiatan dihapus', 'Urungkan', async () => { await call('apiRestoreEvent', id); refresh(true); });
+  refresh(true);
+}
+async function restore(id) { if (!confirm('Pulihkan kegiatan yang dihapus ini?')) return; await call('apiRestoreEvent', id); toast('♻️ Dipulihkan'); await refresh(true); openDetail(id); }
+
+/* ---------- modal: detail */
+function openDetail(id, tab) {
+  const e = S.events.find(x => x.id === id); if (!e) return toast('Kegiatan tidak ditemukan');
+  current = e; tab = tab || 'detail';
+  const c = color(e), nf = filesOf(id).length, nc = commentsOf(id).length;
+  openModal(`<div class="mh"><h2></h2><button class="icon-btn" title="Duplikat" onclick="dup('${id}')">⧉</button>
+    <button class="icon-btn" title="Tambah ke Google Calendar pribadi" onclick="window.open(gcalLink(current),'_blank')">📆</button>
+    <button class="icon-btn" title="Ubah" onclick="openForm('${id}')">✏️</button><button class="icon-btn" onclick="closeModal()">✕</button></div>
+  <div class="tabs">${[['detail', 'Detail'], ['files', `Lampiran (${nf})`], ['ai', '✨ AI Dokumen'], ['comments', `Diskusi (${nc})`], ['history', 'Riwayat']].map(([k, l]) =>
+    `<button class="${k === tab ? 'on' : ''}" onclick="openDetail('${id}','${k}')">${l}</button>`).join('')}</div>
+  <div class="mb" id="dbody"></div>`);
+  const body = document.getElementById('dbody');
+  if (tab === 'detail') {
+    const ck = e.checklist || [], done = ck.filter(x => x.d).length;
+    body.innerHTML = `<div class="detail-hero" style="background:linear-gradient(135deg,${c},${soft(c, .75)})">
+      <span class="tag" style="background:rgba(255,255,255,.25)">${esc(e.kategori)}</span> <span class="tag" style="background:rgba(255,255,255,.25)">${esc(e.status)}</span>
+      ${isNow(e) ? '<span class="now-badge">SEDANG BERLANGSUNG</span>' : ''}
+      <h3>${esc(e.judul)}</h3><div>📅 ${fmtLong(e.mulai)}${e.selesai !== e.mulai ? ' — ' + fmtLong(e.selesai) : ''} · 🕒 ${timeStr(e)}</div>
+      <div style="margin-top:4px">${countdown(e)}</div></div>
+    <div class="kv">
+      ${e.lokasi ? `<span>Lokasi</span><span>📍 <a href="https://maps.google.com/?q=${encodeURIComponent(e.lokasi)}" target="_blank">${esc(e.lokasi)}</a></span>` : ''}
+      <span>Prioritas</span><span><span class="tag" style="background:${soft(PRI[e.prioritas] || '#888')};color:${PRI[e.prioritas]}">${esc(e.prioritas)}</span></span>
+      <span>Dibuat oleh</span><span style="display:flex;gap:8px;align-items:center">${avatar(e.dibuatOleh, true)} ${esc(e.dibuatOleh)} · ${ago(e.dibuatPada)}</span>
+      <span>Terakhir diubah</span><span>${esc(e.diubahOleh)} · ${ago(e.diubahPada)}</span>
+      ${(e.peserta || []).length ? `<span>Peserta</span><span style="display:flex;gap:4px;flex-wrap:wrap">${e.peserta.map(p => avatar(p, true)).join('')}</span>` : ''}
+      ${(e.tautan || []).length ? `<span>Tautan</span><span>${e.tautan.map(u => `<a href="${esc(/^https?:/.test(u) ? u : 'https://' + u)}" target="_blank">${esc(u)}</a>`).join('<br>')}</span>` : ''}
+    </div>
+    ${e.deskripsi ? `<div class="panel" style="white-space:pre-wrap">${linkify(esc(e.deskripsi))}</div>` : ''}
+    ${ck.length ? `<div class="panel"><h3>Checklist · ${done}/${ck.length}</h3><div class="prog"><i style="width:${done / ck.length * 100}%"></i></div>
+      ${ck.map((x, i) => `<label class="chk ${x.d ? 'done' : ''}"><input type="checkbox" ${x.d ? 'checked' : ''} onchange="toggleCk('${id}',${i})"><span>${esc(x.t)}</span></label>`).join('')}</div>` : ''}
+    ${nf ? `<div class="panel"><h3>📎 Lampiran</h3><div class="files">${filesOf(id).slice(0, 4).map(fileCard).join('')}</div></div>` : ''}
+    <div class="panel" style="display:flex;gap:6px;flex-wrap:wrap">${STAT.map(s => `<button class="btn ${s === e.status ? 'btn-primary' : 'btn-soft'}" onclick="setStatus('${id}','${s}')">${s}</button>`).join('')}</div>`;
+  } else if (tab === 'files') {
+    body.innerHTML = `<div class="drop-zone" id="dz" onclick="document.getElementById('fileInput').click()">
+      <div style="font-size:34px">☁️</div><b>Seret foto / dokumen ke sini</b><br><small>atau ketuk untuk memilih · tersimpan otomatis di Google Drive · maks ${S.maxUploadMb} MB/file</small>
+      <div id="upl"></div></div><div class="files">${filesOf(id).map(fileCard).join('') || ''}</div>
+      ${!nf ? '<div class="empty" style="padding:20px">Belum ada lampiran</div>' : ''}`;
+    const dz = document.getElementById('dz');
+    ['dragenter', 'dragover'].forEach(t => dz.addEventListener(t, ev => { ev.preventDefault(); dz.classList.add('hover'); }));
+    ['dragleave', 'drop'].forEach(t => dz.addEventListener(t, ev => { ev.preventDefault(); dz.classList.remove('hover'); }));
+    dz.addEventListener('drop', ev => uploadFiles(ev.dataTransfer.files));
+  } else if (tab === 'ai') {
+    body.innerHTML = `<div class="ai-hero"><b>✨ AI Asisten Dokumen</b><div style="font-size:13px;opacity:.92;margin-top:4px">AI menganalisis kegiatan <b>${esc(e.judul)}</b> dan menentukan dokumen yang perlu dibuat — lengkap dengan draf isinya. Sekali klik jadi Google Docs di folder Drive kegiatan.</div>
+      <button class="btn" style="background:#fff;color:#6d5dfc;margin-top:12px" onclick="runAi('${id}')" id="aiBtn">🪄 Analisis sekarang</button></div><div id="aiRes">${S.ai && S.ai.id === id ? aiHtml(id) : ''}</div>`;
+  } else if (tab === 'comments') {
+    body.innerHTML = `${commentsOf(id).map(cm => `<div class="cmt">${avatar(cm.oleh, true)}<div class="bub"><b>${esc(cm.oleh.split('@')[0])}</b> <small>${ago(cm.pada)}</small><div style="white-space:pre-wrap;margin-top:4px">${linkify(esc(cm.isi))}</div></div></div>`).join('') || '<div class="empty" style="padding:20px">Belum ada diskusi. Mulai percakapan 👇</div>'}
+      <div class="f" style="display:flex;gap:8px;margin-top:10px"><textarea id="cmt" style="min-height:48px" placeholder="Tulis komentar / update progres…" onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey))sendComment()"></textarea>
+      <button class="btn btn-primary" onclick="sendComment()">Kirim</button></div>`;
+  } else {
+    body.innerHTML = '<div class="empty">Memuat riwayat…</div>';
+    call('apiLogs', 200, id).then(logs => { if (current && current.id === id) body.innerHTML = logs.map(l => logItem(l)).join('') || '<div class="empty">Belum ada riwayat</div>'; });
+  }
+}
+async function runAi(id) {
+  const b = document.getElementById('aiBtn'); b.disabled = true; b.textContent = '🧠 Menganalisis…';
+  document.getElementById('aiRes').innerHTML = '<div class="empty"><div class="loader" style="position:static;background:none"><div></div></div></div>';
+  try { const r = await call('apiAiDocs', id); S.ai = { id, ...r }; if (current && current.id === id) { document.getElementById('aiRes').innerHTML = aiHtml(id); b.textContent = '🔄 Analisis ulang'; b.disabled = false; } }
+  catch (err) { toast('⚠️ ' + err.message); b.disabled = false; b.textContent = '🪄 Coba lagi'; document.getElementById('aiRes').innerHTML = ''; }
+}
+function aiHtml(id) {
+  const r = S.ai; const TC = { Sebelum: '#6d5dfc', Saat: '#22a3e6', Sesudah: '#16b981' };
+  return `<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap"><small style="color:var(--muted);flex:1">${r.sumber === 'gemini' ? '🤖 Dihasilkan Google Gemini' : '📚 Dari template bawaan (isi GEMINI_API_KEY untuk AI penuh)'} · ${r.docs.length} dokumen</small>
+    <button class="btn btn-ghost" onclick="aiToTodo('${id}')">☑ Masukkan ke To Do</button><button class="btn btn-primary" onclick="aiCreateAll('${id}')">📄 Buat semua dokumen</button></div>
+    ${r.docs.map((d, i) => `<div class="ai-doc"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><b style="flex:1">📄 ${esc(d.nama)}</b>
+      <span class="tag" style="background:${soft(TC[d.tahap] || '#888888')};color:${TC[d.tahap] || '#888'}">${esc(d.tahap || '')}</span>
+      <button class="btn btn-soft" onclick="aiCreate('${id}',${i})" id="aiC${i}">Buat Google Doc</button></div>
+      <small style="color:var(--muted)">${esc(d.alasan || '')}</small><details style="margin-top:8px"><summary style="cursor:pointer;font-size:12px;font-weight:600">Lihat draf isi</summary><pre>${esc(d.isi || '')}</pre></details></div>`).join('')}`;
+}
+async function aiToTodo(id) { await call('apiAddChecklist', id, S.ai.docs.map(d => 'Siapkan ' + d.nama)); toast('☑ Ditambahkan ke To Do List'); refresh(true); }
+async function aiCreate(id, i, quiet) {
+  const d = S.ai.docs[i], b = document.getElementById('aiC' + i); if (b) { b.disabled = true; b.textContent = 'Membuat…'; }
+  try { const f = await call('apiCreateDoc', id, d.nama, d.isi); if (b) { b.textContent = '✅ Dibuat'; } if (!quiet) { toast('📄 ' + d.nama + ' dibuat di Google Drive', 'Buka', () => window.open(f.url, '_blank')); refresh(true); } }
+  catch (err) { toast('⚠️ ' + err.message); if (b) { b.disabled = false; b.textContent = 'Coba lagi'; } }
+}
+async function aiCreateAll(id) { for (let i = 0; i < S.ai.docs.length; i++) await aiCreate(id, i, true); toast('📄 Semua draf dokumen dibuat di folder Drive kegiatan'); await refresh(true); }
+function countdown(e) {
+  const t = todayKey();
+  if (e.status === 'Selesai') return '✅ Selesai';
+  if (t < e.mulai) { const n = dayDiff(t, e.mulai); return `⏳ ${n === 1 ? 'Besok' : n + ' hari lagi'}`; }
+  if (t > e.selesai) return '⚠️ Sudah lewat ' + dayDiff(e.selesai, t) + ' hari';
+  return '📍 Hari ini';
+}
+function linkify(s) { return s.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank">$1</a>'); }
+function gcalLink(e) {
+  const d = (k, t) => k.replace(/-/g, '') + (t ? 'T' + t.replace(':', '') + '00' : '');
+  const dates = e.seharian || !e.jamMulai ? d(e.mulai) + '/' + d(addDays(e.selesai, 1)) : d(e.mulai, e.jamMulai) + '/' + d(e.selesai, e.jamSelesai || e.jamMulai);
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(e.judul) + '&dates=' + dates + '&ctz=Asia/Jakarta&details=' + encodeURIComponent(e.deskripsi || '') + '&location=' + encodeURIComponent(e.lokasi || '');
+}
+async function toggleCk(id, i) { await call('apiToggleChecklist', id, i); await refresh(true); openDetail(id); }
+async function setStatus(id, s) { const e = S.events.find(x => x.id === id); await call('apiSaveEvent', Object.assign({}, e, { status: s })); toast('Status → ' + s); await refresh(true); openDetail(id); }
+async function dup(id) { const k = prompt('Duplikat ke tanggal (YYYY-MM-DD):', addDays(current.mulai, 7)); if (!k || !/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+  const e = await call('apiDuplicateEvent', id, k); toast('⧉ Diduplikat ke ' + fmtLong(k)); await refresh(true); openDetail(e.id); }
+async function sendComment() {
+  const t = document.getElementById('cmt'); if (!t.value.trim()) return; const id = current.id;
+  await call('apiComment', id, t.value); await refresh(true); openDetail(id, 'comments');
+}
+
+/* ---------- files: upload, hover preview & viewer */
+function isImg(f) { return /^image\//.test(f.mime); }
+function thumb(f, w) { return f.fileId ? `https://drive.google.com/thumbnail?id=${f.fileId}&sz=w${w || 400}` : (isImg(f) ? f.url : ''); }
+function fIcon(f) { return isImg(f) ? '🖼️' : /pdf/.test(f.mime) ? '📕' : /sheet|excel|csv/.test(f.mime) ? '📗' : /word|document/.test(f.mime) ? '📘' : /presentation|powerpoint/.test(f.mime) ? '📙' : /video/.test(f.mime) ? '🎬' : /zip|rar/.test(f.mime) ? '🗜️' : '📄'; }
+function fileCard(f) {
+  const t = thumb(f, 300);
+  return `<div class="file" data-fid="${f.id}" onmouseenter="showHover(event,'${f.id}')" onmousemove="moveHover(event)" onmouseleave="hideHover()" onclick="openViewer('${f.id}')">
+    <div class="th" style="${t ? `background-image:url('${t}')` : ''}">${t ? '' : fIcon(f)}</div>
+    <div class="nm">${fIcon(f)} ${esc(f.nama)}<small>${size(f.ukuran)} · ${esc(f.oleh.split('@')[0])}</small></div>
+    <button class="x" title="Hapus" onclick="event.stopPropagation();delFile('${f.id}')">✕</button></div>`;
+}
+function showHover(ev, id) {
+  if (matchMedia('(hover:none)').matches) return;
+  const f = S.files.find(x => x.id === id); const h = document.getElementById('hover'); const t = thumb(f, 600);
+  h.innerHTML = `${t ? `<img src="${t}" alt="">` : `<div style="font-size:60px;text-align:center;padding:30px">${fIcon(f)}</div>`}
+    <div><b>${esc(f.nama)}</b><br><span style="color:var(--muted)">${size(f.ukuran)} · diunggah ${esc(f.oleh)} · ${ago(f.pada)}</span><br><span style="color:var(--accent)">Klik untuk membuka</span></div>`;
+  h.style.display = 'block'; moveHover(ev);
+}
+function moveHover(ev) { const h = document.getElementById('hover'); const x = Math.min(ev.clientX + 18, innerWidth - 320), y = Math.min(ev.clientY + 18, innerHeight - h.offsetHeight - 10); h.style.left = x + 'px'; h.style.top = Math.max(10, y) + 'px'; }
+function hideHover() { document.getElementById('hover').style.display = 'none'; }
+function openViewer(id) {
+  hideHover(); const f = S.files.find(x => x.id === id);
+  document.getElementById('vTitle').textContent = f.nama; document.getElementById('vOpen').href = f.url;
+  const b = document.getElementById('vBody');
+  b.innerHTML = f.fileId ? `<iframe src="https://drive.google.com/file/d/${f.fileId}/preview" allow="autoplay"></iframe>`
+    : isImg(f) ? `<img src="${f.url}">` : `<iframe src="${f.url}"></iframe>`;
+  document.getElementById('viewer').classList.add('show');
+}
+function closeViewer() { document.getElementById('viewer').classList.remove('show'); document.getElementById('vBody').innerHTML = ''; }
+async function uploadFiles(list) {
+  if (!current || !current.id) return toast('Simpan kegiatan dulu');
+  const id = current.id, box = document.getElementById('upl');
+  for (const file of list) {
+    if (file.size > S.maxUploadMb * 1048576) { toast(`⚠️ ${file.name} melebihi ${S.maxUploadMb} MB`); continue; }
+    const row = document.createElement('div'); row.innerHTML = `<small>${esc(file.name)}</small><div class="prog"><i></i></div>`; box && box.appendChild(row);
+    const bar = row.querySelector('i'); let p = 5; const tm = setInterval(() => { p = Math.min(92, p + (95 - p) * .08); bar.style.width = p + '%'; }, 200);
+    try {
+      const blob = /^image\/(jpeg|png|webp)/.test(file.type) && file.size > 1.5e6 ? await compress(file) : file;
+      const b64 = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(blob); });
+      await call('apiUpload', id, file.name, blob.type || file.type || 'application/octet-stream', b64);
+      bar.style.width = '100%'; toast('📎 ' + file.name + ' tersimpan di Google Drive');
+    } catch (err) { toast('⚠️ Gagal unggah ' + file.name + ': ' + err.message); }
+    clearInterval(tm);
+  }
+  await refresh(true); if (current && current.id === id) openDetail(id, 'files');
+}
+// kompres foto besar dari kamera HP agar upload cepat
+function compress(file) {
+  return new Promise(res => { const img = new Image(); img.onload = () => {
+    const s = Math.min(1, 2400 / Math.max(img.width, img.height)); const c = document.createElement('canvas');
+    c.width = img.width * s; c.height = img.height * s; c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    c.toBlob(b => res(b && b.size < file.size ? b : file), 'image/jpeg', .85); }; img.onerror = () => res(file); img.src = URL.createObjectURL(file); });
+}
+async function delFile(fid) {
+  const f = S.files.find(x => x.id === fid); if (!confirm(`Hapus lampiran "${f.nama}"? (dipindah ke Sampah Drive)`)) return;
+  await call('apiDeleteFile', fid); toast('Lampiran dihapus'); await refresh(true); openDetail(f.eventId, 'files');
+}
+
+/* ---------- export */
+function download(name, text, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click(); }
+function exportCSV() {
+  const cols = ['judul', 'mulai', 'selesai', 'jamMulai', 'jamSelesai', 'lokasi', 'kategori', 'prioritas', 'status', 'deskripsi', 'dibuatOleh', 'diubahPada'];
+  const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  download('kalender-kerja.csv', '﻿' + [cols.join(','), ...visible().map(e => cols.map(c => q(e[c])).join(','))].join('\n'), 'text/csv');
+}
+function exportICS() {
+  const d = k => k.replace(/-/g, ''), t = s => s.replace(':', '') + '00';
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Kalender Kerja Wilayah II//ID'];
+  visible().forEach(e => lines.push('BEGIN:VEVENT', 'UID:' + e.id + '@kkw2', 'SUMMARY:' + e.judul.replace(/[,;]/g, '\\$&'),
+    e.seharian || !e.jamMulai ? 'DTSTART;VALUE=DATE:' + d(e.mulai) : 'DTSTART;TZID=Asia/Jakarta:' + d(e.mulai) + 'T' + t(e.jamMulai),
+    e.seharian || !e.jamMulai ? 'DTEND;VALUE=DATE:' + d(addDays(e.selesai, 1)) : 'DTEND;TZID=Asia/Jakarta:' + d(e.selesai) + 'T' + t(e.jamSelesai || e.jamMulai),
+    'LOCATION:' + (e.lokasi || ''), 'DESCRIPTION:' + (e.deskripsi || '').replace(/\n/g, '\\n'), 'END:VEVENT'));
+  lines.push('END:VCALENDAR'); download('kalender-kerja.ics', lines.join('\r\n'), 'text/calendar');
+}
+
+/* ---------- command palette */
+const CMDS = [
+  ['✨', 'Kegiatan baru', () => openForm(), 'N'], ['📅', 'Tampilan Bulan', () => setView('month'), 'M'], ['🗓️', 'Tampilan Minggu', () => setView('week'), 'W'],
+  ['📋', 'Tampilan Agenda', () => setView('agenda'), 'A'], ['✅', 'To Do List', () => setView('todo'), 'O'], ['🧩', 'Papan status (Kanban)', () => setView('board'), 'B'], ['📊', 'Statistik & dashboard', () => setView('stats'), 'S'],
+  ['📜', 'Log aktivitas', () => setView('log'), 'L'], ['🎯', 'Ke hari ini', goToday, 'T'], ['🌓', 'Ganti tema terang/gelap', () => toggleTheme(), 'D'],
+  ['⬇️', 'Ekspor CSV', exportCSV, ''], ['📆', 'Ekspor .ics', exportICS, ''], ['📁', 'Buka folder Google Drive', () => window.open(S.rootUrl, '_blank'), ''],
+];
+let palSel = 0, palItems = [];
+function openPalette() { document.getElementById('palette').classList.add('show'); const i = document.getElementById('pq'); i.value = ''; renderPalette(); setTimeout(() => i.focus(), 20); }
+function closePalette() { document.getElementById('palette').classList.remove('show'); }
+function renderPalette() {
+  const q = document.getElementById('pq').value.toLowerCase();
+  const cmds = CMDS.filter(c => c[1].toLowerCase().includes(q)).map(c => ({ ic: c[0], t: c[1], s: c[3], run: c[2] }));
+  const evs = q ? S.events.filter(e => (e.judul + ' ' + e.lokasi + ' ' + e.deskripsi).toLowerCase().includes(q)).slice(0, 8)
+    .map(e => ({ ic: '●', col: color(e), t: e.judul, s: fmtShort(e.mulai), run: () => { S.cursor = parse(e.mulai); render(); openDetail(e.id); } })) : [];
+  palItems = [...evs, ...cmds]; palSel = 0; drawPal();
+}
+function drawPal() { document.getElementById('pres').innerHTML = palItems.map((p, i) => `<div class="opt ${i === palSel ? 'on' : ''}" onclick="palRun(${i})"><span style="color:${p.col || 'inherit'}">${p.ic}</span>${esc(p.t)}<small>${esc(p.s || '')}</small></div>`).join('') || '<div class="empty">Tidak ditemukan</div>'; }
+function palRun(i) { closePalette(); palItems[i] && palItems[i].run(); }
+function paletteKey(e) { if (e.key === 'ArrowDown') { palSel = Math.min(palItems.length - 1, palSel + 1); drawPal(); e.preventDefault(); } else if (e.key === 'ArrowUp') { palSel = Math.max(0, palSel - 1); drawPal(); e.preventDefault(); } else if (e.key === 'Enter') palRun(palSel); else if (e.key === 'Escape') closePalette(); }
+
+/* ---------- misc UI */
+function toast(msg, action, fn) {
+  const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = `<span style="flex:1">${esc(msg)}</span>`;
+  if (action) { const b = document.createElement('button'); b.textContent = action; b.onclick = () => { fn(); t.remove(); }; t.appendChild(b); }
+  document.getElementById('toasts').appendChild(t); setTimeout(() => t.remove(), action ? 7000 : 3500);
+}
+function toggleTheme(force) {
+  const d = force || (document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+  document.documentElement.dataset.theme = d; localStorage.setItem('kkw2-theme', d);
+}
+
+document.querySelectorAll('#seg button,#bnav button[data-v]:not([data-v=more])').forEach(b => b.addEventListener('click', () => setView(b.dataset.v)));
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openPalette(); return; }
+  if (e.key === 'Escape') { closeViewer(); closePalette(); closeModal(); return; }
+  if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) || document.getElementById('ov').classList.contains('show')) return;
+  const k = e.key.toLowerCase(); const m = { n: () => openForm(), t: goToday, m: () => setView('month'), w: () => setView('week'), a: () => setView('agenda'), o: () => setView('todo'), b: () => setView('board'), s: () => setView('stats'), l: () => setView('log'), d: () => toggleTheme(), arrowleft: () => shift(-1), arrowright: () => shift(1), '/': () => document.getElementById('q').focus() };
+  if (m[k]) { e.preventDefault(); m[k](); }
+});
+// swipe kiri/kanan di HP untuk ganti bulan
+(() => { let x0 = null, y0 = null; const v = document.getElementById('view');
+  v.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+  v.addEventListener('touchend', e => { if (x0 === null || S.view === 'board') return; const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) shift(dx < 0 ? 1 : -1); x0 = null; }, { passive: true }); })();
+
+/* ============================================================ boot */
+(async function init() {
+  toggleTheme(localStorage.getItem('kkw2-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  S.view = localStorage.getItem('kkw2-view') || (innerWidth < 900 ? 'month' : 'month');
+  // tampilkan cache lebih dulu agar terasa instan
+  try { const c = JSON.parse(localStorage.getItem('kkw2-cache')); if (c && IS_GAS) { applyData(c); render(); document.getElementById('loader').remove(); } } catch (e) {}
+  try {
+    const d = await call('apiBootstrap');
+    S.user = d.user; S.rootUrl = d.rootUrl; S.maxUploadMb = d.maxUploadMb; applyData(d);
+    document.getElementById('me').outerHTML = avatar(d.user).replace('class="avatar', 'id="me" class="avatar');
+    document.getElementById('driveLink').href = d.rootUrl; document.getElementById('sheetLink').href = d.sheetUrl;
+    if (!IS_GAS) toast('🧪 Mode DEMO — data disimpan di browser ini saja. Deploy ke Apps Script untuk mode tim.');
+  } catch (e) { toast('⚠️ Gagal memuat: ' + e.message); }
+  const l = document.getElementById('loader'); l && l.remove();
+  render();
+  // sinkron realtime: cek versi tiap 15 dtk (lebih jarang saat tab tidak aktif)
+  const live = document.getElementById('live');
+  setInterval(async () => {
+    if (document.hidden) return;
+    try { const v = await call('apiVersion'); live.classList.remove('off'); if (v !== S.version) refresh(); }
+    catch (e) { live.classList.add('off'); }
+  }, 15000);
+  setInterval(() => { if (S.view === 'month' || S.view === 'agenda') renderSide(); }, 60000);
+})();
+</script>
+</body>
+</html>
