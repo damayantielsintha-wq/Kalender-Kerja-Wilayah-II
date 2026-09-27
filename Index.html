@@ -371,7 +371,7 @@ function call(fn, ...args) {
 }
 
 const Demo = (() => {
-  const K = 'kkw2-demo';
+  const K = 'kkw2-demo-v2';
   const db = JSON.parse(localStorage.getItem(K) || 'null') || seed();
   const me = 'demo@gmail.com';
   function save() { db.version++; localStorage.setItem(K, JSON.stringify(db)); }
@@ -384,10 +384,10 @@ const Demo = (() => {
       dibuatOleh: by, dibuatPada: new Date().toISOString(), diubahOleh: by, diubahPada: new Date().toISOString() });
     return { version: 1, files: [], comments: [], logs: [], events: [
       mk('Rapat Koordinasi Wilayah', 0, 0, '09:00', '11:00', 'Rapat', 'Tinggi', 'Berjalan', 'Aula Kantor', 'andi@gmail.com'),
-      mk('Kunjungan Lapangan Desa A', 2, 1, '', '', 'Lapangan', 'Sedang', 'Direncanakan', 'Desa A', 'sari@gmail.com'),
+      mk('Penyumpahan Wali dan Inventarisasi Harta', 2, 0, '14:00', '16:00', 'Penyumpahan', 'Tinggi', 'Direncanakan', 'Ruang Rapat BHP Medan', 'sari@gmail.com'),
       mk('Laporan Bulanan', 5, 0, '13:00', '15:00', 'Laporan', 'Tinggi', 'Direncanakan', 'Online', 'demo@gmail.com'),
       mk('Pelatihan SDM', -3, 0, '08:00', '16:00', 'Pelatihan', 'Rendah', 'Selesai', 'Balai Diklat', 'budi@gmail.com'),
-      mk('Monitoring Proyek', 9, 0, '10:00', '12:00', 'Lapangan', 'Sedang', 'Direncanakan', 'Lokasi Proyek', 'andi@gmail.com'),
+      mk('Koordinasi ke Pemkab Deli Serdang', 9, 0, '08:30', '12:00', 'Koordinasi', 'Sedang', 'Direncanakan', 'Kantor Bupati Deli Serdang', 'andi@gmail.com'),
     ] };
   }
   const alive = () => db.events.filter(e => !e.dihapus);
@@ -412,11 +412,7 @@ const Demo = (() => {
       db.files.push(f); log('UNGGAH', { id: eventId }, nama); try { save(); } catch (e) { db.files.pop(); throw new Error('Penyimpanan demo penuh — pakai file kecil'); } return f; },
     apiDeleteFile(i) { const f = db.files.find(x => x.id === i); f.dihapus = true; log('HAPUS_FILE', { id: f.eventId }, f.nama); save(); return true; },
     apiComment(eventId, isi) { const c = { id: id(), eventId, oleh: me, pada: new Date().toISOString(), isi }; db.comments.push(c); log('KOMENTAR', { id: eventId }, isi); save(); return c; },
-    apiAiDocs(i) { const e = db.events.find(x => x.id === i); const info = `Kegiatan: ${e.judul}\nTanggal: ${e.mulai}\nTempat: ${e.lokasi || '[....]'}`;
-      const base = { Rapat: ['Surat Undangan', 'Daftar Hadir', 'Notulen Rapat', 'Laporan Kegiatan'], Lapangan: ['Surat Tugas / SPPD', 'Daftar Hadir', 'Dokumentasi Foto Kegiatan', 'Laporan Kegiatan'],
-        Pelatihan: ['Kerangka Acuan Kerja (KAK/TOR)', 'Surat Undangan', 'Materi / Bahan Paparan', 'Daftar Hadir', 'Laporan Kegiatan'], Cuti: ['Formulir Permohonan Cuti'] }[e.kategori] || ['Kerangka Acuan Kerja (KAK/TOR)', 'Surat Undangan', 'Daftar Hadir', 'Laporan Kegiatan'];
-      log('AI_DOKUMEN', e, base.join(', ')); save();
-      return { sumber: 'template', docs: base.map((n, k) => ({ nama: n, tahap: /Laporan|Dokumentasi/.test(n) ? 'Sesudah' : /Hadir|Notulen/.test(n) ? 'Saat' : 'Sebelum', alasan: 'Kebutuhan administrasi kegiatan ' + e.kategori.toLowerCase(), isi: n.toUpperCase() + '\n\n' + info + '\n\n1. [....]\n2. [....]' })) }; },
+    apiAiDocs(i) { const e = db.events.find(x => x.id === i); log('AI_DOKUMEN', e, 'template'); save(); return { sumber: 'template', docs: null }; },
     apiCreateDoc(i, nama, isi) { return this.apiUpload(i, nama + '.txt', 'text/plain', btoa(unescape(encodeURIComponent(isi)))); },
     apiAddChecklist(i, items) { const e = db.events.find(x => x.id === i); [].concat(items).forEach(t => { if (!e.checklist.some(c => c.t === t)) e.checklist.push({ t, d: false }); }); log('CHECKLIST', e, '+ ' + items); save(); return e; },
     apiLogs(limit, eventId) { return db.logs.filter(l => !eventId || l.eventId === eventId).slice(-(limit || 300)).reverse(); },
@@ -424,12 +420,13 @@ const Demo = (() => {
 })();
 
 /* ============================================================ constants & state */
-const CATS = { Umum: '#6d5dfc', Rapat: '#22a3e6', Lapangan: '#16b981', Laporan: '#f5a524', Pelatihan: '#e654c8', Cuti: '#f0476b', Lainnya: '#8a8fa8' };
+const CATS = { Umum: '#6d5dfc', Rapat: '#22a3e6', Koordinasi: '#0ea5a4', Penyumpahan: '#8b5cf6', Inventarisasi: '#d97706', Lapangan: '#16b981', Laporan: '#f5a524', Pelatihan: '#e654c8', Cuti: '#f0476b', Lainnya: '#8a8fa8' };
 const PRI = { Rendah: '#16b981', Sedang: '#f5a524', Tinggi: '#f0476b' };
 const STAT = ['Direncanakan', 'Berjalan', 'Selesai', 'Dibatalkan'];
 const STAT_C = { Direncanakan: '#6d5dfc', Berjalan: '#22a3e6', Selesai: '#16b981', Dibatalkan: '#8a8fa8' };
 const BLN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 const HR = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+const HR_FULL = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 const S = { events: [], files: [], comments: [], user: '', version: 0, view: 'month', cursor: new Date(), sel: todayKey(),
   hidden: new Set(JSON.parse(localStorage.getItem('kkw2-hidden') || '[]')), maxUploadMb: 25 };
 let current = null; // event being viewed/edited
@@ -884,15 +881,70 @@ function openDetail(id, tab) {
     call('apiLogs', 200, id).then(logs => { if (current && current.id === id) body.innerHTML = logs.map(l => logItem(l)).join('') || '<div class="empty">Belum ada riwayat</div>'; });
   }
 }
+/* ============================================================ template surat BHP Medan
+ * Disusun mengikuti format surat dinas Balai Harta Peninggalan Medan
+ * (kop, penomoran W.2.AHU.AHU.1-…, tanda tangan Kepala, tembusan). Ubah di sini bila ada perubahan. */
+const BHP = {
+  kop: 'KEMENTERIAN HUKUM REPUBLIK INDONESIA\nKANTOR WILAYAH SUMATERA UTARA\nBALAI HARTA PENINGGALAN MEDAN\nJalan Listrik No. 10 Medan\nTelepon: (061) 451 7830, Faksimile: (061) 451 4328\nLaman: www.bhpmedan.kemenkum.go.id, Pos-el: bhp.medan@kemenkum.go.id\n________________________________________________________________',
+  nomor: kode => 'W.2.AHU.AHU.1-' + kode + '-[....]',
+  kepala: 'Kepala,\n\n\n\nSyafriadi Lubis',
+  tembusan: 'Tembusan:\n1. Direktur Jenderal Administrasi Hukum Umum Kementerian Hukum RI;\n2. Direktur Perdata Direktorat Jenderal Administrasi Hukum Umum;\n3. Kepala Kantor Wilayah Kementerian Hukum Sumatera Utara;\n4. Pertinggal.',
+  dipa: 'Daftar Isian Pelaksanaan Anggaran Balai Harta Peninggalan Medan Nomor: SP DIPA-135.04.2.692042/' + new Date().getFullYear(),
+};
+function tglIndo(k) { const d = parse(k); return d.getDate() + ' ' + BLN[d.getMonth()] + ' ' + d.getFullYear(); }
+function bhpDocs(e) {
+  const hari = HR_FULL[parse(e.mulai).getDay()];
+  const tgl = hari + ' / ' + tglIndo(e.mulai) + (e.selesai !== e.mulai ? ' s.d. ' + tglIndo(e.selesai) : '');
+  const jam = e.seharian || !e.jamMulai ? '[....] WIB s.d. selesai' : e.jamMulai.replace(':', '.') + ' WIB s.d. ' + (e.jamSelesai ? e.jamSelesai.replace(':', '.') + ' WIB' : 'selesai');
+  const waktu = `Hari/Tanggal\t: ${tgl}\nPukul\t\t: ${jam}\nTempat\t\t: ${e.lokasi || '[....]'}`;
+  const pegawai = (e.peserta || []).length ? e.peserta.map((p, i) => `${i + 1}. ${p.split('@')[0]} — NIP [....] — [Pangkat/Gol.] — [Jabatan]`).join('\n') : '1. [Nama] — NIP [....] — [Pangkat/Gol.] — [Jabatan]\n2. [....]';
+  const kopSurat = (kode, hal, sifat) => `${BHP.kop}\n\nNomor\t: ${BHP.nomor(kode)}\t\t\tMedan, ${tglIndo(todayKey())}\nSifat\t: ${sifat || 'Biasa'}\nLampiran\t: -\nHal\t: ${hal}\n\n`;
+  const T = {
+    undangan: { nama: 'Surat Undangan', tahap: 'Sebelum', alasan: 'Mengundang pihak terkait secara resmi',
+      isi: kopSurat('UM.01.01', 'Undangan ' + e.judul, 'Segera') + `Yth. [....]\ndi\n[alamat]\n\nSehubungan dengan pelaksanaan tugas dan fungsi Balai Harta Peninggalan Medan, dengan hormat kami mengundang Bapak/Ibu untuk hadir dalam kegiatan ${e.judul} yang akan dilaksanakan pada:\n\n${waktu}\n\n${e.deskripsi ? 'Agenda: ' + e.deskripsi + '\n\n' : ''}Demikian disampaikan, atas perhatian dan kehadiran Bapak/Ibu diucapkan terima kasih.\n\n${BHP.kepala}\n\n${BHP.tembusan}` },
+    undanganSumpah: { nama: 'Undangan Pengambilan Sumpah dan Inventarisasi Harta', tahap: 'Sebelum', alasan: 'Memanggil wali/pengampu untuk penyumpahan sesuai penetapan pengadilan',
+      isi: kopSurat('AH.06.03', 'Undangan Pengambilan Sumpah Wali/Pengampu dan Inventarisasi Harta', 'Segera') + `Yth. Bapak/Ibu [NAMA WALI/PENGAMPU]\ndi\n[alamat]\n\nMenindaklanjuti Penetapan Pengadilan [Negeri/Agama] [....] Nomor: [....]/Pdt.P/[....] tertanggal [....] yang telah memperoleh kekuatan hukum tetap, Bapak/Ibu telah ditunjuk secara resmi sebagai [Wali/Pengampu] atas [NAMA ANAK/TERAMPU], kami mengundang Bapak/Ibu untuk hadir dalam kegiatan Pengangkatan Sumpah pada:\n\n${waktu}\n\nGuna kelengkapan administrasi Berita Acara Penyumpahan dan Pencatatan Harta sesuai ketentuan peraturan perundang-undangan, kami memohon kesediaan Bapak/Ibu membawa dokumen pendukung, meliputi:\n1. Fotokopi Penetapan Pengadilan;\n2. Fotokopi Dokumen Kepemilikan Aset / Harta Kekayaan;\n3. Fotokopi KTP 2 (dua) orang saksi dari pihak Kepala Lingkungan dan/atau Keluarga;\n4. Meterai Rp 10.000,- sebanyak 4 (empat) lembar;\n5. Biaya PNBP sesuai PP Nomor 45 Tahun 2024 (dibayar melalui kode billing saat kegiatan).\n\nDemikian surat pemberitahuan ini kami sampaikan. Informasi lebih lanjut dapat menghubungi Contact Person (WhatsApp) Layanan Perwalian dan Pengampuan: 0851-2156-2136. Atas perhatian dan kesediaan Bapak/Ibu, kami ucapkan terima kasih.\n\n${BHP.kepala}\n\n${BHP.tembusan.replace('4. Pertinggal.', '4. Lurah/Kepala Desa setempat;\n5. Pertinggal.')}` },
+    suratTugas: { nama: 'Surat Tugas', tahap: 'Sebelum', alasan: 'Dasar penugasan pegawai & perjalanan dinas',
+      isi: `${BHP.kop}\n\nSURAT TUGAS\nNOMOR: ${BHP.nomor('KP.04.01')}\n\nDasar\t: ${BHP.dipa}.\n\nMenugaskan:\n${pegawai}\n\nUntuk\t: Melaksanakan ${e.judul}\n${waktu}\n\nDemikian surat tugas ini dibuat untuk dilaksanakan dengan penuh tanggung jawab.\n\nMedan, ${tglIndo(todayKey())}\n${BHP.kepala}` },
+    daftarHadir: { nama: 'Daftar Hadir', tahap: 'Saat', alasan: 'Bukti kehadiran & pertanggungjawaban',
+      isi: `${BHP.kop}\n\nDAFTAR HADIR\n${e.judul.toUpperCase()}\n\n${waktu}\n\nNo. | Nama | Instansi/Jabatan | No. HP | Tanda Tangan\n1.  |      |                  |        |\n2.  |      |                  |        |\n3.  |      |                  |        |\n4.  |      |                  |        |\n5.  |      |                  |        |` },
+    notulen: { nama: 'Notulen', tahap: 'Saat', alasan: 'Mencatat pembahasan, keputusan & tindak lanjut',
+      isi: `${BHP.kop}\n\nNOTULEN\n${e.judul.toUpperCase()}\n\n${waktu}\nPimpinan Rapat\t: [....]\nNotulis\t\t: [....]\nPeserta\t\t: (daftar hadir terlampir)\n\n1. Pembukaan\n2. Pembahasan\n   a. [....]\n3. Kesimpulan / Keputusan\n   a. [....]\n4. Tindak Lanjut (PIC & tenggat)\n   a. [....]\n\nMedan, ${tglIndo(e.mulai)}\nNotulis,\n\n\n[Nama]` },
+    baSumpah: { nama: 'Berita Acara Penyumpahan Wali/Pengampu', tahap: 'Saat', alasan: 'Bukti hukum pengucapan sumpah (Pasal 362 KUHPerdata)',
+      isi: `${BHP.kop}\n\nBERITA ACARA PENYUMPAHAN [WALI/PENGAMPU]\nNomor : ${BHP.nomor('AH.06.02')}\n\n-- Pada hari ini, ${hari}, tanggal ${tglIndo(e.mulai)}, bertempat di ${e.lokasi || '[....]'}, telah menghadap kepada Kepala Balai Harta Peninggalan Medan selaku Wali Pengawas berdasarkan Pasal 366 dan 470 KUHPerdata:\n\n[NAMA], [jenis kelamin], lahir tanggal [....], agama [....], pekerjaan [....], alamat [....], yang berdasarkan Penetapan Pengadilan [....] Nomor: [....] tanggal [....] telah diangkat menjadi [WALI/PENGAMPU] terhadap [NAMA ANAK/TERAMPU].\n\nPenghadap telah mengucapkan sumpah/janji sesuai agamanya untuk melaksanakan [perwalian/pengampuan] dengan baik dan jujur sebagaimana diatur dalam Pasal 362 KUHPerdata, disaksikan oleh:\n1. [Nama Saksi]\n2. [Nama Saksi]\n\nDemikian Berita Acara ini dibuat di atas kertas bermeterai Rp 10.000,- untuk dipergunakan sebagaimana mestinya.\n\nKEPALA BALAI HARTA PENINGGALAN MEDAN\t\t[WALI/PENGAMPU]\n\n\nSYAFRIADI LUBIS\t\t\t\t\t[NAMA]` },
+    baInventaris: { nama: 'Berita Acara Inventarisasi Harta', tahap: 'Saat', alasan: 'Pencatatan harta kekayaan anak/terampu',
+      isi: `${BHP.kop}\n\nBERITA ACARA PENCATATAN/PENDAFTARAN HARTA KEKAYAAN MILIK\nANAK DI BAWAH UMUR / TERAMPU ATAS NAMA [NAMA]\nNomor : ${BHP.nomor('AH.06.02')}\n\n-- Pada hari ini, ${hari}, tanggal ${tglIndo(e.mulai)}, kami yang bertanda tangan di bawah ini masing-masing yaitu:\n\n1. [NAMA WALI/PENGAMPU], [identitas], yang berdasarkan Penetapan Pengadilan [....] Nomor: [....] tanggal [....] telah diangkat menjadi [WALI/PENGAMPU] terhadap [NAMA];\n2. SYAFRIADI LUBIS, Kepala Balai Harta Peninggalan Medan, bertindak berdasarkan Pasal 366 dan 470 KUHPerdata selaku Wali Pengawas.\n\n-- Penghadap telah mendaftarkan harta kekayaan sebagai berikut:\n\nI. AKTIVA\n   A. Barang-barang tetap\t\t: [....]\n   B. Uang tunai, tabungan\t\t: [....]\n   C. Barang-barang emas, perak, dll\t: [....]\n   D. Surat-surat berharga/piutang\t: [....]\n   E. Perabot rumah tangga, barang dagang, ternak : [....]\n   F. Barang bergerak\t\t\t: [....]\nII. PASSIVA\n   Hutang-hutang\t\t\t: [....]\n\nOleh karena tidak ada lagi yang akan dicatat dan didaftar, maka Berita Acara ini diakhiri, diperbuat di atas kertas bermeterai Rp 10.000,- pada hari dan tanggal tersebut di atas.\n\nKEPALA BALAI HARTA PENINGGALAN MEDAN\t\tWALI\n\n\nSYAFRIADI LUBIS\t\t\t\t\t[NAMA]` },
+    laporan: { nama: 'Laporan Pelaksanaan Kegiatan', tahap: 'Sesudah', alasan: 'Pertanggungjawaban hasil kegiatan',
+      isi: `${BHP.kop}\n\nLAPORAN\nTENTANG\n${('Pelaksanaan ' + e.judul).toUpperCase()}\n\nI. PENDAHULUAN\n  1. Umum\n     [Latar belakang; dasar tugas BHP Medan selaku Wali Pengawas sesuai Pasal 366 KUHPerdata ....]\n  2. Maksud dan Tujuan\n     Maksud: [....]\n     Tujuan:\n     1. ${e.deskripsi || '[....]'}\n  3. Ruang Lingkup\n     [....]\n  4. Tempat dan Waktu Kegiatan\n     ${waktu.replace(/\n/g, '\n     ')}\n  5. Pegawai Yang Ditunjuk\n     Berdasarkan Surat Tugas Nomor: ${BHP.nomor('KP.04.01')} tanggal [....]:\n     ${pegawai.replace(/\n/g, '\n     ')}\n  6. Dasar Hukum\n     1. Pasal 366 jo. Pasal 369 KUHPerdata;\n     2. ${BHP.dipa}.\n\nII. KEGIATAN YANG DILAKSANAKAN DAN HASIL YANG DICAPAI\n  [Uraian jalannya kegiatan ....]\n${(e.checklist || []).length ? '  Capaian:\n' + e.checklist.map(c => '  - ' + c.t + (c.d ? ' (selesai)' : ' (belum)')).join('\n') + '\n' : ''}\nIII. KESIMPULAN DAN SARAN\n  Kesimpulan: [....]\n  Saran:\n  1. [....]\n\nIV. PENUTUP\n  Demikian laporan ini dibuat untuk diketahui, atas perhatiannya diucapkan terima kasih.\n\nDibuat di Medan\npada tanggal [....]\n\nMengetahui,\n[Jabatan Ketua Tim]\t\t\tKepala,\n\n\n[Nama]\t\t\t\t\tSyafriadi Lubis\n\nDOKUMENTASI\n[foto kegiatan]` },
+    pengantar: { nama: 'Surat Pengantar Laporan', tahap: 'Sesudah', alasan: 'Menyampaikan laporan ke Kantor Wilayah',
+      isi: kopSurat('OT.03.02', 'Laporan Pelaksanaan ' + e.judul) + `Yth. Kepala Kantor Wilayah Kementerian Hukum Sumatera Utara\ndi –\nMedan\n\nSehubungan dengan pelaksanaan ${e.judul} pada ${tglIndo(e.mulai)}, bersama ini kami sampaikan Laporan Pelaksanaan ${e.judul} sebagaimana terlampir pada surat ini.\n\nDemikian disampaikan, atas perhatian dan perkenan Bapak diucapkan terima kasih.\n\n${BHP.kepala}` },
+    dokumentasi: { nama: 'Dokumentasi Foto Kegiatan', tahap: 'Sesudah', alasan: 'Bukti visual pelaksanaan (lampiran laporan)',
+      isi: `DOKUMENTASI\n${e.judul.toUpperCase()}\n${waktu}\n\n[Foto 1] Keterangan: [....]\n[Foto 2] Keterangan: [....]\n\n(Unggah foto di tab Lampiran — otomatis tersimpan di folder Drive kegiatan)` },
+    cuti: { nama: 'Formulir Permintaan dan Pemberian Cuti', tahap: 'Sebelum', alasan: 'Syarat administrasi cuti ASN',
+      isi: `FORMULIR PERMINTAAN DAN PEMBERIAN CUTI\n\nYth. Kepala Balai Harta Peninggalan Medan\ndi Medan\n\nI. DATA PEGAWAI: Nama [....] / NIP [....] / Jabatan [....] / Unit Kerja: Balai Harta Peninggalan Medan\nII. JENIS CUTI: [Tahunan/Sakit/Alasan Penting/....]\nIII. ALASAN CUTI: ${e.deskripsi || '[....]'}\nIV. LAMANYA CUTI: ${dayDiff(e.mulai, e.selesai) + 1} hari, mulai ${tglIndo(e.mulai)} s.d. ${tglIndo(e.selesai)}\nV. ALAMAT SELAMA CUTI: [....]\nVI. PERTIMBANGAN ATASAN LANGSUNG: [....]\nVII. KEPUTUSAN PEJABAT YANG BERWENANG: [....]` },
+  };
+  const txt = (e.judul + ' ' + e.deskripsi).toLowerCase();
+  let keys;
+  if (e.kategori === 'Cuti') keys = ['cuti'];
+  else if (e.kategori === 'Penyumpahan' || /sumpah|penyumpahan/.test(txt)) keys = ['undanganSumpah', 'daftarHadir', 'baSumpah', 'baInventaris', 'dokumentasi', 'laporan'];
+  else if (e.kategori === 'Inventarisasi' || /inventaris|harta/.test(txt)) keys = ['suratTugas', 'undanganSumpah', 'baInventaris', 'dokumentasi', 'laporan'];
+  else if (e.kategori === 'Koordinasi' || /koordinasi|kunjungan/.test(txt)) keys = ['suratTugas', 'daftarHadir', 'notulen', 'dokumentasi', 'laporan', 'pengantar'];
+  else if (e.kategori === 'Lapangan') keys = ['suratTugas', 'daftarHadir', 'dokumentasi', 'laporan', 'pengantar'];
+  else if (e.kategori === 'Rapat') keys = ['undangan', 'daftarHadir', 'notulen', 'dokumentasi', 'laporan'];
+  else if (e.kategori === 'Laporan') keys = ['laporan', 'pengantar', 'dokumentasi'];
+  else if (e.kategori === 'Pelatihan') keys = ['suratTugas', 'undangan', 'daftarHadir', 'dokumentasi', 'laporan'];
+  else keys = ['suratTugas', 'undangan', 'daftarHadir', 'laporan'];
+  return keys.map(k => T[k]);
+}
 async function runAi(id) {
   const b = document.getElementById('aiBtn'); b.disabled = true; b.textContent = '🧠 Menganalisis…';
   document.getElementById('aiRes').innerHTML = '<div class="empty"><div class="loader" style="position:static;background:none"><div></div></div></div>';
-  try { const r = await call('apiAiDocs', id); S.ai = { id, ...r }; if (current && current.id === id) { document.getElementById('aiRes').innerHTML = aiHtml(id); b.textContent = '🔄 Analisis ulang'; b.disabled = false; } }
+  try { const r = await call('apiAiDocs', id); if (!r.docs) r.docs = bhpDocs(S.events.find(x => x.id === id)); S.ai = { id, ...r }; if (current && current.id === id) { document.getElementById('aiRes').innerHTML = aiHtml(id); b.textContent = '🔄 Analisis ulang'; b.disabled = false; } }
   catch (err) { toast('⚠️ ' + err.message); b.disabled = false; b.textContent = '🪄 Coba lagi'; document.getElementById('aiRes').innerHTML = ''; }
 }
 function aiHtml(id) {
   const r = S.ai; const TC = { Sebelum: '#6d5dfc', Saat: '#22a3e6', Sesudah: '#16b981' };
-  return `<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap"><small style="color:var(--muted);flex:1">${r.sumber === 'gemini' ? '🤖 Dihasilkan Google Gemini' : '📚 Dari template bawaan (isi GEMINI_API_KEY untuk AI penuh)'} · ${r.docs.length} dokumen</small>
+  return `<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap"><small style="color:var(--muted);flex:1">${r.sumber === 'gemini' ? '🤖 Dihasilkan Google Gemini' : '📚 Template format BHP Medan (isi GEMINI_API_KEY untuk analisis AI penuh)'} · ${r.docs.length} dokumen</small>
     <button class="btn btn-ghost" onclick="aiToTodo('${id}')">☑ Masukkan ke To Do</button><button class="btn btn-primary" onclick="aiCreateAll('${id}')">📄 Buat semua dokumen</button></div>
     ${r.docs.map((d, i) => `<div class="ai-doc"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><b style="flex:1">📄 ${esc(d.nama)}</b>
       <span class="tag" style="background:${soft(TC[d.tahap] || '#888888')};color:${TC[d.tahap] || '#888'}">${esc(d.tahap || '')}</span>

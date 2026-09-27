@@ -343,14 +343,22 @@ function apiAiDocs(eventId) {
   if (key) {
     try { docs = geminiDocs_(ev, key); sumber = 'gemini'; } catch (e) { Logger.log('Gemini gagal: ' + e); }
   }
-  if (!docs || !docs.length) docs = templateDocs_(ev);
+  // tanpa Gemini: frontend memakai template format BHP Medan (lihat BHP_TEMPLATES di Index.html)
+  if (!docs || !docs.length) return { sumber: 'template', docs: null };
   log_('AI_DOKUMEN', ev, docs.map(function (d) { return d.nama; }).join(', '));
   return { sumber: sumber, docs: docs };
 }
 
 function geminiDocs_(ev, key) {
   const model = PROP.getProperty('GEMINI_MODEL') || 'gemini-2.5-flash';
-  const prompt = 'Kamu asisten administrasi kantor pemerintahan Indonesia. Untuk kegiatan berikut, tentukan 3-7 dokumen ' +
+  const prompt = 'Kamu asisten administrasi Balai Harta Peninggalan (BHP) Medan, Kantor Wilayah Kementerian Hukum Sumatera Utara ' +
+    '(tugas: wali pengawas perwalian/pengampuan, penyumpahan wali, inventarisasi harta, kepailitan, harta tak terurus). ' +
+    'Ikuti format surat dinas BHP Medan: kop "KEMENTERIAN HUKUM REPUBLIK INDONESIA / KANTOR WILAYAH SUMATERA UTARA / ' +
+    'BALAI HARTA PENINGGALAN MEDAN / Jalan Listrik No. 10 Medan", nomor "W.2.AHU.AHU.1-<kode>-[....]", Sifat/Lampiran/Hal, ' +
+    '"Yth. ...", penutup "Demikian ...", tanda tangan "Kepala," lalu nama, dan Tembusan bila perlu. Laporan memakai bab ' +
+    'Pendahuluan (Umum, Maksud dan Tujuan, Ruang Lingkup, Tempat dan Waktu, Pegawai Yang Ditunjuk, Dasar Hukum), ' +
+    'Kegiatan yang Dilaksanakan dan Hasil yang Dicapai, Kesimpulan dan Saran, Penutup. ' +
+    'Kamu asisten administrasi kantor pemerintahan Indonesia. Untuk kegiatan berikut, tentukan 3-7 dokumen ' +
     'yang WAJIB/PERLU disiapkan (sebelum, saat, dan sesudah kegiatan). Untuk tiap dokumen beri: nama, tahap ' +
     '(Sebelum/Saat/Sesudah), alasan singkat, dan draf isi (kerangka lengkap dengan poin-poin, bahasa Indonesia formal, ' +
     'isi data kegiatan yang diketahui, gunakan [....] untuk yang harus dilengkapi). Jawab HANYA JSON array ' +
@@ -367,37 +375,6 @@ function geminiDocs_(ev, key) {
   const text = JSON.parse(res.getContentText()).candidates[0].content.parts[0].text;
   const arr = JSON.parse(text.replace(/^```json|```$/g, ''));
   return arr.filter(function (d) { return d && d.nama; }).slice(0, 8);
-}
-
-function templateDocs_(ev) {
-  const tgl = ev.mulai + (ev.selesai !== ev.mulai ? ' s/d ' + ev.selesai : '');
-  const jam = ev.seharian || !ev.jamMulai ? 'Pukul [....] WIB' : 'Pukul ' + ev.jamMulai + (ev.jamSelesai ? ' – ' + ev.jamSelesai : '') + ' WIB';
-  const info = 'Kegiatan : ' + ev.judul + '\nHari/Tanggal : ' + tgl + '\nWaktu : ' + jam + '\nTempat : ' + (ev.lokasi || '[....]');
-  const T = {
-    und: { nama: 'Surat Undangan', tahap: 'Sebelum', alasan: 'Memberitahu peserta secara resmi',
-      isi: 'KOP INSTANSI\n\nNomor : [....]\nPerihal : Undangan ' + ev.judul + '\n\nYth. [....]\n\nDengan hormat, kami mengundang Bapak/Ibu untuk hadir pada:\n' + info + '\nAgenda : ' + (ev.deskripsi || '[....]') + '\n\nAtas perhatian dan kehadirannya kami ucapkan terima kasih.\n\n[Jabatan]\n\n[Nama]' },
-    tor: { nama: 'Kerangka Acuan Kerja (KAK/TOR)', tahap: 'Sebelum', alasan: 'Dasar perencanaan & anggaran kegiatan',
-      isi: 'KERANGKA ACUAN KERJA\n' + ev.judul + '\n\nA. Latar Belakang\n[....]\n\nB. Maksud dan Tujuan\n' + (ev.deskripsi || '[....]') + '\n\nC. Sasaran / Peserta\n' + ((ev.peserta || []).join(', ') || '[....]') + '\n\nD. Waktu dan Tempat\n' + info + '\n\nE. Rencana Anggaran\n[....]\n\nF. Penutup' },
-    hadir: { nama: 'Daftar Hadir', tahap: 'Saat', alasan: 'Bukti kehadiran & pertanggungjawaban',
-      isi: 'DAFTAR HADIR\n' + info + '\n\nNo | Nama | Jabatan/Instansi | No. HP | Tanda Tangan\n1 |  |  |  | \n2 |  |  |  | \n3 |  |  |  | ' },
-    notulen: { nama: 'Notulen Rapat', tahap: 'Saat', alasan: 'Mencatat pembahasan & keputusan',
-      isi: 'NOTULEN\n' + info + '\nPimpinan : [....]\nNotulis : [....]\n\n1. Pembukaan\n2. Pembahasan\n   - [....]\n3. Kesimpulan / Keputusan\n   - [....]\n4. Tindak Lanjut (PIC & tenggat)\n   - [....]' },
-    lap: { nama: 'Laporan Kegiatan', tahap: 'Sesudah', alasan: 'Pertanggungjawaban hasil kegiatan',
-      isi: 'LAPORAN KEGIATAN\n' + ev.judul + '\n\nI. Pendahuluan\nII. Pelaksanaan\n' + info + '\nIII. Hasil yang Dicapai\n[....]\nIV. Kendala dan Solusi\n[....]\nV. Rekomendasi / Tindak Lanjut\n[....]\nVI. Lampiran (dokumentasi foto, daftar hadir)' },
-    st: { nama: 'Surat Tugas / SPPD', tahap: 'Sebelum', alasan: 'Dasar penugasan & perjalanan dinas',
-      isi: 'SURAT TUGAS\nNomor : [....]\n\nMenugaskan kepada:\n' + ((ev.peserta || []).map(function (p, i) { return (i + 1) + '. ' + p; }).join('\n') || '1. [Nama/NIP/Jabatan]') + '\n\nUntuk melaksanakan ' + ev.judul + '\n' + info + '\n\nDemikian surat tugas ini untuk dilaksanakan dengan penuh tanggung jawab.' },
-    dok: { nama: 'Dokumentasi Foto Kegiatan', tahap: 'Sesudah', alasan: 'Bukti visual pelaksanaan',
-      isi: 'DOKUMENTASI KEGIATAN\n' + info + '\n\n[Tempel foto 1] Keterangan: [....]\n[Tempel foto 2] Keterangan: [....]' },
-    mat: { nama: 'Materi / Bahan Paparan', tahap: 'Sebelum', alasan: 'Bahan yang disampaikan kepada peserta',
-      isi: 'MATERI ' + ev.judul.toUpperCase() + '\n\n1. Pendahuluan\n2. Pokok Bahasan\n3. Studi Kasus / Diskusi\n4. Penutup' },
-    cuti: { nama: 'Formulir Permohonan Cuti', tahap: 'Sebelum', alasan: 'Syarat administrasi cuti',
-      isi: 'FORMULIR PERMINTAAN CUTI\nNama/NIP : [....]\nJenis Cuti : [....]\nLama : ' + tgl + '\nAlasan : ' + (ev.deskripsi || '[....]') + '\nAlamat selama cuti : [....]' },
-  };
-  const map = {
-    Rapat: ['und', 'hadir', 'notulen', 'lap'], Lapangan: ['st', 'hadir', 'dok', 'lap'], Laporan: ['lap', 'dok'],
-    Pelatihan: ['tor', 'und', 'mat', 'hadir', 'lap'], Cuti: ['cuti'],
-  };
-  return (map[ev.kategori] || ['tor', 'und', 'hadir', 'lap']).map(function (k) { return T[k]; });
 }
 
 /** Membuat draf Google Docs di folder kegiatan dan mencatatnya sebagai lampiran. */
