@@ -123,6 +123,10 @@ body{padding-left:250px}
 #login form{border:0;box-shadow:0 30px 60px #0005}
 @media(max-width:900px){body{padding-left:0}.side{position:static;width:auto;flex-direction:row;flex-wrap:wrap;align-items:center}.side .sec,.side .foot{display:none}.side .brand{border:0;padding:12px}.side .nav{margin:4px;padding:8px 10px;font-size:13px}.top{flex-wrap:wrap;padding:12px 16px}.top #q{width:100%}.wrap{padding:14px}.opts,.dash{grid-template-columns:1fr}.wz{padding:20px}}
 [hidden]{display:none!important}
+html,body{max-width:100%;overflow-x:hidden}
+#login{display:flex;align-items:center;justify-content:center;padding:16px}
+#login form{width:100%;max-width:380px;margin:0!important}
+@media(max-width:900px){.top .uname{display:none}.top{gap:8px}.side{gap:0}.card{min-width:0}.wrap>*{min-width:0}#prev{padding:8px}.paper{transform-origin:top left}.wz{padding:16px 6px}.wz-h{flex-direction:column}.wz-h h2{font-size:19px}.top h2{font-size:17px}.side .brand small{display:none}}
 .wrap.wzmode{grid-template-columns:1fr}.wrap.wzmode>aside{display:none}
 .docs button.pri{background:var(--navy)!important;color:#fff!important;border-color:var(--navy)!important}
 </style>
@@ -772,10 +776,18 @@ function parsePenetapan(raw){
 function gabung(ai,rx){const o={...rx,...ai};for(const k in rx)if(typeof rx[k]!=='object'&&!ai[k])o[k]=rx[k];
   if(ai.terampu||rx.terampu){o.terampu={...(rx.terampu||{})};for(const k in (ai.terampu||{}))if(ai.terampu[k])o.terampu[k]=ai.terampu[k]}
   o.anak=(ai.anak&&ai.anak.filter(a=>a&&a.nama).length)?ai.anak:rx.anak;if(Array.isArray(ai.isiBap))o.isiBap=ai.isiBap.join('\n');o._text=rx._text;o._ai=true;return o}
+function normAI(d){if(Array.isArray(d))d=d[0]||{};d=d||{};
+  const src=d.pemohon||d.wali||d.pengampu;if(src&&typeof src==='object'){for(const k in src)if(!d[k]&&src[k])d[k]=src[k];
+    if(!d.nama)d.nama=src.nama||src.name||''}
+  for(const k of ['nama','nik','jk','tglLahir','agama','pekerjaan','alamat','kelurahan','status','pengadilan','nomorPenetapan','tglPenetapan'])if(d[k]!=null&&typeof d[k]!=='string')d[k]=String(d[k]);
+  if(d.nama)d.nama=d.nama.toUpperCase();if(/^(laki|pria)/i.test(d.jk||''))d.jk='Laki-laki';else if(/^(perem|wanita)/i.test(d.jk||''))d.jk='Perempuan';
+  if(d.jenis&&!/^(Pengampuan|Perwalian)$/.test(d.jenis))d.jenis=/wali/i.test(d.jenis)?'Perwalian':'Pengampuan';return d}
 async function geminiExtract(file){
   const b64=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(file)});
   const prompt=`Anda asisten Balai Harta Peninggalan (BHP) Medan. Baca PENETAPAN PENGADILAN terlampir (perwalian anak atau pengampuan orang dewasa) dan ekstrak data untuk Berita Acara Penyumpahan.
-Balas HANYA JSON dengan kunci berikut (string kosong bila tidak ada di dokumen, jangan mengarang):
+PENTING — data WALI/PENGAMPU = PEMOHON. Identitasnya hampir selalu ada di HALAMAN PERTAMA, tepat setelah frasa seperti "diajukan oleh:", "permohonan yang diajukan oleh", "dari:", atau "Pemohon:", sebelum kalimat "selanjutnya disebut sebagai Pemohon". Di sana tertulis nama, tempat/tanggal lahir (atau umur), agama, pekerjaan, dan alamat/tempat tinggal pemohon. Jangan ambil nama kuasa hukum/advokat, hakim, panitera, atau saksi. Bila ada beberapa pemohon, ambil pemohon yang ditetapkan sebagai wali/pengampu di amar.
+Tanggal lahir boleh ditulis "27-11-1985", "27 Nopember 1985", atau hanya umur — ubah ke YYYY-MM-DD bila ada tanggal.
+Balas HANYA satu objek JSON (bukan array) dengan kunci berikut (string kosong bila tidak ada di dokumen, jangan mengarang):
 {"jenis":"Pengampuan|Perwalian","pengadilan":"mis. Pengadilan Negeri Pekanbaru","nomorPenetapan":"mis. 48/Pdt.P/2025/PN Pbr","tglPenetapan":"YYYY-MM-DD",
 "nama":"pemohon yang DITETAPKAN sebagai wali/pengampu, HURUF KAPITAL tanpa gelar sapaan","nik":"16 digit","jk":"Laki-laki|Perempuan","tglLahir":"YYYY-MM-DD","agama":"Islam|Kristen|Katholik|Hindu|Buddha|Khonghucu",
 "pekerjaan":"","alamat":"alamat lengkap pemohon seperti tertulis (RT/RW, kelurahan, kecamatan, kota, provinsi)","kelurahan":"format: Kelurahan X, Kecamatan Y, Kota/Kabupaten Z, Provinsi",
@@ -785,7 +797,7 @@ Balas HANYA JSON dengan kunci berikut (string kosong bila tidak ada di dokumen, 
 "isiBap":["kalimat keterangan untuk Berita Acara Penghadapan, masing-masing diawali \"Bahwa\" dan diakhiri titik koma, disusun dari duduk perkara/fakta hukum penetapan: perkawinan/hubungan keluarga beserta nomor akta, kematian orang tua/suami bila ada, anak-anak/terampu beserta akta kelahiran, kondisi medis & surat dokter, aset yang dimiliki (jenis, luas, lokasi, nomor sertifikat, atas nama), tujuan permohonan (mis. menjual/menjaminkan aset), dan penetapan pengadilan yang mengangkat pemohon; gunakan sebutan \"penghadap\" untuk pemohon; 4-8 kalimat"]}
 Aturan: ambil nomor & tanggal dari bagian kepala dan penutup penetapan (bukan footer halaman). Tanggal penetapan = tanggal "Demikianlah ditetapkan". Tanggal format 26-06-1982 berarti 26 Juni 1982.
 Untuk Pengampuan isi "terampu" dan kosongkan "anak"; untuk Perwalian isi semua anak yang disebut di amar dan kosongkan "terampu". Jenis kelamin boleh disimpulkan dari hubungan (Ibu/Istri = Perempuan).`;
-  const d=await api('apiBacaPenetapanAI',b64,file.type||'application/pdf',prompt);if(!d)throw new Error('AI tidak aktif');d._ai=true;return d}
+  const d=await api('apiBacaPenetapanAI',b64,file.type||'application/pdf',prompt);if(!d)throw new Error('AI tidak aktif');const n=normAI(d);n._ai=true;return n}
 
 const PEN_LBL={jenis:'Jenis',pengadilan:'Pengadilan',nomorPenetapan:'Nomor Penetapan',tglPenetapan:'Tanggal Penetapan',nama:'Nama Pemohon (Wali/Pengampu)',nik:'NIK',jk:'Jenis Kelamin',tglLahir:'Tanggal Lahir',agama:'Agama',pekerjaan:'Pekerjaan',alamat:'Alamat',kelurahan:'Kelurahan/Kec/Kota',status:'Hubungan'};
 let PEN=null;
