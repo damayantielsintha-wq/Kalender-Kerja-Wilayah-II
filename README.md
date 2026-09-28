@@ -38,11 +38,25 @@ Buka `Index.html` langsung di browser. Aplikasi otomatis masuk **mode demo** (da
 
 ---
 
-# ⚖️ Aplikasi Dokumen Penyumpahan (`penyumpahan/index.html`)
-Pengganti alur AutoCrat di spreadsheet *Dokumen Otomatis (Penetapan Baru)*. Cukup buka file di browser (tanpa instalasi).
-- Isi data sekali (Pengampuan / Perwalian, bisa banyak anak) → otomatis jadi **Surat ke Pengampu/Wali, Surat ke Lurah, BA Penyumpahan, BA Inventarisasi Harta, Lembar Lafaz Sumpah**, sesuai format BHP Medan.
-- Otomatis: usia, sapaan Bapak/Ibu, hari & tanggal terbilang untuk BA, lafaz sumpah sesuai agama, kelurahan dari alamat, nomor surat berurutan.
-- Unduh **Word (.doc)** yang bisa diedit atau **PDF** (cetak), per dokumen atau seluruhnya sekaligus.
-- **Impor CSV** langsung dari sheet PENGAMPUAN/PERWALIAN (File → Download → CSV); ekspor CSV kembali.
-- Kop, nama Kepala, pejabat Madya/Muda + NIP, nomor WA, prefix nomor, dan lafaz bisa diubah di ⚙ Pengaturan. Data tersimpan di browser.
-- **📑 Upload Penetapan**: unggah PDF penetapan pengadilan (dari direktori putusan MA maupun hasil scan). Nomor & tanggal penetapan, pengadilan, data pemohon (nama, TTL, agama, pekerjaan, alamat, kelurahan), hubungan, terampu + kondisi medis + surat dokter, atau daftar anak diisi otomatis, lalu ditampilkan untuk dicek sebelum diterapkan. PDF scan dibaca dengan OCR (Tesseract). Opsional: isi *Gemini API key* di Pengaturan agar dibaca AI (lebih akurat untuk format tidak baku).
+# ⚖️ Aplikasi Dokumen Penyumpahan (`penyumpahan/`)
+Pengganti alur AutoCrat di spreadsheet *Dokumen Otomatis (Penetapan Baru)*. Berjalan sebagai **Google Apps Script Web App** terpisah (`Code.gs`, `Index.html`, `appsscript.json`).
+
+## Fitur
+- **Login per admin** dengan username & password aplikasi. **Admin Utama** (Shela Natasha) punya akses penuh: riwayat seluruh perubahan, kelola pengguna (tambah, nonaktifkan, reset password), pengaturan kop/pejabat/lafaz, koneksi SPS, serta hapus/pulihkan berkas. **Admin** bisa membuat & mengubah berkas, upload penetapan, unduh dokumen, dan ambil nomor SPS.
+- **Riwayat permanen** (sheet `Riwayat`): setiap buat/ubah berkas (per kolom: nilai lama → baru), hapus, pulihkan, unduh DOCX, ambil nomor, baca penetapan, login/logout/login gagal, ganti/reset password, perubahan pengaturan dan pengguna — lengkap dengan nama admin dan waktunya. Admin melihat riwayat per berkas; Admin Utama melihat semuanya dengan filter per admin/aksi.
+- **Anti-bentrok**: jika dua admin mengubah berkas yang sama, perubahan yang kalah cepat tidak menimpa, dan admin diberi tahu siapa yang mengubah.
+- **Output .docx** (Word asli): Surat ke Pengampu/Wali, Surat ke Lurah, BA Penyumpahan, BA Inventarisasi Harta, Lafaz Sumpah — kop dengan logo Pengayoman, Arial, A4, sesuai template BHP.
+- **Nomor surat dari SPS**: tombol *Ambil nomor SPS* hanya aktif bila semua isian dokumen lengkap. Kredensial SPS disimpan di Properti Skrip server (tidak terlihat admin lain).
+- **Upload penetapan** (PDF/scan) → isian terisi otomatis; opsional AI Gemini (kunci di server).
+- Impor CSV dari spreadsheet lama.
+
+## Pasang (dilakukan oleh Shela, ±10 menit)
+1. Buka <https://script.google.com> → **Proyek baru**, beri nama *Dokumen Penyumpahan BHP*.
+2. Salin `penyumpahan/Code.gs` ke `Code.gs`; buat file HTML **`Index`** dan salin `penyumpahan/Index.html`; tampilkan manifes lalu salin `penyumpahan/appsscript.json`.
+3. Pilih fungsi **`setup`** → **Jalankan** → izinkan akses. Buka **Log eksekusi**: berisi link database dan **password sementara** 8 akun (username: `shela`, `annisa`, `elsintha`, `yusril`, `andre`, `fairuz`, `nanang`, `taufik`). Bagikan secara pribadi; semua wajib ganti password saat login pertama.
+4. **Terapkan → Deployment baru → Aplikasi web**: *Jalankan sebagai: Saya*, *Akses: Siapa saja*. Bagikan URL `/exec` ke tim.
+5. Login sebagai `shela` → **⚙ Pengaturan**: isi nama & NIP pejabat, lalu username/password **SPS** dan klik **Tes koneksi**.
+
+Database (Spreadsheet) hanya dimiliki akun Shela; admin lain mengakses lewat aplikasi, sehingga riwayat tidak bisa diubah dari luar aplikasi.
+
+**Coba tanpa deploy:** buka `penyumpahan/Index.html` di browser → mode demo (username `shela`/`annisa`, password `demo`; data di browser saja, tanpa SPS).
