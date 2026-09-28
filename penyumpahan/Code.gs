@@ -619,3 +619,41 @@ function setPasswordSemua() {
   log_({ username: 'system', nama: 'Setup' }, 'RESET_PASSWORD', '', '', 'Password semua akun diseragamkan oleh pemilik skrip');
   Logger.log('Password semua akun sudah diubah.');
 }
+
+/**
+ * Diagnostik: jalankan dari editor (pilih "cekSemua" → Run), lalu lihat Execution log.
+ * Hanya membaca — tidak mengambil nomor SPS dan tidak mengubah data.
+ */
+function cekSemua() {
+  const P = PropertiesService.getScriptProperties();
+  // 1. Gemini
+  const key = P.getProperty('GEMINI_KEY');
+  if (!key) Logger.log('GEMINI  ❌ Kunci belum tersimpan. Simpan di aplikasi: Pengaturan → AI Gemini → Simpan kunci.');
+  else {
+    try {
+      const r = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(key), {
+        method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+        payload: JSON.stringify({ contents: [{ parts: [{ text: 'Balas satu kata: siap' }] }] }) });
+      const c = r.getResponseCode();
+      Logger.log(c === 200 ? 'GEMINI  ✅ Terhubung (gemini-2.5-flash).' : 'GEMINI  ❌ HTTP ' + c + ': ' + r.getContentText().slice(0, 300));
+    } catch (e) { Logger.log('GEMINI  ❌ ' + e.message); }
+  }
+  // 2. SPS (cek ketersediaan nomor 7 hari lalu; tidak mengambil nomor)
+  const cookie = (P.getProperty('SPS_COOKIE') || '').trim(), akun = P.getProperty('SPS_USER');
+  if (!cookie && !akun) Logger.log('SPS     ❌ Cookie/akun SPS belum tersimpan. Isi di aplikasi: Pengaturan → Koneksi SPS.');
+  else {
+    try {
+      const d = new Date(); d.setDate(d.getDate() - 7);
+      const t = Utilities.formatDate(d, 'Asia/Jakarta', 'yyyy-MM-dd');
+      const r = spsFetch_('/surat/available-nomor/' + t, { method: 'get' });
+      const c = r.getResponseCode();
+      if (c === 200) { const j = JSON.parse(r.getContentText()); Logger.log('SPS     ✅ Terhubung. ' + t + ': nomor terakhir ' + (j.info && j.info.nomor_terakhir_hari_ini) + ', cadangan ' + j.available_count + '.'); }
+      else Logger.log('SPS     ❌ HTTP ' + c + ': ' + r.getContentText().slice(0, 300));
+    } catch (e) { Logger.log('SPS     ❌ ' + e.message); }
+  }
+  // 3. Drive API (untuk membuat Google Docs)
+  try { Drive.Files.list({ pageSize: 1 }); Logger.log('DRIVE   ✅ Drive API aktif.'); }
+  catch (e) { Logger.log('DRIVE   ❌ Drive API belum ditambahkan: Services (+) → Drive API → Add. (' + e.message + ')'); }
+  // 4. Pegawai
+  try { const n = (settings_().pejabat || []).length; Logger.log('PEGAWAI ' + (n ? '✅ ' + n + ' pejabat tersimpan.' : 'ℹ Belum sinkron — Pengaturan → Ambil dari sheet Data Pegawai.')); } catch (e) {}
+}
