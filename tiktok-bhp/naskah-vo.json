@@ -16,8 +16,8 @@
  },
  {
   "who": "tasya",
-  "text": "Bentar... ini kantor apa jin botol?! Semua bisa!",
-  "key": "tasya-47875cba"
+  "text": "Wah, ternyata di BHP bisa bikin Surat Keterangan Hak Waris juga toh! Catet, catet!",
+  "key": "tasya-112268d5"
  },
  {
   "who": "narator",
@@ -55,9 +55,9 @@
   "key": "narator-b5e9d0c7"
  },
  {
-  "who": "dinda",
+  "who": "narator",
   "text": "Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor 2, soal perwalian. Tungguin ya!",
-  "key": "dinda-5d71f33e"
+  "key": "narator-1a70e519"
  },
  {
   "who": "tasya",
@@ -81,8 +81,8 @@
  },
  {
   "who": "tasya",
-  "text": "Ini kantor apa jasa bodyguard?! Jagain harta anak juga!",
-  "key": "tasya-4d1cb35b"
+  "text": "Oh gitu… ternyata harta anak juga dijagain BHP ya. Adem dengernya!",
+  "key": "tasya-2348703d"
  },
  {
   "who": "narator",
@@ -105,9 +105,9 @@
   "key": "narator-819976bd"
  },
  {
-  "who": "dinda",
+  "who": "narator",
   "text": "Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor 3, soal kepailitan. Tungguin ya!",
-  "key": "dinda-a47fc6d6"
+  "key": "narator-2c918e2f"
  },
  {
   "who": "tasya",
@@ -131,8 +131,8 @@
  },
  {
   "who": "tasya",
-  "text": "Udah bisa, hemat pula. Ini kantor apa toko diskonan?!",
-  "key": "tasya-8f940ea8"
+  "text": "Wih, ternyata BHP bisa jadi kurator, hemat pula. Mantap!",
+  "key": "tasya-1cd8776f"
  },
  {
   "who": "narator",
@@ -155,9 +155,9 @@
   "key": "narator-a6380dd4"
  },
  {
-  "who": "dinda",
+  "who": "narator",
   "text": "Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor 4, soal harta tak terurus. Tungguin ya!",
-  "key": "dinda-2a63a71f"
+  "key": "narator-c58ef7f8"
  },
  {
   "who": "tasya",
@@ -181,8 +181,8 @@
  },
  {
   "who": "tasya",
-  "text": "Din, kok kayaknya semua masalah bisa selesai di BHP?! Ini kantor apa dukun?!",
-  "key": "tasya-6444910a"
+  "text": "Ternyata harta yang nggak ada yang ngurus pun dijagain BHP ya. Keren juga!",
+  "key": "tasya-c5079bb4"
  },
  {
   "who": "narator",
@@ -205,9 +205,9 @@
   "key": "narator-0ad1cba7"
  },
  {
-  "who": "dinda",
+  "who": "narator",
   "text": "Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor 5, soal surat wasiat. Tungguin ya!",
-  "key": "dinda-04e1419c"
+  "key": "narator-727e4451"
  },
  {
   "who": "tasya",
@@ -231,8 +231,8 @@
  },
  {
   "who": "tasya",
-  "text": "Surat wasiat juga?! Ini kantor apa agensi detektif?!",
-  "key": "tasya-107c287c"
+  "text": "Wah, ternyata buka surat wasiat juga di BHP toh. Jadi tenang deh!",
+  "key": "tasya-01038da6"
  },
  {
   "who": "narator",
@@ -255,9 +255,9 @@
   "key": "narator-198f9f96"
  },
  {
-  "who": "dinda",
+  "who": "narator",
   "text": "Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor 6, soal uang pihak ketiga. Tungguin ya!",
-  "key": "dinda-d38666ea"
+  "key": "narator-caf97cf9"
  },
  {
   "who": "tasya",
@@ -281,8 +281,8 @@
  },
  {
   "who": "tasya",
-  "text": "Duit orang yang ngilang juga dijagain?! Ini kantor apa brankas?!",
-  "key": "tasya-3a192034"
+  "text": "Ternyata bagian ahli waris yang belum ketemu aman di BHP ya. Lega!",
+  "key": "tasya-ab04ad62"
  },
  {
   "who": "narator",
@@ -305,8 +305,8 @@
   "key": "narator-4413e129"
  },
  {
-  "who": "dinda",
+  "who": "narator",
   "text": "Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor 1, soal hak waris. Tungguin ya!",
-  "key": "dinda-3a58aa36"
+  "key": "narator-5ea6e41d"
  }
 ]
