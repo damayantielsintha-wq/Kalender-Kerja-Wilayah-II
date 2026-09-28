@@ -320,7 +320,7 @@ const DOCS={
 <table style="margin:8pt 0 8pt 36pt"><tr><td style="width:130pt">Nama</td><td>:</td><td><b>${V(r.nama)}</b></td></tr><tr><td>Tanggal Lahir/Umur</td><td>:</td><td>${tgl(r.tglLahir)} (${usia(r.tglLahir,r.tglSumpah)})</td></tr>
 <tr><td>Agama</td><td>:</td><td>${esc(r.agama)}</td></tr><tr><td>Pekerjaan</td><td>:</td><td>${V(r.pekerjaan)}</td></tr><tr><td>Alamat</td><td>:</td><td>${V(r.alamat)}</td></tr></table>
 <p>Berkenaan dengan ${d.w?'perwalian':'pengampuan'} atas nama <b>${V(d.objek)}</b>, terhadap pertanyaan-pertanyaan kami, penghadap tersebut diatas telah memberikan keterangan-keterangan dan penjelasan tentang hal-hal yang akan disebut dibawah ini serta menguatkannya dengan pernyataan.</p>
-${isi.length?bapList(r.isiBap):bapList(buatBap(r))}
+${bapList(isi.length?r.isiBap:buatBap(r),r)}
 <p style="margin-top:8pt">Oleh karena tidak ada lagi yang perlu diterangkan dan dijelaskan, maka Berita Acara Penghadapan ini ditutup pada hari dan tanggal tersebut diatas, kemudian ditandatangani oleh saya dan penghadap.</p>`+
     ttd2(esc((p.jabatan||'').toUpperCase()),d.J.toUpperCase(),V(p.nama),V(r.nama),V(p.nip),'')+
 `<p class="ctr" style="margin-top:22pt"><b>P E R N Y A T A A N</b></p>
@@ -384,10 +384,39 @@ function buatBap(r){const d=derive(r),w=d.w,L=[],urut=x=>[...x].sort((a,b)=>Stri
   const sk=baris(r.saksiKet);if(sk.length){L.push('Bahwa keterangan saksi-saksi yang hadir adalah sebagai berikut:');sk.forEach(x=>L.push('- '+x.replace(/[.;]\s*$/,'')+';'))}
   L.push(`Bahwa penghadap bersedia menjalankan tugas sebagai ${d.J} dengan sebaik-baiknya, mengurus kepentingan dan harta kekayaan ${w?'anak di bawah umur':'terampu'} tersebut dengan penuh tanggung jawab, serta bersedia diawasi oleh Balai Harta Peninggalan Medan selaku ${d.J} Pengawas.`);
   return L.join('\n')}
-const tebal=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+/* token dari AI: {usia:YYYY-MM-DD} dihitung pada tanggal sumpah, {tgl:YYYY-MM-DD} ditulis lengkap */
+const tebal=(s,r)=>esc(s).replace(/\{usia:(\d{4}-\d{2}-\d{2})\}/g,(m,d)=>usia(d,r&&r.tglSumpah)).replace(/\{tgl:(\d{4}-\d{2}-\d{2})\}/g,(m,d)=>tgl(d)).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+const PROMPT_BAP=`Anda penyusun Berita Acara Penghadapan (BAP) pada Balai Harta Peninggalan Medan. Baca SELURUH penetapan pengadilan terlampir (identitas, duduk perkara, bukti surat, keterangan saksi, pertimbangan hukum, amar) lalu susun isi BAP berupa keterangan penghadap (= pemohon yang ditetapkan sebagai wali/pengampu) yang LENGKAP, TAJAM, RUNTUT dan MENGALIR — setiap butir menyambung logis dengan butir sebelumnya.
+Urutan butir (lewati yang datanya tidak ada di penetapan):
+1. Identitas lengkap penghadap: nama, NIK, tempat & tanggal lahir, usia, agama, pekerjaan, alamat lengkap; serta hubungan penghadap dengan anak/terampu.
+2. Perkawinan penghadap: dengan siapa (identitas pasangan), kapan & di mana menikah, dasar Kutipan Akta Nikah/Akta Perkawinan (nomor, tanggal, instansi).
+3. Anak-anak dari perkawinan tersebut: pengantar lalu satu sub-butir per anak (nama, jenis kelamin, tempat & tanggal lahir, usia, nomor akta kelahiran bila ada), urut dari yang tertua.
+4. Meninggalnya pasangan/orang tua: tanggal, tempat, sebab bila disebut, dasar Akta/Surat Kematian (nomor, tanggal, instansi); akibat hukumnya terhadap anak.
+5. Anak yang masih di bawah umur (belum 18 tahun/belum kawin) dan berada di bawah perwalian penghadap: sub-butir per anak.
+   (Untuk Pengampuan ganti butir 2–5 dengan: identitas terampu, hubungan dengan penghadap, riwayat & kondisi kesehatan terampu, dasar surat keterangan dokter/rumah sakit, akibatnya terhadap kecakapan hukum terampu.)
+6. Latar belakang dan alasan konkret mengajukan permohonan (kepentingan hukum yang hendak dilakukan, mis. mengurus/menjual/membalik nama aset, mencairkan dana, keperluan pendidikan/nafkah anak).
+7. Harta kekayaan anak/terampu: pengantar lalu sub-butir per aset (jenis, luas, lokasi, nomor sertifikat/rekening, atas nama, asal-usul, nilai bila disebut); bila perlu sub-sub-butir untuk rincian.
+8. Keterangan para saksi di persidangan: pengantar lalu sub-butir per saksi (nama, hubungan dengan penghadap, pokok keterangan yang relevan).
+9. Penetapan pengadilan: nama pengadilan, nomor, tanggal, dan pokok amar yang menetapkan penghadap sebagai wali/pengampu (sebut nama anak/terampu).
+10. Kesanggupan penghadap menjalankan tugas dengan penuh tanggung jawab dan bersedia diawasi Balai Harta Peninggalan Medan selaku Wali/Pengampu Pengawas.
+FORMAT WAJIB:
+- Satu butir per baris. Butir utama TANPA nomor, diawali kata "Bahwa". Sub-butir diawali "- " (tanpa huruf), sub-sub-butir diawali "-- ". Penomoran dibuat otomatis oleh aplikasi — jangan menulis nomor/huruf sendiri.
+- Akhiri setiap butir/sub-butir dengan ";" kecuali butir paling akhir diakhiri ".".
+- Nama orang dalam HURUF KAPITAL dan diapit ** ** (contoh **SITI AMINAH**). Sebut pemohon sebagai "penghadap".
+- Untuk USIA jangan hitung sendiri: tulis {usia:YYYY-MM-DD} berisi tanggal lahir orangnya. Untuk tanggal tulis {tgl:YYYY-MM-DD}.
+- Bahasa Indonesia baku gaya berita acara resmi; kalimat padat, jelas, tidak berulang.
+- HANYA fakta yang tertulis di penetapan. Jangan mengarang nomor, tanggal, nama, atau aset.
+Balas satu objek JSON: {"isiBap":["baris 1","baris 2", "..."]}`;
+async function bapDariPenetapan(file){const b64=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(file)});
+  const d=await api('apiBacaPenetapanAI',b64,file.type||'application/pdf',PROMPT_BAP);const l=d&&(Array.isArray(d.isiBap)?d.isiBap:String(d.isiBap||'').split('\n'));
+  const t=(l||[]).map(x=>String(x).trim()).filter(Boolean).map(x=>x.replace(/^(-{0,2})\s*(?:\d+[.)]|[a-z][.)])\s+/i,'$1 ').replace(/^ /,'')).join('\n');if(!t)throw new Error('AI tidak menghasilkan isi BAP');return t}
+async function susunBapAI(inp){const f=inp.files[0];inp.value='';if(!f)return;if(cur.isiBap&&!confirm('Ganti isi BAP sekarang dengan susunan AI dari penetapan?'))return;
+  toast('Claude sedang membaca penetapan & menyusun BAP… (±30–60 detik)');const lb=inp.closest('label');if(lb)lb.style.opacity=.5;
+  try{cur.isiBap=await bapDariPenetapan(f);save();renderMain();toast('Isi BAP disusun dari penetapan — periksa sebelum mencetak');api('apiCatat','BACA_PENETAPAN',cur.id,cur.nama,'Isi BAP disusun AI dari '+f.name).catch(()=>{})}
+  catch(e){alert('Gagal menyusun BAP: '+(e.message||e));if(lb)lb.style.opacity=1}}
 function susunBap(){if(cur.isiBap&&!confirm('Ganti isi BAP sekarang dengan susunan otomatis dari data berkas?'))return;cur.isiBap=buatBap(cur);save();renderMain();toast('Isi BAP disusun ulang')}
-function bapList(t){const c=[0,0,0];return baris(t).map(x=>{const m=x.match(/^(-{1,2})\s*(.*)$/),lv=m?m[1].length:0,tx=m?m[2]:x;c[lv]++;for(let i=lv+1;i<3;i++)c[i]=0;const tx2=lv?tx.charAt(0).toUpperCase()+tx.slice(1):tx;
-    const n=lv===0?c[0]+'.':lv===1?'abcdefghijklmnopqrstuvwxyz'[(c[1]-1)%26]+'.':c[2]+')';return NP(n,lv*18,tebal(tx2),lv?'':';margin-top:3pt')}).join('')}
+function bapList(t,r){const c=[0,0,0];return baris(t).map(x=>{const m=x.match(/^(-{1,2})\s*(.*)$/),lv=m?m[1].length:0,tx=m?m[2]:x;c[lv]++;for(let i=lv+1;i<3;i++)c[i]=0;const tx2=lv?tx.charAt(0).toUpperCase()+tx.slice(1):tx;
+    const n=lv===0?c[0]+'.':lv===1?'abcdefghijklmnopqrstuvwxyz'[(c[1]-1)%26]+'.':c[2]+')';return NP(n,lv*18,tebal(tx2,r),lv?'':';margin-top:3pt')}).join('')}
 
 
 const $=s=>document.querySelector(s);
@@ -636,9 +665,9 @@ function renderMain(){
     `<div class="full"><h4 style="margin:12px 0 4px">Keterangan untuk BA Penghadapan</h4><p class="hint" style="margin:0">Terisi otomatis dari penetapan bila memakai AI. Kosongkan yang tidak ada.</p></div>`+
     (w?F('pasangan','Nama suami/istri penghadap')+F('aktaNikah','Akta nikah (mis. Kutipan Akta Nikah Nomor … tanggal …)')+F('tglMeninggalPasangan','Tanggal meninggal suami/istri','date')+F('ketMeninggal','Keterangan kematian (mis. berdasarkan Akta Kematian Nomor …)'):'')+
     F('alasan',`Alasan mengajukan ${w?'perwalian':'pengampuan'} (mis. untuk mengurus dan menjual tanah warisan …)`,'area')+F('saksiKet','Keterangan saksi (satu saksi per baris, mis. "saksi BUDI (Kepala Lingkungan) menerangkan …")','area')+
-    `<div class="full" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px"><button class="pri" onclick="susunBap()">✨ Susun isi BAP otomatis</button><span class="hint">Menyusun ulang isi BAP dari data berkas (identitas, anak & usia, pasangan, alasan, harta, penetapan, saksi).</span></div>`+
+    `<div class="full" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px">${ADA_AI?`<label class="btn pri" style="cursor:pointer">📄 Susun BAP dari penetapan (AI Claude)<input type="file" accept=".pdf,image/*" hidden onchange="susunBapAI(this)"></label>`:''}<button onclick="susunBap()">✨ Susun dari data berkas</button><span class="hint">AI membaca seluruh penetapan (duduk perkara, saksi, pertimbangan, amar) lalu menyusun BAP yang runtut; usia & tanggal dihitung otomatis oleh aplikasi.</span></div>`+
     F('isiBap','Isi BA Penghadapan — satu butir per baris; awali "- " untuk sub-butir (a, b, c) dan "-- " untuk sub-sub-butir (1), 2)). Penomoran otomatis.','area')+
-    `<div class="full"><label>Pratinjau penomoran</label><div class="paper" style="padding:14px 18px;min-height:0">${bapList(cur.isiBap||buatBap(cur))}</div></div>`;
+    `<div class="full"><label>Pratinjau penomoran</label><div class="paper" style="padding:14px 18px;min-height:0">${bapList(cur.isiBap||buatBap(cur),cur)}</div></div>`;
   if(tab==='dok')h+=`<div class="full"><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px"><button class="pri" style="padding:11px 18px;border-radius:12px" onclick="prosesOtomatis()">⚡ Proses Otomatis</button><span class="hint">Sekali klik: cek kelengkapan → ambil nomor SPS surat antar → buat 3 Google Doc (2 surat antar + Dokumen Penyumpahan).</span></div>${boxCek(cekData(cur))}<div class="docs">${Object.entries(GRUP).map(([g,o])=>{const nf=NOMOR[g],ku=nf?kurang(g,cur):[],nm=o.nama(cur);
     return`<div class="doc"><b>${nm}</b>${o.ket?`<span class="hint">${o.ket}</span>`:''}${nf?(cur[nf]?`<span class="nomor">No. ${esc(cur[nf])}</span>`:ku.length?`<span class="kurang">Belum bisa ambil nomor. Kurang: ${esc(ku.join(', '))}</span>`:`<button class="pri" onclick="ambilNomor('${g}',this)">🔢 Ambil nomor SPS</button>`):`<span class="hint">Nomor BA/BAP diisi manual petugas di hari H (tab 4)</span>`}
     ${gdocBtn(g,o.keys,nm)}<div style="display:flex;flex-wrap:wrap;gap:6px">${o.keys.map(k=>`<button style="flex:1 1 auto" onclick="preview('${k}')">👁 ${o.keys.length>1?{permohonan:'Permohonan',bap:'BAP',ba:'BA Sumpah',harta:'BA Inventarisasi'}[k]:'Pratinjau'}</button>`).join('')}</div></div>`}).join('')}</div>
@@ -834,7 +863,7 @@ async function handlePenetapan(file){
   if(!file)return;busy('Membaca '+file.name+'…');
   try{
     let data;
-    if(ADA_AI){stat('Menganalisis dengan AI Claude…');try{data=await aiExtract(file)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}}
+    if(ADA_AI){stat('Menganalisis dengan AI Claude (data + isi BAP)…');const pb=bapDariPenetapan(file).catch(e=>{console.warn(e);return ''});try{data=await aiExtract(file)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}stat('Menyusun isi BAP…');const bt=await pb;if(data&&bt)data.isiBap=bt}
     let rx=null;const cukup=data&&data.nama&&(data.nomorPenetapan||data.tglPenetapan);
     if(!cukup)try{const text=await fileText(file);if(text.replace(/\s/g,'').length>=80){rx=parsePenetapan(text);rx._text=text}}catch(e){if(!data)throw e}
     if(data&&rx)data=gabung(data,rx);else data=data||rx;if(!data)throw new Error('Teks tidak terbaca dari file.');
@@ -973,7 +1002,7 @@ function applyPenetapan(root,next){
   (root||$('#penBody')).querySelectorAll('[data-pk]').forEach(e=>{const ks=e.dataset.pk.split('.');let o=PEN;ks.slice(0,-1).forEach((k,i)=>{o[k]=o[k]??(/^\d+$/.test(ks[i+1])?[]:{});o=o[k]});o[ks.at(-1)]=e.value.trim()});
   let r=(penFill&&cur&&!cur._dihapus)?cur:null;const baru=!r;if(!r)r=addRec(blank(),'Dibuat dari upload penetapan '+(PEN.nomorPenetapan||''));
   ['jenis','pengadilan','nomorPenetapan','tglPenetapan','nama','nik','jk','tglLahir','agama','pekerjaan','alamat','kelurahan','status','pasangan','aktaNikah','tglMeninggalPasangan','ketMeninggal','alasan'].forEach(k=>{if(PEN[k])r[k]=typeof PEN[k]==='string'?PEN[k]:String(PEN[k])});
-  terapkanTambahan(PEN,r);
+  terapkanTambahan(PEN,r);if(typeof PEN.isiBap==='string'&&PEN.isiBap.trim())r.isiBap=PEN.isiBap;
   if(PEN.kelurahan)r._kelManual=true;
   if(PEN.jenis==='Perwalian'){const a=(PEN.anak||[]).filter(x=>x&&x.nama).map(x=>({nama:String(x.nama).toUpperCase(),jk:/perem/i.test(x.jk)?'Perempuan':'Laki-laki',tglLahir:x.tglLahir||'',wali:x.diwalikan===false||x.wali==='Tidak'?'Tidak':'Ya'}));if(a.length)r.anak=a}
   else if(PEN.terampu){const t=PEN.terampu;r.terampu={nama:t.nama||'',jk:/perem/i.test(t.jk)?'Perempuan':'Laki-laki',tglLahir:t.tglLahir||'',kondisi:t.kondisi||''}}
