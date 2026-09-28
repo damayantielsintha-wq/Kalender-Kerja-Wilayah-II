@@ -98,10 +98,19 @@ for (const [k, r] of Object.entries(RIGS)) {
   const gh = g.createLinearGradient(0, r.cut - F * .4, 0, r.cut + F); gh.addColorStop(0, 'rgba(0,0,0,1)'); gh.addColorStop(1, 'rgba(0,0,0,0)');
   g.fillStyle = gh; g.fillRect(0, 0, im.width, r.cut + F);
   r.head = head;
+  // rahang: potongan bibir bawah + dagu asli (tepi dilunakkan) yang digeser turun saat bicara
+  { const [mx, my, mw] = r.mouth, jw = Math.round(mw * 1.7), jh = Math.round(mw * 1.15), jx = Math.round(mx - jw / 2);
+    const jaw = document.createElement('canvas'); jaw.width = jw; jaw.height = jh;
+    const gj = jaw.getContext('2d'); gj.drawImage(head, jx, my, jw, jh, 0, 0, jw, jh);
+    gj.globalCompositeOperation = 'destination-in';
+    const rg = gj.createRadialGradient(jw / 2, jh * .28, 1, jw / 2, jh * .28, jw * .5);
+    rg.addColorStop(0, 'rgba(0,0,0,1)'); rg.addColorStop(.62, 'rgba(0,0,0,1)'); rg.addColorStop(1, 'rgba(0,0,0,0)');
+    gj.fillStyle = rg; gj.fillRect(0, 0, jw, jh);
+    r.jaw = { c: jaw, x: jx, y: my }; }
   // warna kulit untuk kelopak mata: diambil dari atas tiap mata
   const px = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
   px.canvas.width = im.width; px.canvas.height = im.height; px.drawImage(im, 0, 0);
-  r.lidC = r.eyes.map(([x, y, w, h]) => { const d = px.getImageData(x - 4, Math.round(y + h * r.lid) - 3, 8, 6).data; let R = 0, G = 0, B = 0, n = d.length / 4; for (let i = 0; i < d.length; i += 4) { R += d[i]; G += d[i + 1]; B += d[i + 2]; } return `rgb(${R / n | 0},${G / n | 0},${B / n | 0})`; });
+  r.lidC = r.eyes.map(([x, y, w, h]) => { const d = px.getImageData(x + (r.eyes[1][0] - r.eyes[0][0]) * (x === r.eyes[0][0] ? .28 : -.28) - 4, Math.round(y - h * 1.9) - 3, 8, 6).data; let R = 0, G = 0, B = 0, n = d.length / 4; for (let i = 0; i < d.length; i += 4) { R += d[i]; G += d[i + 1]; B += d[i + 2]; } return `rgb(${R / n | 0},${G / n | 0},${B / n | 0})`; });
 }
 
 /* ===================== Timeline ===================== */
@@ -139,24 +148,27 @@ function drawChar(key, x, feetY, st) {
     const c = clamp(Math.max(st.blink, st.squint), 0, 1);
     if (c <= .02) return;
     ctx.save();
-    ctx.beginPath(); ctx.ellipse(ex, ey, ew * .62, eh * .78, 0, 0, Math.PI * 2); ctx.clip();
-    ctx.fillStyle = r.lidC[i];
-    ctx.fillRect(ex - ew, ey - eh * 1.2, ew * 2, eh * 1.2 * .5 + eh * 1.55 * c);
+    // kelopak bertepi lembut: memudar masuk (kedipan hanya ±0,15 detik)
+    ctx.globalAlpha = clamp(c * 1.25, 0, 1); ctx.filter = 'blur(2.2px)'; ctx.fillStyle = r.lidC[i];
+    ctx.beginPath(); ctx.ellipse(ex, ey + eh * .02, ew * .55, eh * .66, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.filter = 'none'; ctx.globalAlpha = 1;
     ctx.restore();
-    if (c > .6) { ctx.strokeStyle = '#2a1712'; ctx.lineWidth = Math.max(2.5, eh * .12); ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(ex - ew * .55, ey + eh * .05); ctx.quadraticCurveTo(ex, ey + eh * (st.squint > .5 ? -.25 : .38), ex + ew * .55, ey + eh * .05); ctx.stroke(); }
+    if (c > .55) { ctx.strokeStyle = '#2a1712'; ctx.lineWidth = Math.max(2.5, eh * .13); ctx.lineCap = 'round';
+      const k = st.squint > .5 ? -.28 : .3;
+      ctx.beginPath(); ctx.moveTo(ex - ew * .52, ey + eh * .08); ctx.quadraticCurveTo(ex, ey + eh * (.08 + k), ex + ew * .52, ey + eh * .08); ctx.stroke(); }
   });
-  // mulut bicara: membuka mengikuti volume suara
+  // mulut bicara: rahang (bibir bawah + dagu asli) turun sedikit mengikuti volume suara,
+  // celah di antaranya diisi warna rongga mulut yang lembut
   const a = st.mouth;
-  if (a > .06) {
-    const [mx, my, mw] = r.mouth, w = mw * (.42 + .16 * a), h = mw * .34 * a + 2;
+  if (a > .05) {
+    const [mx, my, mw] = r.mouth, d = mw * .17 * a;
     ctx.save();
-    ctx.beginPath(); ctx.ellipse(mx, my + h * .35, w / 2, h / 2 + 1, 0, 0, Math.PI * 2);
-    ctx.fillStyle = '#5b1620'; ctx.fill(); ctx.clip();
-    ctx.fillStyle = '#f4f1ee'; ctx.fillRect(mx - w / 2, my + h * .35 - h / 2 - 1, w, h * .22);
-    ctx.fillStyle = '#d65e76'; ctx.beginPath(); ctx.ellipse(mx, my + h * .35 + h * .38, w * .32, h * .3, 0, 0, Math.PI * 2); ctx.fill();
+    const gr = ctx.createRadialGradient(mx, my + d * .5, 1, mx, my + d * .5, mw * .3);
+    gr.addColorStop(0, '#3a0d14'); gr.addColorStop(.7, '#6e2330'); gr.addColorStop(1, 'rgba(120,45,55,0)');
+    ctx.fillStyle = gr;
+    ctx.beginPath(); ctx.ellipse(mx, my + d * .5, mw * .3, d * .62 + 1.5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.drawImage(r.jaw.c, r.jaw.x, r.jaw.y + d);
     ctx.restore();
-    ctx.strokeStyle = 'rgba(150,60,70,.55)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(mx, my + h * .35, w / 2, h / 2 + 1, 0, 0, Math.PI * 2); ctx.stroke();
   }
   ctx.restore();
 }
