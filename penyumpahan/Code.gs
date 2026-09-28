@@ -45,8 +45,15 @@ function doGet() {
 function setup() {
   const ss = db_();
   const sh = ss.getSheetByName('Pengguna');
-  const ada = sh.getDataRange().getValues().slice(1).map(function (r) { return r[0]; });
   const out = [];
+  // akun yang sudah ada tapi belum pernah login: buat password sementara baru agar bisa dibagikan ulang
+  rows_('Pengguna').forEach(function (r) {
+    if (r.loginTerakhir || r.wajibGanti !== true) return;
+    const pwd = passwordAcak_(), salt = Utilities.getUuid();
+    sh.getRange(r._row, 4, 1, 2).setValues([[hash_(pwd, salt), salt]]);
+    out.push(r.nama + ' (' + r.role + ')  username: ' + r.username + '  password sementara: ' + pwd);
+  });
+  const ada = sh.getDataRange().getValues().slice(1).map(function (r) { return r[0]; });
   PENGGUNA_AWAL.forEach(function (p) {
     if (ada.indexOf(p[0]) >= 0) return;
     const pwd = passwordAcak_();
@@ -55,11 +62,11 @@ function setup() {
     out.push(p[1] + ' (' + p[2] + ')  username: ' + p[0] + '  password sementara: ' + pwd);
   });
   log_({ username: 'system', nama: 'Setup' }, 'SETUP', '', '', 'Database dibuat / pengguna awal ditambahkan: ' + out.length);
-  const root = folderRoot_();
-  sinkronAkses_();
+  Logger.log(out.length ? out.join('\n') : 'Semua pengguna sudah pernah login (password tidak diubah).');
   Logger.log('Database: ' + ss.getUrl());
+  const root = folderRoot_();
   Logger.log('Folder dokumen: ' + root.getUrl());
-  Logger.log(out.length ? out.join('\n') : 'Semua pengguna sudah ada.');
+  try { sinkronAkses_(); } catch (e) { Logger.log('Akses folder belum dibagikan: ' + e.message); }
 }
 
 /* ------------------------------------------------------------ storage */
@@ -501,7 +508,8 @@ function folderBerkas_(d) {
 function sinkronAkses_() {
   const f = folderRoot_();
   const editors = f.getEditors().map(function (x) { return x.getEmail().toLowerCase(); });
-  const owner = Session.getEffectiveUser().getEmail().toLowerCase();
+  let owner = '';
+  try { owner = f.getOwner().getEmail().toLowerCase(); } catch (e) {}
   rows_('Pengguna').forEach(function (r) {
     const e = String(r.email || '').toLowerCase();
     if (!e || e === owner) return;
