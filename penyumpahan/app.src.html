@@ -374,7 +374,7 @@ async function boot(){
   if(!TOKEN){showLogin();return}
   try{const r=await api('apiInit');ME=r.user;USERS=r.users||[];SPS=r.sps||SPS;SET=Object.assign(JSON.parse(JSON.stringify(DEF_SET)),r.settings||{});DB=r.berkas||[];FOLDER=r.folderUrl||'';
     DB.sort((a,b)=>String(b._meta?.diubahPada||'').localeCompare(String(a._meta?.diubahPada||'')));
-    api('apiAdaGemini').then(v=>ADA_AI=v).catch(()=>{});
+    api('apiAdaAI').then(v=>ADA_AI=v).catch(()=>{});
   }catch(e){if(!TOKEN)return;showLogin(e.message);return}
   $('#login').hidden=true;document.body.classList.remove('locked');renderHeader();cur=null;renderList();renderMain();
   if(ME.wajibGanti)gantiPassword(true)}
@@ -530,7 +530,7 @@ const DEMO=(()=>{const K='bhpDemo.v2',st=(()=>{try{return JSON.parse(localStorag
       st.users.push({username:d.username.toLowerCase(),nama:d.nama,role:d.role,aktif:true,wajibGanti:true,loginTerakhir:''});log(u,'TAMBAH_PENGGUNA','','',d.nama);return 'demo'},
     apiAmbilNomor(){throw new Error('Pengambilan nomor SPS hanya berjalan setelah aplikasi di-deploy ke Google Apps Script.')},
     apiTesSps(){throw new Error('Hanya tersedia setelah di-deploy.')},apiSimpanKredensialSps(){throw new Error('Hanya tersedia setelah di-deploy.')},
-    apiSimpanKunciGemini(){throw new Error('Hanya tersedia setelah di-deploy.')},apiAdaGemini(){return false},apiBacaPenetapanAI(){return null}}})();
+    apiSimpanKunciGemini(){throw new Error('Hanya tersedia setelah di-deploy.')},apiAdaAI(){return false},apiSimpanKunciAI(){throw new Error('Hanya tersedia setelah di-deploy.')},apiBacaPenetapanAI(){return null}}})();
 
 /* ---------------- render UI ---------------- */
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1800)}
@@ -578,7 +578,7 @@ function renderMain(){
     <div><label>Pejabat inventarisasi harta (Muda)</label><select onchange="setv('muda',this.value)">${pjOpt(cur.muda)}</select></div>
     <div><label>Pejabat BAP</label><select onchange="setv('bapOleh',this.value)">${pjOpt(cur.bapOleh??cur.muda)}</select></div>`+F('kanwilTembusan',`Tembusan Kanwil (kosong = ${SET.kanwilTembusan})`)+
     F('saksi1','Saksi 1 (opsional)')+F('saksi2','Saksi 2 (opsional)')+`<div class="full"><label>Lafaz sumpah (otomatis sesuai agama)</label><textarea disabled>${esc(d.laf)}</textarea></div>`;
-  if(tab==='harta')h+=F('isiBap','Isi BA Penghadapan — satu keterangan "Bahwa …" per baris (terisi otomatis oleh Gemini dari penetapan)','area')+
+  if(tab==='harta')h+=F('isiBap','Isi BA Penghadapan — satu keterangan "Bahwa …" per baris (terisi otomatis oleh AI dari penetapan)','area')+
     HARTA.map(([k,l,o])=>{if(cur[k]===undefined&&o)cur[k]=cur[o]||'';return F(k,'Aktiva — '+l+' (satu per baris)','area')}).join('')+F('hartaHutang','Passiva — Hutang-hutang (satu per baris)','area');
   if(tab==='dok')h+=`<div class="full"><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px"><button class="pri" style="padding:11px 18px;border-radius:12px" onclick="prosesOtomatis()">⚡ Proses Otomatis</button><span class="hint">Sekali klik: cek kelengkapan → ambil semua nomor SPS → buat Google Doc lengkap.</span></div>${boxCek(cekData(cur))}<div class="docs">${Object.entries(DOCS).map(([k,o])=>{const nf=NOMOR[k],ku=nf?kurang(k,cur):[];
     return`<div class="doc"><b>${o.nama(cur)}</b>${nf?(cur[nf]?`<span class="nomor">No. ${esc(cur[nf])}</span>`:ku.length?`<span class="kurang">Belum bisa ambil nomor. Kurang: ${esc(ku.join(', '))}</span>`:`<button class="pri" onclick="ambilNomor('${k}',this)">🔢 Ambil nomor SPS</button>`):''}
@@ -728,13 +728,13 @@ async function handlePenetapan(file){
   if(!file)return;busy('Membaca '+file.name+'…');
   try{
     let data;
-    if(ADA_AI){stat('Menganalisis dengan AI Gemini…');try{data=await geminiExtract(file)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}}
+    if(ADA_AI){stat('Menganalisis dengan AI (Claude)…');try{data=await geminiExtract(file)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}}
     let rx=null;const cukup=data&&data.nama&&(data.nomorPenetapan||data.tglPenetapan);
     if(!cukup)try{const text=await fileText(file);if(text.replace(/\s/g,'').length>=80){rx=parsePenetapan(text);rx._text=text}}catch(e){if(!data)throw e}
     if(data&&rx)data=gabung(data,rx);else data=data||rx;if(!data)throw new Error('Teks tidak terbaca dari file.');
     if(WZ.on){if(!WZ.pilih||!data.jenis)data.jenis=data.jenis||WZ.jenis;if(WZ.pilih)data.jenis=WZ.jenis;WZ.data=data;wizard(2);return}
     reviewPenetapan(data,file.name);
-  }catch(e){if(WZ.on){const d=$('#wzDrop');if(d)d.innerHTML=`<div class="ic">⚠️</div><b>Gagal membaca: ${esc(e.message)}</b><small>Klik untuk mencoba file lain, atau isi manual.</small><input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)">`;return}$('#penBody').innerHTML=`<h3>Gagal membaca penetapan</h3><p>${esc(e.message)}</p><p class="hint">Coba file PDF asli (bukan foto miring/buram), atau isi Gemini API key di Pengaturan.</p><p style="text-align:right"><button onclick="penDlg.close()">Tutup</button></p>`}
+  }catch(e){if(WZ.on){const d=$('#wzDrop');if(d)d.innerHTML=`<div class="ic">⚠️</div><b>Gagal membaca: ${esc(e.message)}</b><small>Klik untuk mencoba file lain, atau isi manual.</small><input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)">`;return}$('#penBody').innerHTML=`<h3>Gagal membaca penetapan</h3><p>${esc(e.message)}</p><p class="hint">Coba file PDF asli (bukan foto miring/buram), atau isi kunci AI di Pengaturan.</p><p style="text-align:right"><button onclick="penDlg.close()">Tutup</button></p>`}
 }
 async function fileText(file){
   if(file.type.startsWith('image/'))return ocr([file]);
@@ -808,10 +808,10 @@ function parsePenetapan(raw){
   }else{
     const seen=new Set();R.anak=[];
     const scan=src=>{for(const m of src.matchAll(new RegExp(NM+"\\s*,?\\s*(?:\\(?(laki-laki|perempuan|Laki-laki|Perempuan)\\)?\\s*,?\\s*)?[^A-Z0-9]{0,40}?[Ll]ahir[^0-9]{0,60}?"+D,'g'))){
-      const nm=cleanName(m[1]).replace(/^(?:[a-z]\.|\d+\.)\s*/,'');if(nm.length<3||seen.has(nm)||nm===R.nama||/^(Tempat|Tanggal|Kartu|Akta)/.test(nm))continue;seen.add(nm);
+      const nm=cleanName(m[1]).replace(/^(?:[a-z]\.|\d+\.)\s*/,'').replace(/^.*?\b(?:ANAK|ANAKNYA)\s+(?:YANG\s+)?BERNAMA\s*:?\s*/i,'').replace(/^(?:MENETAPKAN|MENYATAKAN|MENGANGKAT)\s+/i,'');if(nm.length<3||seen.has(nm)||nm===R.nama||/^(Tempat|Tanggal|Kartu|Akta)/.test(nm))continue;seen.add(nm);
       R.anak.push({nama:nm,jk:/perempuan/i.test(m[2]||after(nm,src).slice(0,120))?'Perempuan':'Laki-laki',tglLahir:toISO(m[3])})}};
     for(const src of [amar,flat]){if(R.anak.length)break;for(const m of src.matchAll(new RegExp("(?:^|\\s)\\d+\\.\\s+([A-Za-z][A-Za-z.' ]{2,120}?)\\s*,\\s*(laki-laki|perempuan)\\s*,[^0-9]{0,70}?"+D,'gi'))){
-      const nm=cleanName(m[1].replace(/\s+bin(ti)?\s+.*$/i,'')).toUpperCase();if(nm.length<3||seen.has(nm)||nm===R.nama)continue;seen.add(nm);
+      const nm=cleanName(m[1].replace(/\s+bin(ti)?\s+.*$/i,'')).toUpperCase().replace(/^.*?\b(?:ANAK|ANAKNYA)\s+(?:YANG\s+)?BERNAMA\s*:?\s*/i,'').replace(/^(?:MENETAPKAN|MENYATAKAN|MENGANGKAT)\s+/i,'');if(nm.length<3||seen.has(nm)||nm===R.nama)continue;seen.add(nm);
       R.anak.push({nama:nm,jk:/perempuan/i.test(m[2])?'Perempuan':'Laki-laki',tglLahir:toISO(m[3])})}}
     if(!R.anak.length)scan(amar);if(!R.anak.length)scan(flat);
   }
@@ -876,7 +876,7 @@ function wizard(step){WZ.on=true;$('.wrap').classList.add('wzmode');WZ.step=step
     ${[['Pengampuan','Pengampu atas orang dewasa yang berada di bawah pengampuan (terampu).'],['Perwalian','Wali atas anak yang masih di bawah umur.']].map(([j,d])=>`<div class="opt ${WZ.jenis===j?'on':''}" onclick="WZ.jenis='${j}';WZ.pilih=true;wizard(1)"><b>${j}</b><span>${d}</span></div>`).join('')}</div>
     <div class="lbl">Upload Penetapan Pengadilan</div>
     <label class="drop" id="wzDrop" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="event.preventDefault();this.classList.remove('over');handlePenetapan(event.dataTransfer.files[0])">
-      <div class="ic">📄</div><b>Klik atau seret file PDF penetapan ke sini</b><small>PDF asli atau hasil scan · data dibaca otomatis${ADA_AI?' dengan AI Gemini':''}</small>
+      <div class="ic">📄</div><b>Klik atau seret file PDF penetapan ke sini</b><small>PDF asli atau hasil scan · data dibaca otomatis${ADA_AI?' dengan AI Claude':''}</small>
       <input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)"></label>
     <div class="wz-f"><button class="link" onclick="WZ.on=false;newRec();cur.jenis=WZ.jenis;save();renderMain()">Isi manual tanpa penetapan</button><span class="hint">Setelah upload, lanjut ke Bagian 2 otomatis</span></div></div>`}
   if(step===2){const d=WZ.data;m.innerHTML=`<div class="wz">${wzHead(2)}<h4>🔎 Bagian 2: Periksa Data dari Penetapan ${d._ai?'<span class="tag">AI</span>':''}</h4>
@@ -904,15 +904,15 @@ function openSet(){if(!isSuper())return;const s=SET;const L={instansi:'Instansi'
     <div class="grid"><div><label>Username SPS</label><input id="spsU" autocomplete="off"></div><div><label>Password SPS</label><input id="spsP" type="password" autocomplete="new-password"></div>
     <div class="full"><label>atau Cookie SPS (sama seperti SPS_COOKIE di skrip SAPA WALI)</label><input id="spsC" type="password" autocomplete="off" placeholder="XSRF-TOKEN=…; sps_session=…"></div>
     <div><button onclick="simpanSps()">Simpan kredensial</button></div><div><button onclick="tesSps(this)">🔌 Tes koneksi</button></div></div></div>
-  <div class="full card" style="padding:12px"><h3>✨ AI Gemini untuk membaca penetapan</h3><p class="hint">Status: ${ADA_AI?'<b style="color:var(--ok)">terhubung</b>':'<b style="color:var(--warn)">belum terhubung</b>'}. Buat kunci gratis di <a href="https:\/\/aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> (login dengan akun Google Anda), lalu tempel di sini. Kunci disimpan di server, tidak terlihat admin lain.</p><div class="grid"><div><label>Gemini API key</label><input id="gk" type="password" autocomplete="new-password"></div><div><label>&nbsp;</label><button onclick="simpanGemini()">Simpan kunci</button></div><div><label>&nbsp;</label><button onclick="tesGemini(this)">🔌 Tes Gemini</button></div></div></div>
+  <div class="full card" style="padding:12px"><h3>✨ AI Claude untuk membaca penetapan</h3><p class="hint">Status: ${ADA_AI?'<b style="color:var(--ok)">terhubung</b>':'<b style="color:var(--warn)">belum terhubung</b>'}. Buat kunci di <a href="https:\/\/console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a> (menu API Keys → Create Key, isi saldo di Billing), lalu tempel di sini. Kunci disimpan di server, tidak terlihat admin lain.</p><div class="grid"><div><label>Claude API key (sk-ant-…)</label><input id="gk" type="password" autocomplete="new-password"></div><div><label>&nbsp;</label><button onclick="simpanGemini()">Simpan kunci</button></div><div><label>&nbsp;</label><button onclick="tesGemini(this)">🔌 Tes AI</button></div></div></div>
   </div><p style="text-align:right;margin-top:12px"><button onclick="dlgClose();boot()">Batal</button> <button class="pri" onclick="simpanSet()">Simpan pengaturan</button></p>`)}
 function gantiLogo(inp){const f=inp.files[0];if(!f)return;const img=new Image();img.onload=()=>{const c=document.createElement('canvas'),k=Math.min(1,300/img.height);c.width=img.width*k;c.height=img.height*k;c.getContext('2d').drawImage(img,0,0,c.width,c.height);SET.logo=c.toDataURL('image/png');openSet()};img.src=URL.createObjectURL(f)}
 async function sinkronPegawai(b){b.disabled=true;b.textContent='Membaca sheet…';try{const p=await api('apiSinkronPegawai','');SET.pejabat=p;toast(p.length+' pegawai dimuat');openSet()}catch(e){alert('Gagal: '+(e.message||e));b.disabled=false}}
 async function simpanSet(){try{await api('apiSimpanPengaturan',JSON.parse(JSON.stringify(SET)));dlgClose();toast('Pengaturan disimpan');renderMain()}catch(e){alert(e.message)}}
 async function simpanSps(){try{SPS=await api('apiSimpanKredensialSps',$('#spsU').value.trim(),$('#spsP').value,$('#spsC').value.trim());toast('Kredensial SPS disimpan');openSet()}catch(e){alert(e.message)}}
 async function tesSps(b){b.disabled=true;try{alert(await api('apiTesSps'))}catch(e){alert('Gagal: '+(e.message||e))}b.disabled=false}
-async function tesGemini(b){b.disabled=true;try{alert(await api('apiTesGemini'))}catch(e){alert('Gagal: '+(e.message||e))}b.disabled=false}
-async function simpanGemini(){try{ADA_AI=await api('apiSimpanKunciGemini',$('#gk').value.trim());toast('Disimpan');openSet()}catch(e){alert(e.message)}}
+async function tesGemini(b){b.disabled=true;try{alert(await api('apiTesAI'))}catch(e){alert('Gagal: '+(e.message||e))}b.disabled=false}
+async function simpanGemini(){try{ADA_AI=await api('apiSimpanKunciAI',$('#gk').value.trim());toast('Disimpan');openSet()}catch(e){alert(e.message)}}
 
 function toggleTheme(){const r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem('bhpTheme',r.dataset.theme)}catch(e){}}
 try{document.documentElement.dataset.theme=localStorage.getItem('bhpTheme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}
