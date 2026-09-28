@@ -35,3 +35,13 @@ Buka `Index.html` langsung di browser. Aplikasi otomatis masuk **mode demo** (da
 
 ## ⌨️ Shortcut
 `N` baru · `T` hari ini · `M/W/A/O/B/S/L` ganti tampilan · `←/→` navigasi · `/` cari · `D` tema · `Ctrl+K` palette
+
+---
+
+# ⚖️ Aplikasi Dokumen Penyumpahan (`penyumpahan/index.html`)
+Pengganti alur AutoCrat di spreadsheet *Dokumen Otomatis (Penetapan Baru)*. Cukup buka file di browser (tanpa instalasi).
+- Isi data sekali (Pengampuan / Perwalian, bisa banyak anak) → otomatis jadi **Surat ke Pengampu/Wali, Surat ke Lurah, BA Penyumpahan, BA Inventarisasi Harta, Lembar Lafaz Sumpah**, sesuai format BHP Medan.
+- Otomatis: usia, sapaan Bapak/Ibu, hari & tanggal terbilang untuk BA, lafaz sumpah sesuai agama, kelurahan dari alamat, nomor surat berurutan.
+- Unduh **Word (.doc)** yang bisa diedit atau **PDF** (cetak), per dokumen atau seluruhnya sekaligus.
+- **Impor CSV** langsung dari sheet PENGAMPUAN/PERWALIAN (File → Download → CSV); ekspor CSV kembali.
+- Kop, nama Kepala, pejabat Madya/Muda + NIP, nomor WA, prefix nomor, dan lafaz bisa diubah di ⚙ Pengaturan. Data tersimpan di browser.

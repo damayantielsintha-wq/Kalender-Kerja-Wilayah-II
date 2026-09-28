@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dokumen Penyumpahan BHP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f5fb;--card:#fff;--ink:#1c1f2e;--mut:#6b7087;--line:#e3e5ef;--pri:#4f46e5;--pri2:#eef0ff;--ok:#0f9d6b;--warn:#c2410c;--rad:14px}
+:root[data-theme=dark]{--bg:#10121a;--card:#1a1d29;--ink:#e8eaf3;--mut:#9398ae;--line:#2a2e3e;--pri:#8b83ff;--pri2:#24264a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Plus Jakarta Sans",system-ui,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+header h1{font-size:16px;margin:0 auto 0 0;display:flex;gap:8px;align-items:center}
+header h1 span{background:var(--pri);color:#fff;border-radius:8px;padding:2px 8px;font-size:12px}
+button,.btn{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600}
+button:hover{border-color:var(--pri)}
+.pri{background:var(--pri);color:#fff;border-color:var(--pri)}
+.wrap{display:grid;grid-template-columns:280px 1fr;gap:16px;padding:16px;max-width:1500px;margin:auto}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:16px}
+.list{display:flex;flex-direction:column;gap:6px;max-height:70vh;overflow:auto}
+.item{padding:10px;border-radius:10px;border:1px solid var(--line);cursor:pointer}
+.item.on{border-color:var(--pri);background:var(--pri2)}
+.item b{display:block;font-size:13px}.item small{color:var(--mut)}
+.tag{font-size:11px;padding:1px 7px;border-radius:99px;background:var(--pri2);color:var(--pri);font-weight:700}
+input,select,textarea{font:inherit;width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+textarea{min-height:64px;resize:vertical}
+label{font-size:12px;color:var(--mut);font-weight:600;display:block;margin-bottom:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.full{grid-column:1/-1}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.steps button{border-radius:99px;font-size:13px}
+.steps button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+h3{margin:4px 0 12px;font-size:15px}
+.hint{font-size:12px;color:var(--mut)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;border-radius:0}.seg button.on{background:var(--pri);color:#fff}
+.child{border:1px dashed var(--line);border-radius:10px;padding:10px;margin-bottom:8px}
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.doc{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.doc b{font-size:13px}.doc div{display:flex;gap:6px}
+.doc button{flex:1;padding:6px;font-size:12px}
+#prev{background:#8a8fa3;padding:20px;border-radius:var(--rad);overflow:auto;max-height:80vh}
+.paper{background:#fff;color:#000;width:210mm;min-height:297mm;margin:0 auto 20px;padding:15mm 20mm;font:12pt/1.45 "Times New Roman",serif;box-shadow:0 4px 20px #0003}
+.paper p{margin:0 0 8pt;text-align:justify}
+.kop{text-align:center;border-bottom:3px double #000;padding-bottom:6pt;margin-bottom:12pt;line-height:1.25}
+.kop .b{font-weight:bold;font-size:14pt}.kop small{font-size:10pt}
+.paper table{border-collapse:collapse}.paper td{vertical-align:top;padding:1pt 4pt}
+.ctr{text-align:center}.ttd{width:100%;margin-top:20pt}.ttd td{width:50%;text-align:center}
+.paper ol{margin:0 0 8pt;padding-left:20pt}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none}
+.toast.on{opacity:1}
+@media print{body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{position:absolute;inset:0}.paper{box-shadow:none;margin:0;page-break-after:always}}
+</style>
+</head>
+<body>
+<header>
+  <h1>⚖️ Dokumen Penyumpahan <span>BHP Medan</span></h1>
+  <input id="q" placeholder="Cari nama…" style="width:180px">
+  <button onclick="newRec()" class="pri">+ Data baru</button>
+  <label class="btn" style="margin:0;color:var(--ink)">⬆ Impor CSV<input type="file" accept=".csv" hidden onchange="importCsv(this)"></label>
+  <button onclick="exportCsv()">⬇ Ekspor CSV</button>
+  <button onclick="openSet()">⚙ Pengaturan</button>
+  <button onclick="toggleTheme()">🌓</button>
+</header>
+
+<div class="wrap">
+  <aside class="card">
+    <h3>Daftar Berkas</h3>
+    <div class="list" id="list"></div>
+  </aside>
+
+  <main class="card" id="main"></main>
+</div>
+<div id="printArea" hidden></div>
+<div class="toast" id="toast"></div>
+
+<dialog id="setDlg" style="border:0;border-radius:16px;padding:0;max-width:720px;width:95%;background:var(--card);color:var(--ink)">
+  <div style="padding:18px" id="setBody"></div>
+</dialog>
+
+<script>
+/* ---------------- data ---------------- */
+const LS='bhpSumpah.v1', LSS='bhpSumpah.set.v1';
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+const save=()=>{try{localStorage.setItem(LS,JSON.stringify(DB));localStorage.setItem(LSS,JSON.stringify(SET))}catch(e){}};
+
+const DEF_SET={
+  instansi:'KEMENTERIAN HUKUM REPUBLIK INDONESIA',kanwil:'KANTOR WILAYAH SUMATERA UTARA',
+  balai:'BALAI HARTA PENINGGALAN MEDAN',alamat:'Jalan Listrik No. 10 Medan',
+  telp:'Telepon: (061) 451 7830, Faksimile: (061) 451 4328',
+  web:'Laman: www.bhpmedan.kemenkum.go.id, Pos-el: bhp.medan@kemenkum.go.id',
+  kepala:'Syafriadi Lubis',wa:'0851-2156-2136',prefix:'W.2.AHU.AHU.1-AH.06.03-',nomorBerikut:3002,
+  kanwilTembusan:'Kepala Kantor Wilayah Kementerian Hukum Riau',
+  pejabat:[{nama:'',nip:'',jabatan:'Ahli Madya'},{nama:'',nip:'',jabatan:'Ahli Muda'}],
+  lafaz:{
+    Islam:'WALLAHI (Demi Allah) saya bersumpah, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya.',
+    Kristen:'Demi Tuhan saya berjanji, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya. Semoga Tuhan menolong saya.',
+    Katholik:'Demi Tuhan saya berjanji, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya. Semoga Tuhan menolong saya.',
+    Hindu:'Om Atah Paramawisesa, saya bersumpah, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya.',
+    Buddha:'Demi Sang Hyang Adi Buddha, saya bersumpah, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya.',
+    Khonghucu:'Kehadirat Tian di tempat yang Maha Tinggi dengan bimbingan Nabi Kongzi, saya bersumpah, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya. Wei De Dong Tian.'
+  }
+};
+let SET=Object.assign({},DEF_SET,load(LSS,{}));
+let DB=load(LS,[]);
+let cur=null, tab='umum';
+
+const blank=()=>({id:Date.now().toString(36),jenis:'Pengampuan',tanggalSurat:today(),
+  nomorSurat:'',nomorLurah:'',nomorBA:'',nomorBAHarta:'',
+  nama:'',nik:'',jk:'Perempuan',tglLahir:'',agama:'Islam',pekerjaan:'',alamat:'',kelurahan:'',status:'',
+  terampu:{nama:'',jk:'Laki-laki',tglLahir:'',kondisi:''},anak:[{nama:'',jk:'Laki-laki',tglLahir:''}],
+  pengadilan:'Pengadilan Negeri Pekanbaru',nomorPenetapan:'',tglPenetapan:'',
+  tglSumpah:'',waktu:'10:00 - 16:00 WIB',tempat:'',madya:0,muda:1,harta:'',tanah:'',rekening:'',saksi1:'',saksi2:''});
+
+/* ---------------- util tanggal & terbilang ---------------- */
+const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+function today(){const d=new Date();return d.toISOString().slice(0,10)}
+function pd(s){if(!s)return null;const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)}
+function tgl(s){const d=pd(s);return d?`${String(d.getDate()).padStart(2,'0')} ${BLN[d.getMonth()]} ${d.getFullYear()}`:'…'}
+function hari(s){const d=pd(s);return d?HARI[d.getDay()]:'…'}
+function usia(s,ref){const d=pd(s);if(!d)return'…';const r=pd(ref)||new Date();let u=r.getFullYear()-d.getFullYear();if(r<new Date(r.getFullYear(),d.getMonth(),d.getDate()))u--;return u+' Tahun'}
+function terbilang(n){const s=['','Satu','Dua','Tiga','Empat','Lima','Enam','Tujuh','Delapan','Sembilan','Sepuluh','Sebelas'];
+  if(n<12)return s[n];if(n<20)return terbilang(n-10)+' Belas';if(n<100)return terbilang(Math.floor(n/10))+' Puluh '+terbilang(n%10);
+  if(n<200)return'Seratus '+terbilang(n-100);if(n<1000)return terbilang(Math.floor(n/100))+' Ratus '+terbilang(n%100);
+  if(n<2000)return'Seribu '+terbilang(n-1000);return terbilang(Math.floor(n/1000))+' Ribu '+terbilang(n%1000)}
+const tb=n=>terbilang(n).replace(/\s+/g,' ').trim();
+function tglBA(s){const d=pd(s);return d?`${HARI[d.getDay()]}, tanggal ${tb(d.getDate())} bulan ${BLN[d.getMonth()]} tahun ${tb(d.getFullYear())}`:'…'}
+const esc=v=>String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const V=v=>v?esc(v):'<span style="background:#fde68a">……</span>';
+
+/* ---------------- turunan ---------------- */
+function derive(r){
+  const w=r.jenis==='Perwalian', J=w?'Wali':'Pengampu';
+  const sapa=r.jk==='Laki-laki'?'Bapak':'Ibu';
+  const anak=w?r.anak.filter(a=>a.nama):[];
+  const objek=w?anak.map(a=>a.nama).join(', '):r.terampu.nama;
+  const statusRel=r.status||(w?'Anak':'Keluarga');
+  const kel=r.kelurahan||'';
+  let laf=(SET.lafaz[r.agama]||SET.lafaz.Islam).replace('{JENIS}',w?'Perwalian':'Pengampuan')
+    .replace('{STATUS}',statusRel+(w?'':'')).replace('{PENGADILAN}',r.pengadilan);
+  const pj=SET.pejabat;
+  return{w,J,sapa,objek,statusRel,kel,laf,madya:pj[r.madya]||{},muda:pj[r.muda]||{},anak,
+    pihak:w?'Anak':'Terampu',jenisTxt:w?'Perwalian':'Pengampuan'};
+}
+
+/* ---------------- dokumen ---------------- */
+const kop=()=>`<div class="kop">${esc(SET.instansi)}<br>${esc(SET.kanwil)}<br><span class="b">${esc(SET.balai)}</span><br><small>${esc(SET.alamat)}<br>${esc(SET.telp)}<br>${esc(SET.web)}</small></div>`;
+function head(no,hal,r){return `<table style="width:100%;margin-bottom:12pt"><tr><td style="width:70pt">Nomor</td><td>:</td><td>${V(no)}</td><td style="text-align:right">${tgl(r.tanggalSurat)}</td></tr>
+<tr><td>Sifat</td><td>:</td><td>Segera</td><td></td></tr><tr><td>Lampiran</td><td>:</td><td>-</td><td></td></tr>
+<tr><td>Hal</td><td>:</td><td colspan=2>${hal}</td></tr></table>`}
+const jadwal=(r,note)=>`<table style="margin:0 0 10pt 20pt"><tr><td style="width:90pt">Hari/Tanggal</td><td>:</td><td>${hari(r.tglSumpah)} / ${tgl(r.tglSumpah)}</td></tr>
+<tr><td>Pukul</td><td>:</td><td>${V(r.waktu)} (${note} <b>${esc(SET.wa)}</b>)</td></tr><tr><td>Tempat</td><td>:</td><td>${esc(r.tempat||'Kediaman '+(r.nama||''))}</td></tr></table>`;
+const ttdKepala=()=>`<div style="margin:20pt 0 0 55%">Kepala,<br><br><br><br><b>${esc(SET.kepala)}</b></div>`;
+const tembusan=r=>`<p style="margin-top:18pt">Tembusan:</p><ol><li>Direktur Jenderal Administrasi Hukum Umum Kementerian Hukum RI;</li><li>Direktur Perdata Direktorat Jenderal Administrasi Hukum Umum;</li><li>${esc(SET.kanwilTembusan)};</li><li>Lurah ${V(r.kelurahan)}</li></ol>`;
+const penetapan=r=>`Menindaklanjuti Penetapan ${esc(r.pengadilan)} Nomor: ${V(r.nomorPenetapan)} tertanggal ${tgl(r.tglPenetapan)} yang telah memperoleh kekuatan hukum tetap`;
+const pasal=d=>d.w?'Pasal 366':'Pasal 449';
+
+const DOCS={
+  surat:{nama:r=>`Surat ke ${derive(r).J}`,fn:r=>{const d=derive(r);return kop()+head(r.nomorSurat,`Pengambilan Sumpah ${d.J} dan Inventarisasi Harta`,r)+
+    `<p>Yth. <b>${d.sapa} ${V(r.nama)}</b><br>di<br>${V(r.alamat)}</p>
+<p>${penetapan(r)}, ${d.sapa} telah ditunjuk secara resmi sebagai ${d.J} atas <b>${V(d.objek)}</b> (selanjutnya disebut sebagai "${d.pihak}").</p>
+<p>Berkaitan dengan penetapan tersebut, Balai Harta Peninggalan Medan sangat menghargai serta mendukung penuh kesediaan ${d.sapa} dalam menjalankan tugas sebagai ${d.J}. Berdasarkan amanat ${pasal(d)} Kitab Undang-Undang Hukum Perdata (KUHPerdata), BHP bertugas mendampingi dan memberikan konsultasi hukum kepada ${d.sapa} guna memastikan bahwa pengelolaan aset dan perlindungan hak ${d.pihak} berjalan dengan baik serta melindungi ${d.sapa} dari kemungkinan prasangka negatif dari pihak lain.</p>
+<p>Selanjutnya, sesuai dengan perintah peraturan perundang-undangan yang tertuang dalam Pasal 362 KUHPerdata, setiap ${d.J.toLowerCase()} diwajibkan untuk diangkat sumpah sebelum mulai menjalankan tugas. Penyumpahan ini sangat penting dan menjadi syarat sah agar ${d.sapa} dapat bertindak secara hukum mewakili ${d.pihak} untuk berbagai keperluan administratif.</p>
+<p>Dalam rangka mewujudkan pelayanan publik, Tim Balai Harta Peninggalan Medan akan melakukan kunjungan untuk menyelenggarakan kegiatan Pengangkatan Sumpah tersebut di kediaman ${d.sapa} pada:</p>`+
+    jadwal(r,'Untuk konfirmasi waktu pelaksanaan sumpah, mohon untuk menghubungi Whatsapp Layanan Perwalian Pengampuan di nomor')+
+    `<p>Guna kelengkapan administrasi Berita Acara Penyumpahan dan pencatatan administrasi sesuai prosedur hukum, kami memohon kesediaan ${d.sapa} untuk mempersiapkan dokumen pendukung pada saat kegiatan, yang meliputi:</p>
+<ol><li>Fotokopi Kartu Tanda Penduduk (KTP) ${d.J} ${d.w?'':'dan Terampu'};</li><li>Fotokopi Kartu Keluarga (KK);</li><li>Fotokopi Akta Kelahiran ${d.pihak};</li><li>Fotokopi Kartu Tanda Penduduk (KTP) 2 (dua) orang saksi dari pihak Kepala Lingkungan dan/atau Keluarga;</li><li>Meterai senilai Rp 10.000,- (Sepuluh Ribu Rupiah) sebanyak 4 (empat) lembar;</li><li>Biaya Penerimaan Negara Bukan Pajak (PNBP) sebesar Rp 200.000,- (Dua Ratus Ribu Rupiah) untuk layanan Berita Acara Penyumpahan ${d.jenisTxt} dan biaya sebesar Rp 40.000,- (Empat Puluh Ribu Rupiah) untuk 4 (empat) lembar meterai Rp 10.000,-</li></ol>
+<p>Nominal PNBP ditetapkan secara resmi berdasarkan Peraturan Pemerintah Republik Indonesia Nomor 45 Tahun 2024 tentang Jenis dan Tarif atas Jenis Penerimaan Negara Bukan Pajak yang Berlaku pada Kementerian Hukum dan Hak Asasi Manusia.</p>
+<p>(Mekanisme pembayaran akan dipandu melalui kode pembayaran/<i>billing</i> kas negara secara elektronik pada saat kegiatan).</p>
+<p>Demikian surat pemberitahuan ini kami sampaikan. Atas perhatian dan kesediaan ${d.sapa}, kami ucapkan terima kasih.</p>`+ttdKepala()+tembusan(r)}},
+  lurah:{nama:()=>'Surat ke Lurah',fn:r=>{const d=derive(r);return kop()+head(r.nomorLurah,'Koordinasi Terkait Pengambilan Sumpah dan Inventarisasi Harta',r)+
+    `<p>Yth. <b>Lurah ${V(r.kelurahan)}</b><br>di<br>Tempat</p>
+<p>${penetapan(r)}, <b>${V(r.nama)}</b> telah ditunjuk secara resmi sebagai ${d.J} atas <b>${V(d.objek)}</b> (selanjutnya disebut sebagai "${d.pihak}"). Adapun ${d.J} tersebut merupakan warga yang berdomisili di lingkungan Kelurahan ${V(r.kelurahan)}.</p>
+<p>Berdasarkan amanat ${pasal(d)} Kitab Undang-Undang Hukum Perdata (KUHPerdata), BHP bertugas sebagai ${d.w?'Wali':'Pengampu'} Pengawas dalam rangka mendampingi dan memberikan konsultasi hukum kepada ${d.J} guna memastikan bahwa pengelolaan aset dan perlindungan hak ${d.pihak} berjalan dengan baik serta melindungi ${d.J} dari kemungkinan prasangka negatif dari pihak lain.</p>
+<p>Selanjutnya, sesuai dengan perintah peraturan perundang-undangan yang tertuang dalam Pasal 362 KUHPerdata, setiap ${d.J.toLowerCase()} diwajibkan untuk diangkat sumpah sebelum mulai menjalankan tugas. Penyumpahan ini sangat penting dan menjadi syarat sah agar ${d.J} dapat bertindak secara hukum mewakili ${d.pihak} untuk berbagai keperluan administratif.</p>
+<p>Dalam rangka mewujudkan pelayanan publik, Tim Balai Harta Peninggalan Medan akan melakukan kunjungan untuk menyelenggarakan kegiatan Pengangkatan Sumpah tersebut di kediaman ${d.J} pada:</p>`+
+    jadwal(r,`Untuk konfirmasi waktu pelaksanaan sumpah, mohon diinformasikan kepada ${d.J} untuk menghubungi Whatsapp Layanan Perwalian Pengampuan di nomor`)+
+    `<p>Besar harapan kami agar Bapak/Ibu Lurah berkenan membantu meneruskan surat ini kepada pihak ${d.J} sesuai data administrasi setempat. Sehubungan dengan hal tersebut, Tim Balai Harta Peninggalan Medan akan berkoordinasi dengan pihak Kelurahan untuk memohon kesediaan Bapak/Ibu mendampingi tim dalam pelaksanaan kunjungan ke kediaman <b>${V(r.nama)}</b>.</p>
+<p>Demikian surat pemberitahuan ini kami sampaikan. Atas perhatian dan kesediaan Bapak/Ibu, kami ucapkan terima kasih.</p>`+ttdKepala()+tembusan(r)}},
+  ba:{nama:r=>`BA Penyumpahan ${derive(r).jenisTxt}`,fn:r=>{const d=derive(r),m=d.madya;
+    const obj=d.w?`<ol>${d.anak.map(a=>`<li><b>${esc(a.nama)}</b>, ${esc(a.jk)}, lahir pada tanggal ${tgl(a.tglLahir)} (${usia(a.tglLahir,r.tglSumpah)});</li>`).join('')}</ol>`
+      :`<p><b>${V(r.terampu.nama)}</b>, ${esc(r.terampu.jk)}, lahir pada tanggal ${tgl(r.terampu.tglLahir)} (${usia(r.terampu.tglLahir,r.tglSumpah)}), berada di bawah Pengampuan dikarenakan yang bersangkutan mengalami ${V(r.terampu.kondisi)}, sehingga tidak cakap untuk mengurus kepentingan pribadinya maupun melakukan tindakan hukum.</p>`;
+    return kop()+`<p class="ctr"><b>BERITA ACARA PENYUMPAHAN ${d.jenisTxt.toUpperCase()}</b><br><b>Nomor : ${V(r.nomorBA)}</b></p>
+<p>Pada hari ini, ${tglBA(r.tglSumpah)}, telah hadir dihadapan saya, <b>${V(m.nama)}, NIP. ${V(m.nip)},</b> ${esc(m.jabatan)} pada Balai Harta Peninggalan Medan yang dalam ini bertindak dalam jabatan tersebut, yaitu <b>${V(r.nama)}</b>, ${esc(r.jk)}, Lahir tanggal ${tgl(r.tglLahir)} (${usia(r.tglLahir,r.tglSumpah)}), agama ${esc(r.agama)}, Pekerjaan ${V(r.pekerjaan)}, alamat ${V(r.alamat)}, yang berdasarkan Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)} telah diangkat menjadi <b>${d.J.toUpperCase()}</b> terhadap ${esc(d.statusRel)}nya, yaitu:</p>${obj}
+<p>Yang hadir menerangkan, bahwa Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)} tersebut dan pernyataan ini adalah sebagai pengganti pemberitahuan sesuai dengan penetapan tersebut sebagaimana yang diwajibkan oleh undang-undang. Kemudian untuk memenuhi maksud dari ${d.w?'pasal 362 dan 366':'pasal 433 dan 449'} KUH Perdata, yang telah mengangkat sumpah dihadapan Balai Harta Peninggalan Medan, sesuai dengan agama yang dianutnya (${esc(r.agama)}), dengan mengucapkan perkataan sebagai berikut :</p>
+<p class="ctr"><b><i>"${esc(d.laf)}"</i></b></p>
+<p class="ctr">----------------------------------------------Demikianlah----------------------------------------------</p>
+<p>Berita Acara Penyumpahan ${d.jenisTxt} ini diperbuat sebagaimana mestinya, diperbuat diatas kertas yang dibubuhi materai tempel Rp. 10.000,- kemudian ditandatangani sebagaimana mestinya.</p>
+<table class="ttd"><tr><td><b>YANG MENGANGKAT SUMPAH</b></td><td><b>${esc((m.jabatan||'').toUpperCase())}</b></td></tr>
+<tr><td style="height:60pt"></td><td></td></tr><tr><td><b>${V(r.nama)}</b></td><td><b>${V(m.nama)}</b><br><b>NIP. ${V(m.nip)}</b></td></tr></table>
+<table class="ttd"><tr><td><b>Saksi 1</b></td><td><b>Saksi 2</b></td></tr><tr><td style="height:50pt"></td><td></td></tr>
+<tr><td>( ${esc(r.saksi1)||'.............................'} )<br>NIK.</td><td>( ${esc(r.saksi2)||'.............................'} )<br>NIK.</td></tr></table>`}},
+  harta:{nama:()=>'BA Inventarisasi Harta',fn:r=>{const d=derive(r),m=d.muda;const li=t=>t?`<ol>${t.split('\n').filter(Boolean).map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:'<p>- Nihil -</p>';
+    return kop()+`<p class="ctr"><b>BERITA ACARA INVENTARISASI HARTA ${d.jenisTxt.toUpperCase()}</b><br><b>Nomor : ${V(r.nomorBAHarta)}</b></p>
+<p>Pada hari ini, ${tglBA(r.tglSumpah)}, bertempat di ${esc(r.tempat||r.alamat)}, saya <b>${V(m.nama)}, NIP. ${V(m.nip)}</b>, ${esc(m.jabatan)} pada Balai Harta Peninggalan Medan, telah melakukan inventarisasi harta kekayaan milik ${d.pihak} <b>${V(d.objek)}</b> yang berada di bawah ${d.jenisTxt} <b>${V(r.nama)}</b> berdasarkan Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)}, dengan keterangan sebagai berikut:</p>
+<p><b>A. Harta Tidak Bergerak (Tanah/Bangunan)</b></p>${li(r.tanah)}
+<p><b>B. Rekening / Simpanan</b></p>${li(r.rekening)}
+<p><b>C. Harta Lainnya</b></p>${li(r.harta)}
+<p>${d.J} menyatakan bahwa keterangan di atas adalah benar dan sanggup mengelola harta tersebut semata-mata untuk kepentingan ${d.pihak} serta melaporkan pertanggungjawabannya kepada Balai Harta Peninggalan Medan sesuai ketentuan peraturan perundang-undangan.</p>
+<p>Demikian Berita Acara ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.</p>
+<table class="ttd"><tr><td><b>${d.J.toUpperCase()}</b></td><td><b>${esc((m.jabatan||'').toUpperCase())}</b></td></tr><tr><td style="height:60pt"></td><td></td></tr>
+<tr><td><b>${V(r.nama)}</b></td><td><b>${V(m.nama)}</b><br>NIP. ${V(m.nip)}</td></tr></table>`}},
+  lafaz:{nama:()=>'Lembar Lafaz Sumpah',fn:r=>{const d=derive(r);return kop()+`<p class="ctr"><b>LAFAZ SUMPAH ${d.J.toUpperCase()}</b></p><p class="ctr" style="font-size:16pt;line-height:1.8;margin-top:40pt"><i>"${esc(d.laf)}"</i></p><p class="ctr" style="margin-top:40pt">${esc(r.nama)}<br>(${esc(r.agama)})</p>`}}
+};
+
+/* ---------------- render UI ---------------- */
+const $=s=>document.querySelector(s);
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1800)}
+function renderList(){const q=($('#q').value||'').toLowerCase();
+  $('#list').innerHTML=DB.filter(r=>(r.nama+' '+derive(r).objek).toLowerCase().includes(q)).map(r=>`<div class="item ${cur&&cur.id===r.id?'on':''}" onclick="pick('${r.id}')">
+  <b>${esc(r.nama||'(tanpa nama)')}</b><small>${esc(derive(r).objek||'-')}</small><br><span class="tag">${r.jenis}</span> <small>${r.tglSumpah?tgl(r.tglSumpah):''}</small></div>`).join('')||'<p class="hint">Belum ada data. Klik “+ Data baru” atau impor CSV dari spreadsheet.</p>'}
+function pick(id){cur=DB.find(r=>r.id===id);renderMain();renderList()}
+function newRec(){const r=blank();r.nomorSurat=nextNo();r.nomorLurah=nextNo();DB.unshift(r);cur=r;tab='umum';save();renderMain();renderList()}
+function nextNo(){return SET.prefix+(SET.nomorBerikut++)}
+function F(path,lbl,type='text',opt){const v=get(path);
+  if(type==='select')return`<div><label>${lbl}</label><select onchange="setv('${path}',this.value)">${opt.map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select></div>`;
+  if(type==='area')return`<div class="full"><label>${lbl}</label><textarea oninput="setv('${path}',this.value)">${esc(v)}</textarea></div>`;
+  return`<div><label>${lbl}</label><input type="${type}" value="${esc(v)}" oninput="setv('${path}',this.value)"></div>`}
+function get(p){return p.split('.').reduce((o,k)=>o?.[k],cur)??''}
+function setv(p,v){const ks=p.split('.');let o=cur;ks.slice(0,-1).forEach(k=>o=o[k]);o[ks.at(-1)]=v;
+  if(p==='alamat'&&!cur._kelManual){const m=v.match(/Kelurahan[^,]*,\s*Kecamatan[^,]*(,[^,]*){0,2}/i);if(m){cur.kelurahan=m[0];const i=document.querySelector('[data-kel]');if(i)i.value=cur.kelurahan}}
+  if(p==='kelurahan')cur._kelManual=true;
+  save();renderList();if(p==='jenis')renderMain()}
+function renderMain(){
+  if(!cur){$('#main').innerHTML=`<div style="text-align:center;padding:60px 10px"><div style="font-size:48px">📄</div><h3>Pilih berkas di kiri atau buat data baru</h3><p class="hint">Isi sekali → semua surat & berita acara terbuat otomatis sesuai format BHP.</p><button class="pri" onclick="newRec()">+ Data baru</button></div>`;return}
+  const d=derive(cur),w=d.w;
+  const TABS={umum:'1. Perkara',pihak:`2. ${d.J}`,objek:`3. ${w?'Anak':'Terampu'}`,jadwal:'4. Jadwal & Pejabat',harta:'5. Harta',dok:'📄 Dokumen'};
+  let h=`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><div class="seg">${['Pengampuan','Perwalian'].map(j=>`<button class="${cur.jenis===j?'on':''}" onclick="setv('jenis','${j}')">${j}</button>`).join('')}</div>
+  <span class="hint" style="margin-right:auto">Tersimpan otomatis</span><button onclick="dupRec()">⧉ Duplikat</button><button onclick="delRec()" style="color:var(--warn)">🗑 Hapus</button></div>
+  <div class="steps">${Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';renderMain()">${v}</button>`).join('')}</div><div class="grid">`;
+  const pj=SET.pejabat.map((p,i)=>`<option value="${i}">${esc(p.nama||'(isi di Pengaturan)')} — ${esc(p.jabatan)}</option>`).join('');
+  if(tab==='umum')h+=F('pengadilan','Pengadilan')+F('nomorPenetapan','Nomor Penetapan')+F('tglPenetapan','Tanggal Penetapan','date')+F('tanggalSurat','Tanggal Surat','date')+
+    F('nomorSurat',`Nomor Surat ke ${d.J}`)+F('nomorLurah','Nomor Surat ke Lurah')+F('nomorBA','Nomor BA Sumpah')+F('nomorBAHarta','Nomor BA Harta');
+  if(tab==='pihak')h+=F('nama',`Nama ${d.J}`)+F('nik','NIK')+F('jk','Jenis Kelamin','select',['Laki-laki','Perempuan'])+F('tglLahir','Tanggal Lahir','date')+
+    `<div><label>Usia (otomatis)</label><input disabled value="${usia(cur.tglLahir,cur.tglSumpah)}"></div>`+F('agama','Agama','select',Object.keys(SET.lafaz))+F('pekerjaan','Pekerjaan')+
+    F('status',`Hubungan dgn ${d.pihak} (mis. Ibu Kandung, Saudara Kandung)`)+F('alamat','Alamat lengkap','area')+
+    `<div class="full"><label>Kelurahan, Kecamatan, Kota (terisi otomatis dari alamat)</label><input data-kel value="${esc(cur.kelurahan)}" oninput="setv('kelurahan',this.value)"></div>`;
+  if(tab==='objek'){if(w){h+=`<div class="full">${cur.anak.map((a,i)=>`<div class="child grid">${F(`anak.${i}.nama`,`Nama Anak ${i+1}`)}${F(`anak.${i}.jk`,'Jenis Kelamin','select',['Laki-laki','Perempuan'])}${F(`anak.${i}.tglLahir`,'Tanggal Lahir','date')}<div><label>&nbsp;</label><button onclick="cur.anak.splice(${i},1);save();renderMain()">Hapus</button></div></div>`).join('')}
+    <button onclick="cur.anak.push({nama:'',jk:'Laki-laki',tglLahir:''});save();renderMain()">+ Tambah anak</button></div>`}
+    else h+=F('terampu.nama','Nama Terampu')+F('terampu.jk','Jenis Kelamin','select',['Laki-laki','Perempuan'])+F('terampu.tglLahir','Tanggal Lahir','date')+
+    `<div><label>Usia (otomatis)</label><input disabled value="${usia(cur.terampu.tglLahir,cur.tglSumpah)}"></div>`+F('terampu.kondisi','Kondisi medis + surat dokter','area')}
+  if(tab==='jadwal')h+=F('tglSumpah','Tanggal Sumpah','date')+F('waktu','Waktu')+F('tempat','Tempat (kosong = kediaman)')+
+    `<div><label>Hari/tanggal di BA (otomatis)</label><input disabled value="${tglBA(cur.tglSumpah)}"></div>
+    <div><label>Pejabat penyumpah (Madya)</label><select onchange="setv('madya',+this.value)">${pj}</select></div>
+    <div><label>Pejabat inventarisasi (Muda)</label><select onchange="setv('muda',+this.value)">${pj}</select></div>`+
+    F('saksi1','Saksi 1 (opsional)')+F('saksi2','Saksi 2 (opsional)')+`<div class="full"><label>Lafaz sumpah (otomatis sesuai agama)</label><textarea disabled>${esc(d.laf)}</textarea></div>`;
+  if(tab==='harta')h+=F('tanah','Daftar tanah/bangunan (satu per baris)','area')+F('rekening','Daftar rekening (satu per baris)','area')+F('harta','Harta lainnya (satu per baris)','area');
+  if(tab==='dok')h+=`<div class="full"><div class="docs">${Object.entries(DOCS).map(([k,o])=>`<div class="doc"><b>${o.nama(cur)}</b><div>
+    <button onclick="preview('${k}')">👁 Lihat</button><button onclick="dl(['${k}'])">⬇ Word</button><button onclick="pr(['${k}'])">🖨 PDF</button></div></div>`).join('')}
+    <div class="doc" style="border-color:var(--pri)"><b>📦 Seluruh Dokumen</b><div><button class="pri" onclick="dl(Object.keys(DOCS))">⬇ Word</button><button class="pri" onclick="pr(Object.keys(DOCS))">🖨 PDF</button></div></div></div>
+    <p class="hint">Kolom kuning = belum diisi. “Word” mengunduh .doc yang bisa diedit; “PDF” membuka dialog cetak → Simpan sebagai PDF.</p><div id="prev"></div></div>`;
+  $('#main').innerHTML=h+'</div>';
+  if(tab==='jadwal'){const s=$('#main').querySelectorAll('select');s[0].value=cur.madya;s[1].value=cur.muda}
+  if(tab==='dok')preview('surat');
+}
+function preview(k){$('#prev').innerHTML=`<div class="paper">${DOCS[k].fn(cur)}</div>`}
+function html(keys){return keys.map(k=>`<div class="paper">${DOCS[k].fn(cur)}</div>`).join('')}
+function pr(keys){const a=$('#printArea');a.innerHTML=html(keys);a.hidden=false;window.print();a.hidden=true}
+function dl(keys){const css=document.querySelector('style').textContent.match(/\.paper[^]*?\.ttd td\{[^}]*\}/)[0];
+  const body=keys.map(k=>`<div class="paper">${DOCS[k].fn(cur)}</div>`).join('<br style="page-break-before:always">');
+  const doc=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>@page{size:21cm 33cm;margin:1.5cm 2cm}${css}.paper{width:auto;padding:0;box-shadow:none;min-height:0}</style></head><body>${body}</body></html>`;
+  const n=(keys.length>1?'Dokumen Lengkap':DOCS[keys[0]].nama(cur))+` - ${cur.nama||'tanpa nama'}.doc`;
+  const u=URL.createObjectURL(new Blob(['﻿'+doc],{type:'application/msword'}));const a=document.createElement('a');a.href=u;a.download=n;a.click();toast('Diunduh: '+n)}
+function dupRec(){const r=JSON.parse(JSON.stringify(cur));r.id=Date.now().toString(36);r.nama+=' (salinan)';DB.unshift(r);cur=r;save();renderMain();renderList()}
+function delRec(){if(!confirm('Hapus berkas '+(cur.nama||'')+'?'))return;DB=DB.filter(r=>r!==cur);cur=null;save();renderMain();renderList()}
+
+/* ---------------- CSV (kompatibel kolom spreadsheet AutoCrat) ---------------- */
+function parseCsv(t){const rows=[];let r=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];
+  if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==','){r.push(f);f=''}
+  else if(c=='\n'||c=='\r'){if(c=='\r'&&t[i+1]=='\n')i++;r.push(f);rows.push(r);r=[];f=''}else f+=c}
+  if(f||r.length){r.push(f);rows.push(r)}return rows}
+function toISO(s){if(!s)return'';const m=s.match(/(\d{1,2})\s+(\w+)\s+(\d{4})/);if(!m)return'';const b=BLN.findIndex(x=>x.toLowerCase()===m[2].toLowerCase());
+  return b<0?'':`${m[3]}-${String(b+1).padStart(2,'0')}-${m[1].padStart(2,'0')}`}
+function importCsv(inp){const f=inp.files[0];if(!f)return;f.text().then(t=>{const rows=parseCsv(t);const H=rows.shift().map(h=>h.trim());let n=0;
+  rows.forEach(v=>{const g=k=>{const i=H.indexOf(k);return i<0?'':(v[i]||'').trim()};const w=H.includes('Nama_Wali');
+    const nama=g(w?'Nama_Wali':'Nama_Pengampu');if(!nama)return;const r=blank();
+    Object.assign(r,{jenis:w?'Perwalian':'Pengampuan',nama,nik:g(w?'NIK_Wali':'NIK_Pengampu'),jk:/laki/i.test(g(w?'Jenis_Kelamin_Wali':'Jenis_Kelamin_Pengampu'))?'Laki-laki':'Perempuan',
+      tglLahir:toISO(g(w?'Tanggal_Lahir_Wali':'Tanggal_Lahir_Pengampu')),agama:g(w?'Agama_Wali':'Agama_Pengampu')||'Islam',pekerjaan:g(w?'Pekerjaan_Wali':'Pekerjaan_Pengampu'),
+      alamat:g(w?'Alamat_Wali':'Alamat_Pengampu'),kelurahan:g('Kel_Kec_Kota'),status:g(w?'Status_Dengan_Wali':'Status_Dengan_Pengampu'),
+      nomorSurat:g(w?'Nomor_Surat_Wali':'Nomor_Surat_Pengampu'),nomorLurah:g('Nomor_Surat_Lurah'),tanggalSurat:toISO(g('Tanggal_Surat'))||today(),
+      nomorPenetapan:g('Nomor_Penetapan'),tglPenetapan:toISO(g('Tanggal_Penetapan')),tglSumpah:toISO(g('Hari_Tanggal_Sumpah')),waktu:g('Waktu_Sumpah')||r.waktu,tempat:g('Tempat_Sumpah'),
+      pengadilan:g('Lokasi_Pengadilan')||r.pengadilan,tanah:g('Daftar_Tanah'),rekening:g('Daftar_Rekening'),
+      nomorBA:g(w?'Nomor_BA_Sumpah_Wali':'Nomor_BA_Sumpah_Pengampu'),nomorBAHarta:g(w?'Nomor_BA_Harta_Wali':'Nomor_BA_Harta_Pengampu')});
+    if(w){r.anak=[{nama:g('Nama_Anak')||g('Nama_Anak_1'),jk:/perem/i.test(g('Jenis_Kelamin_Anak'))?'Perempuan':'Laki-laki',tglLahir:toISO(g('Tanggal_Lahir_Anak'))}]}
+    else r.terampu={nama:g('Nama_Terampu'),jk:/perem/i.test(g('Jenis_Kelamin_Terampu'))?'Perempuan':'Laki-laki',tglLahir:toISO(g('Tanggal_Lahir_Terampu')),kondisi:g('Kondisi_Medis_Terampu')};
+    r.id=Date.now().toString(36)+n;DB.push(r);n++});save();renderList();toast(n+' berkas diimpor');inp.value=''})}
+function exportCsv(){const H=['Jenis','Nama','NIK','Jenis_Kelamin','Tanggal_Lahir','Agama','Pekerjaan','Alamat','Kel_Kec_Kota','Status','Objek','Nomor_Penetapan','Tanggal_Penetapan','Tanggal_Sumpah','Nomor_Surat','Nomor_Surat_Lurah','Nomor_BA'];
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const t=[H.join(',')].concat(DB.map(r=>[r.jenis,r.nama,r.nik,r.jk,tgl(r.tglLahir),r.agama,r.pekerjaan,r.alamat,r.kelurahan,r.status,derive(r).objek,r.nomorPenetapan,tgl(r.tglPenetapan),tgl(r.tglSumpah),r.nomorSurat,r.nomorLurah,r.nomorBA].map(q).join(','))).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+t],{type:'text/csv'}));a.download='data-penyumpahan.csv';a.click()}
+
+/* ---------------- pengaturan ---------------- */
+function openSet(){const s=SET;$('#setBody').innerHTML=`<h3>⚙ Pengaturan Kop, Pejabat & Penomoran</h3><div class="grid">
+  ${['instansi','kanwil','balai','alamat','telp','web','kepala','wa','prefix','nomorBerikut','kanwilTembusan'].map(k=>`<div><label>${k}</label><input value="${esc(s[k])}" oninput="SET['${k}']=this.value${k==='nomorBerikut'?'*1':''};save()"></div>`).join('')}
+  <div class="full"><label>Pejabat BHP</label>${s.pejabat.map((p,i)=>`<div class="grid child"><input placeholder="Nama" value="${esc(p.nama)}" oninput="SET.pejabat[${i}].nama=this.value;save()"><input placeholder="NIP" value="${esc(p.nip)}" oninput="SET.pejabat[${i}].nip=this.value;save()"><input placeholder="Jabatan" value="${esc(p.jabatan)}" oninput="SET.pejabat[${i}].jabatan=this.value;save()"></div>`).join('')}
+  <button onclick="SET.pejabat.push({nama:'',nip:'',jabatan:''});save();openSet()">+ Pejabat</button></div>
+  <div class="full"><label>Lafaz sumpah per agama ({JENIS}, {STATUS}, {PENGADILAN} diganti otomatis)</label>${Object.keys(s.lafaz).map(a=>`<label>${a}</label><textarea oninput="SET.lafaz['${a}']=this.value;save()">${esc(s.lafaz[a])}</textarea>`).join('')}</div>
+  </div><p style="text-align:right"><button class="pri" onclick="setDlg.close();renderMain()">Selesai</button></p>`;
+  if(!$('#setDlg').open)$('#setDlg').showModal()}
+
+function toggleTheme(){const r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem('bhpTheme',r.dataset.theme)}catch(e){}}
+try{document.documentElement.dataset.theme=localStorage.getItem('bhpTheme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}
+$('#q').oninput=renderList;
+renderList();renderMain();
+</script>
+</body>
+</html>
