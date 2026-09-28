@@ -1,0 +1,1347 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BHP · Pasti Selalu Ada Solusinya!</title>
+<meta name="description" content="Animasi kartun pendek gaya TikTok/Reels: Tasya dan Dinda ngobrol soal layanan Balai Harta Peninggalan.">
+<meta name="theme-color" content="#0B2A5B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B2A5B;
+    --navy-deep: #06152E;
+    --navy-soft: #16407F;
+    --gold: #F2B705;
+    --gold-deep: #B98A00;
+    --paper: #F7F5F0;
+    --ink: #0F172A;
+    --ink-soft: #475569;
+    --grey-bubble: #E4E7EC;
+    --font: "Plus Jakarta Sans", "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { background: var(--navy-deep); font-family: var(--font); color: var(--ink); overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+  /* ====== Kanvas 1080x1920, diskalakan agar muat layar ====== */
+  #stage {
+    position: absolute; left: 50%; top: 50%;
+    width: 1080px; height: 1920px;
+    transform-origin: 50% 50%;
+    transform: translate(-50%, -50%) scale(var(--s, .4));
+    overflow: hidden; background: var(--paper);
+    box-shadow: 0 30px 120px rgba(0,0,0,.5);
+  }
+  #app { position: absolute; inset: 0; overflow: hidden; background: var(--paper); }
+
+  /* ====== Latar & properti ====== */
+  #bg, #bg svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #world { position: absolute; inset: 0; transform-origin: 50% 60%; transition: transform 7s linear; }
+  #world.zoom { transform: scale(1.07); }
+  .swing { transform-box: fill-box; transform-origin: 50% 0; animation: swing 4s ease-in-out infinite; }
+  .swing.b { animation-duration: 4.6s; animation-direction: reverse; }
+  @keyframes swing { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+  .drift { animation: drift 26s linear infinite; }
+  .drift.b { animation-duration: 38s; animation-delay: -12s; }
+  @keyframes drift { from { transform: translateX(-300px); } to { transform: translateX(1200px); } }
+  .spin { transform-box: fill-box; transform-origin: center; animation: spin 30s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .twinkle { animation: twinkle 1.6s ease-in-out infinite; }
+  .twinkle:nth-child(2n) { animation-delay: .5s; } .twinkle:nth-child(3n) { animation-delay: 1s; }
+  @keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+  #table { position: absolute; left: 0; right: 0; top: 1435px; bottom: 0; z-index: 3; }
+  #table svg, #props svg { width: 100%; height: 100%; display: block; }
+  #props { position: absolute; left: 0; right: 0; top: 1275px; height: 180px; z-index: 3; }
+  .steam { animation: steam 2.4s ease-in infinite; }
+  .steam.b { animation-delay: 1.2s; }
+  @keyframes steam { 0% { transform: translateY(10px); opacity: 0; } 30% { opacity: .8; } 100% { transform: translateY(-40px); opacity: 0; } }
+
+  /* ====== Progress & chip ====== */
+  #progress { position: absolute; top: 36px; left: 40px; right: 40px; height: 10px; display: flex; gap: 10px; z-index: 5; }
+  #progress i { flex: 1; background: rgba(255,255,255,.55); box-shadow: 0 0 0 1px rgba(11,42,91,.12); border-radius: 10px; overflow: hidden; position: relative; }
+  #progress i b { position: absolute; inset: 0; width: 0%; background: var(--navy); border-radius: 10px; }
+  #chip {
+    position: absolute; top: 76px; left: 40px; height: 80px; z-index: 5;
+    display: flex; align-items: center; gap: 18px;
+    padding: 0 34px 0 12px; border-radius: 80px;
+    background: #fff; box-shadow: 0 8px 24px rgba(11,42,91,.18);
+    font-weight: 800; font-size: 34px; color: var(--navy);
+  }
+  #chip .ico { width: 58px; height: 58px; border-radius: 50%; background: var(--navy); display: grid; place-items: center; }
+  #chip .ico svg { width: 34px; height: 34px; stroke: var(--gold); }
+  #chip small { font-weight: 600; color: var(--ink-soft); font-size: 28px; }
+  #brand {
+    position: absolute; top: 90px; right: 40px; height: 52px; padding: 0 22px; z-index: 5;
+    display: flex; align-items: center; border-radius: 50px;
+    background: var(--gold); color: var(--navy); font-weight: 800; font-size: 26px; letter-spacing: .08em;
+    box-shadow: 0 8px 24px rgba(11,42,91,.18);
+  }
+
+  /* ====== Tokoh kartun ====== */
+  .char { position: absolute; top: 880px; width: 520px; height: 756px; z-index: 2; }
+  .char.tasya { left: 20px; }
+  .char.dinda { right: 20px; }
+  .char > svg { width: 100%; height: 100%; overflow: visible; transform-origin: 50% 100%; animation: breathe 3.2s ease-in-out infinite; }
+  .char.dinda > svg { animation-delay: -1.4s; }
+  @keyframes breathe { 0%, 100% { transform: none; } 50% { transform: scaleY(1.015) translateY(-3px); } }
+  .tilt, .head, .eyes, .brows, .arm { transform-box: fill-box; }
+  .tilt { transform-origin: 50% 100%; transition: transform .45s cubic-bezier(.2,1.3,.4,1); }
+  .head { transform-origin: 50% 90%; }
+  .eyes { transform-origin: center; animation: blink 4.2s infinite; }
+  .dinda .eyes { animation-delay: -2s; }
+  @keyframes blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+  .brows { transition: transform .3s; }
+  .m-open { opacity: 0; }
+  .arm { transform-origin: 50% 100%; transform: translateY(330px) rotate(18deg); transition: transform .5s cubic-bezier(.2,1.3,.4,1); }
+  .dinda .arm { transform: translateY(330px) rotate(-18deg); }
+
+  /* Bicara: mulut buka-tutup + kepala mengangguk kecil */
+  .char.talking .m-open { animation: yap .24s steps(1) infinite; }
+  .char.talking .m-closed { animation: yap .24s steps(1) infinite reverse; }
+  .char.talking .head { animation: bob .6s ease-in-out infinite; }
+  @keyframes yap { 0% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes bob { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(2deg) translateY(-3px); } }
+  .char.thinking .tilt { transform: rotate(-5deg); }
+  .dinda.thinking .tilt { transform: rotate(5deg); }
+
+  /* Aksi / ekspresi (diatur lewat field "act" di data scene) */
+  .act-shock { animation: jump .6s cubic-bezier(.3,1.6,.5,1); }
+  .act-shock .eyes { animation: none; transform: scale(1.3); }
+  .act-shock .brows, .act-wow .brows { transform: translateY(-14px); }
+  .act-shock .arm, .act-explain .arm, .act-phone .arm, .act-wow .arm { transform: none; }
+  .act-explain .arm { animation: wag .5s ease-in-out .5s 3; }
+  @keyframes wag { 0%, 100% { transform: none; } 50% { transform: rotate(-10deg); } }
+  .act-tilt .tilt { transform: rotate(-9deg); }
+  .dinda.act-tilt .tilt { transform: rotate(9deg); }
+  .act-sad .tilt { transform: rotate(5deg) translateY(10px); }
+  .dinda.act-sad .tilt { transform: rotate(-5deg) translateY(10px); }
+  .act-sad .brows { transform: rotate(6deg); }
+  .act-nod .tilt { animation: nod .45s ease-in-out 3; }
+  @keyframes nod { 0%, 100% { transform: none; } 50% { transform: translateY(10px) rotate(2deg); } }
+  .act-bounce, .act-wow { animation: jump .55s cubic-bezier(.3,1.6,.5,1) 2; }
+  @keyframes jump { 0%, 100% { transform: none; } 40% { transform: translateY(-50px); } }
+  .act-laugh { animation: giggle .2s ease-in-out 8; }
+  @keyframes giggle { 0%, 100% { transform: none; } 50% { transform: translateY(-10px) rotate(1deg); } }
+  .char.act-laugh .eyes { animation: none; transform: scaleY(.25); }
+  .char.act-laugh .m-open { opacity: 1; animation: none; }
+  .char.act-laugh .m-closed { opacity: 0; animation: none; }
+  .act-phone .tilt { transform: rotate(4deg); }
+
+  .emote {
+    position: absolute; top: 120px; font-size: 100px; line-height: 1; z-index: 3;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,.2));
+    animation: emote .5s cubic-bezier(.2,1.6,.4,1) both, float 1.6s ease-in-out .5s infinite;
+  }
+  .tasya .emote { left: 410px; }
+  .dinda .emote { left: 0; }
+  @keyframes emote { from { transform: scale(0) rotate(-30deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes float { 0%, 100% { transform: none; } 50% { transform: translateY(-14px); } }
+
+  /* ====== Balon bicara ====== */
+  #talk {
+    position: absolute; left: 40px; right: 40px; top: 190px; height: 800px; z-index: 4;
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 22px;
+    padding-bottom: 34px; overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 80px);
+            mask-image: linear-gradient(to bottom, transparent 0, #000 80px);
+  }
+  .line { display: flex; flex: none; }
+  .line.right { justify-content: flex-end; }
+  .bubble {
+    position: relative; max-width: 860px; padding: 22px 32px 24px;
+    border-radius: 40px; font-size: 42px; line-height: 1.36; font-weight: 600;
+    box-shadow: 0 10px 0 rgba(11,42,91,.10), 0 16px 30px rgba(15,23,42,.14);
+    transform-origin: 25% 100%;
+    animation: pop .42s cubic-bezier(.2,1.4,.4,1) backwards;
+    transition: opacity .4s, transform .4s;
+  }
+  .left .bubble { background: var(--grey-bubble); color: var(--ink); border: 4px solid #fff; }
+  .right .bubble { background: var(--navy); color: #fff; border: 4px solid #fff; transform-origin: 75% 100%; }
+  .bubble::after {
+    content: ""; position: absolute; bottom: -34px; width: 0; height: 0;
+    border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 34px solid;
+  }
+  .left .bubble::after { left: 190px; border-top-color: var(--grey-bubble); transform: skewX(20deg); }
+  .right .bubble::after { right: 190px; border-top-color: var(--navy); transform: skewX(-20deg); }
+  .bubble.listcard { background: #fff; color: var(--navy); border: 5px solid var(--gold); padding: 26px 34px 30px; min-width: 760px; }
+  .right .bubble.listcard::after { border-top-color: var(--gold); }
+  .listcard .ltitle { font-size: 46px; font-weight: 800; margin: 4px 0 14px; }
+  .listcard ul { list-style: none; display: grid; gap: 14px; }
+  .listcard li { display: flex; align-items: center; gap: 20px; font-size: 38px; font-weight: 700; line-height: 1.25;
+    background: #F4F6FA; border-left: 10px solid var(--navy); border-radius: 18px; padding: 14px 20px;
+    opacity: 0; transform: translateX(40px); transition: opacity .3s, transform .45s cubic-bezier(.2,1.4,.4,1); }
+  .listcard li.in { opacity: 1; transform: none; }
+  .listcard li span { font-size: 48px; flex: none; }
+  .line.old .bubble { opacity: .72; transform: scale(.92); }
+  .line.old .bubble::after { display: none; }
+  .bubble .name { font-size: 28px; font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 12px; }
+  .left .bubble .name { color: var(--gold-deep); }
+  .right .bubble .name { color: var(--gold); }
+  .bubble .tag { font-size: 20px; font-weight: 700; padding: 3px 12px; border-radius: 20px; letter-spacing: .04em; }
+  .left .tag { background: rgba(185,138,0,.14); color: var(--gold-deep); }
+  .right .tag { background: var(--gold); color: var(--navy); }
+  .bubble.typing { padding: 30px 38px; display: flex; gap: 14px; }
+  .bubble.typing i { width: 20px; height: 20px; border-radius: 50%; background: currentColor; opacity: .45; animation: dot 1s infinite ease-in-out; }
+  .bubble.typing i:nth-child(2) { animation-delay: .15s; }
+  .bubble.typing i:nth-child(3) { animation-delay: .3s; }
+  @keyframes dot { 0%, 60%, 100% { transform: translateY(0); opacity: .35; } 30% { transform: translateY(-14px); opacity: .9; } }
+  @keyframes pop {
+    0% { transform: scale(.5) translateY(30px); opacity: 0; }
+    70% { transform: scale(1.04); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* ====== Overlay kartu putih bawah ====== */
+  #overlay {
+    position: absolute; left: 76px; right: 76px; bottom: 190px; z-index: 6;
+    display: flex; align-items: center; gap: 32px;
+    padding: 34px 40px 34px 34px; border-radius: 40px;
+    background: #fff; color: var(--ink);
+    border: 4px solid var(--navy);
+    box-shadow: 0 30px 60px rgba(11,42,91,.28), 14px 14px 0 var(--gold);
+    transform: translateX(-130%) rotate(-3deg); opacity: 0;
+    transition: transform .6s cubic-bezier(.2,1.2,.35,1), opacity .3s;
+  }
+  #overlay.show { transform: none; opacity: 1; }
+  #overlay .oico { width: 150px; height: 150px; border-radius: 32px; background: var(--navy); flex: none; display: grid; place-items: center; }
+  #overlay .oico { position: relative; }
+  #overlay .oico .oi { display: grid; place-items: center; }
+  #overlay .oico svg { width: 88px; height: 88px; stroke: var(--gold); }
+  #overlay .onum {
+    position: absolute; top: -22px; left: -22px; width: 76px; height: 76px; border-radius: 50%;
+    background: var(--gold); color: var(--navy); border: 5px solid #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 28px; box-shadow: 0 6px 14px rgba(0,0,0,.2);
+  }
+  #overlay .onum b { font-size: 38px; }
+  #overlay .stamp {
+    position: absolute; right: -6px; top: -48px; padding: 8px 20px; border-radius: 14px;
+    background: #fff; color: #15803D; border: 6px solid #15803D;
+    font-weight: 800; font-size: 32px; letter-spacing: .06em; white-space: nowrap;
+    opacity: 0; transform: rotate(-8deg) scale(3);
+  }
+  #overlay.show .stamp { animation: stamp .45s cubic-bezier(.2,1.5,.4,1) .6s forwards; }
+  @keyframes stamp { to { opacity: 1; transform: rotate(-8deg) scale(1); } }
+  #overlay .kicker { font-size: 26px; font-weight: 800; letter-spacing: .12em; color: var(--gold-deep); text-transform: uppercase; }
+  #overlay .otitle { font-size: 52px; line-height: 1.12; font-weight: 800; color: var(--navy); margin-top: 6px; }
+  #overlay .osub { font-size: 40px; font-weight: 700; color: var(--ink); margin-top: 8px; }
+  #overlay .osub:empty { display: none; }
+
+  /* ====== Ending: Pak Kepala nongol dari mana-mana ====== */
+  .kepala {
+    position: absolute; width: 420px; height: 520px; z-index: 6; pointer-events: none;
+    opacity: 0; transition: transform .38s cubic-bezier(.2,1.5,.4,1), opacity .15s;
+  }
+  .kepala.in { opacity: 1; }
+  .kepala .kfig { width: 100%; height: 100%; transform-origin: 50% 60%; }
+  .kepala .kfig svg { width: 100%; height: 100%; overflow: visible; }
+  .kepala.in .kfig { animation: kwiggle .5s ease-in-out .35s 2; }
+  @keyframes kwiggle { 0%, 100% { transform: rotate(var(--r, 0deg)); } 50% { transform: rotate(calc(var(--r, 0deg) + 4deg)) scale(1.03); } }
+  .kepala .kfig { transform: rotate(var(--r, 0deg)); }
+  .kepala .thumb { transform-box: fill-box; transform-origin: 50% 100%; transform: translateY(160px); opacity: 0; transition: transform .4s cubic-bezier(.2,1.5,.4,1) .3s, opacity .2s .3s; }
+  .kepala.final .thumb { transform: none; opacity: 1; }
+  .kepala .kb {
+    position: absolute; left: calc(50% + var(--kbx, 0px)); bottom: calc(100% - 40px); transform: translateX(-50%) scale(0);
+    background: var(--gold); color: var(--navy); border: 6px solid var(--navy);
+    font-weight: 800; font-size: 48px; line-height: 1.15; text-align: center;
+    padding: 18px 30px; border-radius: 36px; white-space: nowrap;
+    box-shadow: 0 12px 0 rgba(11,42,91,.25), 0 20px 40px rgba(0,0,0,.25);
+    transition: transform .3s cubic-bezier(.2,1.6,.4,1) .15s;
+  }
+  .kepala .kb::after { content: ""; position: absolute; left: 50%; top: 100%; transform: translateX(-50%); border: 22px solid transparent; border-top: 30px solid var(--navy); }
+  .kepala.in .kb { transform: translateX(-50%) scale(1); }
+  .kepala.kb-below .kb { bottom: auto; top: calc(100% + 40px); }
+  .kepala.kb-below .plate { display: none; }
+  .kepala.tiny .kb { font-size: 100px; border-width: 12px; padding: 34px 56px; border-radius: 70px; bottom: calc(100% + 10px); }
+  .kepala.tiny .plate { display: none; }
+  .kepala.kb-below .kb::after { top: auto; bottom: 100%; border-top-color: transparent; border-bottom: 30px solid var(--navy); }
+  .kepala.final .kb { white-space: normal; width: 820px; font-size: 44px; background: #fff; }
+  .kepala .plate {
+    position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
+    background: var(--navy); color: var(--gold); font-weight: 800; font-size: 26px; letter-spacing: .06em;
+    padding: 8px 20px; border-radius: 30px; white-space: nowrap; border: 3px solid var(--gold);
+  }
+  .sparkles { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
+  .sparkles i { position: absolute; font-style: normal; font-size: 70px; animation: spark .7s ease-out forwards; }
+  @keyframes spark { from { transform: scale(0) rotate(-40deg); opacity: 1; } to { transform: scale(1.3) rotate(20deg) translateY(-60px); opacity: 0; } }
+
+  #tagline { position: absolute; left: 40px; right: 40px; top: 250px; z-index: 9; text-align: center; pointer-events: none; opacity: 0; }
+  #tagline .rays {
+    position: absolute; left: 50%; top: 50%; width: 1300px; height: 1300px; transform: translate(-50%,-50%) scale(.2); opacity: 0;
+    background: repeating-conic-gradient(from 0deg, rgba(242,183,5,.28) 0 6deg, transparent 6deg 18deg);
+    -webkit-mask-image: radial-gradient(circle, #000 12%, transparent 62%);
+            mask-image: radial-gradient(circle, #000 12%, transparent 62%);
+    transition: transform 1.2s cubic-bezier(.16,1,.3,1), opacity .6s;
+  }
+  #tagline .t1, #tagline .t2 { position: relative; display: block; font-weight: 800; line-height: 1; letter-spacing: -.02em; }
+  #tagline .t1 { font-size: 108px; color: #fff; text-shadow: 0 8px 0 var(--navy), 0 20px 40px rgba(0,0,0,.6); }
+  #tagline .t2 { font-size: 150px; color: var(--gold); margin-top: 14px; text-shadow: 0 10px 0 var(--navy), 0 24px 50px rgba(0,0,0,.6); }
+  #tagline.show { opacity: 1; animation: tagpop .7s cubic-bezier(.2,1.5,.4,1) both; }
+  #tagline.show .rays { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+  @keyframes tagpop { 0% { transform: scale(2.2); opacity: 0; } 60% { transform: scale(.93); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+
+  #flash { position: absolute; inset: 0; z-index: 10; background: #fff; opacity: 0; pointer-events: none; }
+  #flash.go { animation: flash .55s ease-out; }
+  @keyframes flash { 0% { opacity: 0; } 15% { opacity: .95; } 100% { opacity: 0; } }
+  #app.shake { animation: shake .5s cubic-bezier(.36,.07,.19,.97); }
+  @keyframes shake {
+    10%, 90% { transform: translate(-4px, 2px); }
+    20%, 80% { transform: translate(8px, -4px); }
+    30%, 50%, 70% { transform: translate(-14px, 6px) rotate(-.4deg); }
+    40%, 60% { transform: translate(14px, -6px) rotate(.4deg); }
+  }
+  #app.resetting, #app.resetting * { transition: none !important; }
+  /* Freeze frame: semua berhenti, warna dikeraskan, bingkai putih */
+  #app.frozen, #app.frozen * { animation-play-state: paused !important; }
+  #app.frozen { filter: contrast(1.12) saturate(.75); }
+  #app.frozen::after { content: ""; position: absolute; inset: 0; z-index: 11; pointer-events: none; box-shadow: inset 0 0 0 18px #fff, inset 0 0 0 22px rgba(11,42,91,.6); }
+  #freezetag { position: absolute; top: 60px; right: 60px; z-index: 12; display: none; background: #fff; color: var(--navy); font-weight: 800; font-size: 30px; padding: 10px 24px; border-radius: 12px; letter-spacing: .1em; }
+  #app.frozen #freezetag { display: block; }
+
+  /* ====== Wipe transisi ====== */
+  #wipe {
+    position: absolute; inset: 0; z-index: 30; pointer-events: none;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+    transform: translateX(-104%); display: grid; place-items: center;
+  }
+  #wipe::before, #wipe::after { content: ""; position: absolute; top: 0; bottom: 0; width: 26px; background: var(--gold); }
+  #wipe::before { left: 0; } #wipe::after { right: 0; }
+  #wipe span { font-size: 64px; font-weight: 800; color: var(--gold); letter-spacing: .2em; }
+  #wipe.cover  { transform: translateX(0);    transition: transform .45s cubic-bezier(.7,0,.3,1); }
+  #wipe.reveal { transform: translateX(104%); transition: transform .45s cubic-bezier(.7,0,.3,1); }
+
+  /* ====== Layar mulai & penutup ====== */
+  .screen {
+    position: absolute; inset: 0; z-index: 20;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    padding: 120px 90px; color: #fff;
+    background:
+      radial-gradient(800px 700px at 50% 40%, rgba(242,183,5,.16), transparent 60%),
+      repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 2px, transparent 2px 36px),
+      linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+  }
+  .screen[hidden] { display: none; }
+  .emblem { width: 260px; height: 260px; border-radius: 50%; display: grid; place-items: center; border: 8px solid var(--gold); background: rgba(255,255,255,.05); box-shadow: 0 0 0 18px rgba(242,183,5,.12); }
+  .emblem svg { width: 140px; height: 140px; stroke: var(--gold); }
+  .duo { display: flex; gap: 10px; align-items: flex-end; height: 470px; border-bottom: 10px solid var(--gold); }
+  .duo .char { position: relative; top: auto; left: auto; right: auto; width: 360px; height: 470px; }
+  .duo .char > svg { height: 523px; }
+  .duo .char { overflow: hidden; }
+  #start .duo { height: 400px; }
+  #start .duo .char { height: 400px; }
+  #start h1 { margin-top: 50px; font-size: 92px; line-height: 1.05; font-weight: 800; letter-spacing: -.02em; }
+  #start h1 em { font-style: normal; color: var(--gold); }
+  #start p { margin-top: 26px; font-size: 38px; color: #BFD2F2; font-weight: 500; line-height: 1.4; }
+  .btn {
+    margin-top: 70px; display: inline-flex; align-items: center; gap: 24px;
+    font: 800 52px/1 var(--font); color: var(--navy); background: var(--gold);
+    border: 0; border-radius: 100px; padding: 36px 76px 36px 56px; cursor: pointer;
+    box-shadow: 0 16px 0 var(--gold-deep), 0 30px 60px rgba(0,0,0,.4);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .btn:hover { transform: translateY(-4px); }
+  .btn:active { transform: translateY(10px); box-shadow: 0 6px 0 var(--gold-deep), 0 16px 30px rgba(0,0,0,.4); }
+  .btn:focus-visible { outline: 6px solid #fff; outline-offset: 10px; }
+  .btn svg { width: 56px; height: 56px; fill: var(--navy); }
+  .toggle {
+    margin-top: 44px; font: 700 34px/1 var(--font); color: #fff; cursor: pointer;
+    background: rgba(255,255,255,.08); border: 3px solid rgba(255,255,255,.35); border-radius: 60px; padding: 18px 36px;
+  }
+  .toggle[aria-pressed="false"] { opacity: .6; }
+  .toggles { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+  .toggle:focus-visible { outline: 6px solid var(--gold); outline-offset: 6px; }
+  #start .note { margin-top: 36px; font-size: 28px; color: rgba(255,255,255,.5); }
+
+  #closing .l1 { margin-top: 80px; font-size: 64px; line-height: 1.12; font-weight: 800; letter-spacing: .02em; }
+  #closing .l2 { margin-top: 26px; font-size: 44px; color: #BFD2F2; font-weight: 600; }
+  #closing .l3 { margin-top: 60px; font-size: 50px; font-weight: 800; color: var(--navy); background: var(--gold); padding: 18px 44px; border-radius: 80px; }
+  #closing .btn { background: #fff; box-shadow: 0 16px 0 #9FB3D6, 0 30px 60px rgba(0,0,0,.4); margin-top: 0; padding: 30px 50px; font-size: 44px; }
+  #closing .btn.next { background: var(--gold); box-shadow: 0 16px 0 var(--gold-deep), 0 30px 60px rgba(0,0,0,.4); }
+  .tusicard {
+    background: #fff; color: var(--navy); border-radius: 40px; padding: 34px 44px; width: 900px;
+    border: 6px solid var(--gold); box-shadow: 0 16px 0 var(--gold-deep), 0 30px 60px rgba(0,0,0,.4);
+  }
+  .tusicard small { display: block; font-size: 30px; font-weight: 800; letter-spacing: .12em; color: var(--gold-deep); }
+  .tusicard b { display: block; font-size: 64px; line-height: 1.1; margin: 12px 0 10px; }
+  .tusicard span { display: inline-block; font-size: 38px; font-weight: 800; color: #fff; background: #15803D; padding: 8px 26px; border-radius: 40px; }
+  #closing .l1 { margin-top: 60px; font-size: 52px; }
+  #closing .l2 { font-size: 38px; }
+  #closing .l3 { margin-top: 40px; font-size: 42px; }
+  .endbtns { margin-top: 60px; display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
+  .endbtns[hidden] { display: none; }
+  .teaser { margin-top: 56px; font-size: 38px; line-height: 1.35; color: #fff; font-weight: 700; background: rgba(255,255,255,.08); border: 3px dashed rgba(242,183,5,.7); border-radius: 30px; padding: 24px 36px; }
+  .teaser:empty { display: none; }
+  .teaser b { color: var(--gold); }
+  .eps { margin-top: 44px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; width: 900px; }
+  .ep {
+    font: 700 32px/1.2 var(--font); color: #fff; text-align: left; cursor: pointer;
+    background: rgba(255,255,255,.07); border: 3px solid rgba(255,255,255,.25); border-radius: 26px; padding: 18px 24px;
+    display: flex; gap: 16px; align-items: center;
+  }
+  .ep small { display: block; font-size: 22px; color: var(--gold); letter-spacing: .1em; font-weight: 800; }
+  .ep[aria-checked="true"] { background: var(--gold); color: var(--navy); border-color: #fff; }
+  .ep[aria-checked="true"] small { color: var(--navy); }
+  .ep:focus-visible { outline: 6px solid #fff; outline-offset: 4px; }
+  .ep .e { font-size: 44px; }
+  #closing.show > * { animation: rise .8s cubic-bezier(.16,1,.3,1) both; }
+  #closing.show > *:nth-child(2) { animation-delay: .25s; }
+  #closing.show > *:nth-child(3) { animation-delay: .45s; }
+  #closing.show > *:nth-child(4) { animation-delay: .75s; }
+  #closing.show > *:nth-child(5) { animation-delay: 1s; }
+  #closing.show > *:nth-child(6) { animation-delay: 0s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(60px); } to { opacity: 1; transform: none; } }
+
+  /* ====== Hormati prefers-reduced-motion ====== */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      animation-delay: 0s !important;
+      transition-duration: .01ms !important;
+      transition-delay: 0s !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="stage" aria-label="Animasi kartun Tasya dan Dinda ngobrol tentang Balai Harta Peninggalan">
+  <div id="app">
+    <div id="world">
+      <div id="bg"></div>
+      <div class="char tasya" id="tasya"></div>
+      <div class="char dinda" id="dinda"></div>
+      <div id="props"></div>
+      <div id="table"></div>
+    </div>
+    <div class="kepala" id="kepala" aria-live="polite">
+      <div class="kfig"></div>
+      <div class="plate">KEPALA BHP MEDAN</div>
+      <div class="kb"></div>
+    </div>
+    <div id="talk" role="log" aria-live="polite"></div>
+
+    <div id="progress" aria-hidden="true"></div>
+    <div id="chip"><span class="ico"></span><span class="txt"></span></div>
+    <div id="brand">BHP</div>
+
+    <div id="overlay" aria-live="polite">
+      <div class="oico"><span class="oi"></span><span class="onum">#<b>1</b></span></div>
+      <div><div class="kicker">✅ Ada di BHP:</div><div class="otitle"></div><div class="osub"></div></div>
+      <div class="stamp" aria-hidden="true">✔ BISA DI BHP</div>
+    </div>
+
+    <div class="sparkles" id="sparkles"></div>
+    <div id="tagline" aria-live="polite"><div class="rays"></div><span class="t1"></span><span class="t2"></span></div>
+    <div id="flash"></div>
+    <div id="freezetag">⏸ FREEZE</div>
+  </div>
+
+  <section id="start" class="screen">
+    <div class="duo"><div class="char tasya"></div><div class="char dinda"></div></div>
+    <h1><em>BHP</em> Serba Bisa? 🤔</h1>
+    <p>Seri Tusi BHP · pilih episodenya</p>
+    <div class="eps" id="eps" role="radiogroup" aria-label="Pilih episode tusi"></div>
+    <button class="btn" id="playBtn" type="button"><svg viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 001.5.87l12-7.5a1 1 0 000-1.74l-12-7.5A1 1 0 007 4.5z"/></svg>Putar</button>
+    <div class="toggles">
+      <button class="toggle" id="soundBtn" type="button" aria-pressed="true">🔊 Narator: ON</button>
+      <button class="toggle" id="musicBtn" type="button" aria-pressed="true">🎵 Backsound: ON</button>
+    </div>
+    <div class="note">±40 detik per episode · <span id="voiceNote"></span></div>
+  </section>
+
+  <section id="closing" class="screen" hidden>
+    <div class="tusicard" id="tusiCard"></div>
+    <div class="l1">BALAI HARTA PENINGGALAN<br>MEDAN</div>
+    <div class="l2">Kementerian Hukum RI</div>
+    <div class="l3">#PastiSelaluAdaSolusinya</div>
+    <div class="teaser" id="teaser"></div>
+    <div class="endbtns" id="endBtns" hidden>
+      <button class="btn" id="replayBtn" type="button"><svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a6 6 0 11-6 6H4a8 8 0 108-8z"/></svg>Ulang</button>
+      <button class="btn next" id="nextBtn" type="button">Tusi berikutnya 👉</button>
+    </div>
+  </section>
+
+  <div id="wipe"><span></span></div>
+</div>
+
+<script>
+/* =====================================================================
+   DATA SCENE — ubah naskah, urutan, latar, ekspresi & timing di sini saja.
+   Tiap pesan: { from: 'tasya' | 'dinda', text: '...', act, emote }
+     act   : ekspresi/gerak tokoh saat bicara —
+             'explain' | 'shock' | 'tilt' | 'sad' | 'nod' | 'laugh' | 'bounce' | 'phone'
+     emote : emoji kecil yang muncul di dekat kepala tokoh
+   Opsional per pesan: typing (ms), hold (ms) untuk menimpa timing otomatis.
+   Latar (bg): 'kafe' | 'teras' | 'kedai' | 'malam'. Gelas di meja (cups): 'kopi' | 'esteh' | 'boba'.
+   ===================================================================== */
+const CHARACTERS = {
+  tasya: { name: 'Tasya', tag: 'Gen Z', side: 'left' },
+  dinda: { name: 'Dinda', tag: 'BHP',   side: 'right' },
+};
+
+/* Suara (Text-to-Speech Bahasa Indonesia, id-ID) — atur nada & kecepatan tiap penutur.
+   Opsional per pesan: say: '...' untuk ejaan bacaan yang berbeda dari teks di layar,
+   atau audio: 'vo/s1-1.mp3' untuk memakai rekaman suara asli (menggantikan TTS). */
+const VOICES = {
+  tasya:   { pitch: 1.18, rate: 1.1,  jitter: .06, gender: 'f' }, // cepat, ekspresif
+  dinda:   { pitch: 1.02, rate: 1.03, jitter: .04, gender: 'f' }, // kalem, meyakinkan
+  boss:    { pitch: 0.78, rate: 0.96, jitter: .03, gender: 'm' },
+  narator: { pitch: 0.98, rate: 1.0,  jitter: .03, gender: 'm' }, // hangat, kayak ngobrol
+};
+
+/* Kamus lafal: biar TTS bacanya kayak orang Indonesia ngomong, bukan robot baca ejaan.
+   Kiri = tulisan di layar, kanan = cara dibaca. */
+const LEXICON = [
+  [/\bBHP\b/g, 'Be Ha Pe'], [/\bUPT\b/g, 'U Pe Te'],
+  [/\bgue\b/gi, 'gua'], [/\blo\b/gi, 'lu'], [/\bnggak\b/gi, 'enggak'],
+  [/\bonline\b/gi, 'onlen'], [/\bbodyguard\b/gi, 'bodigat'], [/\bunboxing\b/gi, 'anboksing'],
+  [/\bfee\b/gi, 'fi'], [/\bghosting\b/gi, 'gosting'], [/\bfollow\b/gi, 'folo'],
+  [/\bGen Z\b/g, 'Jen Zi'], [/\bPsst\b/gi, 'Ssst'], [/\bWih\b/g, 'Wiih'], [/\bHah\b/g, 'Haah'],
+];
+const lafal = (t) => LEXICON.reduce((a, [re, to]) => a.replace(re, to), t);
+
+/* SERI PER TUSI — satu episode = satu video pendek.
+   Alur tiap episode: dialog → kartu "Catat! Di BHP bisa" → celetukan Tasya (punch)
+   → Pak Kepala nongol dari berbagai tempat (pops) → kalimat penutup + tagline → freeze → closing.
+   Tempat nongol (pops.spot): 'right' | 'left' | 'top' (terbalik dari atas) | 'table' (dari balik meja) | 'cup' (dari balik gelas) */
+const EPISODES = [
+  {
+    no: 1, short: 'Hak Waris', emoji: '📄', title: 'Hak Waris', icon: 'doc', bg: 'kafe', cups: ['kopi', 'kopi'],
+    messages: [
+      { from: 'tasya', act: 'sad',     emote: '😵‍💫', text: 'Din, sumpah gue pusing deh. Tanah Papa kan mau gue balik nama, tapi Papa udah nggak ada… terus gue harus ke mana dulu sih?' },
+      { from: 'dinda', act: 'explain', emote: '💡', text: 'Oh, itu lo butuh Surat Keterangan Hak Waris dulu, Sya. Urusnya di BHP aja, bisa online kok.' },
+      { from: 'tasya', act: 'shock',   emote: '❗', text: 'Hah, serius? Segampang itu doang?' },
+    ],
+    overlay: { title: 'Surat Keterangan Hak Waris', sub: 'bisa online 📲', icon: 'doc' },
+    punch: { from: 'tasya', act: 'shock', emote: '🧞', text: 'Bentar... ini kantor apa jin botol?! Semua bisa!' },
+    pops: [
+      { spot: 'right', text: 'Pasti ada solusi!' },
+      { spot: 'top',   text: 'Pasti ada solusi!!' },
+      { spot: 'cup',   text: 'Psst… pasti ada solusi 🤫' },
+    ],
+  },
+  {
+    no: 2, short: 'Perwalian', emoji: '🛡️', title: 'Perwalian', icon: 'shield', bg: 'teras', cups: ['esteh', 'esteh'],
+    messages: [
+      { from: 'tasya', act: 'tilt',    emote: '🤔', text: 'Din, eh, tetangga gue kan anaknya masih kecil-kecil, terus ibunya mau jual rumah. Emang boleh ya?' },
+      { from: 'dinda', act: 'explain', emote: '🛡️', text: 'Nah, itu namanya perwalian. Karena ada anak di bawah umur, walinya didampingi BHP. Jadi harta anaknya aman, ibunya juga nggak bakal dicurigain sama keluarga yang lain.' },
+      { from: 'tasya', act: 'bounce',  emote: '😎', text: 'Oh… jadi BHP tuh kayak bodyguard-nya wali sama harta si anak gitu?' },
+      { from: 'dinda', act: 'nod',     emote: '👍', text: 'Yap, persis.' },
+    ],
+    overlay: { title: 'Perwalian', sub: 'BHP wali pengawas 🛡️', icon: 'shield' },
+    punch: { from: 'tasya', act: 'shock', emote: '🕶️', text: 'Ini kantor apa jasa bodyguard?! Jagain harta anak juga!' },
+    pops: [
+      { spot: 'table', text: 'Pasti ada solusi!' },
+      { spot: 'left',  text: 'Pasti ada solusi!!' },
+      { spot: 'top',   text: 'Hadir! Pasti ada solusi 🫡' },
+    ],
+  },
+  {
+    no: 3, short: 'Kepailitan', emoji: '⚖️', title: 'Kepailitan', icon: 'scale', bg: 'kedai', cups: ['esteh', 'kopi'],
+    messages: [
+      { from: 'tasya', act: 'sad',     emote: '😰', text: 'Din, kasian deh, tetangga gue usahanya bangkrut. Utangnya di mana-mana.' },
+      { from: 'dinda', act: 'explain', emote: '⚖️', text: 'Itu namanya pailit. Nah, BHP bisa lho jadi kuratornya.' },
+      { from: 'tasya', act: 'tilt',    emote: '💸', text: 'Wah, mahal dong?' },
+      { from: 'dinda', act: 'nod',     emote: '😌', text: 'Justru lebih hemat, Sya. Nggak ada fee macem-macem, soalnya kita kan mewakili negara.' },
+    ],
+    overlay: { title: 'Kepailitan', sub: 'BHP kurator negara ⚖️', icon: 'scale' },
+    punch: { from: 'tasya', act: 'shock', emote: '🏷️', text: 'Udah bisa, hemat pula. Ini kantor apa toko diskonan?!' },
+    pops: [
+      { spot: 'top',   text: 'Pasti ada solusi!' },
+      { spot: 'right', text: 'Pasti ada solusi!!' },
+      { spot: 'table', text: 'Tanpa fee ini itu. Pasti ada solusi 😌' },
+    ],
+  },
+  {
+    no: 4, short: 'Harta Tak Terurus', emoji: '🗂️', title: 'Harta Tak Terurus', icon: 'folder', bg: 'malam', cups: ['boba', 'boba'],
+    messages: [
+      { from: 'tasya', act: 'phone',   emote: '👻', text: 'Din, kalau ada orang ilang, nggak ada kabar, kayak mantan gue yang ghosting itu… hartanya nggak ada yang ngurus. Itu ke BHP juga?' },
+      { from: 'dinda', act: 'laugh',   emote: '😏', text: 'Hahaha, mantan lo mah nggak masuk, Sya. Kan nggak punya harta.' },
+      { from: 'tasya', act: 'shock',   emote: '😤', text: 'Eh, jahat banget!' },
+      { from: 'dinda', act: 'explain', emote: '📚', text: 'Tapi serius deh, kalau ada orang yang beneran ilang dan hartanya nggak keurus, itu namanya afwezigheid. Terus kalau hartanya nggak ada pemiliknya sama sekali, namanya onbeheerde nalatenschap. Dua-duanya BHP yang jagain.',
+        say: 'Tapi serius deh, kalau ada orang yang beneran ilang dan hartanya nggak keurus, itu namanya, afwesikhait. Terus kalau hartanya nggak ada pemiliknya sama sekali, namanya, onbeherde nalatenskhap. Dua-duanya BHP yang jagain.' },
+    ],
+    overlay: { title: 'Harta orang tak hadir & harta tak terurus 🗂️', sub: '', icon: 'folder' },
+    punch: { from: 'tasya', act: 'shock', emote: '🔮', text: 'Din, kok kayaknya semua masalah bisa selesai di BHP?! Ini kantor apa dukun?!' },
+    pops: [
+      { spot: 'left',  text: 'Pasti ada solusi!' },
+      { spot: 'table', text: 'Pasti ada solusi!!' },
+      { spot: 'right', text: 'Bukan dukun. Pasti ada solusi 😎' },
+    ],
+  },
+  {
+    // ⚠️ Naskah baru — mohon dicek kebenaran isinya sebelum tayang
+    no: 5, short: 'Surat Wasiat', emoji: '📜', title: 'Surat Wasiat', icon: 'doc', bg: 'kafe', cups: ['esteh', 'kopi'],
+    messages: [
+      { from: 'tasya', act: 'tilt',    emote: '📜', text: 'Din, almarhumah nenek gue ninggalin surat wasiat tertutup di notaris. Nah, bukanya tuh gimana ya?' },
+      { from: 'dinda', act: 'explain', emote: '🔏', text: 'Wasiat tertutup gitu dibukanya di BHP, terus dibikinin berita acaranya. Jadi resmi, dan nggak ada yang bisa asal buka sendiri.' },
+      { from: 'tasya', act: 'bounce',  emote: '📦', text: 'Wih, kayak unboxing gitu ya, tapi versi resmi negara!' },
+      { from: 'dinda', act: 'nod',     emote: '😎', text: 'Hehe, unboxing paling sah se-Indonesia pokoknya.' },
+    ],
+    overlay: { title: 'Pembukaan Surat Wasiat', sub: 'resmi & tercatat 📜', icon: 'doc' },
+    punch: { from: 'tasya', act: 'shock', emote: '🕵️', text: 'Surat wasiat juga?! Ini kantor apa agensi detektif?!' },
+    pops: [
+      { spot: 'cup',   text: 'Pasti ada solusi!' },
+      { spot: 'top',   text: 'Pasti ada solusi!!' },
+      { spot: 'left',  text: 'Segel aman. Pasti ada solusi 🔏' },
+    ],
+  },
+  {
+    // ⚠️ Naskah baru — mohon dicek kebenaran isinya sebelum tayang
+    no: 6, short: 'Uang Pihak Ketiga', emoji: '💰', title: 'Uang Pihak Ketiga', icon: 'building', bg: 'kedai', cups: ['boba', 'esteh'],
+    messages: [
+      { from: 'tasya', act: 'tilt',    emote: '🤔', text: 'Din, misal warisan udah dibagi nih, tapi ada satu ahli waris yang nggak ketemu-ketemu. Bagiannya terus ke mana?' },
+      { from: 'dinda', act: 'explain', emote: '💰', text: 'Tenang, bagiannya dikelola BHP sebagai uang pihak ketiga. Aman kok, sampai orangnya dateng dan ngurus sendiri.' },
+      { from: 'tasya', act: 'bounce',  emote: '🐷', text: 'Oh, jadi kayak celengan gitu, tapi yang jagain negara?' },
+      { from: 'dinda', act: 'nod',     emote: '🔐', text: 'Iya, celengan paling amanah deh pokoknya.' },
+    ],
+    overlay: { title: 'Uang Pihak Ketiga', sub: 'dikelola aman oleh BHP 💰', icon: 'building' },
+    punch: { from: 'tasya', act: 'shock', emote: '🏦', text: 'Duit orang yang ngilang juga dijagain?! Ini kantor apa brankas?!' },
+    pops: [
+      { spot: 'right', text: 'Pasti ada solusi!' },
+      { spot: 'cup',   text: 'Pasti ada solusi!!' },
+      { spot: 'top',   text: 'Aman terkendali. Pasti ada solusi 🔐' },
+    ],
+  },
+];
+
+/* Nama tusi yang disebut jelas di ending & closing card (urutan sama dengan EPISODES) */
+const TUSI = [
+  'Surat Keterangan Hak Waris',
+  'Perwalian anak di bawah umur',
+  'Kurator kepailitan',
+  'Harta orang tak hadir & harta tak terurus',
+  'Pembukaan surat wasiat',
+  'Pengelolaan uang pihak ketiga',
+];
+EPISODES.forEach((ep, i) => { ep.tusi = TUSI[i]; });
+
+/* Kalimat penutup Pak Kepala: menyebut tusinya dengan jelas, lalu tagline besar */
+const FINALE = {
+  line: (ep) => `Soal ${ep.tusi.toLowerCase()}? Tenang, ada di BHP kok! Kita kan UPT-nya Kementerian Hukum. Jadi…`,
+  tagline: ['Pasti Selalu Ada', 'Solusinya!'],
+};
+
+/* Timing (ms). Durasi bubble dihitung dari panjang teks lalu dibatasi min/max. */
+const T = {
+  wipe: 450, wipeHold: 250, sceneIntro: 400,
+  typingBase: 400, typingPerChar: 7,  typingMin: 700,  typingMax: 1400,
+  readBase: 800,   readPerChar: 22,   readMin: 2000,   readMax: 4600,
+  talkPerChar: 45, // lama mulut bergerak per karakter
+  listItemGap: 900, listHold: 1800, // kartu daftar (opsional)
+  overlayIn: 600, overlayHold: 2400,
+  popIn: 400, popHold: 1500, popOut: 300, // tiap kemunculan Pak Kepala
+  finaleHold: 2600, taglineHold: 2800, freeze: 1600, closing: 5000, replayAfter: 2500,
+};
+
+/* ===================== Ikon SVG inline ===================== */
+const ICONS = {
+  coffee:  '<path d="M4 9h12v5a5 5 0 01-5 5H9a5 5 0 01-5-5z"/><path d="M16 11h1.5a2.5 2.5 0 010 5H16"/><path d="M8 3c-.8 1 .8 2 0 3M12 3c-.8 1 .8 2 0 3"/><path d="M3 21h15"/>',
+  doc:     '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h4"/><rect x="15" y="14" width="6" height="8" rx="1.2"/><path d="M17.5 20h1"/>',
+  shield:  '<path d="M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+  scale:   '<path d="M12 3v18M6 21h12M4 7h16"/><path d="M7 7l-3 7a3 3 0 006 0zM17 7l-3 7a3 3 0 006 0z"/>',
+  folder:  '<path d="M3 6a1 1 0 011-1h5l2 2h9a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1z"/><circle cx="11.5" cy="12.5" r="2.5"/><path d="M13.3 14.3L16 17"/>',
+  building:'<path d="M3 21h18M4 10h16M12 3l9 5H3z"/><path d="M6 10v8M10 10v8M14 10v8M18 10v8M4 18h16"/>',
+};
+const svg = (name, sw = 2) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
+
+/* ===================== Tokoh kartun (SVG) ===================== */
+const FACE = (skin, lx, rx, ey) => `
+  <g class="eyes">
+    <ellipse cx="${lx}" cy="${ey}" rx="13" ry="17" fill="#1E1B2E"/><ellipse cx="${rx}" cy="${ey}" rx="13" ry="17" fill="#1E1B2E"/>
+    <circle cx="${lx + 4}" cy="${ey - 7}" r="4.5" fill="#fff"/><circle cx="${rx + 4}" cy="${ey - 7}" r="4.5" fill="#fff"/>
+  </g>
+  <ellipse cx="160" cy="${ey + 42}" rx="20" ry="11" fill="#F58FA8" opacity=".55"/>
+  <ellipse cx="280" cy="${ey + 42}" rx="20" ry="11" fill="#F58FA8" opacity=".55"/>
+  <path d="M220 ${ey + 18} q7 14 -3 18" fill="none" stroke="${skin}" stroke-width="5" stroke-linecap="round"/>
+  <path class="m-closed" d="M198 ${ey + 64} Q220 ${ey + 82} 242 ${ey + 64}" fill="none" stroke="#9B3A4A" stroke-width="7" stroke-linecap="round"/>
+  <g class="m-open"><path d="M196 ${ey + 58} Q220 ${ey + 108} 244 ${ey + 58} Z" fill="#7A2233"/><ellipse cx="220" cy="${ey + 84}" rx="12" ry="7" fill="#F27C8E"/></g>`;
+
+const TASYA_SVG = `
+<svg viewBox="0 0 440 640" aria-hidden="true">
+  <path d="M92 230 C88 110 150 58 220 58 C292 58 354 110 350 230 L366 470 C320 500 120 500 76 470 Z" fill="#2A1A14"/>
+  <path d="M36 640 C36 500 108 418 220 418 C332 418 404 500 404 640 Z" fill="#F4A6BC"/>
+  <path d="M146 424 C168 478 272 478 294 424 C262 410 178 410 146 424 Z" fill="#E88AA6"/>
+  <path d="M196 452 L190 540 M244 452 L250 540" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="190" cy="546" r="7" fill="#fff"/><circle cx="250" cy="546" r="7" fill="#fff"/>
+  <rect x="192" y="318" width="56" height="112" rx="22" fill="#EDBE98"/>
+  <g class="tilt"><g class="head">
+    <ellipse cx="112" cy="228" rx="17" ry="25" fill="#F2C29F"/><ellipse cx="328" cy="228" rx="17" ry="25" fill="#F2C29F"/>
+    <circle cx="112" cy="258" r="7" fill="#F2B705"/><circle cx="328" cy="258" r="7" fill="#F2B705"/>
+    <ellipse cx="220" cy="215" rx="108" ry="118" fill="#F6CFAE"/>
+    <path d="M108 206 C100 118 158 84 222 84 C290 84 342 120 334 206 C312 160 270 142 236 140 C214 176 160 196 108 206 Z" fill="#2A1A14"/>
+    <rect x="276" y="112" width="46" height="16" rx="8" fill="#F2B705" transform="rotate(28 299 120)"/>
+    <g class="brows"><path d="M158 176 Q180 164 204 174 M238 174 Q262 164 284 176" fill="none" stroke="#2A1A14" stroke-width="8" stroke-linecap="round"/></g>
+    ${FACE('#D9A07F', 186, 266, 218)}
+  </g></g>
+  <g class="arm">
+    <path d="M350 640 L372 430" stroke="#F4A6BC" stroke-width="60" stroke-linecap="round"/>
+    <rect x="344" y="300" width="62" height="108" rx="14" fill="#1F2937"/>
+    <rect x="352" y="310" width="46" height="84" rx="8" fill="#7DD3FC"/>
+    <circle cx="374" cy="408" r="30" fill="#F6CFAE"/>
+  </g>
+</svg>`;
+
+const DINDA_SVG = `
+<svg viewBox="0 0 440 640" aria-hidden="true">
+  <path d="M36 640 C36 500 108 418 220 418 C332 418 404 500 404 640 Z" fill="#0B2A5B"/>
+  <path d="M170 424 L220 540 L270 424 Z" fill="#fff"/>
+  <path d="M96 232 C92 116 150 70 220 70 C290 70 348 116 344 232 C350 340 318 420 290 450 C250 490 190 490 150 450 C122 420 90 340 96 232 Z" fill="#2F5DA8"/>
+  <path d="M178 452 L220 520 L262 452" fill="none" stroke="#F2B705" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="196" y="516" width="48" height="62" rx="8" fill="#fff" stroke="#F2B705" stroke-width="5"/>
+  <rect x="206" y="528" width="28" height="18" rx="3" fill="#0B2A5B"/>
+  <path d="M206 556 H234 M206 566 H226" stroke="#94A3B8" stroke-width="4" stroke-linecap="round"/>
+  <g class="tilt"><g class="head">
+    <path d="M100 236 C96 120 152 76 220 76 C288 76 344 120 340 236 C342 300 320 350 300 372 L140 372 C120 350 98 300 100 236 Z" fill="#2F5DA8"/>
+    <ellipse cx="220" cy="232" rx="92" ry="104" fill="#E9B58E"/>
+    <path d="M124 214 C128 136 180 112 220 112 C262 112 312 136 316 214 C292 170 256 156 220 156 C184 156 148 170 124 214 Z" fill="#2F5DA8"/>
+    <path d="M132 196 C160 162 280 162 308 196" fill="none" stroke="#244C8F" stroke-width="6"/>
+    <circle cx="316" cy="318" r="10" fill="#F2B705"/>
+    <g class="brows"><path d="M156 190 Q178 180 202 188 M238 188 Q262 180 284 190" fill="none" stroke="#3B2A22" stroke-width="7" stroke-linecap="round"/></g>
+    ${FACE('#C98F68', 178, 256, 230)}
+  </g></g>
+  <g class="arm">
+    <path d="M92 640 L68 432" stroke="#0B2A5B" stroke-width="60" stroke-linecap="round"/>
+    <rect x="58" y="330" width="20" height="70" rx="10" fill="#E9B58E"/>
+    <circle cx="68" cy="408" r="30" fill="#E9B58E"/>
+  </g>
+</svg>`;
+
+/* Pak Kepala: karikatur (rambut pendek, kumis & janggut tipis) berseragam dinas */
+const KEPALA_SVG = `
+<svg viewBox="0 0 420 520" aria-hidden="true">
+  <path d="M20 520 C20 400 90 336 210 336 C330 336 400 400 400 520 Z" fill="#1F3F73" stroke="#fff" stroke-width="6"/>
+  <g transform="rotate(-16 100 386)"><rect x="56" y="372" width="92" height="28" rx="8" fill="#0B2A5B"/><path d="M70 380 V394 M84 380 V394 M98 380 V394" stroke="#F2B705" stroke-width="5"/></g>
+  <g transform="rotate(16 320 386)"><rect x="272" y="372" width="92" height="28" rx="8" fill="#0B2A5B"/><path d="M322 380 V394 M336 380 V394 M350 380 V394" stroke="#F2B705" stroke-width="5"/></g>
+  <path d="M156 342 L210 404 L264 342 L244 332 L210 372 L176 332 Z" fill="#16325E"/>
+  <path d="M210 404 V520" stroke="#16325E" stroke-width="6"/>
+  <circle cx="210" cy="430" r="6" fill="#F2B705"/><circle cx="210" cy="470" r="6" fill="#F2B705"/><circle cx="210" cy="508" r="6" fill="#F2B705"/>
+  <rect x="96" y="424" width="92" height="26" rx="5" fill="#fff"/><path d="M106 437 H176" stroke="#0B2A5B" stroke-width="5"/>
+  <rect x="244" y="440" width="84" height="62" rx="8" fill="none" stroke="#16325E" stroke-width="5"/>
+  <circle cx="286" cy="416" r="20" fill="#F2B705"/><path d="M286 402 l4 9 10 1 -8 6 3 10 -9 -5 -9 5 3 -10 -8 -6 10 -1z" fill="#0B2A5B"/>
+  <rect x="180" y="284" width="60" height="66" rx="22" fill="#B37650"/>
+  <g class="khead">
+    <ellipse cx="118" cy="200" rx="16" ry="25" fill="#C68B5E"/><ellipse cx="302" cy="200" rx="16" ry="25" fill="#C68B5E"/>
+    <ellipse cx="210" cy="190" rx="94" ry="108" fill="#C68B5E"/>
+    <path d="M122 214 C130 268 168 300 210 300 C252 300 290 268 298 214 C292 262 256 290 210 290 C164 290 128 262 122 214 Z" fill="#151010" opacity=".14"/>
+    <path d="M116 182 C106 104 158 70 212 70 C270 70 316 104 304 182 C298 150 280 132 250 126 C224 120 190 122 168 128 C140 136 122 156 116 182 Z" fill="#151010"/>
+    <path d="M114 168 h14 v44 h-10 z M292 168 h14 v44 h-10 z" fill="#151010"/>
+    <path d="M150 160 Q172 148 198 157 M222 157 Q248 148 270 160" fill="none" stroke="#151010" stroke-width="10" stroke-linecap="round"/>
+    <ellipse cx="174" cy="188" rx="11" ry="13" fill="#1E1B2E"/><ellipse cx="246" cy="188" rx="11" ry="13" fill="#1E1B2E"/>
+    <circle cx="178" cy="183" r="4" fill="#fff"/><circle cx="250" cy="183" r="4" fill="#fff"/>
+    <path d="M210 198 q12 28 -6 34" fill="none" stroke="#9C6440" stroke-width="5" stroke-linecap="round"/>
+    <path d="M184 262 Q210 294 236 262 Z" fill="#7A2233"/><path d="M190 264 H230 L226 272 H194 Z" fill="#fff"/>
+    <path d="M168 254 Q190 236 210 246 Q230 236 252 254 Q230 258 210 251 Q190 258 168 254 Z" fill="#151010"/>
+    <path d="M186 288 Q210 300 234 288 Q232 314 210 322 Q188 314 186 288 Z" fill="#151010"/>
+  </g>
+  <g class="thumb">
+    <path d="M356 520 L370 390" stroke="#1F3F73" stroke-width="62" stroke-linecap="round"/>
+    <rect x="352" y="292" width="26" height="62" rx="13" fill="#C68B5E"/>
+    <rect x="340" y="336" width="66" height="60" rx="20" fill="#C68B5E"/>
+  </g>
+</svg>`;
+
+/* ===================== Latar per scene (SVG 1080x1920) ===================== */
+const lamp = (x, cls = '') => `<g class="swing ${cls}"><path d="M${x} 170 V330" stroke="#3B2A22" stroke-width="5"/>
+  <path d="M${x - 60} 390 Q${x} 300 ${x + 60} 390 Z" fill="#0B2A5B"/><ellipse cx="${x}" cy="398" rx="26" ry="14" fill="#FFE08A"/>
+  <ellipse cx="${x}" cy="470" rx="110" ry="60" fill="#FFE08A" opacity=".18"/></g>`;
+const BACKDROPS = {
+  kafe: `
+    <rect width="1080" height="1920" fill="#F2E3CB"/>
+    <rect y="1000" width="1080" height="920" fill="#E0C49D"/><rect y="990" width="1080" height="16" fill="#B98A5E"/>
+    <rect x="80" y="330" width="560" height="580" rx="26" fill="#BFE3F5"/>
+    <g fill="#8FC3DE"><rect x="100" y="640" width="90" height="270"/><rect x="200" y="560" width="120" height="350"/><rect x="330" y="680" width="80" height="230"/><rect x="420" y="600" width="130" height="310"/><rect x="560" y="700" width="70" height="210"/></g>
+    <g fill="#fff" opacity=".9" class="drift"><ellipse cx="0" cy="420" rx="70" ry="26"/><ellipse cx="50" cy="405" rx="50" ry="26"/></g>
+    <rect x="80" y="330" width="560" height="580" rx="26" fill="none" stroke="#8A5A3B" stroke-width="20"/>
+    <path d="M360 330 V910 M80 620 H640" stroke="#8A5A3B" stroke-width="12"/>
+    <rect x="720" y="330" width="280" height="230" rx="16" fill="#2E3B32" stroke="#8A5A3B" stroke-width="12"/>
+    <text x="860" y="395" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="44" fill="#fff">MENU</text>
+    <text x="760" y="455" font-family="Plus Jakarta Sans, sans-serif" font-weight="600" font-size="28" fill="#E5E7EB">Kopi Susu ....18</text>
+    <text x="760" y="500" font-family="Plus Jakarta Sans, sans-serif" font-weight="600" font-size="28" fill="#E5E7EB">Es Teh .........8</text>
+    <rect x="710" y="760" width="310" height="18" rx="6" fill="#8A5A3B"/>
+    <path d="M760 760 h60 l-8 -70 h-44z" fill="#C0504D"/><path d="M790 690 c-40 -60 -10 -100 0 -120 c10 20 40 60 0 120 M790 690 c-60 -30 -70 -60 -60 -80 c30 10 60 40 60 80 M790 690 c50 -30 70 -60 60 -80 c-30 10 -60 40 -60 80" fill="#4E9F5B"/>
+    <rect x="860" y="680" width="50" height="80" rx="10" fill="#F2B705" opacity=".85"/><rect x="930" y="700" width="50" height="60" rx="10" fill="#fff" opacity=".85"/>
+    ${lamp(250)}${lamp(560, 'b')}`,
+  teras: `
+    <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ED8FF"/><stop offset="1" stop-color="#E8F7FF"/></linearGradient></defs>
+    <rect width="1080" height="1920" fill="url(#sky)"/>
+    <g class="spin"><circle cx="880" cy="360" r="140" fill="#FFE08A" opacity=".35"/><path d="M880 180 v40 M880 500 v40 M700 360 h40 M1020 360 h40 M752 232 l28 28 M980 460 l28 28 M752 488 l28 -28 M980 260 l28 -28" stroke="#FFC933" stroke-width="10" stroke-linecap="round"/></g>
+    <circle cx="880" cy="360" r="80" fill="#FFC933"/>
+    <g fill="#fff" class="drift"><ellipse cx="0" cy="300" rx="90" ry="32"/><ellipse cx="60" cy="280" rx="60" ry="34"/></g>
+    <g fill="#fff" class="drift b"><ellipse cx="0" cy="480" rx="70" ry="26"/><ellipse cx="45" cy="465" rx="46" ry="26"/></g>
+    <path d="M40 700 L250 540 L460 700 Z" fill="#C0504D"/><rect x="70" y="700" width="360" height="420" fill="#F6D7A7"/>
+    <rect x="120" y="770" width="100" height="100" rx="8" fill="#9ED8FF" stroke="#fff" stroke-width="10"/><rect x="280" y="900" width="100" height="220" rx="8" fill="#8A5A3B"/>
+    <path d="M600 720 L810 560 L1020 720 Z" fill="#3B6EA5"/><rect x="630" y="720" width="360" height="400" fill="#CFE3D0"/>
+    <rect x="680" y="790" width="100" height="100" rx="8" fill="#9ED8FF" stroke="#fff" stroke-width="10"/><rect x="840" y="790" width="100" height="100" rx="8" fill="#9ED8FF" stroke="#fff" stroke-width="10"/>
+    <rect x="515" y="820" width="30" height="300" fill="#8A5A3B"/><circle cx="530" cy="760" r="110" fill="#4E9F5B"/><circle cx="470" cy="820" r="70" fill="#5DB36B"/><circle cx="600" cy="810" r="75" fill="#5DB36B"/>
+    <rect y="1100" width="1080" height="820" fill="#A7D58A"/>
+    <g fill="#fff" stroke="#D6D3D1" stroke-width="3">${Array.from({ length: 14 }, (_, i) => `<path d="M${i * 80 + 10} 1330 V1080 l20 -26 l20 26 V1330 Z"/>`).join('')}</g>
+    <rect y="1130" width="1080" height="20" fill="#fff" stroke="#D6D3D1" stroke-width="3"/>`,
+  kedai: `
+    <rect width="1080" height="1920" fill="#FFE2B8"/>
+    <rect y="1040" width="1080" height="900" fill="#F4C98A"/>
+    <g>${Array.from({ length: 9 }, (_, i) => `<rect x="${i * 120}" y="170" width="120" height="170" fill="${i % 2 ? '#fff' : '#E4572E'}"/><circle cx="${i * 120 + 60}" cy="340" r="60" fill="${i % 2 ? '#fff' : '#E4572E'}"/>`).join('')}</g>
+    <g class="swing"><path d="M540 390 V440" stroke="#3B2A22" stroke-width="5"/><rect x="380" y="440" width="320" height="110" rx="18" fill="#F2B705" stroke="#0B2A5B" stroke-width="8"/>
+    <text x="540" y="513" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="50" fill="#0B2A5B">ES TEH 🧊</text></g>
+    <rect x="70" y="620" width="300" height="16" rx="6" fill="#8A5A3B"/><rect x="70" y="820" width="300" height="16" rx="6" fill="#8A5A3B"/>
+    <g>${['#E4572E', '#4E9F5B', '#3B6EA5', '#F2B705', '#9B59B6'].map((c, i) => `<rect x="${90 + i * 55}" y="540" width="38" height="80" rx="10" fill="${c}"/><rect x="${90 + i * 55}" y="745" width="38" height="75" rx="10" fill="${['#F2B705', '#E4572E', '#9B59B6', '#4E9F5B', '#3B6EA5'][i]}"/>`).join('')}</g>
+    <path d="M700 600 H1030" stroke="#8A5A3B" stroke-width="6"/>
+    <g class="swing b">${Array.from({ length: 6 }, (_, i) => `<rect x="${720 + i * 52}" y="600" width="44" height="${200 - (i % 3) * 30}" rx="6" fill="${['#E4572E', '#F2B705', '#3B6EA5'][i % 3]}"/><rect x="${726 + i * 52}" y="640" width="32" height="40" rx="4" fill="#fff" opacity=".7"/>`).join('')}</g>`,
+  malam: `
+    <rect width="1080" height="1920" fill="#1D2748"/>
+    <rect y="1020" width="1080" height="900" fill="#172039"/>
+    <rect x="560" y="330" width="440" height="520" rx="24" fill="#0E1530" stroke="#5B4636" stroke-width="18"/>
+    <circle cx="880" cy="450" r="60" fill="#FFF3C4"/><circle cx="905" cy="435" r="55" fill="#0E1530"/>
+    <g fill="#fff"><circle class="twinkle" cx="630" cy="420" r="5"/><circle class="twinkle" cx="700" cy="560" r="4"/><circle class="twinkle" cx="820" cy="640" r="5"/><circle class="twinkle" cx="950" cy="700" r="4"/><circle class="twinkle" cx="660" cy="760" r="5"/><circle class="twinkle" cx="760" cy="400" r="4"/></g>
+    <path d="M780 330 V850 M560 590 H1000" stroke="#5B4636" stroke-width="10"/>
+    <path d="M0 250 Q270 360 540 260 T1080 260" fill="none" stroke="#3B2A22" stroke-width="4"/>
+    <g>${Array.from({ length: 12 }, (_, i) => { const x = 40 + i * 90; const y = 250 + Math.sin((x / 1080) * Math.PI * 2) * -40 + 50; return `<circle class="twinkle" cx="${x}" cy="${y}" r="14" fill="${i % 2 ? '#F2B705' : '#FFE08A'}"/>`; }).join('')}</g>
+    <rect x="100" y="400" width="320" height="400" rx="14" fill="#2B3A6B" stroke="#F2B705" stroke-width="8"/>
+    <circle cx="260" cy="560" r="90" fill="#F2B705" opacity=".8"/><path d="M130 760 L230 620 L300 700 L350 650 L400 760 Z" fill="#6D83C4"/>
+    <text x="260" y="455" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="34" fill="#fff">NGOPI MALAM</text>`,
+};
+const bgSvg = (name) => `<svg viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${BACKDROPS[name]}</svg>`;
+
+const TABLE_COLORS = { kafe: ['#B07A4E', '#8A5A3B'], teras: ['#D8B98A', '#B8946A'], kedai: ['#3B6EA5', '#2C5585'], malam: ['#6B4B3A', '#4E3629'] };
+function tableSvg(name) {
+  const [top, front] = TABLE_COLORS[name] || TABLE_COLORS.kafe;
+  return `<svg viewBox="0 0 1080 590" preserveAspectRatio="none" aria-hidden="true">
+    <rect width="1080" height="590" fill="${front}"/><rect width="1080" height="46" fill="${top}"/>
+    <rect y="46" width="1080" height="10" fill="#000" opacity=".15"/>
+    <path d="M0 140 H1080 M0 260 H1080 M0 380 H1080" stroke="#000" stroke-width="3" opacity=".07"/>
+    <path d="M330 0 H750 V250 L540 300 L330 250 Z" fill="#0B2A5B"/>
+    <path d="M350 0 V240 L540 284 L730 240 V0" fill="none" stroke="#F2B705" stroke-width="8"/>
+    <text x="540" y="160" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="64" letter-spacing="8" fill="#F2B705">BHP</text></svg>`;
+}
+const CUPS = {
+  kopi: (x) => `<g transform="translate(${x} 0)">
+    <path class="steam" d="M45 60 q-14 -20 0 -40 q14 -20 0 -40" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".8"/>
+    <path class="steam b" d="M80 60 q-14 -20 0 -40 q14 -20 0 -40" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".8"/>
+    <path d="M118 100 a26 26 0 010 52" fill="none" stroke="#fff" stroke-width="12"/>
+    <rect x="10" y="74" width="112" height="100" rx="18" fill="#fff" stroke="#0B2A5B" stroke-width="5"/>
+    <ellipse cx="66" cy="80" rx="52" ry="10" fill="#6B3E26"/><rect x="10" y="118" width="112" height="16" fill="#F2B705"/></g>`,
+  esteh: (x) => `<g transform="translate(${x} 0)">
+    <path d="M88 0 L70 110" stroke="#E4572E" stroke-width="10" stroke-linecap="round"/>
+    <path d="M18 40 H118 L106 176 H30 Z" fill="#F6A04D" opacity=".85" stroke="#fff" stroke-width="5"/>
+    <rect x="36" y="60" width="26" height="26" rx="5" fill="#fff" opacity=".7" transform="rotate(12 49 73)"/><rect x="70" y="84" width="24" height="24" rx="5" fill="#fff" opacity=".7"/></g>`,
+  boba: (x) => `<g transform="translate(${x} 0)">
+    <path d="M72 0 L66 60" stroke="#0B2A5B" stroke-width="12" stroke-linecap="round"/>
+    <path d="M14 60 Q68 20 122 60 Z" fill="#fff" opacity=".9"/>
+    <path d="M16 60 H120 L108 176 H28 Z" fill="#E8C9A8" stroke="#fff" stroke-width="5"/>
+    <g fill="#3B2A22">${Array.from({ length: 8 }, (_, i) => `<circle cx="${38 + (i % 4) * 20}" cy="${150 + Math.floor(i / 4) * 16}" r="8"/>`).join('')}</g></g>`,
+};
+const propsSvg = (cups) => `<svg viewBox="0 0 1080 180" aria-hidden="true">${CUPS[cups[0]](380)}${CUPS[cups[1]](570)}</svg>`;
+
+/* ===================== Utilitas ===================== */
+const $ = (s) => document.querySelector(s);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const params = new URLSearchParams(location.search);
+const SPEED = clamp(parseFloat(params.get('kecepatan')) || 1, .25, 20);  // ?kecepatan=4 untuk uji cepat
+let currentEp = clamp((parseInt(params.get('ep'), 10) || 1) - 1, 0, EPISODES.length - 1); // ?ep=3 → langsung pilih episode 3
+const rmQuery = matchMedia('(prefers-reduced-motion: reduce)');
+const reduced = () => rmQuery.matches;
+
+const typingDur = (m) => m.typing ?? clamp(T.typingBase + m.text.length * T.typingPerChar, T.typingMin, T.typingMax);
+const holdDur   = (m) => m.hold   ?? (m.list ? m.list.length * T.listItemGap + T.listHold : null) ?? clamp(T.readBase   + m.text.length * T.readPerChar,   T.readMin,   T.readMax);
+
+/* Estimasi durasi per bagian episode: [dialog, ending Pak Kepala, closing] */
+function estimateEp(ep) {
+  let talkPart = T.wipe * 2 + T.wipeHold + T.sceneIntro + T.overlayIn + T.overlayHold;
+  for (const m of [...ep.messages, ep.punch]) talkPart += typingDur(m) + holdDur(m);
+  const gagPart = ep.pops.length * (T.popIn + T.popHold + T.popOut) + T.popIn + T.finaleHold + T.taglineHold + T.freeze;
+  return [talkPart, gagPart, T.wipe * 2 + T.wipeHold + T.closing];
+}
+EPISODES.forEach((ep) => console.info(`[BHP] Tusi #${ep.no} ${ep.short}: ±${(estimateEp(ep).reduce((a, b) => a + b, 0) / 1000).toFixed(0)} detik`));
+let SEGMENTS = estimateEp(EPISODES[currentEp]);
+
+/* ===================== Narator / suara ===================== */
+const TTS = 'speechSynthesis' in window;
+let soundOn = true, idVoice = null, currentAudio = null, charVoice = { f: null, m: null };
+function pickVoice() {
+  if (!TTS) return;
+  const vs = speechSynthesis.getVoices().filter((v) => /^id(-|_|$)/i.test(v.lang));
+  // Utamakan suara neural/natural (Edge "Gadis/Ardi Online (Natural)", Google, Siri premium)
+  const score = (v) => (/natural|neural|online|premium|enhanced/i.test(v.name) ? 3 : 0) + (/google/i.test(v.name) ? 2 : 0) + (v.localService ? 0 : 1);
+  vs.sort((a, b) => score(b) - score(a));
+  idVoice = vs[0] || null;
+  const male = vs.find((v) => /ardi|male|pria|laki/i.test(v.name));
+  const female = vs.find((v) => /gadis|damayanti|female|wanita/i.test(v.name));
+  charVoice = { f: female || idVoice, m: male || idVoice };
+  updateSoundUi();
+}
+const cleanSpeech = (t) => t.replace(/[\p{Extended_Pictographic}️‍]/gu, '').replace(/\s+/g, ' ').trim();
+/* Membacakan teks; selesai saat suara berakhir (dengan batas waktu aman). */
+function speak(text, who, audioSrc) {
+  if (!soundOn) return Promise.resolve();
+  Music.duck(true);
+  return speakRaw(text, who, audioSrc).then(() => Music.duck(false));
+}
+function speakRaw(text, who, audioSrc) {
+  if (audioSrc) {
+    return new Promise((res) => {
+      const a = new Audio(audioSrc); currentAudio = a;
+      a.onended = a.onerror = () => res();
+      a.play().catch(() => res());
+    });
+  }
+  const t = cleanSpeech(text || '');
+  if (!TTS || !t) return Promise.resolve();
+  /* Dipecah per frasa (koma/titik/tanya/seru/elipsis) supaya ada jeda napas alami,
+     lalu nada & tempo tiap frasa digeser sedikit: pertanyaan naik di ujung, seruan lebih
+     semangat, "…" melambat. Hasilnya lebih kayak orang ngobrol, bukan baca teks datar. */
+  const v = VOICES[who] || VOICES.narator;
+  const voice = charVoice[v.gender] || idVoice;
+  const phrases = lafal(t).match(/[^,.!?…]+(?:[,.!?…]+|$)/g)?.map((x) => x.trim()).filter(Boolean) || [t];
+  return new Promise((res) => {
+    let done = false; const finish = () => { if (!done) { done = true; res(); } };
+    const rnd = () => (Math.random() * 2 - 1) * v.jitter;
+    phrases.forEach((ph, i) => {
+      const u = new SpeechSynthesisUtterance(ph);
+      u.lang = 'id-ID'; if (voice) u.voice = voice;
+      const q = /\?/.test(ph), ex = /!/.test(ph), trail = /…|\.\.\./.test(ph), comma = /,$/.test(ph);
+      u.pitch = clamp(v.pitch + rnd() + (q ? .12 : 0) + (ex ? .08 : 0) - (comma ? .03 : 0), .1, 2);
+      u.rate = clamp(v.rate * (1 + rnd() / 2) * (ex ? 1.06 : 1) * (trail ? .9 : 1) * (ph.length < 12 ? .96 : 1), .5, 2) * Math.min(SPEED, 2);
+      if (i === phrases.length - 1) u.onend = u.onerror = finish;
+      speechSynthesis.speak(u);
+    });
+    setTimeout(finish, (t.length * 95) / v.rate + 2500 + phrases.length * 300); // jaga-jaga bila event "end" tak muncul
+  });
+}
+/* ===================== Backsound & SFX (Web Audio, tanpa file) =====================
+   Beat lo-fi/trap 92 BPM: kick, clap, hi-hat roll, 808, pad chord, arpeggio, kresek vinyl.
+   SFX meme: pop, whoosh, vine boom, ding, stempel, riser, drop, record scratch. */
+let musicOn = true;
+const Music = (() => {
+  let ctx, master, bus, duckG, sfx, noiseBuf, timer = null, stopTimer = null, step = 0, next = 0;
+  const BPM = 92, SPB = 60 / BPM / 4;
+  const CHORDS = [[53, 57, 60, 64], [52, 55, 59, 62], [50, 53, 57, 60], [48, 52, 55, 59]]; // Fmaj7 Em7 Dm7 Cmaj7
+  const ROOTS = [41, 40, 38, 36];
+  const ARP = [0, 2, 1, 3, 2, 1, 3, 2];
+  const hz = (m) => 440 * 2 ** ((m - 69) / 12);
+  function init() {
+    if (ctx) return true;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    ctx = new AC();
+    const comp = ctx.createDynamicsCompressor(); comp.connect(ctx.destination);
+    master = ctx.createGain(); master.gain.value = .9; master.connect(comp);
+    bus = ctx.createGain(); bus.gain.value = 0;
+    duckG = ctx.createGain(); bus.connect(duckG); duckG.connect(master);
+    sfx = ctx.createGain(); sfx.gain.value = .7; sfx.connect(master);
+    noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+    const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return true;
+  }
+  function noise(t, dur, { type = 'highpass', freq = 7000, to, q = 1, gain = .2, dest = bus } = {}) {
+    const s = ctx.createBufferSource(); s.buffer = noiseBuf;
+    const f = ctx.createBiquadFilter(); f.type = type; f.Q.value = q;
+    f.frequency.setValueAtTime(freq, t); if (to) f.frequency.exponentialRampToValueAtTime(to, t + dur);
+    const g = ctx.createGain(); g.gain.setValueAtTime(gain, t); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(dest); s.start(t); s.stop(t + dur + .05);
+  }
+  function tone(t, freq, dur, { type = 'sine', to, gain = .2, attack = .005, lp, dest = bus } = {}) {
+    const o = ctx.createOscillator(); o.type = type;
+    o.frequency.setValueAtTime(freq, t); if (to) o.frequency.exponentialRampToValueAtTime(to, t + dur);
+    const g = ctx.createGain(); g.gain.setValueAtTime(.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + attack); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    let n = o; if (lp) { const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = lp; o.connect(f); n = f; }
+    n.connect(g); g.connect(dest); o.start(t); o.stop(t + dur + .05);
+  }
+  function beat(s, t) {
+    const bar = Math.floor(s / 16) % 4, i = s % 16, ch = CHORDS[bar];
+    if (i === 0) ch.forEach((n) => { tone(t, hz(n), SPB * 16, { type: 'triangle', gain: .04, attack: .3, lp: 1300 }); tone(t, hz(n) * 1.005, SPB * 16, { gain: .03, attack: .35 }); });
+    if (i === 0 || i === 6 || i === 10) tone(t, 150, .35, { to: 45, gain: .85 });                       // kick
+    if (i === 4 || i === 12) { noise(t, .18, { type: 'bandpass', freq: 1500, q: .8, gain: .4 }); noise(t + .012, .12, { type: 'bandpass', freq: 1100, gain: .25 }); } // clap
+    const roll = Math.floor(s / 16) % 2 === 1 && i >= 12;                                               // hi-hat roll
+    if (roll) { noise(t, .04, { freq: 8000, gain: .09 }); noise(t + SPB / 2, .04, { freq: 8000, gain: .06 }); }
+    else if (i % 2 === 0) noise(t, .045, { freq: 8000, gain: i % 4 === 0 ? .11 : .07 });
+    if (i === 0) tone(t, hz(ROOTS[bar]), SPB * 6, { gain: .5, attack: .01 });                          // 808
+    if (i === 10) tone(t, hz(ROOTS[bar]), SPB * 5, { gain: .45, attack: .01 });
+    if (s >= 32 && i % 2 === 0) tone(t + (i % 4 === 2 ? SPB * .12 : 0), hz(ch[ARP[i / 2]] + 12), .28, { type: 'triangle', gain: .06, lp: 2800 }); // arpeggio
+    if (Math.random() < .3) noise(t, .012, { freq: 3000, gain: .03 });                                 // kresek vinyl
+  }
+  function tick() { while (next < ctx.currentTime + .12) { beat(step, next); step++; next += SPB; } }
+  const now = () => ctx.currentTime;
+  const ok = () => musicOn && init();
+  return {
+    start(vol = .8) {
+      if (!ok()) return;
+      ctx.resume();
+      clearTimeout(stopTimer);
+      if (!timer) { step = 0; next = now() + .05; timer = setInterval(tick, 25); }
+      bus.gain.cancelScheduledValues(now()); bus.gain.setTargetAtTime(vol, now(), .15);
+    },
+    stop(fade = .5) {
+      if (!ctx) return;
+      bus.gain.cancelScheduledValues(now()); bus.gain.setTargetAtTime(0, now(), Math.max(.01, fade / 3));
+      clearTimeout(stopTimer);
+      stopTimer = setTimeout(() => { clearInterval(timer); timer = null; }, fade * 1000 + 150);
+    },
+    duck(on) { if (ctx) duckG.gain.setTargetAtTime(on ? .35 : 1, now(), .08); },
+    pop()   { if (ok()) tone(now(), 520, .09, { to: 1150, gain: .22, dest: sfx }); },
+    whoosh(){ if (ok()) noise(now(), .45, { type: 'bandpass', freq: 350, to: 4200, q: 1.3, gain: .35, dest: sfx }); },
+    ding()  { if (ok()) { tone(now(), 1320, .45, { gain: .16, dest: sfx }); tone(now(), 1980, .3, { gain: .07, dest: sfx }); } },
+    stamp() { if (ok()) { tone(now(), 150, .3, { to: 45, gain: .8, dest: sfx }); noise(now(), .12, { type: 'lowpass', freq: 900, gain: .45, dest: sfx }); } },
+    boing() { if (ok()) { tone(now(), 160, .32, { type: 'triangle', to: 760, gain: .28, dest: sfx }); tone(now() + .12, 520, .2, { to: 300, gain: .12, dest: sfx }); } },
+    vine()  { if (ok()) { tone(now(), 85, .7, { to: 38, gain: .95, dest: sfx }); tone(now(), 170, .35, { to: 80, gain: .35, dest: sfx }); } },
+    boom()  { if (ok()) { tone(now(), 95, 1.8, { to: 30, gain: 1, dest: sfx }); noise(now(), 2, { freq: 4500, gain: .28, dest: sfx }); } },
+    riser(sec) {
+      if (!ok()) return;
+      const t = now(), s = ctx.createBufferSource(); s.buffer = noiseBuf; s.loop = true;
+      const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 2;
+      f.frequency.setValueAtTime(200, t); f.frequency.exponentialRampToValueAtTime(6000, t + sec);
+      const g = ctx.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.3, t + sec);
+      g.gain.linearRampToValueAtTime(0, t + sec + .05);
+      s.connect(f); f.connect(g); g.connect(sfx); s.start(t); s.stop(t + sec + .1);
+    },
+    scratch() {
+      if (!ok()) return;
+      const t = now(), o = ctx.createOscillator(); o.type = 'sawtooth';
+      o.frequency.setValueAtTime(220, t); o.frequency.linearRampToValueAtTime(950, t + .12); o.frequency.linearRampToValueAtTime(140, t + .38);
+      const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1200; f.Q.value = 1.5;
+      const g = ctx.createGain(); g.gain.setValueAtTime(.3, t); g.gain.exponentialRampToValueAtTime(.0001, t + .4);
+      o.connect(f); f.connect(g); g.connect(sfx); o.start(t); o.stop(t + .45);
+      noise(t, .4, { type: 'bandpass', freq: 2000, to: 500, gain: .2, dest: sfx });
+    },
+    get ready() { return !!ctx; },
+  };
+})();
+
+function stopSpeech() {
+  if (TTS) speechSynthesis.cancel();
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+}
+
+/* Sleep yang bisa dibatalkan saat "Ulang" */
+let runId = 0;
+const CANCEL = Symbol('cancel');
+function sleep(ms) {
+  const my = runId;
+  return new Promise((res, rej) => setTimeout(() => (my === runId ? res() : rej(CANCEL)), ms / SPEED));
+}
+
+/* ===================== Skala responsif ===================== */
+function fit() { $('#stage').style.setProperty('--s', Math.min(innerWidth / 1080, innerHeight / 1920)); }
+addEventListener('resize', fit); fit();
+
+/* ===================== Progress bar ===================== */
+const progress = $('#progress');
+progress.innerHTML = [0, 1, 2].map(() => '<i><b></b></i>').join('');
+const bars = [...progress.querySelectorAll('b')];
+let seg = { i: -1, start: 0, dur: 1 };
+function setSegment(i) {
+  bars.forEach((b, k) => (b.style.width = k < i ? '100%' : '0%'));
+  seg = { i, start: performance.now(), dur: SEGMENTS[i] / SPEED };
+}
+(function tick() {
+  if (seg.i >= 0 && bars[seg.i]) bars[seg.i].style.width = clamp((performance.now() - seg.start) / seg.dur, 0, 1) * 100 + '%';
+  requestAnimationFrame(tick);
+})();
+
+/* ===================== Elemen ===================== */
+const app = $('#app'), world = $('#world'), talk = $('#talk');
+const overlay = $('#overlay'), kepala = $('#kepala'), tagline = $('#tagline'), flash = $('#flash');
+const wipeEl = $('#wipe'), startEl = $('#start'), closingEl = $('#closing'), endBtns = $('#endBtns');
+kepala.querySelector('.kfig').innerHTML = KEPALA_SVG;
+const cast = { tasya: $('#tasya'), dinda: $('#dinda') };
+cast.tasya.innerHTML = TASYA_SVG;
+cast.dinda.innerHTML = DINDA_SVG;
+document.querySelector('.duo .tasya').innerHTML = TASYA_SVG;
+document.querySelector('.duo .dinda').innerHTML = DINDA_SVG;
+
+function clearChar(ch) {
+  ch.className = ch.className.split(' ').filter((c) => !/^act-|^talking$|^thinking$/.test(c)).join(' ');
+  ch.querySelectorAll('.emote').forEach((e) => e.remove());
+}
+
+function resetStage() {
+  // Matikan transisi sementara supaya reset tidak terlihat "mundur pelan"
+  app.classList.add('resetting');
+  talk.innerHTML = '';
+  overlay.classList.remove('show');
+  app.classList.remove('dim', 'shake', 'frozen');
+  world.classList.remove('zoom');
+  kepala.className = 'kepala';
+  kepala.removeAttribute('style');
+  $('#sparkles').innerHTML = '';
+  tagline.classList.remove('show');
+  flash.classList.remove('go');
+  Object.values(cast).forEach(clearChar);
+  void app.offsetWidth;
+  app.classList.remove('resetting');
+}
+
+function setScene(sc) {
+  resetStage();
+  $('#chip .ico').innerHTML = svg(sc.icon, 2.2);
+  $('#chip .txt').innerHTML = `Tusi #${sc.no} <small>· ${sc.title}</small>`;
+  $('#bg').innerHTML = bgSvg(sc.bg);
+  $('#table').innerHTML = tableSvg(sc.bg);
+  $('#props').innerHTML = propsSvg(sc.cups || ['kopi', 'kopi']);
+}
+
+async function wipe(label, swap) {
+  wipeEl.querySelector('span').textContent = label || '';
+  wipeEl.className = 'cover';
+  Music.whoosh();
+  await sleep(T.wipe);
+  swap();
+  await sleep(T.wipeHold);
+  wipeEl.className = 'reveal';
+  Music.whoosh();
+  await sleep(T.wipe);
+  wipeEl.className = '';
+}
+
+async function sendMessage(m) {
+  const c = CHARACTERS[m.from], ch = cast[m.from];
+  if (m.fresh) talk.innerHTML = '';
+  talk.querySelectorAll('.line').forEach((l) => l.classList.add('old'));
+
+  // 1) Tokoh "mikir" + balon titik-titik
+  const line = document.createElement('div');
+  line.className = `line ${c.side}`;
+  const typing = document.createElement('div');
+  typing.className = 'bubble typing';
+  typing.setAttribute('aria-label', `${c.name} sedang mengetik`);
+  typing.innerHTML = '<i></i><i></i><i></i>';
+  line.appendChild(typing);
+  talk.appendChild(line);
+  ch.classList.add('thinking');
+  await sleep(typingDur(m));
+
+  // 2) Balon teks pop-in + tokoh bicara dengan ekspresi
+  const b = document.createElement('div');
+  b.className = m.list ? 'bubble listcard' : 'bubble';
+  b.innerHTML = `<div class="name">${c.name}<span class="tag">${c.tag}</span></div><div class="text"></div>`;
+  b.querySelector('.text').textContent = m.text;
+  if (m.list) {
+    b.querySelector('.text').className = 'ltitle';
+    const ul = document.createElement('ul');
+    for (const it of m.list) {
+      const li = document.createElement('li');
+      li.innerHTML = `<span aria-hidden="true">${it.icon}</span><b></b>`;
+      li.querySelector('b').textContent = it.text;
+      ul.appendChild(li);
+    }
+    b.appendChild(ul);
+  }
+  typing.replaceWith(b);
+  Music.pop();
+  if (m.act === 'shock') Music.vine();
+  ch.classList.remove('thinking');
+  if (m.act) ch.classList.add(`act-${m.act}`);
+  if (m.emote) { const e = document.createElement('div'); e.className = 'emote'; e.textContent = m.emote; ch.appendChild(e); }
+  ch.classList.add('talking');
+
+  const hold = holdDur(m);
+  if (m.list) {
+    // Poin tusi muncul satu per satu sambil Dinda membacakannya
+    await Promise.all([sleep(600), speak(m.say || m.text, m.from)]);
+    for (const [k, li] of [...b.querySelectorAll('li')].entries()) {
+      li.classList.add('in');
+      Music.ding();
+      await Promise.all([sleep(T.listItemGap), speak(m.list[k].say || m.list[k].text, m.from)]);
+    }
+    ch.classList.remove('talking');
+    await sleep(T.listHold);
+    clearChar(ch);
+    return;
+  }
+  // Mulut bergerak selama suara diputar (minimal talkMs), lalu sisa waktu baca
+  const t0 = performance.now();
+  const talkMs = clamp(m.text.length * T.talkPerChar, 600, hold - 300);
+  await Promise.all([sleep(talkMs), speak(m.say || m.text, m.from, m.audio)]);
+  ch.classList.remove('talking');
+  const spent = (performance.now() - t0) * SPEED;
+  await sleep(Math.max(500, hold - spent));
+  clearChar(ch);
+}
+
+async function showOverlay(o, num) {
+  overlay.querySelector('.oi').innerHTML = svg(o.icon, 1.8);
+  overlay.querySelector('.onum b').textContent = num;
+  overlay.querySelector('.otitle').textContent = o.title;
+  overlay.querySelector('.osub').textContent = o.sub || '';
+  overlay.classList.add('show');
+  Music.whoosh();
+  sleep(T.overlayIn + 150).then(() => Music.stamp(), () => {}); // saat stempel "BISA DI BHP" mendarat
+  await Promise.all([
+    sleep(T.overlayIn + T.overlayHold),
+    sleep(T.overlayIn).then(() => speak(`Nah, catet ya. ${o.title}, bisa kamu urus di BHP. ${o.sub || ''}`, 'narator')),
+  ]);
+}
+
+/* Tempat-tempat Pak Kepala nongol (koordinat kanvas 1080x1920) */
+const SPOTS = {
+  right: { left: 700, top: 640,  r: -22, from: 'translateX(620px)', kbx: -150 },
+  left:  { left: -40, top: 640,  r: 22,  from: 'translateX(-620px)', kbx: 150 },
+  top:   { left: 330, top: -110, r: 180, from: 'translateY(-760px)', below: true },
+  table: { left: 330, top: 1110, r: 0,   from: 'translateY(480px)', z: 2 },
+  cup:   { left: 235, top: 905,  r: -8,  from: 'translateY(300px)', z: 2, scale: .45 },
+  final: { left: 330, top: 915,  r: 0,   from: 'scale(0) rotate(-360deg)', final: true },
+};
+function placeKepala(name, text) {
+  const s = SPOTS[name], base = s.scale ? `scale(${s.scale})` : '';
+  kepala.className = 'kepala' + (s.below ? ' kb-below' : '') + (s.scale ? ' tiny' : '') + (s.final ? ' final' : '');
+  kepala.style.transition = 'none';
+  Object.assign(kepala.style, { left: s.left + 'px', top: s.top + 'px', zIndex: s.z || 6, transformOrigin: s.scale ? '50% 100%' : '50% 50%' });
+  kepala.style.setProperty('--r', s.r + 'deg');
+  kepala.style.setProperty('--kbx', (s.kbx || 0) + 'px');
+  kepala.style.transform = `${s.from} ${base}`;
+  kepala.querySelector('.kb').textContent = text;
+  void kepala.offsetWidth;
+  kepala.style.transition = '';
+  kepala.classList.add('in');
+  kepala.style.transform = base || 'none';
+  return s;
+}
+async function hideKepala(s) {
+  kepala.style.transform = `${s.from} ${s.scale ? `scale(${s.scale})` : ''}`;
+  await sleep(T.popOut);
+  kepala.classList.remove('in');
+}
+function sparkle(n = 8) {
+  const box = $('#sparkles'); box.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const e = document.createElement('i');
+    e.textContent = ['✨', '⭐', '💫', '🌟'][i % 4];
+    e.style.left = 120 + Math.random() * 840 + 'px'; e.style.top = 700 + Math.random() * 600 + 'px';
+    e.style.animationDelay = i * 60 + 'ms';
+    box.appendChild(e);
+  }
+}
+
+/* Ending semi-komedi: Pak Kepala nongol dari berbagai tempat, lalu tampil utuh */
+async function finale(ep) {
+  talk.innerHTML = '';
+  overlay.classList.remove('show');
+  const reacts = ['laugh', 'nod', 'bounce'];
+  for (const [i, p] of ep.pops.entries()) {
+    Object.values(cast).forEach(clearChar);
+    const s = placeKepala(p.spot, p.text);
+    Music.boing();
+    if (i === 0) Music.vine();
+    cast.tasya.classList.add(i === 0 ? 'act-shock' : 'act-tilt');
+    cast.dinda.classList.add(`act-${reacts[i % reacts.length]}`);
+    await sleep(T.popIn);
+    await Promise.all([sleep(T.popHold), speak(p.text, 'boss')]);
+    await hideKepala(s);
+  }
+  Object.values(cast).forEach(clearChar);
+
+  // Pak Kepala tampil utuh di tengah + jempol
+  const line = FINALE.line(ep);
+  placeKepala('final', line);
+  Music.boing(); sparkle();
+  cast.tasya.classList.add('act-shock'); cast.dinda.classList.add('act-nod');
+  await sleep(T.popIn);
+  await Promise.all([sleep(T.finaleHold + 800), speak(line, 'boss')]);
+
+  // Tagline besar + flash + shake, semua melonjak
+  const c = FINALE;
+  tagline.querySelector('.t1').textContent = c.tagline[0];
+  tagline.querySelector('.t2').textContent = c.tagline[1];
+  Object.values(cast).forEach((ch) => { clearChar(ch); ch.classList.add('act-wow'); });
+  if (!reduced()) {
+    flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+    app.classList.remove('shake'); void app.offsetWidth; app.classList.add('shake');
+  }
+  tagline.classList.add('show');
+  Music.boom(); Music.start(.9); // drop!
+  await Promise.all([sleep(T.taglineHold), speak(c.tagline.join(' '), 'narator')]);
+
+  // Freeze frame + record scratch
+  app.classList.add('frozen');
+  Music.scratch(); Music.stop(.05);
+  await sleep(T.freeze);
+}
+
+async function showClosing(ep) {
+  setSegment(2);
+  const next = EPISODES[(currentEp + 1) % EPISODES.length];
+  const isLast = currentEp === EPISODES.length - 1;
+  $('#tusiCard').innerHTML = `<small>TUSI #${ep.no} BHP ${ep.emoji}</small><b></b><span>✔ ADA DI BHP</span>`;
+  $('#tusiCard b').textContent = ep.tusi;
+  $('#teaser').innerHTML = `Lu belum tau aja, ada lagi loh tusi lain! 👉<br><b>Tusi #${next.no}: ${next.short} ${next.emoji}</b>`;
+  $('#nextBtn').textContent = isLast ? 'Mulai lagi dari Tusi #1 👉' : `Tusi #${next.no}: ${next.short} 👉`;
+  await wipe('', () => {
+    closingEl.hidden = false;
+    closingEl.classList.remove('show'); void closingEl.offsetWidth; closingEl.classList.add('show');
+    Music.start(.55);
+  });
+  await Promise.all([sleep(T.replayAfter),
+    speak(`Jadi inget ya, urusan ${ep.tusi.toLowerCase()}, langsung aja ke BHP. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!`, 'narator')
+      .then(() => speak(`Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor ${next.no}, soal ${next.short.toLowerCase()}. Tungguin ya!`, 'dinda'))]);
+  endBtns.hidden = false;
+  $('#nextBtn').focus({ preventScroll: true });
+}
+
+async function play(epIndex = currentEp) {
+  runId++;
+  currentEp = epIndex;
+  const ep = EPISODES[epIndex];
+  SEGMENTS = estimateEp(ep);
+  stopSpeech();
+  Music.start(.8);
+  endBtns.hidden = true;
+  try {
+    setSegment(0);
+    await wipe(`TUSI #${ep.no}`, () => {
+      startEl.hidden = true;
+      closingEl.hidden = true;
+      setScene(ep);
+    });
+    await sleep(T.sceneIntro);
+    for (const m of ep.messages) await sendMessage(m);
+    await showOverlay(ep.overlay, ep.no);
+    await sendMessage(ep.punch);
+    setSegment(1);
+    await finale(ep);
+    await showClosing(ep);
+  } catch (e) {
+    if (e !== CANCEL) throw e;
+  }
+}
+
+/* Tombol suara di layar awal + tombol M untuk mute */
+const soundBtn = $('#soundBtn');
+function updateSoundUi() {
+  soundBtn.textContent = soundOn ? '🔊 Narator: ON' : '🔇 Narator: OFF';
+  soundBtn.setAttribute('aria-pressed', String(soundOn));
+  $('#voiceNote').textContent = !TTS ? 'Browser ini tidak mendukung suara.'
+    : idVoice ? `Suara: ${idVoice.name}` : 'Suara Bahasa Indonesia belum terpasang di perangkat ini.';
+}
+soundBtn.addEventListener('click', () => { soundOn = !soundOn; if (!soundOn) stopSpeech(); updateSoundUi(); });
+addEventListener('keydown', (e) => { if (e.key === 'm' || e.key === 'M') { soundOn = !soundOn; if (!soundOn) stopSpeech(); updateSoundUi(); } });
+const musicBtn = $('#musicBtn');
+musicBtn.addEventListener('click', () => {
+  musicOn = !musicOn;
+  if (!musicOn) Music.stop(.2);
+  musicBtn.textContent = musicOn ? '🎵 Backsound: ON' : '🔇 Backsound: OFF';
+  musicBtn.setAttribute('aria-pressed', String(musicOn));
+});
+if (TTS) { pickVoice(); speechSynthesis.addEventListener?.('voiceschanged', pickVoice); }
+updateSoundUi();
+
+/* Pilihan episode di layar awal */
+const epsEl = $('#eps');
+epsEl.innerHTML = EPISODES.map((ep, i) =>
+  `<button class="ep" type="button" role="radio" data-i="${i}" aria-checked="${i === currentEp}"><span class="e" aria-hidden="true">${ep.emoji}</span><span><small>TUSI #${ep.no}</small>${ep.short}</span></button>`).join('');
+epsEl.addEventListener('click', (e) => {
+  const b = e.target.closest('.ep'); if (!b) return;
+  currentEp = +b.dataset.i;
+  epsEl.querySelectorAll('.ep').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+});
+
+$('#playBtn').addEventListener('click', () => play(currentEp));
+$('#replayBtn').addEventListener('click', () => play(currentEp));
+$('#nextBtn').addEventListener('click', () => play((currentEp + 1) % EPISODES.length));
+setScene(EPISODES[currentEp]);
+</script>
+</body>
+</html>
