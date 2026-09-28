@@ -1,0 +1,492 @@
+<title>Telaah Cessie PT Rata Makmur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#EEF2F7; --panel:#FFFFFF; --ink:#0E1B2C; --muted:#5B6B80; --line:#DCE3EC;
+  --navy:#0A3A73; --accent:#1559B7; --accent-soft:#E6EEFA; --gold:#A57C12; --gold-soft:#FBF3DC;
+  --bad:#B42318; --bad-soft:#FDECEA; --ok:#157A46; --ok-soft:#E3F4EA;
+  --shadow:0 1px 2px rgba(10,58,115,.06),0 8px 24px rgba(10,58,115,.08);
+  --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:var(--sans); --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#0A1220;--panel:#111C2E;--ink:#E6ECF4;--muted:#93A3B8;--line:#22314A;--navy:#0D2A52;
+  --accent:#6EA8FF;--accent-soft:#16294A;--gold:#E2BC55;--gold-soft:#2D2614;
+  --bad:#FF8A7A;--bad-soft:#3A1C1A;--ok:#6FD49A;--ok-soft:#15301F;--shadow:0 8px 24px rgba(0,0,0,.35);}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0A1220;--panel:#111C2E;--ink:#E6ECF4;--muted:#93A3B8;--line:#22314A;--navy:#0D2A52;
+  --accent:#6EA8FF;--accent-soft:#16294A;--gold:#E2BC55;--gold-soft:#2D2614;
+  --bad:#FF8A7A;--bad-soft:#3A1C1A;--ok:#6FD49A;--ok-soft:#15301F;--shadow:0 8px 24px rgba(0,0,0,.35);}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font:15px/1.6 var(--sans);padding-inline:0;-webkit-font-smoothing:antialiased}
+/* app bar */
+.appbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--navy);color:#fff;padding:12px 16px 0}
+.appbar .row{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.seal{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.12);display:grid;place-items:center;flex:none}
+.appbar .ttl{flex:1;min-width:0}
+.appbar .ttl small{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.75;font-weight:600}
+.appbar .ttl b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iconbtn{background:rgba(255,255,255,.12);border:0;color:#fff;border-radius:10px;padding:8px 11px;font:600 13px var(--sans);cursor:pointer}
+.iconbtn:hover{background:rgba(255,255,255,.2);color:#fff}
+.prog-top{max-width:760px;margin:12px auto 0;height:4px;background:rgba(255,255,255,.18);border-radius:4px 4px 0 0;overflow:hidden}
+.prog-top i{display:block;height:100%;background:#F2C94C;width:0;transition:width .35s ease}
+/* stage */
+main{max-width:760px;margin:0 auto;padding:18px 16px calc(96px + env(safe-area-inset-bottom,0px))}
+main>section{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:22px 18px;animation:in .3s ease}
+body.deck main>section{display:none}
+body.deck main>section.cur{display:block}
+body:not(.deck) main{display:grid;gap:16px}
+@keyframes in{from{opacity:.4;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (min-width:640px){main>section{padding:30px 32px}}
+.eyebrow{font:700 11px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.hero{background:linear-gradient(160deg,var(--panel) 55%,var(--accent-soft))!important}
+h1{font:800 clamp(24px,6.5vw,34px)/1.2 var(--sans);margin:8px 0 12px;text-wrap:balance;letter-spacing:-.01em}
+h2{font:800 22px/1.25 var(--sans);margin:0 0 6px;text-wrap:balance;letter-spacing:-.01em}
+h2::before{content:attr(data-n);display:block;font:700 11px var(--sans);letter-spacing:.12em;color:var(--accent);margin-bottom:6px;text-transform:uppercase}
+h3{font:700 15px/1.35 var(--sans);margin:0 0 4px}
+.lede{color:var(--muted);font-size:15.5px;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.chip{font:600 11.5px var(--sans);padding:5px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.chip.g{background:var(--gold-soft);color:var(--gold)}
+section>.sub{color:var(--muted);margin:0 0 16px;font-size:14.5px}
+.pasal{font:500 11.5px var(--mono);color:var(--gold);background:var(--gold-soft);padding:1px 6px;border-radius:5px;white-space:nowrap}
+td.pasal,dd.pasal{background:none;padding:0}
+.thesis{background:var(--accent-soft);border-radius:14px;padding:16px 18px;font:600 16px/1.6 var(--sans);margin:0}
+.thesis em{font-style:normal;color:var(--accent)}
+.note{background:var(--gold-soft);border-radius:12px;padding:12px 14px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.cell{background:var(--bg);border-radius:14px;padding:14px 16px}
+.cell p{margin:0;color:var(--muted);font-size:14px}
+.cell .n{width:30px;height:30px;border-radius:9px;background:var(--accent);color:var(--panel);display:grid;place-items:center;font:800 14px var(--sans);margin-bottom:10px}
+/* tables → cards on mobile */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font:700 11px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:var(--bg)}
+td{padding:11px 12px;border-top:1px solid var(--line);vertical-align:top}
+@media (max-width:640px){
+  .tbl{border:0;overflow:visible}
+  table,tbody,tr,td{display:block;width:100%} thead{display:none}
+  tr{background:var(--bg);border-radius:14px;padding:6px 14px;margin-bottom:10px}
+  td{border:0;padding:6px 0;display:grid;grid-template-columns:96px 1fr;gap:10px}
+  td::before{content:attr(data-label);font:700 10.5px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+  td:first-child{font-weight:700;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:2px}
+  td[data-label=""]{grid-template-columns:1fr} td[data-label=""]::before{display:none}
+}
+.st{display:inline-block;font:700 11px var(--sans);padding:2px 8px;border-radius:6px}
+.st.bad{background:var(--bad-soft);color:var(--bad)}.st.ok{background:var(--ok-soft);color:var(--ok)}.st.mid{background:var(--gold-soft);color:var(--gold)}
+/* buttons */
+button{font:600 14px var(--sans);cursor:pointer;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:11px 16px;min-height:44px}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button.pri{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+button.pri:hover{filter:brightness(1.08);color:var(--panel)}
+/* wizard */
+.wiz{background:var(--bg);border-radius:16px;padding:18px}
+.wiz .prog{display:flex;gap:5px;margin-bottom:14px}.wiz .prog i{flex:1;height:4px;border-radius:2px;background:var(--line)}.wiz .prog i.done{background:var(--accent)}
+.q{font:800 18px/1.35 var(--sans);margin:6px 0}
+.qhelp{color:var(--muted);font-size:14px;margin:0 0 14px}
+.btns{display:flex;flex-direction:column;gap:8px}
+@media (min-width:640px){.btns{flex-direction:row;flex-wrap:wrap}}
+.btns button{text-align:left}
+.verdict{border-radius:14px;padding:16px}
+.verdict.bad{background:var(--bad-soft)}.verdict.ok{background:var(--ok-soft)}.verdict.mid{background:var(--gold-soft)}
+.verdict .tag{font:700 11px var(--sans);letter-spacing:.1em;text-transform:uppercase}
+.verdict.bad .tag{color:var(--bad)}.verdict.ok .tag{color:var(--ok)}.verdict.mid .tag{color:var(--gold)}
+.verdict ol{margin:10px 0 0;padding-left:20px}.verdict li{margin-bottom:4px}
+.trail{font-size:12.5px;color:var(--muted);margin-top:12px}
+/* tahap */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin:0 -18px 12px;padding-inline:18px;scrollbar-width:none}
+.tabs button{white-space:nowrap;padding:8px 14px;min-height:38px;border-radius:999px}
+.tabs button[aria-selected="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.stage-h{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;align-items:baseline;margin-bottom:10px}
+.stage-h h3{font:800 18px var(--sans)!important}.stage-h span{color:var(--muted);font-size:13px}
+.steps{display:grid;gap:10px}
+.step{background:var(--bg);border-radius:14px;padding:14px;display:grid;grid-template-columns:38px 1fr;gap:10px}
+.step .num{width:32px;height:32px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font:700 12px var(--mono)}
+.step dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:8px 0 0;font-size:13.5px}
+.step dt{color:var(--muted);font-weight:600}.step dd{margin:0}
+/* checklist */
+.ck{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.ck fieldset{border:0;border-radius:14px;background:var(--bg);padding:14px 16px;margin:0}
+.ck legend{font:700 13px var(--sans);float:left;width:100%;margin-bottom:6px}
+.ck label{display:flex;gap:10px;font-size:14px;padding:7px 0;cursor:pointer;clear:both}
+.ck input{accent-color:var(--accent);width:18px;height:18px;margin-top:2px;flex:none}
+.ckbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;font-size:13px;color:var(--muted)}
+.ckbar .bar{flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
+.ckbar .bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+.ckbar button{min-height:36px;padding:6px 12px}
+/* letters */
+details.letter{background:var(--bg);border-radius:14px;margin-bottom:10px}
+details.letter summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.letter summary::-webkit-details-marker{display:none}
+details.letter summary::after{content:"+";color:var(--accent);font-size:18px;line-height:1}details.letter[open] summary::after{content:"–"}
+.lbody{padding:0 16px 16px}
+.lbody pre{white-space:pre-wrap;font:14px/1.65 var(--sans);background:var(--panel);border:1px solid var(--line);padding:14px;border-radius:10px;margin:0 0 10px}
+.ok-msg{font-size:13px;color:var(--ok);margin-left:8px}
+ol.rec{padding-left:20px}ol.rec li{margin-bottom:8px}
+/* bottom nav */
+.botnav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.botnav .row{max-width:760px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.botnav button{flex:1}
+.botnav .cnt{font:700 13px var(--sans);color:var(--muted);min-width:56px;text-align:center;font-variant-numeric:tabular-nums}
+body:not(.deck) .botnav{display:none}
+/* menu sheet */
+.sheet[hidden]{display:none}
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(6,20,40,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet .box{background:var(--panel);width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:80vh;overflow:auto}
+@media (min-width:640px){.sheet{align-items:center}.sheet .box{border-radius:20px}}
+.sheet h3{font:800 17px var(--sans);margin:0 0 10px}
+.sheet ol{list-style:none;padding:0;margin:0 0 12px;display:grid;gap:4px}
+.sheet li button{width:100%;text-align:left;border:0;background:var(--bg);display:flex;gap:12px;align-items:center}
+.sheet li button span{font:700 12px var(--mono);color:var(--accent);width:22px}
+.sheet li button.on{background:var(--accent-soft);color:var(--accent)}
+.foot{font-size:12.5px;color:var(--muted);text-align:center;padding:4px 8px 0;max-width:760px;margin:0 auto}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.step{grid-template-columns:auto 1fr}.step .num{width:auto;min-width:32px;padding:0 7px}
+</style>
+<header class="appbar">
+  <div class="row">
+    <div class="seal" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F2C94C" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M5 7h14M7 7l-3 7a3 3 0 0 0 6 0L7 7zM17 7l-3 7a3 3 0 0 0 6 0l-3-7zM8 21h8"/></svg></div>
+    <div class="ttl"><small>BHP · Kurator PT Rata Makmur</small><b id="curTitle">Cessie Sei Tampa</b></div>
+    <button class="iconbtn" id="modeBtn" type="button">Semua</button>
+    <button class="iconbtn" id="menuBtn" type="button" aria-haspopup="dialog">Menu</button>
+  </div>
+  <div class="prog-top"><i id="progTop"></i></div>
+</header>
+
+<main>
+<section id="cover" class="hero" data-t="Sampul">
+  <div class="eyebrow">BHP Medan · Seksi Harta Peninggalan Wilayah II</div>
+  <h1>Cessie hak ganti rugi eks HGU No. 2/Sei Tampa</h1>
+  <p class="lede">Bisakah Kurator mengalihkan hak PT Rata Makmur (dalam pailit) atas ganti rugi tanaman dan bangunan di kebun Sei Tampa? Telaah ini mengurai dasar hukumnya, syaratnya, skemanya, dan langkah BHP sampai uang masuk rekening boedel.</p>
+  <div class="grid" style="margin-top:16px">
+    <div class="cell"><h3>Perkara</h3><p>No. 33/Pdt.Sus-PKPU/2022/PN Niaga Mdn · pailit 10 April 2023</p></div>
+    <div class="cell"><h3>Daftar Piutang Tetap</h3><p>Rp1.432.871.696 · disahkan 22 Juni 2023 (insolvensi)</p></div>
+    <div class="cell"><h3>Sisa tagihan terbesar</h3><p>KPP Pratama Binjai Rp1.108.581.903 · belum dibayar</p></div>
+    <div class="cell"><h3>Objek</h3><p>Tanaman sawit, bangunan, dan benda di atas ±338,7 / 388,7 Ha, Desa Sei Tampa, Kec. Selesai, Langkat</p></div>
+  </div>
+  <div class="meta"><span class="chip">UU 37/2004</span><span class="chip">KUHPer Ps. 613, 1534–1535</span><span class="chip">PP 40/1996 Ps. 4(4), 17, 18</span><span class="chip">PP 18/2021 Ps. 22</span><span class="chip g">Sumber: memo Kurator 28 Sep 2026, BA RK 10 Des 2025, laporan TW III 2026</span></div>
+</section>
+
+<section id="kronologi" data-t="Kronologi">
+  <h2>Kronologi yang menentukan</h2>
+  <p class="sub">Urutan waktu inilah yang membuat tanah keluar dari boedel, tetapi hak atas tanaman dan bangunan tetap tinggal.</p>
+  <div class="steps">
+    <div class="step"><div class="num">1989</div><div><h3>HGU No. 2/Sei Tampa diberikan, 25 tahun</h3><p style="margin:0;color:var(--muted)">Surat Ukur Sementara No. 471/1989 tanggal 6 Juni 1989.</p></div></div>
+    <div class="step"><div class="num">2011</div><div><h3>Tenggat perpanjangan lewat (31 Agustus 2011)</h3><p style="margin:0;color:var(--muted)">Tidak ada permohonan perpanjangan. <span class="pasal">PP 40/1996 Ps. 10(1)</span></p></div></div>
+    <div class="step"><div class="num">2013</div><div><h3>HGU hapus demi hukum, 31 Agustus 2013</h3><p style="margin:0;color:var(--muted)">Tanah menjadi tanah negara. Bangunan dan tanaman tetap milik PT (asas pemisahan horizontal). <span class="pasal">UUPA Ps. 34a; PP 40/1996 Ps. 17</span></p></div></div>
+    <div class="step"><div class="num">2022</div><div><h3>PKPU Sementara, 9 Agustus 2022</h3><p style="margin:0;color:var(--muted)">Atas permohonan eks karyawan (Samin K dkk).</p></div></div>
+    <div class="step"><div class="num">2023</div><div><h3>Pailit 10 April · blokir 8 Mei · sita umum 22 Mei · DPT 22 Juni</h3><p style="margin:0;color:var(--muted)">Sejak DPT disahkan, harta pailit dalam keadaan insolvensi. <span class="pasal">UUK Ps. 178</span></p></div></div>
+    <div class="step"><div class="num">2024</div><div><h3>Surat BPN Langkat, 12 Agustus 2024</h3><p style="margin:0;color:var(--muted)">HGU berakhir 2013, blokir BHP tercatat, bidang belum terpetakan di KKP. Luas 388,7463 Ha (laporan Kurator: 338,7463 Ha).</p></div></div>
+    <div class="step"><div class="num">2025</div><div><h3>Setor Rp170 juta (29 Mar) · dibagi ke 6 eks karyawan (24–25 Jun) · RK 10 Des</h3><p style="margin:0;color:var(--muted)">Debitor berjanji menyetor dana investor paling lambat 18 Desember 2025. Tidak dipenuhi.</p></div></div>
+    <div class="step"><div class="num">2026</div><div><h3>Rapat 14 Sep · memo Kurator 28 Sep · menunggu tim khusus Kanwil BPN Sumut</h3><p style="margin:0;color:var(--muted)">PT Raya Padang Langkat pernah menyatakan minat. Kebun diduga dikontrakkan ke pihak lain untuk panen.</p></div></div>
+  </div>
+</section>
+
+<section id="inti" data-t="Jawaban singkat">
+  <h2>Jawaban singkat</h2>
+  <p class="thesis">Bisa, dengan syarat. Yang dialihkan <em>bukan tanah dan bukan HGU</em>, melainkan <em>hak tagih ganti rugi</em> atas tanaman, bangunan, dan benda yang masih diperlukan untuk melanjutkan usaha kebun. Hak tagih itu piutang, jadi penyerahannya memakai cessie. Karena ia harta pailit, pengalihannya adalah <em>penjualan harta pailit</em>: lelang, atau di bawah tangan dengan izin Hakim Pengawas.</p>
+  <div class="grid" style="margin-top:16px">
+    <div class="cell"><h3>Sumber hak</h3><p>Bekas pemegang HGU berhak atas ganti rugi bila tanaman dan bangunan masih diperlukan. <span class="pasal">PP 40/1996 Ps. 18(2), 4(4)</span></p></div>
+    <div class="cell"><h3>Masuk boedel</h3><p>Hak itu kekayaan PT Rata Makmur pada 10 April 2023. <span class="pasal">UUK Ps. 21</span></p></div>
+    <div class="cell"><h3>Cara serah</h3><p>Akta cessie, lalu diberitahukan kepada pihak yang wajib membayar. <span class="pasal">KUHPer Ps. 613</span></p></div>
+    <div class="cell"><h3>Wewenang</h3><p>Hanya Kurator; insolvensi sudah terjadi. Di bawah tangan wajib izin HP. <span class="pasal">UUK Ps. 24, 69, 178, 185</span></p></div>
+  </div>
+</section>
+
+<section id="objek" data-t="Apa yang bisa dialihkan">
+  <h2>Apa yang bisa dan tidak bisa dialihkan</h2>
+  <p class="sub">Pisahkan setiap unsur di kebun Sei Tampa. Setiap unsur punya cara pengalihan sendiri.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Unsur</th><th>Status</th><th>Bisa dicessie?</th><th>Cara yang benar</th><th>Dasar</th></tr></thead>
+    <tbody>
+      <tr><td>Tanah ±338,7/388,7 Ha</td><td><span class="st bad">Tanah negara</span></td><td>Tidak</td><td>Keluarkan dari daftar harta pailit</td><td class="pasal">PP 40/1996 Ps. 17(2); UUK Ps. 21</td></tr>
+      <tr><td>HGU No. 2/Sei Tampa</td><td><span class="st bad">Hapus 2013</span></td><td>Tidak</td><td>Tidak ada lagi yang bisa dialihkan</td><td class="pasal">UUPA Ps. 34a</td></tr>
+      <tr><td>Prioritas bekas pemegang hak</td><td><span class="st mid">Diskresi Menteri</span></td><td>Tidak (bukan benda)</td><td>Kurator dapat mengajukan atau melepaskannya demi boedel, sebagai bagian dari kesepakatan ganti rugi</td><td class="pasal">PP 18/2021 Ps. 22(3); UUK Ps. 69</td></tr>
+      <tr><td><b>Hak tagih ganti rugi tanaman &amp; bangunan</b></td><td><span class="st ok">Boedel</span></td><td><b>Ya</b></td><td>Cessie melalui penjualan harta pailit, izin HP</td><td class="pasal">PP 40/1996 Ps. 18(2), 4(4); KUHPer 613; UUK 185</td></tr>
+      <tr><td>Bangunan &amp; mesin (bila dibongkar)</td><td><span class="st ok">Boedel</span></td><td>Tidak perlu</td><td>Jual sebagai benda bergerak/bongkaran; penyerahan nyata</td><td class="pasal">KUHPer Ps. 612; UUK Ps. 185</td></tr>
+      <tr><td>Hasil kebun sejak 10 April 2023</td><td><span class="st ok">Boedel</span></td><td>Bisa, tetapi tagih dulu</td><td>Tagih debitor dan pengelola kebun; kontrak panen setelah pailit tidak mengikat boedel</td><td class="pasal">UUK Ps. 21, 24, 26</td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="syarat" data-t="Syarat sah">
+  <h2>Enam syarat sebelum akta cessie dibuat</h2>
+  <p class="sub">Semua harus terpenuhi. Kalau satu belum, jangan tanda tangan dulu.</p>
+  <div class="grid">
+    <div class="cell"><div class="n">1</div><h3>Objeknya ada dan tertentu</h3><p>Hak ganti rugi baru lahir bila tanaman dan bangunan "masih diperlukan" untuk melanjutkan usaha. Buktikan lewat inventarisasi lapangan dan penilaian KJPP. <span class="pasal">PP 40/1996 Ps. 18(2)</span></p></div>
+    <div class="cell"><div class="n">2</div><h3>Pihak yang wajib bayar jelas</h3><p>Pemohon HGU baru, atau negara bila tanah ditata ulang. Ini bergantung pada sikap tim khusus Kanwil BPN Sumut. <span class="pasal">PP 40/1996 Ps. 4(4), 18(2)</span></p></div>
+    <div class="cell"><div class="n">3</div><h3>Kurator berwenang</h3><p>Debitor kehilangan hak mengurus sejak 10 April 2023; insolvensi sejak 22 Juni 2023. <span class="pasal">UUK Ps. 24, 69, 178</span></p></div>
+    <div class="cell"><div class="n">4</div><h3>Cara penjualan sah</h3><p>Lelang di muka umum; atau di bawah tangan dengan izin tertulis Hakim Pengawas. <span class="pasal">UUK Ps. 185(1)–(2)</span></p></div>
+    <div class="cell"><div class="n">5</div><h3>Harga wajar</h3><p>Nilai dari KJPP menjadi dasar harga minimum, agar tidak digugat kreditor. <span class="pasal">UUK Ps. 72, 77</span></p></div>
+    <div class="cell"><div class="n">6</div><h3>Diberitahukan</h3><p>Cessie diberitahukan kepada pihak yang wajib membayar, dengan tembusan ke Kantah Langkat dan Kanwil BPN Sumut. <span class="pasal">KUHPer Ps. 613(2)</span></p></div>
+  </div>
+  <p class="note" style="margin-top:12px">Sebagai penjual piutang, Kurator hanya menjamin bahwa hak itu ada saat dialihkan, <b>bukan</b> bahwa pihak yang wajib membayar mampu atau mau membayar, kecuali diperjanjikan. Tulis tegas dalam akta. <span class="pasal">KUHPer Ps. 1534–1535</span></p>
+</section>
+
+<section id="skenario" data-t="Pilih skema">
+  <h2>Skema mengikuti sikap Kanwil BPN</h2>
+  <p class="sub">Pihak yang wajib membayar ganti rugi ditentukan oleh keputusan penataan tanah. Pilih keadaan yang terjadi.</p>
+  <div class="wiz" id="wiz" aria-live="polite"></div>
+</section>
+
+<section id="langkah" data-t="Langkah BHP">
+  <h2>Langkah BHP, tahap demi tahap</h2>
+  <p class="sub">Setiap langkah memuat berkas, ke mana dikirim, dasar pasal, dan hasilnya.</p>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div id="stage"></div>
+</section>
+
+<section id="matriks" data-t="Berkas & tujuan">
+  <h2>Berkas, tujuan, dan pasal</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Kebutuhan</th><th>Berkas</th><th>Ditujukan kepada</th><th>Pasal</th></tr></thead>
+    <tbody>
+      <tr><td>Hentikan lelang tanah, koreksi daftar harta</td><td>Laporan + permohonan arahan</td><td>Hakim Pengawas (Abdul Hadi Nasution)</td><td class="pasal">UUK 65, 69, 74</td></tr>
+      <tr><td>Kepastian status &amp; pihak pembayar</td><td>Surat permohonan penegasan (draf A)</td><td>Tim khusus Kanwil BPN Sumut, tembusan Kantah Langkat</td><td class="pasal">PP 18/2021 Ps. 22; PP 40/1996 Ps. 4(4), 18</td></tr>
+      <tr><td>Data fisik &amp; luas</td><td>Permohonan inventarisasi bersama &amp; pengukuran</td><td>Kantor Pertanahan Langkat</td><td class="pasal">UUK 98, 100</td></tr>
+      <tr><td>Nilai ganti rugi</td><td>Surat penugasan + sumpah penilai</td><td>KJPP (via penetapan HP)</td><td class="pasal">UUK 69</td></tr>
+      <tr><td>Hasil kebun</td><td>Surat tagihan / somasi</td><td>Direksi PT RM dan pengelola kebun</td><td class="pasal">UUK 21, 24, 26</td></tr>
+      <tr><td>Cara pemberesan</td><td>Undangan rapat kreditor</td><td>KPP Binjai, KPP Medan Polonia, eks karyawan</td><td class="pasal">UUK 187</td></tr>
+      <tr><td>Izin menjual hak tagih</td><td>Permohonan izin (draf B) + laporan KJPP</td><td>Hakim Pengawas</td><td class="pasal">UUK 185(2)</td></tr>
+      <tr><td>Penawaran</td><td>Surat penawaran (draf C)</td><td>PT Raya Padang Langkat &amp; peminat lain</td><td class="pasal">UUK 185</td></tr>
+      <tr><td>Penyerahan hak</td><td>Akta cessie (draf D)</td><td>Notaris; lalu pemberitahuan ke pihak pembayar</td><td class="pasal">KUHPer 613, 1534–1535</td></tr>
+      <tr><td>Uang masuk</td><td>Bukti setor</td><td>Rekening harta pailit</td><td class="pasal">UUK 69, 98</td></tr>
+      <tr><td>Tanggapan ke debitor</td><td>Surat tanggapan (draf E)</td><td>Direksi &amp; kuasa hukum PT RM</td><td class="pasal">UUK 24, 110</td></tr>
+      <tr><td>Pembagian &amp; penutupan</td><td>Daftar pembagian penutup</td><td>Hakim Pengawas</td><td class="pasal">UUK 189, 202</td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="uang" data-t="Ke mana uangnya">
+  <h2>Ke mana uang hasil cessie</h2>
+  <p class="sub">Uang dari pembeli masuk rekening harta pailit dulu. Tidak ada pembayaran langsung dari pembeli atau debitor ke kreditor.</p>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div><h3>Biaya kepailitan &amp; imbalan jasa Kurator</h3><p style="margin:0;color:var(--muted)">Termasuk PNBP 7% dari DPT, iklan BNRI dan dua surat kabar, sesuai perintah HP dalam RK 10 Desember 2025. <span class="pasal">UUK Ps. 18, 191</span></p></div></div>
+    <div class="step"><div class="num">2</div><div><h3>Kreditor preferen pajak: KPP Pratama Binjai Rp1.108.581.903</h3><p style="margin:0;color:var(--muted)">DPT tidak dapat ditambah atau dikurangi. <span class="pasal">UU KUP Ps. 21; UUK Ps. 189</span></p></div></div>
+    <div class="step"><div class="num">3</div><div><h3>Sisa tagihan lain dalam DPT, secara seimbang</h3><p style="margin:0;color:var(--muted)">Pari passu prorata parte. <span class="pasal">KUHPer 1131–1132; UUK 189</span></p></div></div>
+    <div class="step"><div class="num">4</div><div><h3>Tanda terima lunas &amp; penutupan</h3><p style="margin:0;color:var(--muted)">Termasuk tanda terima lunas untuk KPP Medan Polonia (Rp14.636.625, dibayar langsung oleh debitor). Kepailitan berakhir setelah daftar pembagian penutup mengikat. <span class="pasal">UUK Ps. 202</span></p></div></div>
+  </div>
+  <p class="note" style="margin-top:12px">Bila nilai ganti rugi tidak cukup menutup biaya, Kurator dapat mengusulkan pencabutan kepailitan. Sisa tagihan tetap menjadi utang debitor. <span class="pasal">UUK Ps. 18</span></p>
+</section>
+
+<section id="checklist" data-t="Checklist">
+  <h2>Checklist berkas</h2>
+  <p class="sub">Centang yang sudah ada. Tanda centang tersimpan di peramban Anda saja.</p>
+  <div class="ckbar"><span id="ckcount">0 / 0</span><div class="bar"><i id="ckfill"></i></div><button id="ckreset" type="button">Kosongkan</button></div>
+  <div class="ck" id="ck"></div>
+</section>
+
+<section id="risiko" data-t="Risiko">
+  <h2>Risiko dan mitigasi</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Risiko</th><th>Akibat</th><th>Mitigasi</th></tr></thead>
+    <tbody>
+      <tr><td>Akta ditulis "cessie HGU" atau "cessie tanah"</td><td>Objek tidak ada; batal dan menjadi dasar gugatan</td><td>Objek ditulis "hak tagih ganti rugi atas tanaman, bangunan, dan benda" dengan lampiran inventaris</td></tr>
+      <tr><td>Tanah ditata untuk Bank Tanah atau reforma agraria</td><td>Tidak ada pemohon HGU baru</td><td>Tagih ganti rugi kepada negara <span class="pasal">PP 40/1996 Ps. 18(2)</span></td></tr>
+      <tr><td>Kebun rusak atau dipanen liar</td><td>Tanaman tidak lagi "diperlukan"; hak ganti rugi hilang</td><td>Pengamanan lapangan; hasil panen ke rekening boedel</td></tr>
+      <tr><td>Harga di bawah nilai wajar</td><td>Keberatan KPP Binjai; tanggung jawab Kurator</td><td>KJPP, nilai minimum, penawaran terbuka <span class="pasal">UUK Ps. 72, 77</span></td></tr>
+      <tr><td>Pembeli menuntut bila HGU baru tidak diberikan</td><td>Klaim terhadap boedel</td><td>Klausul: Kurator tidak menjamin pemberian hak atau kemampuan pembayar <span class="pasal">KUHPer 1535</span></td></tr>
+      <tr><td>Debitor atau investor bertransaksi sendiri</td><td>Tidak mengikat boedel; uang tidak masuk rekening Kurator</td><td>Surat tegas ke debitor dan calon pembeli <span class="pasal">UUK Ps. 24</span></td></tr>
+      <tr><td>Selisih luas 338,7 vs 388,7 Ha</td><td>Nilai dan objek cessie keliru</td><td>Pengukuran dan inventarisasi bersama Kantah Langkat</td></tr>
+      <tr><td>Menjual tanpa izin HP</td><td>Sah terhadap pembeli, tetapi Kurator menanggung sendiri</td><td>Kantongi izin tertulis lebih dulu <span class="pasal">UUK Ps. 78</span></td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="surat" data-t="Draf surat">
+  <h2>Draf surat</h2>
+  <p class="sub">Siap disalin lalu disesuaikan dengan tata naskah BHP Medan.</p>
+  <div id="letters"></div>
+</section>
+
+<section id="simpulan" data-t="Kesimpulan">
+  <h2>Kesimpulan dan urutan tindakan</h2>
+  <ol class="rec">
+    <li>Tanah eks HGU No. 2/Sei Tampa adalah tanah negara sejak 31 Agustus 2013 dan bukan harta pailit. Lelang tanah dihentikan.</li>
+    <li>Yang tersisa dan bernilai adalah hak tagih ganti rugi atas tanaman, bangunan, dan benda. Hak itu piutang dan dapat dialihkan dengan cessie <span class="pasal">KUHPer 613</span>.</li>
+    <li>Cessie itu adalah penjualan harta pailit: lelang atau di bawah tangan dengan izin Hakim Pengawas <span class="pasal">UUK 185</span>.</li>
+    <li>Sebelum menjual, pastikan pihak yang wajib membayar lewat Kanwil BPN Sumut, dan nilai lewat KJPP.</li>
+  </ol>
+  <h3 style="margin-top:18px">Urutan tindakan</h3>
+  <ol class="rec">
+    <li>Minta arahan HP: hentikan lelang tanah, koreksi daftar harta pailit.</li>
+    <li>Surati tim khusus Kanwil BPN Sumut (draf A).</li>
+    <li>Inventarisasi dan pengukuran bersama Kantah Langkat; amankan kebun.</li>
+    <li>Tagih hasil kebun sejak 10 April 2023.</li>
+    <li>Tugaskan KJPP; rapat kreditor soal cara pemberesan.</li>
+    <li>Mohon izin HP (draf B); tawarkan (draf C); buat akta cessie (draf D).</li>
+    <li>Terima dana di rekening boedel; bagi; tutup kepailitan.</li>
+  </ol>
+  <p class="note" style="margin-top:12px">Verifikasi sebelum dikutip: bunyi Pasal 79 Permen ATR/BPN 18/2021 masih dari kutipan sekunder, dan salinan putusan MA yang dirujuk dalam memo perlu diunduh dari Direktori Putusan MA.</p>
+</section>
+</main>
+
+<script>
+const Q=[
+ {id:"q1",t:"Bagaimana sikap tim khusus Kanwil BPN Sumut atas tanah eks HGU?",h:"Pihak yang wajib membayar ganti rugi mengikuti keputusan penataan tanah negara.",p:"PP 18/2021 Ps. 22; PP 40/1996 Ps. 4(4), 18",
+  a:[["Diberikan HGU baru kepada pemohon (mis. PT Raya Padang Langkat)",{v:"ok",s:"Skema A · Pemohon HGU baru",t:"Pemohon baru wajib membayar ganti rugi; hak tagihnya dijual kepadanya atau kepada pihak ketiga",d:"Pemegang HGU baru menanggung ganti rugi atas tanaman dan bangunan bekas pemegang hak. Jalan paling praktis: pemohon membayar ganti rugi langsung ke rekening boedel, dan Kurator menyerahkan hak tagih serta penguasaan kebun.",x:["Minta Kanwil menegaskan kewajiban ganti rugi pemohon baru (Ps. 4(4) PP 40/1996) dan apakah bukti penyelesaiannya menjadi syarat permohonan.","Nilai ganti rugi lewat KJPP; tetapkan harga minimum.","Mohon izin HP untuk penjualan di bawah tangan kepada pemohon (Ps. 185(2)).","Tanda tangani akta cessie atau akta penyelesaian ganti rugi hanya setelah dana masuk rekening boedel.","Kurator dapat sekaligus menyatakan tidak menggunakan prioritas bekas pemegang hak, sebagai bagian dari kesepakatan (Ps. 22(3) PP 18/2021)."]}],
+     ["Prioritas diberikan kepada bekas pemegang hak",{v:"mid",s:"Skema B · Prioritas",t:"Kurator menjalankan prioritas demi boedel, lalu melepaskannya kepada pihak yang membayar",d:"Peluangnya lemah karena kebun diduga dikelola pihak lain dan PT dalam pailit. Kalau diberikan, Kurator tidak menjual prioritas itu, tetapi dapat menjadikannya bagian dari kesepakatan dengan pemohon yang membayar ganti rugi.",x:["Konsultasikan ke HP sebelum mengajukan atau melepaskan prioritas (Ps. 69).","Jangan menanggung biaya pengurusan hak baru dari boedel tanpa hitung untung-rugi.","Lanjutkan seperti Skema A: ganti rugi dibayar ke rekening boedel, izin HP, akta cessie."]}],
+     ["Tanah ditata untuk Bank Tanah atau reforma agraria",{v:"mid",s:"Skema C · Negara",t:"Tagih ganti rugi kepada negara",d:"Tidak ada pemohon baru yang membayar. Hak ganti rugi bekas pemegang hak ditagih kepada negara bila tanaman dan bangunan masih diperlukan.",x:["Ajukan tagihan ganti rugi tertulis ke Kanwil BPN Sumut / Badan Bank Tanah (Ps. 18(2) PP 40/1996).","Lampirkan inventaris dan laporan KJPP.","Pilihan lain: jual hak tagih itu kepada investor dengan harga diskon, izin HP; risiko pembayaran pindah ke pembeli (KUHPer 1535)."]}],
+     ["Tanaman dan bangunan dinilai tidak diperlukan",{v:"bad",s:"Skema D · Bongkar",t:"Hak ganti rugi tidak lahir; yang tersisa hanya benda bongkaran",d:"Bekas pemegang hak wajib membongkar bangunan dan menyerahkan tanah serta tanaman kepada negara. Tidak ada piutang untuk dicessie.",x:["Jual bangunan dan mesin sebagai bongkaran lewat lelang atau izin HP (Ps. 185).","Hitung nilai bersih; bila lebih kecil dari biaya, usulkan pencabutan kepailitan (UUK Ps. 18).","Kreditor dapat menilai tanggung jawab direksi yang membiarkan HGU berakhir (UU PT Ps. 104(2))."]}],
+     ["Belum ada keputusan",{v:"mid",s:"Masa tunggu",t:"Jaga nilai hak, jangan menjual dulu",d:"Menjual sebelum pihak pembayar jelas membuat harga jatuh dan membuka keberatan kreditor.",x:["Amankan kebun; tagih hasil panen sejak 10 April 2023 ke rekening boedel.","Beri tahu debitor dan calon pembeli bahwa transaksi di luar Kurator tidak mengikat (Ps. 24).","Inventarisasi dan pengukuran bersama Kantah Langkat; selesaikan selisih luas.","Laporkan ke HP dalam laporan triwulanan (Ps. 74)."]}]]}
+];
+const wiz=document.getElementById("wiz");let path=[];
+function renderQ(id){const q=Q.find(q=>q.id===id);
+ wiz.innerHTML=`<div class="eyebrow">Pertanyaan kunci · <span class="pasal">${q.p}</span></div><p class="q">${q.t}</p><p class="qhelp">${q.h}</p>
+ <div class="btns">${q.a.map((a,k)=>`<button type="button" data-k="${k}">${a[0]}</button>`).join("")}</div>`;
+ wiz.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const a=q.a[+b.dataset.k];path.push([q,a[0]]);renderV(a[1])});}
+function renderV(v){wiz.innerHTML=`<div class="verdict ${v.v}"><div class="tag">${v.s}</div><p class="q" style="margin-top:4px">${v.t}</p><p style="margin:0">${v.d}</p>
+ <ol>${v.x.map(s=>`<li>${s}</li>`).join("")}</ol></div><div class="btns" style="margin-top:12px"><button type="button" class="pri" data-reset>Pilih keadaan lain</button></div>`;
+ wiz.querySelector("[data-reset]").onclick=()=>{path=[];renderQ("q1")};}
+renderQ("q1");
+
+const T=[
+ ["Tahap 0","Luruskan objek","Segera",[
+  ["Lapor dan minta arahan: hentikan lelang tanah, koreksi daftar harta pailit","Laporan + memo Kurator 28 Sep 2026","Hakim Pengawas","UUK 65, 69, 74; Ps. 21","Daftar harta: tanah keluar, hak ganti rugi masuk"],
+  ["Kirim tanggapan tertulis ke debitor atas rapat 14 Sep 2026","Surat tanggapan (draf E)","Direksi & kuasa hukum PT RM","UUK 24, 110","Debitor tahu jalur pemberesan"],
+  ["Terbitkan tanda terima lunas KPP Medan Polonia","Tanda terima","KPP Pratama Medan Polonia","Perintah HP, RK 10 Des 2025","Tagihan Rp14,6 juta tuntas"]]],
+ ["Tahap 1","Kepastian dari BPN","Oktober 2026",[
+  ["Mohon penegasan status tanah, prioritas, dan kewajiban ganti rugi","Surat (draf A) + memo + surat BPN 12 Agu 2024","Tim khusus Kanwil BPN Sumut, tembusan Kantah Langkat","PP 18/2021 Ps. 22; PP 40/1996 Ps. 4(4), 18","Pihak pembayar jelas"],
+  ["Inventarisasi dan pengukuran bersama","Permohonan + berita acara","Kantah Langkat","UUK 98, 100","Luas pasti; daftar tanaman, bangunan, mesin"]]],
+ ["Tahap 2","Jaga nilai kebun","Paralel",[
+  ["Tagih hasil kebun sejak 10 April 2023","Surat tagihan / somasi","Direksi PT RM dan pengelola kebun","UUK 21, 24, 26","Dana ke rekening boedel"],
+  ["Bila ditolak: gugatan lain-lain","Izin HP + gugatan","Pengadilan Niaga Medan","UUK 3(1), 69(5)","Putusan penyerahan hasil"],
+  ["Pengamanan lapangan","Surat pemberitahuan + papan","Lokasi kebun, Kepala Desa","UUK 98","Cegah panen liar"]]],
+ ["Tahap 3","Nilai dan persetujuan","Setelah BPN menjawab",[
+  ["Mohon penetapan penilai","Permohonan","Hakim Pengawas","UUK 69","Penetapan KJPP"],
+  ["Penilaian ganti rugi tanaman, bangunan, benda","Laporan KJPP","KJPP","UUK 69, 72","Nilai pasar &amp; harga minimum"],
+  ["Rapat kreditor: cara pemberesan hak tagih","Undangan + BA rapat","KPP Binjai, eks karyawan","UUK 187","Kreditor mengetahui dan tidak keberatan"]]],
+ ["Tahap 4","Jual dan cessie","Setelah izin HP",[
+  ["Mohon izin penjualan di bawah tangan","Permohonan (draf B) + KJPP + BA rapat","Hakim Pengawas","UUK 185(2)","Penetapan izin"],
+  ["Tawarkan kepada peminat","Surat penawaran (draf C)","PT Raya Padang Langkat &amp; peminat lain","UUK 185","Harga terbaik"],
+  ["Terima dana, lalu tanda tangani akta cessie","Akta cessie (draf D) + bukti setor","Notaris; rekening boedel","KUHPer 613, 1534–1535","Hak beralih"],
+  ["Beritahukan cessie","Surat pemberitahuan","Pihak pembayar; tembusan Kanwil BPN &amp; Kantah Langkat","KUHPer 613(2)","Cessie mengikat pembayar"]]],
+ ["Tahap 5","Bagi dan tutup","Akhir",[
+  ["Susun daftar pembagian penutup","Daftar pembagian","Hakim Pengawas","UUK 189, 192–193","Pengesahan"],
+  ["Bayar biaya, KPP Binjai, dan kreditor lain","Bukti bayar + tanda terima lunas","Para kreditor","UUK 189, 201","Tagihan diselesaikan sejauh dana cukup"],
+  ["Laporan akhir; kepailitan berakhir","Laporan","HP; tembusan Ditjen AHU &amp; Kanwil Kemenkum Sumut","UUK 74, 202","Perkara selesai"]]]
+];
+const tabs=document.getElementById("tabs"),stage=document.getElementById("stage");
+function showStage(i){[...tabs.children].forEach((b,k)=>b.setAttribute("aria-selected",k===i));const s=T[i];
+ stage.innerHTML=`<div class="stage-h"><h3>${s[1]}</h3><span>${s[2]}</span></div><div class="steps">${s[3].map((r,k)=>`<div class="step"><div class="num">${i}.${k+1}</div><div><h3>${r[0]}</h3><dl><dt>Berkas</dt><dd>${r[1]}</dd><dt>Ke mana</dt><dd>${r[2]}</dd><dt>Dasar</dt><dd class="pasal" style="white-space:normal">${r[3]}</dd><dt>Hasil</dt><dd>${r[4]}</dd></dl></div></div>`).join("")}</div>`;}
+T.forEach((s,i)=>{const b=document.createElement("button");b.type="button";b.role="tab";b.textContent=s[0];b.onclick=()=>showStage(i);tabs.appendChild(b)});showStage(0);
+
+const C={"A. Dasar":["Salinan putusan No. 33/Pdt.Sus-PKPU/2022/PN Niaga Mdn","DPT 22 Juni 2023","BA RK 10 Desember 2025","Memo Kurator 28 September 2026","Arahan HP penghentian lelang tanah"],
+"B. Status tanah":["Surat BPN Langkat 12 Agustus 2024","Salinan sertipikat/SK HGU No. 2/Sei Tampa","Surat Ukur Sementara No. 471/1989","Jawaban tim khusus Kanwil BPN Sumut","Hasil pengukuran (selisih luas selesai)"],
+"C. Objek & nilai":["Berita acara inventarisasi tanaman","Daftar bangunan, mesin, benda","Foto aset (folder Foto Aset)","Penetapan penilai","Laporan KJPP"],
+"D. Penjualan":["BA rapat kreditor cara pemberesan","Izin tertulis HP (Ps. 185(2))","Surat penawaran & jawaban peminat","Bukti setor ke rekening boedel","Akta cessie","Surat pemberitahuan kepada pihak pembayar"],
+"E. Penutupan":["Tanda terima lunas KPP Medan Polonia","Daftar pembagian penutup","Tanda terima para kreditor","Laporan akhir Kurator"]};
+const ck=document.getElementById("ck");let saved={};try{saved=JSON.parse(localStorage.getItem("ck-rm2")||"{}")}catch(e){}
+let n=0;Object.entries(C).forEach(([g,items])=>{const f=document.createElement("fieldset");f.innerHTML=`<legend>${g}</legend>`+items.map(t=>{const id="ck"+(n++);return `<label for="${id}"><input type="checkbox" id="${id}" ${saved[id]?"checked":""}><span>${t}</span></label>`}).join("");ck.appendChild(f)});
+function upd(){const all=ck.querySelectorAll("input"),on=[...all].filter(i=>i.checked);document.getElementById("ckcount").textContent=`${on.length} / ${all.length} berkas`;document.getElementById("ckfill").style.width=(on.length/all.length*100)+"%";const s={};on.forEach(i=>s[i.id]=1);try{localStorage.setItem("ck-rm2",JSON.stringify(s))}catch(e){}}
+ck.addEventListener("change",upd);document.getElementById("ckreset").onclick=()=>{ck.querySelectorAll("input").forEach(i=>i.checked=false);upd()};upd();
+
+const L=[
+["A · Permohonan penegasan kepada tim khusus Kanwil BPN Sumut",`Nomor : W.2.AHU.AHU.1-[...]
+Hal   : Permohonan Penegasan Status Tanah Eks HGU No. 2/Sei Tampa dan Kewajiban Ganti Rugi
+
+Yth. Kepala Kantor Wilayah BPN Provinsi Sumatera Utara
+c.q. Tim Khusus Penanganan Tanah Eks HGU No. 2/Sei Tampa
+
+Berdasarkan Putusan Pengadilan Niaga pada PN Medan No. 33/Pdt.Sus-PKPU/2022/PN Niaga Mdn tanggal 10 April 2023, PT Rata Makmur dinyatakan pailit dan Balai Harta Peninggalan Medan ditunjuk sebagai Kurator. Merujuk surat Kantor Pertanahan Kabupaten Langkat tanggal 12 Agustus 2024, HGU No. 2/Sei Tampa berakhir pada 31 Agustus 2013.
+
+Kurator mohon penegasan tertulis mengenai:
+1. status tanah eks HGU No. 2/Sei Tampa dan rencana penataannya;
+2. kedudukan prioritas bekas pemegang hak menurut Pasal 22 ayat (3) PP 18/2021 dalam hal bekas pemegang hak dalam keadaan pailit;
+3. kewajiban pemohon hak baru untuk memberikan ganti rugi atas tanaman, bangunan, dan benda milik bekas pemegang hak (Pasal 4 ayat (4) dan Pasal 18 ayat (2) PP 40/1996), serta apakah bukti penyelesaiannya menjadi syarat permohonan;
+4. pelaksanaan inventarisasi dan pengukuran bersama untuk menyelesaikan perbedaan luas 338,7463 Ha dan 388,7463 Ha.
+
+Seluruh pembayaran ganti rugi yang menjadi hak PT Rata Makmur (dalam pailit) hanya sah bila dibayarkan ke rekening harta pailit yang dikelola Kurator (Pasal 24 dan 69 UU 37/2004).`],
+["B · Permohonan izin kepada Hakim Pengawas",`Yth. Hakim Pengawas Kepailitan PT Rata Makmur (dalam pailit)
+Hal : Permohonan Izin Penjualan Hak Tagih Ganti Rugi atas Tanaman dan Bangunan di Kebun Sei Tampa
+
+Kurator mohon izin berdasarkan Pasal 185 ayat (2) UU 37/2004 untuk menjual secara di bawah tangan hak tagih PT Rata Makmur (dalam pailit) atas ganti rugi tanaman, bangunan, dan benda di atas tanah eks HGU No. 2/Sei Tampa, kepada [calon pembeli] dengan harga Rp [...], dengan pertimbangan:
+a. tanah eks HGU telah menjadi tanah negara sejak 31 Agustus 2013 dan bukan harta pailit;
+b. hak tagih ganti rugi bersumber dari Pasal 4 ayat (4) dan Pasal 18 ayat (2) PP 40/1996, dengan pihak pembayar [pemohon HGU baru / negara] sesuai penegasan Kanwil BPN Sumut tanggal [...];
+c. nilai menurut KJPP [...] tanggal [...] sebesar Rp [...];
+d. kreditor telah diberi tahu dalam rapat tanggal [...];
+e. penjualan melalui lelang [tidak memungkinkan / tidak lebih menguntungkan] karena [...].
+
+Pengalihan dilakukan dengan akta cessie (Pasal 613 KUHPerdata). Akta ditandatangani setelah seluruh harga diterima di rekening harta pailit.`],
+["C · Surat penawaran kepada PT Raya Padang Langkat",`Hal : Penawaran Hak Tagih Ganti Rugi atas Tanaman dan Bangunan Kebun Sei Tampa
+
+Menanggapi minat Saudara, Kurator PT Rata Makmur (dalam pailit) menyampaikan:
+1. Tanah eks HGU No. 2/Sei Tampa adalah tanah negara sejak 31 Agustus 2013. Kurator tidak menjual tanah dan tidak menjamin pemberian hak atas tanah kepada Saudara.
+2. Yang ditawarkan adalah hak tagih ganti rugi atas tanaman, bangunan, dan benda milik PT Rata Makmur di atas tanah tersebut, sesuai inventaris terlampir.
+3. Harga minimum Rp [...] berdasarkan penilaian KJPP [...].
+4. Pembayaran penuh ke rekening harta pailit: [Bank / No. Rek. / a.n. BHP Medan Kurator PT Rata Makmur (dalam pailit)].
+5. Penjualan tunduk pada izin Hakim Pengawas (Pasal 185 ayat (2) UU 37/2004).
+
+Mohon tanggapan tertulis paling lambat [tanggal].`],
+["D · Pokok-pokok akta cessie",`AKTA CESSIE (POKOK-POKOK KLAUSUL)
+
+Para pihak: Balai Harta Peninggalan Medan selaku Kurator PT Rata Makmur (dalam pailit), berdasarkan Putusan No. 33/Pdt.Sus-PKPU/2022/PN Niaga Mdn dan izin Hakim Pengawas No. [...] (Cedent); dan [pembeli] (Cessionaris).
+
+1. Objek: hak tagih ganti rugi atas tanaman, bangunan, dan benda sebagaimana lampiran inventaris, yang bersumber dari Pasal 4 ayat (4) dan Pasal 18 ayat (2) PP 40/1996. BUKAN tanah dan BUKAN hak atas tanah.
+2. Pihak yang wajib membayar (cessus): [pemohon HGU baru / negara c.q. ...].
+3. Harga Rp [...] telah diterima penuh di rekening harta pailit pada [tanggal].
+4. Cedent hanya menjamin bahwa hak tagih ada pada saat penyerahan; tidak menjamin kemampuan atau kesediaan cessus membayar, maupun pemberian hak atas tanah (Pasal 1534–1535 KUHPerdata).
+5. Cessionaris menanggung sendiri biaya dan risiko penagihan.
+6. Cessie diberitahukan kepada cessus oleh [Cedent/Cessionaris] dalam 7 hari (Pasal 613 ayat (2) KUHPerdata).
+7. Penyelesaian sengketa: Pengadilan Niaga pada PN Medan (Pasal 3 ayat (1) UU 37/2004).`],
+["E · Tanggapan tertulis kepada debitor",`Yth. Direksi PT Rata Makmur (dalam pailit) c.q. Sdr. Arya A. Purba, S.H.
+Hal : Tanggapan atas Rapat 14 September 2026
+
+1. Sejak 10 April 2023 Debitor kehilangan hak menguasai dan mengurus harta (Pasal 24 UU 37/2004). Setiap perjanjian mengenai kebun Sei Tampa, termasuk kontrak panen dan kesepakatan dengan investor, tidak mengikat harta pailit bila dibuat tanpa Kurator.
+2. Tanah eks HGU No. 2/Sei Tampa adalah tanah negara sejak 31 Agustus 2013 dan tidak dapat "diperbarui" karena tenggatnya telah lewat.
+3. Kurator akan membereskan hak tagih ganti rugi atas tanaman dan bangunan, serta menagih hasil kebun sejak 10 April 2023. Mohon Saudara menyerahkan data pengelola dan hasil panen dalam 14 hari.
+4. Tagihan KPP Pratama Binjai Rp1.108.581.903 tetap sesuai DPT. Setiap pembayaran wajib melalui rekening harta pailit.
+5. Mohon rencana pembayaran tertulis paling lambat [tanggal].`]];
+const lw=document.getElementById("letters");
+L.forEach(([t,b])=>{const d=document.createElement("details");d.className="letter";d.innerHTML=`<summary>${t}</summary><div class="lbody"><pre></pre><button type="button">Salin teks</button><span class="ok-msg" hidden>Tersalin</span></div>`;d.querySelector("pre").textContent=b;
+ const m=d.querySelector(".ok-msg");d.querySelector("button").onclick=()=>{navigator.clipboard.writeText(b).then(()=>{m.hidden=false;setTimeout(()=>m.hidden=true,1800)}).catch(()=>{const r=document.createRange();r.selectNodeContents(d.querySelector("pre"));const s=getSelection();s.removeAllRanges();s.addRange(r)})};lw.appendChild(d)});
+</script>
+
+<p class="foot" id="foot">Kertas kerja internal Tim Kurator BHP Medan · disusun dari berkas Drive per 28 September 2026. Cocokkan kutipan pasal dan putusan dengan naskah resmi sebelum dipakai di surat keluar.</p>
+<nav class="botnav" aria-label="Navigasi kartu">
+  <div class="row">
+    <button type="button" id="prevBtn">‹ Sebelumnya</button>
+    <span class="cnt" id="cnt">1 / 13</span>
+    <button type="button" class="pri" id="nextBtn">Lanjut ›</button>
+  </div>
+</nav>
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-label="Daftar isi">
+  <div class="box"><h3>Daftar isi</h3><ol id="sheetList"></ol><button type="button" id="sheetClose" style="width:100%">Tutup</button></div>
+</div>
+<script>
+(function(){
+  document.querySelectorAll("table").forEach(t=>{const h=[...t.querySelectorAll("thead th")].map(x=>x.textContent.trim());
+    t.querySelectorAll("tbody tr").forEach(r=>[...r.children].forEach((c,i)=>c.setAttribute("data-label",h[i]||"")))});
+  const S=[...document.querySelectorAll("main>section")];
+  S.forEach((s,i)=>{const h=s.querySelector("h2");if(h)h.setAttribute("data-n",`Bagian ${i} dari ${S.length-1}`)});
+  let cur=0,deck=true;try{const v=localStorage.getItem("rm-cur2");if(v)cur=Math.min(+v,S.length-1)}catch(e){}
+  const hash=location.hash.slice(1);const hi=S.findIndex(s=>s.id===hash);if(hi>=0)cur=hi;
+  const body=document.body;body.classList.add("deck");
+  function go(i,scroll){cur=Math.max(0,Math.min(S.length-1,i));
+    S.forEach((s,k)=>s.classList.toggle("cur",k===cur));
+    document.getElementById("cnt").textContent=`${cur+1} / ${S.length}`;
+    document.getElementById("progTop").style.width=((cur+1)/S.length*100)+"%";
+    document.getElementById("curTitle").textContent=S[cur].dataset.t;
+    document.getElementById("prevBtn").disabled=cur===0;
+    const nb=document.getElementById("nextBtn");nb.textContent=cur===S.length-1?"Ke awal ↺":"Lanjut ›";
+    if(scroll!==false)window.scrollTo({top:0,behavior:"smooth"});
+    try{localStorage.setItem("rm-cur2",cur)}catch(e){}}
+  document.getElementById("prevBtn").onclick=()=>go(cur-1);
+  document.getElementById("nextBtn").onclick=()=>go(cur===S.length-1?0:cur+1);
+  document.getElementById("modeBtn").onclick=e=>{deck=!deck;body.classList.toggle("deck",deck);e.target.textContent=deck?"Semua":"Kartu";
+    if(!deck){document.getElementById("curTitle").textContent="Cessie Sei Tampa";document.getElementById("progTop").style.width="100%"}else go(cur)};
+  document.addEventListener("keydown",e=>{if(!deck||e.target.closest("input,textarea"))return;if(e.key==="ArrowRight")go(cur+1);if(e.key==="ArrowLeft")go(cur-1)});
+  let x0=null,y0=null;const m=document.querySelector("main");
+  m.addEventListener("touchstart",e=>{if(e.target.closest(".tbl,.tabs,pre"))return;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+  m.addEventListener("touchend",e=>{if(x0===null||!deck)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
+    if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)go(cur+(dx<0?1:-1))});
+  const sheet=document.getElementById("sheet"),list=document.getElementById("sheetList");
+  function openSheet(){list.innerHTML=S.map((s,i)=>`<li><button type="button" data-i="${i}" class="${i===cur&&deck?"on":""}"><span>${String(i).padStart(2,"0")}</span>${s.dataset.t}</button></li>`).join("");
+    list.querySelectorAll("button").forEach(b=>b.onclick=()=>{sheet.hidden=true;const i=+b.dataset.i;if(deck)go(i);else S[i].scrollIntoView({behavior:"smooth"})});sheet.hidden=false;list.querySelector("button").focus()}
+  document.getElementById("menuBtn").onclick=openSheet;
+  document.getElementById("sheetClose").onclick=()=>sheet.hidden=true;
+  sheet.onclick=e=>{if(e.target===sheet)sheet.hidden=true};
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")sheet.hidden=true});
+  go(cur,false);
+})();
+</script>
