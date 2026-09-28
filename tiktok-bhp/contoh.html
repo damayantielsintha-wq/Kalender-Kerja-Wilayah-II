@@ -1,0 +1,11 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pilih Suara Narator</title>
+<style>body{font-family:system-ui,sans-serif;max-width:640px;margin:24px auto;padding:0 16px;background:#fff;color:#111}
+.v{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #ddd;border-radius:12px;margin:8px 0}
+.v b{flex:1;font-size:15px}audio{width:220px}</style></head><body>
+<h1>Pilih suara yang paling kayak manusia</h1>
+<p>Kalimat: <i>"Din, sumpah gue pusing deh…"</i>. Dengerin, lalu kasih tahu nama suara yang paling cocok untuk Tasya, Dinda, Pak Kepala &amp; narator.</p>
+<div id="list">Memuat…</div>
+<script>
+fetch('contoh/daftar.json').then(r=>r.json()).then(vs=>{list.innerHTML=vs.map(v=>`<div class="v"><b>${v.replace('Neural','').replace(/^\w\w-\w\w-/,'')}</b><audio controls preload="none" src="contoh/${v}.mp3"></audio></div>`).join('')}).catch(()=>list.textContent='Contoh belum dibuat.');
+</script></body></html>
