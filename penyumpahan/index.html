@@ -60,6 +60,7 @@ h3{margin:4px 0 12px;font-size:15px}
   <h1>⚖️ Dokumen Penyumpahan <span>BHP Medan</span></h1>
   <input id="q" placeholder="Cari nama…" style="width:180px">
   <button onclick="newRec()" class="pri">+ Data baru</button>
+  <label class="btn pri" style="margin:0">📑 Upload Penetapan<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)"></label>
   <label class="btn" style="margin:0;color:var(--ink)">⬆ Impor CSV<input type="file" accept=".csv" hidden onchange="importCsv(this)"></label>
   <button onclick="exportCsv()">⬇ Ekspor CSV</button>
   <button onclick="openSet()">⚙ Pengaturan</button>
@@ -77,6 +78,7 @@ h3{margin:4px 0 12px;font-size:15px}
 <div id="printArea" hidden></div>
 <div class="toast" id="toast"></div>
 
+<dialog id="penDlg" style="border:0;border-radius:16px;padding:0;max-width:760px;width:95%;background:var(--card);color:var(--ink)"><div style="padding:18px" id="penBody"></div></dialog>
 <dialog id="setDlg" style="border:0;border-radius:16px;padding:0;max-width:720px;width:95%;background:var(--card);color:var(--ink)">
   <div style="padding:18px" id="setBody"></div>
 </dialog>
@@ -226,14 +228,17 @@ function setv(p,v){const ks=p.split('.');let o=cur;ks.slice(0,-1).forEach(k=>o=o
   if(p==='kelurahan')cur._kelManual=true;
   save();renderList();if(p==='jenis')renderMain()}
 function renderMain(){
-  if(!cur){$('#main').innerHTML=`<div style="text-align:center;padding:60px 10px"><div style="font-size:48px">📄</div><h3>Pilih berkas di kiri atau buat data baru</h3><p class="hint">Isi sekali → semua surat & berita acara terbuat otomatis sesuai format BHP.</p><button class="pri" onclick="newRec()">+ Data baru</button></div>`;return}
+  if(!cur){$('#main').innerHTML=`<div style="text-align:center;padding:60px 10px"><div style="font-size:48px">📄</div><h3>Pilih berkas di kiri atau buat data baru</h3><p class="hint">Isi sekali → semua surat & berita acara terbuat otomatis sesuai format BHP.</p><button class="pri" onclick="newRec()">+ Data baru</button>
+<label id="drop" class="card" style="display:block;margin:24px auto 0;max-width:460px;border:2px dashed var(--pri);cursor:pointer" ondragover="event.preventDefault()" ondrop="event.preventDefault();handlePenetapan(event.dataTransfer.files[0])">
+<div style="font-size:32px">📑</div><b>Upload / seret PDF Penetapan Pengadilan di sini</b><br><span class="hint">Nama, NIK, TTL, agama, pekerjaan, alamat, nomor & tanggal penetapan, terampu/anak akan terisi otomatis</span>
+<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)"></label></div>`;return}
   const d=derive(cur),w=d.w;
   const TABS={umum:'1. Perkara',pihak:`2. ${d.J}`,objek:`3. ${w?'Anak':'Terampu'}`,jadwal:'4. Jadwal & Pejabat',harta:'5. Harta',dok:'📄 Dokumen'};
   let h=`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><div class="seg">${['Pengampuan','Perwalian'].map(j=>`<button class="${cur.jenis===j?'on':''}" onclick="setv('jenis','${j}')">${j}</button>`).join('')}</div>
   <span class="hint" style="margin-right:auto">Tersimpan otomatis</span><button onclick="dupRec()">⧉ Duplikat</button><button onclick="delRec()" style="color:var(--warn)">🗑 Hapus</button></div>
   <div class="steps">${Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';renderMain()">${v}</button>`).join('')}</div><div class="grid">`;
   const pj=SET.pejabat.map((p,i)=>`<option value="${i}">${esc(p.nama||'(isi di Pengaturan)')} — ${esc(p.jabatan)}</option>`).join('');
-  if(tab==='umum')h+=F('pengadilan','Pengadilan')+F('nomorPenetapan','Nomor Penetapan')+F('tglPenetapan','Tanggal Penetapan','date')+F('tanggalSurat','Tanggal Surat','date')+
+  if(tab==='umum')h+=`<div class="full"><label class="btn" style="display:inline-block;margin:0;color:var(--ink)">📑 Isi otomatis dari PDF Penetapan<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this,true)"></label></div>`+F('pengadilan','Pengadilan')+F('nomorPenetapan','Nomor Penetapan')+F('tglPenetapan','Tanggal Penetapan','date')+F('tanggalSurat','Tanggal Surat','date')+
     F('nomorSurat',`Nomor Surat ke ${d.J}`)+F('nomorLurah','Nomor Surat ke Lurah')+F('nomorBA','Nomor BA Sumpah')+F('nomorBAHarta','Nomor BA Harta');
   if(tab==='pihak')h+=F('nama',`Nama ${d.J}`)+F('nik','NIK')+F('jk','Jenis Kelamin','select',['Laki-laki','Perempuan'])+F('tglLahir','Tanggal Lahir','date')+
     `<div><label>Usia (otomatis)</label><input disabled value="${usia(cur.tglLahir,cur.tglSumpah)}"></div>`+F('agama','Agama','select',Object.keys(SET.lafaz))+F('pekerjaan','Pekerjaan')+
@@ -293,9 +298,129 @@ function exportCsv(){const H=['Jenis','Nama','NIK','Jenis_Kelamin','Tanggal_Lahi
   const t=[H.join(',')].concat(DB.map(r=>[r.jenis,r.nama,r.nik,r.jk,tgl(r.tglLahir),r.agama,r.pekerjaan,r.alamat,r.kelurahan,r.status,derive(r).objek,r.nomorPenetapan,tgl(r.tglPenetapan),tgl(r.tglSumpah),r.nomorSurat,r.nomorLurah,r.nomorBA].map(q).join(','))).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+t],{type:'text/csv'}));a.download='data-penyumpahan.csv';a.click()}
 
+/* ---------------- baca PDF penetapan ---------------- */
+const loadJs=src=>new Promise((ok,no)=>{if(document.querySelector(`script[src="${src}"]`))return ok();const e=document.createElement('script');e.src=src;e.onload=ok;e.onerror=()=>no(new Error('Gagal memuat '+src));document.head.appendChild(e)});
+const PDFJS='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+const TESS='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+let penFill=false;
+function uploadPenetapan(inp,fill){penFill=!!fill;const f=inp.files[0];inp.value='';if(f)handlePenetapan(f)}
+function busy(t){$('#penBody').innerHTML=`<div style="text-align:center;padding:30px"><div style="font-size:32px">⏳</div><b id="penStat">${t}</b><p class="hint">Dokumen diproses di browser Anda.</p></div>`;if(!$('#penDlg').open)$('#penDlg').showModal()}
+const stat=t=>{const e=$('#penStat');if(e)e.textContent=t};
+async function handlePenetapan(file){
+  if(!file)return;busy('Membaca '+file.name+'…');
+  try{
+    let data;
+    if(SET.geminiKey){stat('Menganalisis dengan AI Gemini…');try{data=await geminiExtract(file)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}}
+    if(!data){const text=await fileText(file);if(text.replace(/\s/g,'').length<80)throw new Error('Teks tidak terbaca dari file.');data=parsePenetapan(text);data._text=text}
+    reviewPenetapan(data,file.name);
+  }catch(e){$('#penBody').innerHTML=`<h3>Gagal membaca penetapan</h3><p>${esc(e.message)}</p><p class="hint">Coba file PDF asli (bukan foto miring/buram), atau isi Gemini API key di Pengaturan.</p><p style="text-align:right"><button onclick="penDlg.close()">Tutup</button></p>`}
+}
+async function fileText(file){
+  if(file.type.startsWith('image/'))return ocr([file]);
+  await loadJs(PDFJS);pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS.replace('pdf.min.js','pdf.worker.min.js');
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;let out='';
+  for(let i=1;i<=pdf.numPages;i++){stat(`Membaca halaman ${i}/${pdf.numPages}…`);const c=await(await pdf.getPage(i)).getTextContent();
+    let y=null;c.items.forEach(it=>{const ny=it.transform[5];out+=(y!==null&&Math.abs(ny-y)>3?'\n':' ')+it.str;y=ny});out+='\n'}
+  if(out.replace(/\s/g,'').length>200)return out;
+  const imgs=[];for(let i=1;i<=Math.min(pdf.numPages,12);i++){stat(`Menyiapkan OCR halaman ${i}…`);const pg=await pdf.getPage(i),vp=pg.getViewport({scale:2});
+    const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;imgs.push(cv)}
+  return ocr(imgs)}
+async function ocr(imgs){await loadJs(TESS);const w=await Tesseract.createWorker('ind');let t='';
+  for(let i=0;i<imgs.length;i++){stat(`OCR (scan) halaman ${i+1}/${imgs.length}… agak lama`);t+=(await w.recognize(imgs[i])).data.text+'\n'}await w.terminate();return t}
+
+/* heuristik teks penetapan PN (format direktori putusan MA) */
+function parsePenetapan(raw){
+  let t=raw.replace(/\r/g,'').replace(/[ \t]+/g,' ').replace(/\b((?:[A-Z] ){3,}[A-Z])\b/g,m=>m.replace(/ /g,''));
+  let flat=t.replace(/\s*\n\s*/g,' ')
+    .replace(/Mahkamah Agu[^\n]*?epublik Indonesia/g,' ').replace(/Disclaimer Kepaniteraan.*?Halaman \d+/g,' ')
+    .replace(/Direktori Putusan Mahkamah Agung Republik Indonesia putusan\.mahkamahagung\.go\.id/g,' ')
+    .replace(/Hal(?:aman)?\.?\s*\d+\s*dari\s*\d+\s*Halaman[^;]*?PN\s*\w+/gi,' ')
+    .replace(/\b(\d{1,2})\s*[–—\-\/.]\s*(\d{1,2})\s*[–—\-\/.]\s*(\d{4})\b/g,(m,d,b,y)=>+b>=1&&+b<=12?`${d.padStart(2,'0')} ${BLN[b-1]} ${y}`:m)
+    .replace(/\s+/g,' ');
+  const R={};const m1=(re,s=flat)=>{const m=s.match(re);return m?m[1].trim():''};
+  const NM="([A-Z][A-Z.' ]{2,}?)";
+  const cleanName=n=>(n||'').replace(/^(Sdr\.?|Sdri\.?|Tn\.?|Ny\.?|Nn\.?)\s*/i,'').replace(/[;:,.\s-]+$/,'').trim();
+  const D='(\\d{1,2}\\s+(?:'+BLN.join('|')+')\\s+\\d{4})';
+  R.nomorPenetapan=m1(/Nomor\s*:?\s*(\d+\s*\/\s*Pdt\.?\s*P\s*\/\s*\d{4}\s*\/\s*P[NA]\s*[A-Za-z.]+)/i).replace(/\s*\/\s*/g,'/').replace(/Pdt\.?\s*P/i,'Pdt.P');
+  R.pengadilan=m1(/(Pengadilan (?:Negeri|Agama) [A-Z][a-zA-Z]+(?: [A-Z][a-zA-Z]+)?)/).replace(/\s+(Yang|Kelas|Tersebut|Telah|Nomor)$/,'');
+  const ai=flat.search(/MENETAPKAN|MENGADILI/);const amar=ai>=0?flat.slice(ai):flat;
+  R.jenis=/pengampu/i.test(amar)||(!/\bwali\b/i.test(amar)&&/pengampu/i.test(flat))?'Pengampuan':'Perwalian';
+  const tp=[...flat.matchAll(new RegExp('(?:ditetapkan|diucapkan|dijatuhkan)[^.]{0,120}?tanggal\\s+'+D,'gi'))];
+  R.tglPenetapan=toISO(tp.length?tp[0][1]:'');
+  // pemohon
+  const st=flat.search(/(?:permohonan\s+)?dari\s*:|diajukan oleh\s*:?|Pemohon\s*:/i);
+  let blk=st>=0?flat.slice(st,st+1500):'';const ct=blk.search(/sebagai\s*-*\s*Pemohon|selanjutnya disebut|Pengadilan (?:Negeri|Agama) tersebut/i);if(ct>0)blk=blk.slice(0,ct);
+  blk=blk.replace(/^(?:permohonan\s+)?(?:dari|diajukan oleh|Pemohon)\s*:?\s*/i,'');
+  const LB='(?:Nama|NIK|Tempat|Tgl|Tanggal Lahir|Umur|Jenis Kelamin|Agama|Pekerjaan|Alamat|Bertempat tinggal|Kewarganegaraan|Warga Negara|Pendidikan|Status)';
+  const L=lab=>m1(new RegExp('\\b'+lab+'\\s*:?\\s*(.+?)(?=[,;]\\s*'+LB+'\\b|;|$)','i'),blk);
+  R.nama=cleanName(L('Nama')||m1(/^([^,;]+)/,blk));
+  R.nik=m1(/NIK\s*:?\s*(\d{16})/,blk);
+  const tl=blk.match(new RegExp('[Ll]ahir[^0-9]{0,60}?'+D));R.tglLahir=tl?toISO(tl[1]):'';
+  R.jk=/perempuan|wanita/i.test(blk)?'Perempuan':/laki/i.test(blk)?'Laki-laki':'';
+  const ag=(L('Agama')||'').toLowerCase();
+  R.agama=!ag?'':/protestan|kristen/.test(ag)?'Kristen':/katol|kathol/.test(ag)?'Katholik':/bud/.test(ag)?'Buddha':/hindu/.test(ag)?'Hindu':/kong|konghu/.test(ag)?'Khonghucu':'Islam';
+  R.pekerjaan=L('Pekerjaan');
+  R.alamat=(L('(?:Alamat|Bertempat tinggal di|Bertempat tinggal|Tempat tinggal)')).replace(/^di\s+/i,'').replace(/\s*-\s*(?=[A-Z])/g,', ');
+  const k=R.alamat.match(/Kel(?:urahan|\s*\/\s*Desa|\.)?\.?\s*([^,]+?),\s*Kec(?:amatan|\.)?\.?\s*([^,]+?)(?:,\s*([^,;]+?))?(?:,\s*([^,;]+))?$/i);
+  R.kelurahan=k?[`Kelurahan ${k[1].replace(/^\.\s*/,'')}`,`Kecamatan ${k[2]}`,k[3],k[4]].filter(Boolean).join(', '):'';
+  const rel=m1(/\b(ibu kandung|ayah kandung|bapak kandung|saudara kandung|anak kandung|kakak kandung|adik kandung|suami|isteri|istri|paman|bibi|kakek|nenek|keponakan|cucu)(?=nya|\b)/i);
+  R.status=rel?rel.replace(/\b\w/g,c=>c.toUpperCase()):'';
+  const after=(n,src)=>{const i=src.indexOf(n);return i<0?'':src.slice(i,i+300)};
+  if(R.jenis==='Pengampuan'){
+    const endN="(?=\\s*[,;(]|\\s+(?:bin|binti|[Ll]ahir|Tempat|[Uu]mur|NIK|[Yy]ang|karena|dikarenakan)\\b)";
+    let n=m1(new RegExp('[Pp]engampu[^A-Z]{0,80}?(?:bernama|terhadap|atas|dari|bagi)\\s*:?\\s*-?\\s*'+NM+endN),amar)
+       ||m1(new RegExp('(?:di ?bawah pengampuan)[^A-Z]{0,40}?'+NM+endN),amar)
+       ||m1(new RegExp('[Pp]engampu[^A-Z]{0,80}?(?:bernama|terhadap|atas|dari|bagi)\\s*:?\\s*-?\\s*'+NM+endN));
+    n=cleanName(n);const ctx=after(n,amar)||after(n,flat);
+    const tt=ctx.match(new RegExp('[Ll]ahir[^0-9]{0,60}?'+D));
+    let kond=m1(/(?:mengalami|menderita|mengidap)\s+(?:penyakit\s+)?(.{5,160}?)(?=\s+Untuk\b|\s+sesuai\b|\s+sehingga\b|;|\.\s|$)/i,amar)||m1(/(?:mengalami|menderita|mengidap)\s+(?:penyakit\s+)?(.{5,160}?)(?=\s+Untuk\b|\s+sesuai\b|\s+sehingga\b|;|\.\s|$)/i);
+    const sk=m1(/(Surat Keterangan Dokter.{0,120}?)(?=;|\s+diberi\b)/i);if(kond&&sk)kond+=' sesuai dengan '+sk;
+    R.terampu={nama:n,jk:/perempuan|wanita|\bibu\b|nenek|isteri|istri/i.test(R.status+' '+ctx)?'Perempuan':'Laki-laki',tglLahir:tt?toISO(tt[1]):'',kondisi:kond};
+  }else{
+    const seen=new Set();R.anak=[];
+    const scan=src=>{for(const m of src.matchAll(new RegExp(NM+"\\s*,?\\s*(?:\\(?(laki-laki|perempuan|Laki-laki|Perempuan)\\)?\\s*,?\\s*)?[^A-Z0-9]{0,40}?[Ll]ahir[^0-9]{0,60}?"+D,'g'))){
+      const nm=cleanName(m[1]).replace(/^(?:[a-z]\.|\d+\.)\s*/,'');if(nm.length<3||seen.has(nm)||nm===R.nama||/^(Tempat|Tanggal|Kartu|Akta)/.test(nm))continue;seen.add(nm);
+      R.anak.push({nama:nm,jk:/perempuan/i.test(m[2]||after(nm,src).slice(0,120))?'Perempuan':'Laki-laki',tglLahir:toISO(m[3])})}};
+    scan(amar);if(!R.anak.length)scan(flat);
+  }
+  return R}
+
+async function geminiExtract(file){
+  const b64=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(file)});
+  const prompt=`Ekstrak data dari Penetapan Pengadilan (perwalian/pengampuan) ini. Balas JSON saja dengan kunci:
+{"jenis":"Pengampuan|Perwalian","pengadilan":"","nomorPenetapan":"","tglPenetapan":"YYYY-MM-DD","nama":"nama pemohon yg diangkat wali/pengampu","nik":"","jk":"Laki-laki|Perempuan","tglLahir":"YYYY-MM-DD","agama":"Islam|Kristen|Katholik|Hindu|Buddha|Khonghucu","pekerjaan":"","alamat":"alamat lengkap","kelurahan":"Kelurahan X, Kecamatan Y, Kota Z, Provinsi","status":"hubungan pemohon dgn terampu/anak mis. Ibu Kandung","terampu":{"nama":"","jk":"","tglLahir":"YYYY-MM-DD","kondisi":"kondisi medis + dasar surat dokter"},"anak":[{"nama":"","jk":"","tglLahir":"YYYY-MM-DD"}]}
+Kosongkan yang tidak ada. Nama dalam HURUF KAPITAL.`;
+  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${SET.geminiModel||'gemini-2.5-flash'}:generateContent?key=${encodeURIComponent(SET.geminiKey)}`,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents:[{parts:[{inline_data:{mime_type:file.type||'application/pdf',data:b64}},{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:0}})});
+  if(!res.ok)throw new Error('Gemini '+res.status);const j=await res.json();
+  const d=JSON.parse(j.candidates[0].content.parts[0].text);d._ai=true;return d}
+
+const PEN_LBL={jenis:'Jenis',pengadilan:'Pengadilan',nomorPenetapan:'Nomor Penetapan',tglPenetapan:'Tanggal Penetapan',nama:'Nama Pemohon (Wali/Pengampu)',nik:'NIK',jk:'Jenis Kelamin',tglLahir:'Tanggal Lahir',agama:'Agama',pekerjaan:'Pekerjaan',alamat:'Alamat',kelurahan:'Kelurahan/Kec/Kota',status:'Hubungan'};
+let PEN=null;
+function reviewPenetapan(d,fname){PEN=d;const w=d.jenis==='Perwalian';
+  const row=(k,lbl,v,type='text')=>`<div><label>${lbl}</label><input type="${type}" value="${esc(v||'')}" data-pk="${k}" style="${v?'':'background:#fde68a33;border-color:#f59e0b'}"></div>`;
+  let h=`<h3>📑 Hasil baca: ${esc(fname)} ${d._ai?'<span class="tag">AI</span>':''}</h3><p class="hint">Periksa & koreksi dulu. Kolom oranye = tidak ditemukan di dokumen.</p><div class="grid">`;
+  h+=`<div><label>Jenis</label><select data-pk="jenis">${['Pengampuan','Perwalian'].map(j=>`<option ${j===d.jenis?'selected':''}>${j}</option>`).join('')}</select></div>`;
+  ['pengadilan','nomorPenetapan','tglPenetapan','nama','nik','jk','tglLahir','agama','pekerjaan','status'].forEach(k=>h+=row(k,PEN_LBL[k],d[k],/^tgl/.test(k)?'date':'text'));
+  h+=`<div class="full">${row('alamat','Alamat',d.alamat)}</div><div class="full">${row('kelurahan','Kelurahan, Kecamatan, Kota',d.kelurahan)}</div>`;
+  if(w)(d.anak||[]).forEach((a,i)=>h+=row(`anak.${i}.nama`,`Anak ${i+1}`,a.nama)+row(`anak.${i}.tglLahir`,'Tgl lahir',a.tglLahir,'date')+row(`anak.${i}.jk`,'JK',a.jk));
+  else{const t=d.terampu||{};h+=row('terampu.nama','Nama Terampu',t.nama)+row('terampu.tglLahir','Tgl Lahir Terampu',t.tglLahir,'date')+row('terampu.jk','JK Terampu',t.jk)+`<div class="full">${row('terampu.kondisi','Kondisi medis',t.kondisi)}</div>`}
+  h+=`</div>${d._text?`<details style="margin-top:10px"><summary class="hint">Lihat teks hasil baca</summary><pre style="white-space:pre-wrap;max-height:200px;overflow:auto;font-size:11px">${esc(d._text)}</pre></details>`:''}
+  <p style="text-align:right;display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button onclick="penDlg.close()">Batal</button><button class="pri" onclick="applyPenetapan()">✔ Terapkan ke berkas</button></p>`;
+  $('#penBody').innerHTML=h;if(!$('#penDlg').open)$('#penDlg').showModal()}
+function applyPenetapan(){
+  $('#penBody').querySelectorAll('[data-pk]').forEach(e=>{const ks=e.dataset.pk.split('.');let o=PEN;ks.slice(0,-1).forEach((k,i)=>{o[k]=o[k]??(/^\d+$/.test(ks[i+1])?[]:{});o=o[k]});o[ks.at(-1)]=e.value.trim()});
+  let r=(penFill&&cur)?cur:null;if(!r){r=blank();r.nomorSurat=nextNo();r.nomorLurah=nextNo();DB.unshift(r)}
+  ['jenis','pengadilan','nomorPenetapan','tglPenetapan','nama','nik','jk','tglLahir','agama','pekerjaan','alamat','kelurahan','status'].forEach(k=>{if(PEN[k])r[k]=PEN[k]});
+  if(PEN.kelurahan)r._kelManual=true;
+  if(PEN.jenis==='Perwalian'){const a=(PEN.anak||[]).filter(x=>x&&x.nama).map(x=>({nama:x.nama,jk:/perem/i.test(x.jk)?'Perempuan':'Laki-laki',tglLahir:x.tglLahir||''}));if(a.length)r.anak=a}
+  else if(PEN.terampu){const t=PEN.terampu;r.terampu={nama:t.nama||'',jk:/perem/i.test(t.jk)?'Perempuan':'Laki-laki',tglLahir:t.tglLahir||'',kondisi:t.kondisi||''}}
+  cur=r;tab='jadwal';save();penDlg.close();renderList();renderMain();toast('Data penetapan diterapkan — lanjut isi jadwal sumpah')}
+
+
 /* ---------------- pengaturan ---------------- */
 function openSet(){const s=SET;$('#setBody').innerHTML=`<h3>⚙ Pengaturan Kop, Pejabat & Penomoran</h3><div class="grid">
-  ${['instansi','kanwil','balai','alamat','telp','web','kepala','wa','prefix','nomorBerikut','kanwilTembusan'].map(k=>`<div><label>${k}</label><input value="${esc(s[k])}" oninput="SET['${k}']=this.value${k==='nomorBerikut'?'*1':''};save()"></div>`).join('')}
+  ${['instansi','kanwil','balai','alamat','telp','web','kepala','wa','prefix','nomorBerikut','kanwilTembusan','geminiKey'].map(k=>`<div><label>${k==='geminiKey'?'Gemini API key (opsional, untuk baca penetapan pakai AI)':k}</label><input ${k==='geminiKey'?'type=password':''} value="${esc(s[k])}" oninput="SET['${k}']=this.value${k==='nomorBerikut'?'*1':''};save()"></div>`).join('')}
   <div class="full"><label>Pejabat BHP</label>${s.pejabat.map((p,i)=>`<div class="grid child"><input placeholder="Nama" value="${esc(p.nama)}" oninput="SET.pejabat[${i}].nama=this.value;save()"><input placeholder="NIP" value="${esc(p.nip)}" oninput="SET.pejabat[${i}].nip=this.value;save()"><input placeholder="Jabatan" value="${esc(p.jabatan)}" oninput="SET.pejabat[${i}].jabatan=this.value;save()"></div>`).join('')}
   <button onclick="SET.pejabat.push({nama:'',nip:'',jabatan:''});save();openSet()">+ Pejabat</button></div>
   <div class="full"><label>Lafaz sumpah per agama ({JENIS}, {STATUS}, {PENGADILAN} diganti otomatis)</label>${Object.keys(s.lafaz).map(a=>`<label>${a}</label><textarea oninput="SET.lafaz['${a}']=this.value;save()">${esc(s.lafaz[a])}</textarea>`).join('')}</div>

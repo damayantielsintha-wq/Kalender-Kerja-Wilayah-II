@@ -45,3 +45,4 @@ Pengganti alur AutoCrat di spreadsheet *Dokumen Otomatis (Penetapan Baru)*. Cuku
 - Unduh **Word (.doc)** yang bisa diedit atau **PDF** (cetak), per dokumen atau seluruhnya sekaligus.
 - **Impor CSV** langsung dari sheet PENGAMPUAN/PERWALIAN (File → Download → CSV); ekspor CSV kembali.
 - Kop, nama Kepala, pejabat Madya/Muda + NIP, nomor WA, prefix nomor, dan lafaz bisa diubah di ⚙ Pengaturan. Data tersimpan di browser.
+- **📑 Upload Penetapan**: unggah PDF penetapan pengadilan (dari direktori putusan MA maupun hasil scan). Nomor & tanggal penetapan, pengadilan, data pemohon (nama, TTL, agama, pekerjaan, alamat, kelurahan), hubungan, terampu + kondisi medis + surat dokter, atau daftar anak diisi otomatis, lalu ditampilkan untuk dicek sebelum diterapkan. PDF scan dibaca dengan OCR (Tesseract). Opsional: isi *Gemini API key* di Pengaturan agar dibaca AI (lebih akurat untuk format tidak baku).
