@@ -144,102 +144,96 @@ body:not(.deck) .botnav{display:none}
 .sheet li button.on{background:var(--accent-soft);color:var(--accent)}
 .foot{font-size:12.5px;color:var(--muted);text-align:center;padding:4px 8px 0;max-width:760px;margin:0 auto}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.step{grid-template-columns:auto 1fr}.step .num{width:auto;min-width:32px;padding:0 7px}
 </style>
 <header class="appbar">
   <div class="row">
     <div class="seal" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F2C94C" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M5 7h14M7 7l-3 7a3 3 0 0 0 6 0L7 7zM17 7l-3 7a3 3 0 0 0 6 0l-3-7zM8 21h8"/></svg></div>
-    <div class="ttl"><small>BHP · Kurator PT Rata Makmur</small><b id="curTitle">Telaah HGU</b></div>
+    <div class="ttl"><small>BHP · Kurator PT Rata Makmur</small><b id="curTitle">Cessie Sei Tampa</b></div>
     <button class="iconbtn" id="modeBtn" type="button">Semua</button>
     <button class="iconbtn" id="menuBtn" type="button" aria-haspopup="dialog">Menu</button>
   </div>
   <div class="prog-top"><i id="progTop"></i></div>
 </header>
 
-
-
-
 <main>
 <section id="cover" class="hero" data-t="Sampul">
-  <div class="eyebrow">Balai Harta Peninggalan · Kertas Kerja Kurator</div>
-  <h1>Rencana Kurator "meng-cessie-kan" HGU PT Rata Makmur</h1>
-  <p class="lede">Bisakah Kurator mengalihkan Hak Guna Usaha milik debitur pailit dengan cessie? Telaah ini menjawabnya dari aturan hukum, lalu menunjukkan jalur yang benar: berkas apa, ke mana, dan berdasarkan pasal apa.</p>
-  <div class="meta">
-    <span class="chip">UU 37/2004 (UUK-PKPU)</span><span class="chip">UUPA 5/1960</span><span class="chip">PP 24/1997</span><span class="chip">PP 18/2021</span><span class="chip">UU 4/1996 Hak Tanggungan</span><span class="chip g">Data perkara: isi bagian [ … ]</span>
+  <div class="eyebrow">BHP Medan · Seksi Harta Peninggalan Wilayah II</div>
+  <h1>Cessie hak ganti rugi eks HGU No. 2/Sei Tampa</h1>
+  <p class="lede">Bisakah Kurator mengalihkan hak PT Rata Makmur (dalam pailit) atas ganti rugi tanaman dan bangunan di kebun Sei Tampa? Telaah ini mengurai dasar hukumnya, syaratnya, skemanya, dan langkah BHP sampai uang masuk rekening boedel.</p>
+  <div class="grid" style="margin-top:16px">
+    <div class="cell"><h3>Perkara</h3><p>No. 33/Pdt.Sus-PKPU/2022/PN Niaga Mdn · pailit 10 April 2023</p></div>
+    <div class="cell"><h3>Daftar Piutang Tetap</h3><p>Rp1.432.871.696 · disahkan 22 Juni 2023 (insolvensi)</p></div>
+    <div class="cell"><h3>Sisa tagihan terbesar</h3><p>KPP Pratama Binjai Rp1.108.581.903 · belum dibayar</p></div>
+    <div class="cell"><h3>Objek</h3><p>Tanaman sawit, bangunan, dan benda di atas ±338,7 / 388,7 Ha, Desa Sei Tampa, Kec. Selesai, Langkat</p></div>
+  </div>
+  <div class="meta"><span class="chip">UU 37/2004</span><span class="chip">KUHPer Ps. 613, 1534–1535</span><span class="chip">PP 40/1996 Ps. 4(4), 17, 18</span><span class="chip">PP 18/2021 Ps. 22</span><span class="chip g">Sumber: memo Kurator 28 Sep 2026, BA RK 10 Des 2025, laporan TW III 2026</span></div>
+</section>
+
+<section id="kronologi" data-t="Kronologi">
+  <h2>Kronologi yang menentukan</h2>
+  <p class="sub">Urutan waktu inilah yang membuat tanah keluar dari boedel, tetapi hak atas tanaman dan bangunan tetap tinggal.</p>
+  <div class="steps">
+    <div class="step"><div class="num">1989</div><div><h3>HGU No. 2/Sei Tampa diberikan, 25 tahun</h3><p style="margin:0;color:var(--muted)">Surat Ukur Sementara No. 471/1989 tanggal 6 Juni 1989.</p></div></div>
+    <div class="step"><div class="num">2011</div><div><h3>Tenggat perpanjangan lewat (31 Agustus 2011)</h3><p style="margin:0;color:var(--muted)">Tidak ada permohonan perpanjangan. <span class="pasal">PP 40/1996 Ps. 10(1)</span></p></div></div>
+    <div class="step"><div class="num">2013</div><div><h3>HGU hapus demi hukum, 31 Agustus 2013</h3><p style="margin:0;color:var(--muted)">Tanah menjadi tanah negara. Bangunan dan tanaman tetap milik PT (asas pemisahan horizontal). <span class="pasal">UUPA Ps. 34a; PP 40/1996 Ps. 17</span></p></div></div>
+    <div class="step"><div class="num">2022</div><div><h3>PKPU Sementara, 9 Agustus 2022</h3><p style="margin:0;color:var(--muted)">Atas permohonan eks karyawan (Samin K dkk).</p></div></div>
+    <div class="step"><div class="num">2023</div><div><h3>Pailit 10 April · blokir 8 Mei · sita umum 22 Mei · DPT 22 Juni</h3><p style="margin:0;color:var(--muted)">Sejak DPT disahkan, harta pailit dalam keadaan insolvensi. <span class="pasal">UUK Ps. 178</span></p></div></div>
+    <div class="step"><div class="num">2024</div><div><h3>Surat BPN Langkat, 12 Agustus 2024</h3><p style="margin:0;color:var(--muted)">HGU berakhir 2013, blokir BHP tercatat, bidang belum terpetakan di KKP. Luas 388,7463 Ha (laporan Kurator: 338,7463 Ha).</p></div></div>
+    <div class="step"><div class="num">2025</div><div><h3>Setor Rp170 juta (29 Mar) · dibagi ke 6 eks karyawan (24–25 Jun) · RK 10 Des</h3><p style="margin:0;color:var(--muted)">Debitor berjanji menyetor dana investor paling lambat 18 Desember 2025. Tidak dipenuhi.</p></div></div>
+    <div class="step"><div class="num">2026</div><div><h3>Rapat 14 Sep · memo Kurator 28 Sep · menunggu tim khusus Kanwil BPN Sumut</h3><p style="margin:0;color:var(--muted)">PT Raya Padang Langkat pernah menyatakan minat. Kebun diduga dikontrakkan ke pihak lain untuk panen.</p></div></div>
   </div>
 </section>
 
 <section id="inti" data-t="Jawaban singkat">
   <h2>Jawaban singkat</h2>
-  <p class="thesis">HGU tidak bisa dialihkan dengan cessie. Cessie hanya untuk piutang atas nama dan benda tak bertubuh lain. HGU adalah hak atas tanah, sehingga peralihannya wajib dengan akta PPAT dan didaftarkan di Kantor Pertanahan. Dalam kepailitan, Kurator mengalihkannya melalui <em>penjualan</em>: lelang di muka umum, atau di bawah tangan dengan izin Hakim Pengawas.</p>
+  <p class="thesis">Bisa, dengan syarat. Yang dialihkan <em>bukan tanah dan bukan HGU</em>, melainkan <em>hak tagih ganti rugi</em> atas tanaman, bangunan, dan benda yang masih diperlukan untuk melanjutkan usaha kebun. Hak tagih itu piutang, jadi penyerahannya memakai cessie. Karena ia harta pailit, pengalihannya adalah <em>penjualan harta pailit</em>: lelang, atau di bawah tangan dengan izin Hakim Pengawas.</p>
   <div class="grid" style="margin-top:16px">
-    <div class="cell"><h3>Instrumen salah</h3><p>Akta cessie atas HGU tidak akan diterima untuk pendaftaran peralihan hak oleh Kantor Pertanahan. <span class="pasal">PP 24/1997 Ps. 37</span></p></div>
-    <div class="cell"><h3>Instrumen benar</h3><p>Jual beli dengan akta PPAT, didahului lelang atau izin HP. <span class="pasal">UUK Ps. 185; UUPA Ps. 28(3)</span></p></div>
-    <div class="cell"><h3>Jaminan diperhatikan</h3><p>Bila HGU dibebani Hak Tanggungan, pemegangnya kreditor separatis. <span class="pasal">UUK Ps. 55–59</span></p></div>
-    <div class="cell"><h3>Risiko pribadi</h3><p>Perbuatan tanpa dasar atau tanpa izin HP menjadi tanggung jawab Kurator. <span class="pasal">UUK Ps. 72, 78</span></p></div>
+    <div class="cell"><h3>Sumber hak</h3><p>Bekas pemegang HGU berhak atas ganti rugi bila tanaman dan bangunan masih diperlukan. <span class="pasal">PP 40/1996 Ps. 18(2), 4(4)</span></p></div>
+    <div class="cell"><h3>Masuk boedel</h3><p>Hak itu kekayaan PT Rata Makmur pada 10 April 2023. <span class="pasal">UUK Ps. 21</span></p></div>
+    <div class="cell"><h3>Cara serah</h3><p>Akta cessie, lalu diberitahukan kepada pihak yang wajib membayar. <span class="pasal">KUHPer Ps. 613</span></p></div>
+    <div class="cell"><h3>Wewenang</h3><p>Hanya Kurator; insolvensi sudah terjadi. Di bawah tangan wajib izin HP. <span class="pasal">UUK Ps. 24, 69, 178, 185</span></p></div>
   </div>
 </section>
 
-<section id="beda" data-t="Cessie vs HGU">
-  <h2>Cessie berbeda dengan peralihan HGU</h2>
-  <p class="sub">Objek menentukan cara penyerahannya (levering). Inilah titik awal alur berpikirnya.</p>
+<section id="objek" data-t="Apa yang bisa dialihkan">
+  <h2>Apa yang bisa dan tidak bisa dialihkan</h2>
+  <p class="sub">Pisahkan setiap unsur di kebun Sei Tampa. Setiap unsur punya cara pengalihan sendiri.</p>
   <div class="tbl"><table>
-    <thead><tr><th></th><th>Cessie</th><th>Peralihan HGU</th></tr></thead>
+    <thead><tr><th>Unsur</th><th>Status</th><th>Bisa dicessie?</th><th>Cara yang benar</th><th>Dasar</th></tr></thead>
     <tbody>
-      <tr><td><b>Objek</b></td><td>Piutang atas nama, benda tak bertubuh lain</td><td>Hak atas tanah negara untuk usaha pertanian, perkebunan, perikanan, peternakan</td></tr>
-      <tr><td><b>Dasar</b></td><td class="pasal">KUHPerdata Ps. 613</td><td class="pasal">UUPA Ps. 28–34; PP 18/2021; PP 24/1997 Ps. 37</td></tr>
-      <tr><td><b>Cara serah</b></td><td>Akta otentik atau di bawah tangan + pemberitahuan ke debitur</td><td>Akta PPAT (atau risalah lelang) + pendaftaran di Kantor Pertanahan</td></tr>
-      <tr><td><b>Kapan beralih</b></td><td>Saat akta dibuat (mengikat debitur setelah diberitahu)</td><td>Saat dicatat di buku tanah (asas publisitas)</td></tr>
-      <tr><td><b>Syarat penerima</b></td><td>Bebas</td><td>WNI atau badan hukum Indonesia yang berkedudukan di Indonesia <span class="pasal">UUPA Ps. 30</span></td></tr>
-      <tr><td><b>Dalam pailit</b></td><td>Kurator dapat menjual piutang <span class="pasal">UUK Ps. 185</span></td><td>Kurator menjual lewat lelang atau di bawah tangan dengan izin HP <span class="pasal">UUK Ps. 185</span></td></tr>
-    </tbody></table></div>
-  <p class="note" style="margin-top:12px">HGU bisa diperjualbelikan dan dijaminkan <span class="pasal">UUPA Ps. 28(3), 33</span>, tetapi penyerahannya mengikuti hukum pertanahan, bukan Pasal 613 KUHPerdata.</p>
-</section>
-
-<section id="maksud" data-t="Apa yang dialihkan">
-  <h2>Apa sebenarnya yang mau dialihkan?</h2>
-  <p class="sub">Istilah "cessie HGU" di lapangan sering dipakai untuk beberapa hal yang berbeda. Pilih yang sesuai; tiap pilihan punya jalur hukum sendiri.</p>
-  <div class="wiz" id="wiz" aria-live="polite"></div>
-</section>
-
-<section id="cek" data-t="Uji HGU">
-  <h2>Uji HGU sebelum dijual</h2>
-  <p class="sub">Tujuh hal ini menentukan apakah HGU masih boedel, siapa yang berhak atas hasilnya, dan berapa nilainya.</p>
-  <div class="tbl"><table>
-    <thead><tr><th>#</th><th>Yang diuji</th><th>Cara cek / berkas</th><th>Kalau bermasalah</th><th>Dasar</th></tr></thead>
-    <tbody>
-      <tr><td>1</td><td><b>Masa berlaku HGU</b></td><td>Sertipikat, SK pemberian hak, buku tanah</td><td>HGU yang hapus karena jangka waktu habis kembali ke negara dan bukan boedel. Bila masih dalam tenggang, pertimbangkan permohonan perpanjangan/pembaruan</td><td class="pasal">UUPA Ps. 29, 34; PP 18/2021</td></tr>
-      <tr><td>2</td><td><b>Atas nama PT Rata Makmur</b></td><td>SKPT dari Kantor Pertanahan</td><td>Bukan atas nama PT RM berarti bukan boedel; telusuri peralihan sebelumnya (actio pauliana bila dialihkan menjelang pailit)</td><td class="pasal">UUK Ps. 21, 41–49</td></tr>
-      <tr><td>3</td><td><b>Hak Tanggungan</b></td><td>SKPT, sertipikat HT, APHT</td><td>Pemegang HT separatis; ikuti Ps. 55–59; sisa hasil masuk boedel</td><td class="pasal">UU 4/1996 Ps. 6, 20; UUK Ps. 55–59</td></tr>
-      <tr><td>4</td><td><b>Sita dan blokir</b></td><td>SKPT</td><td>Sita lain gugur demi hukum karena pailit; mohon pengangkatan sita/blokir</td><td class="pasal">UUK Ps. 31</td></tr>
-      <tr><td>5</td><td><b>Penguasaan fisik</b></td><td>Peninjauan lapangan, foto, pengukuran ulang</td><td>Okupasi, tumpang tindih, klaim masyarakat/adat menurunkan nilai; selesaikan atau ungkapkan ke calon pembeli</td><td class="pasal">UUK Ps. 98, 100</td></tr>
-      <tr><td>6</td><td><b>Indikasi tanah terlantar</b></td><td>Surat dari Kantor Wilayah BPN</td><td>Bila ditetapkan terlantar, hak dapat dihapus; segera laporkan status pailit dan rencana pemberesan</td><td class="pasal">PP 20/2021</td></tr>
-      <tr><td>7</td><td><b>Nilai pasar &amp; nilai limit</b></td><td>Penilaian KJPP independen</td><td>Tanpa penilaian, harga mudah digugat kreditor</td><td class="pasal">UUK Ps. 69, 72</td></tr>
+      <tr><td>Tanah ±338,7/388,7 Ha</td><td><span class="st bad">Tanah negara</span></td><td>Tidak</td><td>Keluarkan dari daftar harta pailit</td><td class="pasal">PP 40/1996 Ps. 17(2); UUK Ps. 21</td></tr>
+      <tr><td>HGU No. 2/Sei Tampa</td><td><span class="st bad">Hapus 2013</span></td><td>Tidak</td><td>Tidak ada lagi yang bisa dialihkan</td><td class="pasal">UUPA Ps. 34a</td></tr>
+      <tr><td>Prioritas bekas pemegang hak</td><td><span class="st mid">Diskresi Menteri</span></td><td>Tidak (bukan benda)</td><td>Kurator dapat mengajukan atau melepaskannya demi boedel, sebagai bagian dari kesepakatan ganti rugi</td><td class="pasal">PP 18/2021 Ps. 22(3); UUK Ps. 69</td></tr>
+      <tr><td><b>Hak tagih ganti rugi tanaman &amp; bangunan</b></td><td><span class="st ok">Boedel</span></td><td><b>Ya</b></td><td>Cessie melalui penjualan harta pailit, izin HP</td><td class="pasal">PP 40/1996 Ps. 18(2), 4(4); KUHPer 613; UUK 185</td></tr>
+      <tr><td>Bangunan &amp; mesin (bila dibongkar)</td><td><span class="st ok">Boedel</span></td><td>Tidak perlu</td><td>Jual sebagai benda bergerak/bongkaran; penyerahan nyata</td><td class="pasal">KUHPer Ps. 612; UUK Ps. 185</td></tr>
+      <tr><td>Hasil kebun sejak 10 April 2023</td><td><span class="st ok">Boedel</span></td><td>Bisa, tetapi tagih dulu</td><td>Tagih debitor dan pengelola kebun; kontrak panen setelah pailit tidak mengikat boedel</td><td class="pasal">UUK Ps. 21, 24, 26</td></tr>
     </tbody></table></div>
 </section>
 
-<section id="jalur" data-t="Jalur yang benar">
-  <h2>Jalur yang benar</h2>
-  <p class="sub">Urutan berpikir: apakah sudah boleh dijual, siapa yang menjual, lalu dengan cara apa.</p>
+<section id="syarat" data-t="Syarat sah">
+  <h2>Enam syarat sebelum akta cessie dibuat</h2>
+  <p class="sub">Semua harus terpenuhi. Kalau satu belum, jangan tanda tangan dulu.</p>
   <div class="grid">
-    <div class="cell"><div class="n">1</div><h3>Sudah boleh dijual?</h3><p>Pemberesan dimulai setelah insolvensi. Sebelum itu, penjualan hanya bila perlu untuk menutup biaya atau menahan harta akan merugikan, dengan izin HP. <span class="pasal">UUK Ps. 107, 178, 184</span></p></div>
-    <div class="cell"><div class="n">2</div><h3>Siapa yang menjual?</h3><p>Ada HT: kreditor separatis mengeksekusi dalam 2 bulan sejak insolvensi, setelah penangguhan 90 hari. Lewat 2 bulan, Kurator menuntut penyerahan dan menjual sendiri. Tanpa HT: Kurator. <span class="pasal">Ps. 56, 59</span></p></div>
-    <div class="cell"><div class="n">3</div><h3>Dengan cara apa?</h3><p>Utama: lelang di muka umum melalui KPKNL. Bila lelang tidak laku atau tidak menguntungkan: penjualan di bawah tangan dengan izin HP, akta PPAT. <span class="pasal">Ps. 185 ayat (1)–(2)</span></p></div>
-    <div class="cell"><div class="n">4</div><h3>Balik nama &amp; roya</h3><p>Risalah lelang atau AJB PPAT didaftarkan ke Kantor Pertanahan; HT dihapus (roya) setelah hasil dibayarkan. <span class="pasal">PP 24/1997 Ps. 37, 41; UU 4/1996 Ps. 22</span></p></div>
+    <div class="cell"><div class="n">1</div><h3>Objeknya ada dan tertentu</h3><p>Hak ganti rugi baru lahir bila tanaman dan bangunan "masih diperlukan" untuk melanjutkan usaha. Buktikan lewat inventarisasi lapangan dan penilaian KJPP. <span class="pasal">PP 40/1996 Ps. 18(2)</span></p></div>
+    <div class="cell"><div class="n">2</div><h3>Pihak yang wajib bayar jelas</h3><p>Pemohon HGU baru, atau negara bila tanah ditata ulang. Ini bergantung pada sikap tim khusus Kanwil BPN Sumut. <span class="pasal">PP 40/1996 Ps. 4(4), 18(2)</span></p></div>
+    <div class="cell"><div class="n">3</div><h3>Kurator berwenang</h3><p>Debitor kehilangan hak mengurus sejak 10 April 2023; insolvensi sejak 22 Juni 2023. <span class="pasal">UUK Ps. 24, 69, 178</span></p></div>
+    <div class="cell"><div class="n">4</div><h3>Cara penjualan sah</h3><p>Lelang di muka umum; atau di bawah tangan dengan izin tertulis Hakim Pengawas. <span class="pasal">UUK Ps. 185(1)–(2)</span></p></div>
+    <div class="cell"><div class="n">5</div><h3>Harga wajar</h3><p>Nilai dari KJPP menjadi dasar harga minimum, agar tidak digugat kreditor. <span class="pasal">UUK Ps. 72, 77</span></p></div>
+    <div class="cell"><div class="n">6</div><h3>Diberitahukan</h3><p>Cessie diberitahukan kepada pihak yang wajib membayar, dengan tembusan ke Kantah Langkat dan Kanwil BPN Sumut. <span class="pasal">KUHPer Ps. 613(2)</span></p></div>
   </div>
-  <div class="tbl" style="margin-top:16px"><table>
-    <thead><tr><th>Jalur</th><th>Kapan dipakai</th><th>Instrumen</th><th>Izin</th><th>Pasal</th></tr></thead>
-    <tbody>
-      <tr><td><span class="st ok">A</span> Lelang oleh Kurator</td><td>Setelah insolvensi, HGU tanpa HT atau separatis lewat 2 bulan</td><td>Permohonan lelang ke KPKNL; risalah lelang</td><td>Penetapan/izin HP (praktik)</td><td class="pasal">UUK 185(1); PMK lelang yang berlaku</td></tr>
-      <tr><td><span class="st ok">B</span> Di bawah tangan</td><td>Lelang tidak laku atau harga lebih baik</td><td>PPJB bersyarat, lalu AJB di hadapan PPAT</td><td><b>Wajib izin HP</b></td><td class="pasal">UUK 185(2)</td></tr>
-      <tr><td><span class="st mid">C</span> Eksekusi oleh separatis</td><td>Dalam 2 bulan sejak insolvensi</td><td>Lelang parate eksekusi HT via KPKNL</td><td>Tidak perlu izin HP; wajib lapor hasil ke Kurator</td><td class="pasal">UU 4/1996 Ps. 6, 20; UUK 55, 59(1), 60</td></tr>
-      <tr><td><span class="st mid">D</span> Penjualan dini</td><td>Sebelum insolvensi, untuk biaya atau mencegah rugi</td><td>Seperti A atau B</td><td><b>Wajib izin HP</b></td><td class="pasal">UUK 107</td></tr>
-      <tr><td><span class="st bad">X</span> "Cessie" HGU</td><td>Tidak pernah</td><td>—</td><td>—</td><td>Tidak dapat didaftarkan</td></tr>
-    </tbody></table></div>
+  <p class="note" style="margin-top:12px">Sebagai penjual piutang, Kurator hanya menjamin bahwa hak itu ada saat dialihkan, <b>bukan</b> bahwa pihak yang wajib membayar mampu atau mau membayar, kecuali diperjanjikan. Tulis tegas dalam akta. <span class="pasal">KUHPer Ps. 1534–1535</span></p>
+</section>
+
+<section id="skenario" data-t="Pilih skema">
+  <h2>Skema mengikuti sikap Kanwil BPN</h2>
+  <p class="sub">Pihak yang wajib membayar ganti rugi ditentukan oleh keputusan penataan tanah. Pilih keadaan yang terjadi.</p>
+  <div class="wiz" id="wiz" aria-live="polite"></div>
 </section>
 
 <section id="langkah" data-t="Langkah BHP">
   <h2>Langkah BHP, tahap demi tahap</h2>
-  <p class="sub">Setiap langkah memuat apa yang dilakukan, berkasnya, ke mana dikirim, dan dasar pasalnya.</p>
+  <p class="sub">Setiap langkah memuat berkas, ke mana dikirim, dasar pasal, dan hasilnya.</p>
   <div class="tabs" role="tablist" id="tabs"></div>
   <div id="stage"></div>
 </section>
@@ -249,32 +243,31 @@ body:not(.deck) .botnav{display:none}
   <div class="tbl"><table>
     <thead><tr><th>Kebutuhan</th><th>Berkas</th><th>Ditujukan kepada</th><th>Pasal</th></tr></thead>
     <tbody>
-      <tr><td>Hentikan rencana cessie</td><td>Nota Telaah + disposisi</td><td>Ketua BHP</td><td class="pasal">UUK 69, 72</td></tr>
-      <tr><td>Status yuridis HGU</td><td>Permohonan SKPT + salinan putusan</td><td>Kantor Pertanahan setempat</td><td class="pasal">PP 24/1997 Ps. 34; UUK 98</td></tr>
-      <tr><td>Catat status pailit &amp; angkat sita</td><td>Permohonan pencatatan + putusan</td><td>Kantor Pertanahan</td><td class="pasal">UUK 31</td></tr>
-      <tr><td>Asli sertipikat &amp; SK HGU</td><td>Surat permintaan</td><td>Direksi PT RM / pemegang HT</td><td class="pasal">UUK 98, 105, 110</td></tr>
-      <tr><td>Masa berlaku &amp; status terlantar</td><td>Surat permintaan keterangan</td><td>Kanwil BPN</td><td class="pasal">UUPA 29; PP 20/2021</td></tr>
-      <tr><td>Nilai</td><td>Surat penugasan penilaian</td><td>KJPP</td><td class="pasal">UUK 69</td></tr>
-      <tr><td>Jadwal separatis</td><td>Pemberitahuan penangguhan &amp; batas 2 bulan</td><td>Pemegang HT</td><td class="pasal">UUK 56, 59</td></tr>
-      <tr><td>Izin menjual</td><td>Permohonan izin + laporan penilaian</td><td>Hakim Pengawas</td><td class="pasal">UUK 107, 185</td></tr>
-      <tr><td>Lelang</td><td>Permohonan lelang + dokumen persyaratan</td><td>KPKNL</td><td class="pasal">UUK 185(1)</td></tr>
-      <tr><td>Jual di bawah tangan</td><td>AJB</td><td>PPAT wilayah letak tanah</td><td class="pasal">UUK 185(2); PP 24/1997 Ps. 37</td></tr>
-      <tr><td>Balik nama</td><td>Risalah lelang / AJB + bukti pajak</td><td>Kantor Pertanahan</td><td class="pasal">PP 24/1997 Ps. 37, 41</td></tr>
-      <tr><td>Roya HT</td><td>Surat roya dari kreditor</td><td>Kantor Pertanahan</td><td class="pasal">UU 4/1996 Ps. 22</td></tr>
-      <tr><td>Pertanggungjawaban</td><td>Laporan triwulanan</td><td>Hakim Pengawas</td><td class="pasal">UUK 74</td></tr>
+      <tr><td>Hentikan lelang tanah, koreksi daftar harta</td><td>Laporan + permohonan arahan</td><td>Hakim Pengawas (Abdul Hadi Nasution)</td><td class="pasal">UUK 65, 69, 74</td></tr>
+      <tr><td>Kepastian status &amp; pihak pembayar</td><td>Surat permohonan penegasan (draf A)</td><td>Tim khusus Kanwil BPN Sumut, tembusan Kantah Langkat</td><td class="pasal">PP 18/2021 Ps. 22; PP 40/1996 Ps. 4(4), 18</td></tr>
+      <tr><td>Data fisik &amp; luas</td><td>Permohonan inventarisasi bersama &amp; pengukuran</td><td>Kantor Pertanahan Langkat</td><td class="pasal">UUK 98, 100</td></tr>
+      <tr><td>Nilai ganti rugi</td><td>Surat penugasan + sumpah penilai</td><td>KJPP (via penetapan HP)</td><td class="pasal">UUK 69</td></tr>
+      <tr><td>Hasil kebun</td><td>Surat tagihan / somasi</td><td>Direksi PT RM dan pengelola kebun</td><td class="pasal">UUK 21, 24, 26</td></tr>
+      <tr><td>Cara pemberesan</td><td>Undangan rapat kreditor</td><td>KPP Binjai, KPP Medan Polonia, eks karyawan</td><td class="pasal">UUK 187</td></tr>
+      <tr><td>Izin menjual hak tagih</td><td>Permohonan izin (draf B) + laporan KJPP</td><td>Hakim Pengawas</td><td class="pasal">UUK 185(2)</td></tr>
+      <tr><td>Penawaran</td><td>Surat penawaran (draf C)</td><td>PT Raya Padang Langkat &amp; peminat lain</td><td class="pasal">UUK 185</td></tr>
+      <tr><td>Penyerahan hak</td><td>Akta cessie (draf D)</td><td>Notaris; lalu pemberitahuan ke pihak pembayar</td><td class="pasal">KUHPer 613, 1534–1535</td></tr>
+      <tr><td>Uang masuk</td><td>Bukti setor</td><td>Rekening harta pailit</td><td class="pasal">UUK 69, 98</td></tr>
+      <tr><td>Tanggapan ke debitor</td><td>Surat tanggapan (draf E)</td><td>Direksi &amp; kuasa hukum PT RM</td><td class="pasal">UUK 24, 110</td></tr>
+      <tr><td>Pembagian &amp; penutupan</td><td>Daftar pembagian penutup</td><td>Hakim Pengawas</td><td class="pasal">UUK 189, 202</td></tr>
     </tbody></table></div>
 </section>
 
-<section id="kebun" data-t="Khusus perkebunan">
-  <h2>Hal khusus HGU perkebunan</h2>
-  <div class="grid">
-    <div class="cell"><h3>Tanaman &amp; bangunan</h3><p>Asas pemisahan horizontal: tanaman dan pabrik ikut dijaminkan hanya bila dicantumkan dalam APHT. Nilai dan jual sebagai satu paket agar tidak terpecah. <span class="pasal">UU 4/1996 Ps. 4(4)</span></p></div>
-    <div class="cell"><h3>Izin usaha</h3><p>Izin usaha perkebunan tidak otomatis ikut HGU. Pembeli perlu mengurus izinnya sendiri; ungkapkan dalam dokumen lelang. <span class="pasal">UU 39/2014</span></p></div>
-    <div class="cell"><h3>Kebun plasma</h3><p>Cek kewajiban fasilitasi kebun masyarakat 20% dan perjanjian dengan koperasi plasma; ini memengaruhi nilai dan risiko sengketa. <span class="pasal">UU 39/2014 Ps. 58</span></p></div>
-    <div class="cell"><h3>Upah pekerja</h3><p>Upah buruh terutang didahulukan atas semua kreditor, termasuk separatis; hak lain pekerja didahulukan setelah separatis. <span class="pasal">Putusan MK 67/PUU-XI/2013</span></p></div>
-    <div class="cell"><h3>Pajak</h3><p>PPh final atas pengalihan tanah dari penjual (boedel) dan BPHTB dari pembeli. Hitung dalam biaya pemberesan. <span class="pasal">PP 34/2016; UU 1/2022</span></p></div>
-    <div class="cell"><h3>Hasil kebun berjalan</h3><p>Selama belum terjual, panen tetap boedel. Kurator dapat melanjutkan usaha dengan persetujuan panitia kreditor atau HP. <span class="pasal">UUK Ps. 104</span></p></div>
+<section id="uang" data-t="Ke mana uangnya">
+  <h2>Ke mana uang hasil cessie</h2>
+  <p class="sub">Uang dari pembeli masuk rekening harta pailit dulu. Tidak ada pembayaran langsung dari pembeli atau debitor ke kreditor.</p>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div><h3>Biaya kepailitan &amp; imbalan jasa Kurator</h3><p style="margin:0;color:var(--muted)">Termasuk PNBP 7% dari DPT, iklan BNRI dan dua surat kabar, sesuai perintah HP dalam RK 10 Desember 2025. <span class="pasal">UUK Ps. 18, 191</span></p></div></div>
+    <div class="step"><div class="num">2</div><div><h3>Kreditor preferen pajak: KPP Pratama Binjai Rp1.108.581.903</h3><p style="margin:0;color:var(--muted)">DPT tidak dapat ditambah atau dikurangi. <span class="pasal">UU KUP Ps. 21; UUK Ps. 189</span></p></div></div>
+    <div class="step"><div class="num">3</div><div><h3>Sisa tagihan lain dalam DPT, secara seimbang</h3><p style="margin:0;color:var(--muted)">Pari passu prorata parte. <span class="pasal">KUHPer 1131–1132; UUK 189</span></p></div></div>
+    <div class="step"><div class="num">4</div><div><h3>Tanda terima lunas &amp; penutupan</h3><p style="margin:0;color:var(--muted)">Termasuk tanda terima lunas untuk KPP Medan Polonia (Rp14.636.625, dibayar langsung oleh debitor). Kepailitan berakhir setelah daftar pembagian penutup mengikat. <span class="pasal">UUK Ps. 202</span></p></div></div>
   </div>
+  <p class="note" style="margin-top:12px">Bila nilai ganti rugi tidak cukup menutup biaya, Kurator dapat mengusulkan pencabutan kepailitan. Sisa tagihan tetap menjadi utang debitor. <span class="pasal">UUK Ps. 18</span></p>
 </section>
 
 <section id="checklist" data-t="Checklist">
@@ -284,189 +277,172 @@ body:not(.deck) .botnav{display:none}
   <div class="ck" id="ck"></div>
 </section>
 
-<section id="risiko" data-t="Risiko Kurator">
-  <h2>Risiko bagi Kurator</h2>
+<section id="risiko" data-t="Risiko">
+  <h2>Risiko dan mitigasi</h2>
   <div class="tbl"><table>
     <thead><tr><th>Risiko</th><th>Akibat</th><th>Mitigasi</th></tr></thead>
     <tbody>
-      <tr><td>Tetap memakai akta cessie</td><td>Tidak bisa didaftarkan; pembeli dirugikan; gugatan kepada Kurator</td><td>Hentikan; ganti dengan jalur A atau B <span class="pasal">PP 24/1997 Ps. 37</span></td></tr>
-      <tr><td>Menjual tanpa izin HP</td><td>Perbuatan tetap sah terhadap pihak ketiga, tetapi Kurator bertanggung jawab sendiri</td><td>Kantongi izin tertulis lebih dulu <span class="pasal">UUK Ps. 78, 72</span></td></tr>
-      <tr><td>Harga di bawah nilai wajar</td><td>Keberatan kreditor; gugatan ganti rugi</td><td>Penilaian KJPP; nilai limit; lelang terbuka <span class="pasal">UUK Ps. 77</span></td></tr>
-      <tr><td>Mengalihkan ke satu kreditor sebagai pelunasan</td><td>Melanggar kesetaraan kreditor</td><td>Kreditor boleh ikut lelang sebagai peserta; hasil dibagi lewat daftar pembagian <span class="pasal">UUK Ps. 189; KUHPer 1132</span></td></tr>
-      <tr><td>Melangkahi separatis dalam 2 bulan</td><td>Perlawanan pemegang HT</td><td>Hormati penangguhan dan jangka Ps. 59 <span class="pasal">UUK Ps. 56, 59</span></td></tr>
-      <tr><td>Pembeli tidak memenuhi syarat subjek HGU</td><td>Peralihan ditolak Kantor Pertanahan</td><td>Syarat peserta lelang: WNI/badan hukum Indonesia <span class="pasal">UUPA Ps. 30</span></td></tr>
-      <tr><td>HGU habis masa berlaku saat proses</td><td>Aset hilang dari boedel</td><td>Cek sejak awal; ajukan perpanjangan/pembaruan bila memungkinkan</td></tr>
+      <tr><td>Akta ditulis "cessie HGU" atau "cessie tanah"</td><td>Objek tidak ada; batal dan menjadi dasar gugatan</td><td>Objek ditulis "hak tagih ganti rugi atas tanaman, bangunan, dan benda" dengan lampiran inventaris</td></tr>
+      <tr><td>Tanah ditata untuk Bank Tanah atau reforma agraria</td><td>Tidak ada pemohon HGU baru</td><td>Tagih ganti rugi kepada negara <span class="pasal">PP 40/1996 Ps. 18(2)</span></td></tr>
+      <tr><td>Kebun rusak atau dipanen liar</td><td>Tanaman tidak lagi "diperlukan"; hak ganti rugi hilang</td><td>Pengamanan lapangan; hasil panen ke rekening boedel</td></tr>
+      <tr><td>Harga di bawah nilai wajar</td><td>Keberatan KPP Binjai; tanggung jawab Kurator</td><td>KJPP, nilai minimum, penawaran terbuka <span class="pasal">UUK Ps. 72, 77</span></td></tr>
+      <tr><td>Pembeli menuntut bila HGU baru tidak diberikan</td><td>Klaim terhadap boedel</td><td>Klausul: Kurator tidak menjamin pemberian hak atau kemampuan pembayar <span class="pasal">KUHPer 1535</span></td></tr>
+      <tr><td>Debitor atau investor bertransaksi sendiri</td><td>Tidak mengikat boedel; uang tidak masuk rekening Kurator</td><td>Surat tegas ke debitor dan calon pembeli <span class="pasal">UUK Ps. 24</span></td></tr>
+      <tr><td>Selisih luas 338,7 vs 388,7 Ha</td><td>Nilai dan objek cessie keliru</td><td>Pengukuran dan inventarisasi bersama Kantah Langkat</td></tr>
+      <tr><td>Menjual tanpa izin HP</td><td>Sah terhadap pembeli, tetapi Kurator menanggung sendiri</td><td>Kantongi izin tertulis lebih dulu <span class="pasal">UUK Ps. 78</span></td></tr>
     </tbody></table></div>
 </section>
 
 <section id="surat" data-t="Draf surat">
   <h2>Draf surat</h2>
-  <p class="sub">Siap disalin lalu disesuaikan dengan format surat BHP. Isi bagian dalam kurung siku.</p>
+  <p class="sub">Siap disalin lalu disesuaikan dengan tata naskah BHP Medan.</p>
   <div id="letters"></div>
 </section>
 
 <section id="simpulan" data-t="Kesimpulan">
-  <h2>Kesimpulan dan rekomendasi</h2>
+  <h2>Kesimpulan dan urutan tindakan</h2>
   <ol class="rec">
-    <li>HGU tidak dapat dialihkan dengan cessie. Cessie hanya untuk piutang atas nama dan benda tak bertubuh lain <span class="pasal">KUHPer 613</span>; HGU beralih dengan akta PPAT atau risalah lelang yang didaftarkan <span class="pasal">UUPA 28(3); PP 24/1997 Ps. 37, 41</span>.</li>
-    <li>Kurator mengalihkan HGU dengan menjualnya: lelang di muka umum, atau di bawah tangan dengan izin Hakim Pengawas <span class="pasal">UUK 185</span>, setelah insolvensi atau dengan izin HP untuk penjualan dini <span class="pasal">UUK 107, 178</span>.</li>
-    <li>Bila HGU dibebani Hak Tanggungan, hak eksekusi pemegang HT dihormati dulu <span class="pasal">UUK 55–59</span>; sisa hasil penjualan masuk boedel.</li>
-    <li>Bila yang dimaksud adalah cessie piutang yang dijamin HT atas HGU, itu tindakan kreditor, bukan Kurator. Kurator cukup mencatat pergantian kreditor dan peralihan HT-nya <span class="pasal">UU 4/1996 Ps. 16</span>.</li>
+    <li>Tanah eks HGU No. 2/Sei Tampa adalah tanah negara sejak 31 Agustus 2013 dan bukan harta pailit. Lelang tanah dihentikan.</li>
+    <li>Yang tersisa dan bernilai adalah hak tagih ganti rugi atas tanaman, bangunan, dan benda. Hak itu piutang dan dapat dialihkan dengan cessie <span class="pasal">KUHPer 613</span>.</li>
+    <li>Cessie itu adalah penjualan harta pailit: lelang atau di bawah tangan dengan izin Hakim Pengawas <span class="pasal">UUK 185</span>.</li>
+    <li>Sebelum menjual, pastikan pihak yang wajib membayar lewat Kanwil BPN Sumut, dan nilai lewat KJPP.</li>
   </ol>
-  <h3 style="margin-top:22px">Urutan tindakan</h3>
+  <h3 style="margin-top:18px">Urutan tindakan</h3>
   <ol class="rec">
-    <li>Hentikan rencana akta cessie; buat Nota Telaah ke Ketua BHP.</li>
-    <li>Minta SKPT, asli sertipikat, SK HGU; cek masa berlaku, HT, sita, dan status terlantar.</li>
-    <li>Tinjau lapangan dan tugaskan KJPP.</li>
-    <li>Kirim pemberitahuan jadwal ke pemegang HT.</li>
-    <li>Mohon izin Hakim Pengawas untuk menjual.</li>
-    <li>Ajukan lelang ke KPKNL; bila tidak laku, jual di bawah tangan dengan izin HP dan AJB PPAT.</li>
-    <li>Daftarkan peralihan, roya HT, masukkan hasil ke rekening boedel, dan laporkan <span class="pasal">UUK 74</span>.</li>
+    <li>Minta arahan HP: hentikan lelang tanah, koreksi daftar harta pailit.</li>
+    <li>Surati tim khusus Kanwil BPN Sumut (draf A).</li>
+    <li>Inventarisasi dan pengukuran bersama Kantah Langkat; amankan kebun.</li>
+    <li>Tagih hasil kebun sejak 10 April 2023.</li>
+    <li>Tugaskan KJPP; rapat kreditor soal cara pemberesan.</li>
+    <li>Mohon izin HP (draf B); tawarkan (draf C); buat akta cessie (draf D).</li>
+    <li>Terima dana di rekening boedel; bagi; tutup kepailitan.</li>
   </ol>
+  <p class="note" style="margin-top:12px">Verifikasi sebelum dikutip: bunyi Pasal 79 Permen ATR/BPN 18/2021 masih dari kutipan sekunder, dan salinan putusan MA yang dirujuk dalam memo perlu diunduh dari Direktori Putusan MA.</p>
 </section>
-
-
 </main>
 
 <script>
-/* ---------- Wizard: apa yang mau dialihkan ---------- */
 const Q=[
- {id:"q1",t:"Apa yang sebenarnya ingin dialihkan Kurator?",h:"Dengarkan maksud di balik istilah \"cessie HGU\". Pilih yang paling mendekati.",p:"Kualifikasi objek",
-  a:[["HGU-nya sendiri, ke pembeli atau kreditor","q2"],
-     ["Piutang bank yang dijamin HT atas HGU",{v:"mid",s:"Cessie oleh kreditor",t:"Ini cessie yang sah, tetapi pelakunya kreditor, bukan Kurator",d:"Bank (kreditor) boleh menjual piutangnya kepada pihak lain dengan cessie. Hak Tanggungan atas HGU ikut beralih kepada kreditor baru.",x:["Minta bukti cessie dan pencatatan peralihan HT di Kantor Pertanahan (UU 4/1996 Ps. 16).","Catat kreditor baru dalam daftar piutang; ia menggantikan kedudukan separatis (UUK Ps. 55, 113 dst).","Kurator tidak menandatangani cessie ini dan tidak perlu izin HP.","Bila cessie dibuat menjelang pailit dengan pihak terafiliasi, nilai ulang tagihannya saat verifikasi."]}],
-     ["Hak tagih atas jual beli HGU yang belum selesai",{v:"mid",s:"Perjanjian belum selesai",t:"Pakai mekanisme perjanjian timbal balik",d:"Bila PT RM sudah menjual HGU sebelum pailit tetapi balik nama belum terjadi, penyerahan tidak dapat dilaksanakan lagi setelah pailit (Ps. 34). Kurator memilih meneruskan atau tidak.",x:["Pelajari PPJB/AJB, pembayaran yang sudah diterima, dan tanggalnya.","Pembeli dapat meminta kepastian; Kurator menjawab dalam jangka yang disepakati atau ditetapkan HP (Ps. 36).","Bila diteruskan: selesaikan dengan AJB PPAT atas nama Kurator dengan izin HP; sisa harga masuk boedel.","Bila tidak diteruskan: pembeli menjadi kreditor konkuren atas uang yang sudah dibayar.","Uji actio pauliana bila harga tidak wajar atau pembeli terafiliasi (Ps. 41–42)."]}],
-     ["Hasil penjualan HGU (uangnya) ke kreditor",{v:"ok",s:"Pembagian",t:"Bukan cessie, tetapi pembagian",d:"Uang hasil penjualan masuk rekening boedel dan dibagikan menurut daftar pembagian yang disahkan.",x:["Separatis: dibayar dari hasil jaminannya dikurangi bagian biaya kepailitan (Ps. 55, 60).","Upah pekerja terutang didahulukan (Putusan MK 67/PUU-XI/2013).","Sisanya dibagi kepada kreditor preferen dan konkuren lewat daftar pembagian (Ps. 189, 192–193)."]}]]},
- {id:"q2",t:"Apakah HGU dibebani Hak Tanggungan?",h:"Lihat SKPT dan sertipikat HGU. Catatan HT tertera di buku tanah.",p:"UUK Ps. 55–59; UU 4/1996",
-  a:[["Ya, ada HT","q3"],["Tidak ada HT","q4"]]},
- {id:"q3",t:"Sudah lewat 2 bulan sejak keadaan insolvensi?",h:"Pemegang HT boleh mengeksekusi sendiri setelah penangguhan 90 hari, paling lambat 2 bulan sejak insolvensi.",p:"UUK Ps. 56, 57, 59",
-  a:[["Belum lewat",{v:"mid",s:"Jalur C",t:"Biarkan pemegang HT mengeksekusi; Kurator mengawasi",d:"Pemegang HT menjual lewat lelang KPKNL (parate eksekusi). Kurator memastikan prosesnya benar dan sisa hasil masuk boedel.",x:["Kirim pemberitahuan tertulis tentang penangguhan dan batas 2 bulan.","Minta salinan permohonan lelang dan risalah lelang.","Tagih bagian biaya kepailitan dan kelebihan hasil ke rekening boedel (Ps. 60).","Pastikan upah pekerja terutang diperhitungkan."]}],
-   ["Sudah lewat",{v:"ok",s:"Jalur A/B",t:"Kurator menuntut penyerahan HGU lalu menjualnya",d:"Hak eksekusi separatis berakhir; Kurator yang menjual. Hasil untuk pemegang HT dibayar lebih dulu sesuai haknya.",x:["Kirim tuntutan penyerahan sertipikat dan penguasaan (Ps. 59(2)).","Tugaskan KJPP untuk nilai limit.","Mohon izin HP, lalu permohonan lelang ke KPKNL (Ps. 185(1)).","Bila tidak laku: izin HP untuk jual di bawah tangan, AJB PPAT (Ps. 185(2)).","Balik nama, roya HT, dan bayar pemegang HT dari hasil."]}]]},
- {id:"q4",t:"Sudah dalam keadaan insolvensi?",h:"Insolvensi terjadi bila tidak ada rencana perdamaian, perdamaian ditolak, atau pengesahannya ditolak.",p:"UUK Ps. 178",
-  a:[["Sudah insolvensi",{v:"ok",s:"Jalur A/B",t:"Kurator menjual melalui lelang",d:"Pemberesan berjalan. Lelang di muka umum adalah jalur utama.",x:["Tugaskan KJPP untuk nilai limit.","Mohon izin/penetapan HP untuk penjualan.","Ajukan permohonan lelang ke KPKNL dengan dokumen persyaratan (Ps. 185(1)).","Bila tidak laku: izin HP untuk jual di bawah tangan dengan AJB PPAT (Ps. 185(2)).","Daftarkan peralihan di Kantor Pertanahan; hasil ke rekening boedel."]}],
-   ["Belum insolvensi",{v:"mid",s:"Jalur D",t:"Hanya boleh bila mendesak, dengan izin HP",d:"Sebelum insolvensi, penjualan hanya untuk menutup biaya kepailitan atau bila menahan harta akan merugikan.",x:["Uraikan alasan mendesak (biaya, kerusakan kebun, risiko terlantar).","Mohon izin HP untuk penjualan dini (Ps. 107).","Setelah izin: jalankan lelang atau penjualan di bawah tangan seperti jalur A/B.","Bila tidak mendesak: tunggu insolvensi; kelola kebun sementara (Ps. 104)."]}]]}
+ {id:"q1",t:"Bagaimana sikap tim khusus Kanwil BPN Sumut atas tanah eks HGU?",h:"Pihak yang wajib membayar ganti rugi mengikuti keputusan penataan tanah negara.",p:"PP 18/2021 Ps. 22; PP 40/1996 Ps. 4(4), 18",
+  a:[["Diberikan HGU baru kepada pemohon (mis. PT Raya Padang Langkat)",{v:"ok",s:"Skema A · Pemohon HGU baru",t:"Pemohon baru wajib membayar ganti rugi; hak tagihnya dijual kepadanya atau kepada pihak ketiga",d:"Pemegang HGU baru menanggung ganti rugi atas tanaman dan bangunan bekas pemegang hak. Jalan paling praktis: pemohon membayar ganti rugi langsung ke rekening boedel, dan Kurator menyerahkan hak tagih serta penguasaan kebun.",x:["Minta Kanwil menegaskan kewajiban ganti rugi pemohon baru (Ps. 4(4) PP 40/1996) dan apakah bukti penyelesaiannya menjadi syarat permohonan.","Nilai ganti rugi lewat KJPP; tetapkan harga minimum.","Mohon izin HP untuk penjualan di bawah tangan kepada pemohon (Ps. 185(2)).","Tanda tangani akta cessie atau akta penyelesaian ganti rugi hanya setelah dana masuk rekening boedel.","Kurator dapat sekaligus menyatakan tidak menggunakan prioritas bekas pemegang hak, sebagai bagian dari kesepakatan (Ps. 22(3) PP 18/2021)."]}],
+     ["Prioritas diberikan kepada bekas pemegang hak",{v:"mid",s:"Skema B · Prioritas",t:"Kurator menjalankan prioritas demi boedel, lalu melepaskannya kepada pihak yang membayar",d:"Peluangnya lemah karena kebun diduga dikelola pihak lain dan PT dalam pailit. Kalau diberikan, Kurator tidak menjual prioritas itu, tetapi dapat menjadikannya bagian dari kesepakatan dengan pemohon yang membayar ganti rugi.",x:["Konsultasikan ke HP sebelum mengajukan atau melepaskan prioritas (Ps. 69).","Jangan menanggung biaya pengurusan hak baru dari boedel tanpa hitung untung-rugi.","Lanjutkan seperti Skema A: ganti rugi dibayar ke rekening boedel, izin HP, akta cessie."]}],
+     ["Tanah ditata untuk Bank Tanah atau reforma agraria",{v:"mid",s:"Skema C · Negara",t:"Tagih ganti rugi kepada negara",d:"Tidak ada pemohon baru yang membayar. Hak ganti rugi bekas pemegang hak ditagih kepada negara bila tanaman dan bangunan masih diperlukan.",x:["Ajukan tagihan ganti rugi tertulis ke Kanwil BPN Sumut / Badan Bank Tanah (Ps. 18(2) PP 40/1996).","Lampirkan inventaris dan laporan KJPP.","Pilihan lain: jual hak tagih itu kepada investor dengan harga diskon, izin HP; risiko pembayaran pindah ke pembeli (KUHPer 1535)."]}],
+     ["Tanaman dan bangunan dinilai tidak diperlukan",{v:"bad",s:"Skema D · Bongkar",t:"Hak ganti rugi tidak lahir; yang tersisa hanya benda bongkaran",d:"Bekas pemegang hak wajib membongkar bangunan dan menyerahkan tanah serta tanaman kepada negara. Tidak ada piutang untuk dicessie.",x:["Jual bangunan dan mesin sebagai bongkaran lewat lelang atau izin HP (Ps. 185).","Hitung nilai bersih; bila lebih kecil dari biaya, usulkan pencabutan kepailitan (UUK Ps. 18).","Kreditor dapat menilai tanggung jawab direksi yang membiarkan HGU berakhir (UU PT Ps. 104(2))."]}],
+     ["Belum ada keputusan",{v:"mid",s:"Masa tunggu",t:"Jaga nilai hak, jangan menjual dulu",d:"Menjual sebelum pihak pembayar jelas membuat harga jatuh dan membuka keberatan kreditor.",x:["Amankan kebun; tagih hasil panen sejak 10 April 2023 ke rekening boedel.","Beri tahu debitor dan calon pembeli bahwa transaksi di luar Kurator tidak mengikat (Ps. 24).","Inventarisasi dan pengukuran bersama Kantah Langkat; selesaikan selisih luas.","Laporkan ke HP dalam laporan triwulanan (Ps. 74)."]}]]}
 ];
 const wiz=document.getElementById("wiz");let path=[];
-function renderQ(id){const i=Q.findIndex(q=>q.id===id),q=Q[i];
- wiz.innerHTML=`<div class="prog">${Q.map((_,k)=>`<i class="${k<=path.length?"done":""}"></i>`).join("")}</div>
- <div class="eyebrow">Langkah ${path.length+1} · <span class="pasal">${q.p}</span></div>
- <p class="q">${q.t}</p><p class="qhelp">${q.h}</p>
- <div class="btns">${q.a.map((a,k)=>`<button type="button" class="${k===0?"pri":""}" data-k="${k}">${a[0]}</button>`).join("")}
- ${path.length?'<button type="button" data-back>Kembali</button>':""}</div>${trail()}`;
- wiz.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const a=q.a[+b.dataset.k];path.push([q,a[0]]);typeof a[1]==="string"?renderQ(a[1]):renderV(a[1])});
- const bk=wiz.querySelector("[data-back]");if(bk)bk.onclick=back;}
-function trail(){return path.length?`<div class="trail">Jawaban: ${path.map(p=>p[1]).join(" → ")}</div>`:""}
-function back(){const p=path.pop();renderQ(p[0].id)}
-function renderV(v){wiz.innerHTML=`<div class="prog">${Q.map(()=>'<i class="done"></i>').join("")}</div>
- <div class="verdict ${v.v}"><div class="tag">${v.s}</div><p class="q" style="margin-top:4px">${v.t}</p><p style="margin:0">${v.d}</p>
- <ol>${v.x.map(s=>`<li>${s}</li>`).join("")}</ol></div>${trail()}
- <div class="btns" style="margin-top:14px"><button type="button" data-back>Kembali</button><button type="button" class="pri" data-reset>Mulai lagi</button></div>`;
- wiz.querySelector("[data-back]").onclick=back;wiz.querySelector("[data-reset]").onclick=()=>{path=[];renderQ("q1")};}
+function renderQ(id){const q=Q.find(q=>q.id===id);
+ wiz.innerHTML=`<div class="eyebrow">Pertanyaan kunci · <span class="pasal">${q.p}</span></div><p class="q">${q.t}</p><p class="qhelp">${q.h}</p>
+ <div class="btns">${q.a.map((a,k)=>`<button type="button" data-k="${k}">${a[0]}</button>`).join("")}</div>`;
+ wiz.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const a=q.a[+b.dataset.k];path.push([q,a[0]]);renderV(a[1])});}
+function renderV(v){wiz.innerHTML=`<div class="verdict ${v.v}"><div class="tag">${v.s}</div><p class="q" style="margin-top:4px">${v.t}</p><p style="margin:0">${v.d}</p>
+ <ol>${v.x.map(s=>`<li>${s}</li>`).join("")}</ol></div><div class="btns" style="margin-top:12px"><button type="button" class="pri" data-reset>Pilih keadaan lain</button></div>`;
+ wiz.querySelector("[data-reset]").onclick=()=>{path=[];renderQ("q1")};}
 renderQ("q1");
 
-/* ---------- Tahap ---------- */
 const T=[
- ["Tahap 0","Hentikan cessie, tetapkan sikap","Segera",[
-  ["Hentikan penyusunan akta cessie HGU","Nota Telaah (halaman ini)","Ketua BHP","UUK 69, 72; KUHPer 613","Disposisi: ganti dengan jalur penjualan"],
-  ["Laporkan rencana pemberesan HGU","Surat laporan + rencana kerja","Hakim Pengawas","UUK 65, 74","Arahan HP"],
-  ["Jelaskan kepada pihak yang meminta cessie","Surat penjelasan","Calon pembeli / kreditor","UUPA 28(3); PP 24/1997 Ps. 37","Pihak memahami jalur lelang"]]],
- ["Tahap 1","Pastikan status HGU","Minggu 1–3",[
-  ["Minta asli sertipikat HGU, SK pemberian hak, peta bidang","Surat permintaan dokumen (draf A)","Direksi PT RM / bank pemegang HT","UUK 98, 105, 110","Dokumen asli di tangan Kurator"],
-  ["Mohon SKPT dan catat status pailit","Permohonan SKPT (draf B) + putusan","Kantor Pertanahan","PP 24/1997 Ps. 34; UUK 31","Data HT, sita, blokir, masa berlaku"],
-  ["Cek masa berlaku dan indikasi terlantar","Surat permintaan keterangan","Kanwil BPN","UUPA 29; PP 20/2021","Status hak jelas"],
-  ["Tinjau lapangan","Berita acara, foto, koordinat","Lokasi kebun","UUK 98, 100","Kondisi fisik & okupasi"],
-  ["Inventarisasi tanaman, pabrik, alat, stok","Daftar harta pailit","Arsip Kurator","UUK 100","Paket aset lengkap"]]],
- ["Tahap 2","Separatis dan penilaian","Minggu 2–6",[
-  ["Beri tahu penangguhan 90 hari dan batas 2 bulan","Surat pemberitahuan (draf C)","Pemegang HT","UUK 56, 57, 59","Jadwal jelas"],
-  ["Tugaskan penilai independen","Surat penugasan","KJPP","UUK 69","Nilai pasar & nilai limit"],
-  ["Cek kewajiban plasma, izin usaha, tunggakan upah","Surat permintaan data","Direksi, Dinas Perkebunan, serikat pekerja","UU 39/2014; Putusan MK 67/2013","Beban yang memengaruhi harga"]]],
- ["Tahap 3","Izin menjual","Setelah insolvensi",[
-  ["Pastikan insolvensi atau alasan penjualan dini","Berita acara rapat / penetapan","Hakim Pengawas","UUK 107, 178","Dasar menjual"],
-  ["Mohon izin penjualan HGU","Permohonan izin (draf D) + laporan KJPP","Hakim Pengawas","UUK 185, 107","Penetapan izin"],
-  ["Bila separatis lewat 2 bulan: tuntut penyerahan","Surat tuntutan","Pemegang HT","UUK 59(2)","HGU dikuasai Kurator"]]],
- ["Tahap 4","Penjualan","Sesuai jadwal KPKNL",[
-  ["Ajukan permohonan lelang","Permohonan lelang (draf E) + putusan, izin HP, SKPT, sertipikat, nilai limit","KPKNL","UUK 185(1); PMK lelang yang berlaku","Jadwal & pengumuman lelang"],
-  ["Tetapkan syarat peserta: WNI/badan hukum Indonesia","Syarat lelang","KPKNL","UUPA 30","Pembeli memenuhi syarat"],
-  ["Bila tidak laku: jual di bawah tangan","Izin HP baru, PPJB bersyarat, AJB","Hakim Pengawas; PPAT","UUK 185(2); PP 24/1997 Ps. 37","Pembeli & harga disetujui"]]],
- ["Tahap 5","Balik nama dan roya","Setelah lunas",[
-  ["Setor hasil ke rekening boedel","Bukti setor","Bank","UUK 69","Dana terkumpul"],
-  ["Bayar pajak penjual","SSP PPh final","Kantor Pajak","PP 34/2016","Bukti pajak"],
-  ["Serahkan dokumen untuk balik nama","Risalah lelang / AJB + sertipikat","Kantor Pertanahan (oleh pembeli)","PP 24/1997 Ps. 37, 41","Sertipikat atas nama pembeli"],
-  ["Roya HT setelah pemegang HT dibayar","Surat roya","Kantor Pertanahan","UU 4/1996 Ps. 22","HT hapus"]]],
- ["Tahap 6","Pembagian dan laporan","Sampai selesai",[
-  ["Bayar separatis dari hasil jaminannya dikurangi bagian biaya","Perhitungan","Pemegang HT","UUK 55, 60","Hak separatis tuntas"],
-  ["Susun dan sahkan daftar pembagian","Daftar pembagian","Hakim Pengawas","UUK 188–193","Pembagian sah"],
-  ["Laporan triwulanan","Laporan","Hakim Pengawas","UUK 74","Akuntabilitas"]]]
+ ["Tahap 0","Luruskan objek","Segera",[
+  ["Lapor dan minta arahan: hentikan lelang tanah, koreksi daftar harta pailit","Laporan + memo Kurator 28 Sep 2026","Hakim Pengawas","UUK 65, 69, 74; Ps. 21","Daftar harta: tanah keluar, hak ganti rugi masuk"],
+  ["Kirim tanggapan tertulis ke debitor atas rapat 14 Sep 2026","Surat tanggapan (draf E)","Direksi & kuasa hukum PT RM","UUK 24, 110","Debitor tahu jalur pemberesan"],
+  ["Terbitkan tanda terima lunas KPP Medan Polonia","Tanda terima","KPP Pratama Medan Polonia","Perintah HP, RK 10 Des 2025","Tagihan Rp14,6 juta tuntas"]]],
+ ["Tahap 1","Kepastian dari BPN","Oktober 2026",[
+  ["Mohon penegasan status tanah, prioritas, dan kewajiban ganti rugi","Surat (draf A) + memo + surat BPN 12 Agu 2024","Tim khusus Kanwil BPN Sumut, tembusan Kantah Langkat","PP 18/2021 Ps. 22; PP 40/1996 Ps. 4(4), 18","Pihak pembayar jelas"],
+  ["Inventarisasi dan pengukuran bersama","Permohonan + berita acara","Kantah Langkat","UUK 98, 100","Luas pasti; daftar tanaman, bangunan, mesin"]]],
+ ["Tahap 2","Jaga nilai kebun","Paralel",[
+  ["Tagih hasil kebun sejak 10 April 2023","Surat tagihan / somasi","Direksi PT RM dan pengelola kebun","UUK 21, 24, 26","Dana ke rekening boedel"],
+  ["Bila ditolak: gugatan lain-lain","Izin HP + gugatan","Pengadilan Niaga Medan","UUK 3(1), 69(5)","Putusan penyerahan hasil"],
+  ["Pengamanan lapangan","Surat pemberitahuan + papan","Lokasi kebun, Kepala Desa","UUK 98","Cegah panen liar"]]],
+ ["Tahap 3","Nilai dan persetujuan","Setelah BPN menjawab",[
+  ["Mohon penetapan penilai","Permohonan","Hakim Pengawas","UUK 69","Penetapan KJPP"],
+  ["Penilaian ganti rugi tanaman, bangunan, benda","Laporan KJPP","KJPP","UUK 69, 72","Nilai pasar &amp; harga minimum"],
+  ["Rapat kreditor: cara pemberesan hak tagih","Undangan + BA rapat","KPP Binjai, eks karyawan","UUK 187","Kreditor mengetahui dan tidak keberatan"]]],
+ ["Tahap 4","Jual dan cessie","Setelah izin HP",[
+  ["Mohon izin penjualan di bawah tangan","Permohonan (draf B) + KJPP + BA rapat","Hakim Pengawas","UUK 185(2)","Penetapan izin"],
+  ["Tawarkan kepada peminat","Surat penawaran (draf C)","PT Raya Padang Langkat &amp; peminat lain","UUK 185","Harga terbaik"],
+  ["Terima dana, lalu tanda tangani akta cessie","Akta cessie (draf D) + bukti setor","Notaris; rekening boedel","KUHPer 613, 1534–1535","Hak beralih"],
+  ["Beritahukan cessie","Surat pemberitahuan","Pihak pembayar; tembusan Kanwil BPN &amp; Kantah Langkat","KUHPer 613(2)","Cessie mengikat pembayar"]]],
+ ["Tahap 5","Bagi dan tutup","Akhir",[
+  ["Susun daftar pembagian penutup","Daftar pembagian","Hakim Pengawas","UUK 189, 192–193","Pengesahan"],
+  ["Bayar biaya, KPP Binjai, dan kreditor lain","Bukti bayar + tanda terima lunas","Para kreditor","UUK 189, 201","Tagihan diselesaikan sejauh dana cukup"],
+  ["Laporan akhir; kepailitan berakhir","Laporan","HP; tembusan Ditjen AHU &amp; Kanwil Kemenkum Sumut","UUK 74, 202","Perkara selesai"]]]
 ];
 const tabs=document.getElementById("tabs"),stage=document.getElementById("stage");
 function showStage(i){[...tabs.children].forEach((b,k)=>b.setAttribute("aria-selected",k===i));const s=T[i];
- stage.innerHTML=`<div class="stage-h"><h3 style="font:650 21px var(--serif);margin:0">${s[1]}</h3><span>${s[2]}</span></div>
- <div class="steps">${s[3].map((r,k)=>`<div class="step"><div class="num">${i}.${k+1}</div><div><h3>${r[0]}</h3>
- <dl><dt>Berkas</dt><dd>${r[1]}</dd><dt>Ke mana</dt><dd>${r[2]}</dd><dt>Dasar</dt><dd class="pasal" style="white-space:normal">${r[3]}</dd><dt>Hasil</dt><dd>${r[4]}</dd></dl></div></div>`).join("")}</div>`;}
+ stage.innerHTML=`<div class="stage-h"><h3>${s[1]}</h3><span>${s[2]}</span></div><div class="steps">${s[3].map((r,k)=>`<div class="step"><div class="num">${i}.${k+1}</div><div><h3>${r[0]}</h3><dl><dt>Berkas</dt><dd>${r[1]}</dd><dt>Ke mana</dt><dd>${r[2]}</dd><dt>Dasar</dt><dd class="pasal" style="white-space:normal">${r[3]}</dd><dt>Hasil</dt><dd>${r[4]}</dd></dl></div></div>`).join("")}</div>`;}
 T.forEach((s,i)=>{const b=document.createElement("button");b.type="button";b.role="tab";b.textContent=s[0];b.onclick=()=>showStage(i);tabs.appendChild(b)});showStage(0);
 
-/* ---------- Checklist ---------- */
-const C={"A. Dasar kewenangan":["Salinan resmi putusan pailit","Penetapan Hakim Pengawas","Bukti pengumuman putusan","Bukti keadaan insolvensi / izin penjualan dini"],
-"B. Dokumen HGU":["Asli sertipikat HGU","SK pemberian HGU & syarat-syaratnya","Surat ukur / peta bidang","SKPT terbaru","Sertipikat HT & APHT (bila ada)","Bukti PBB / kewajiban tanah"],
-"C. Kondisi & nilai":["Berita acara tinjau lapangan","Daftar tanaman, pabrik, alat","Laporan penilaian KJPP","Data plasma & izin usaha perkebunan","Data tunggakan upah pekerja"],
-"D. Penjualan":["Nota Telaah & disposisi Ketua BHP","Izin/penetapan HP untuk menjual","Permohonan lelang ke KPKNL","Risalah lelang atau AJB PPAT","Bukti setor ke rekening boedel","Bukti pajak penjual","Surat roya HT"]};
-const ck=document.getElementById("ck");let saved={};try{saved=JSON.parse(localStorage.getItem("ck-hgu")||"{}")}catch(e){}
+const C={"A. Dasar":["Salinan putusan No. 33/Pdt.Sus-PKPU/2022/PN Niaga Mdn","DPT 22 Juni 2023","BA RK 10 Desember 2025","Memo Kurator 28 September 2026","Arahan HP penghentian lelang tanah"],
+"B. Status tanah":["Surat BPN Langkat 12 Agustus 2024","Salinan sertipikat/SK HGU No. 2/Sei Tampa","Surat Ukur Sementara No. 471/1989","Jawaban tim khusus Kanwil BPN Sumut","Hasil pengukuran (selisih luas selesai)"],
+"C. Objek & nilai":["Berita acara inventarisasi tanaman","Daftar bangunan, mesin, benda","Foto aset (folder Foto Aset)","Penetapan penilai","Laporan KJPP"],
+"D. Penjualan":["BA rapat kreditor cara pemberesan","Izin tertulis HP (Ps. 185(2))","Surat penawaran & jawaban peminat","Bukti setor ke rekening boedel","Akta cessie","Surat pemberitahuan kepada pihak pembayar"],
+"E. Penutupan":["Tanda terima lunas KPP Medan Polonia","Daftar pembagian penutup","Tanda terima para kreditor","Laporan akhir Kurator"]};
+const ck=document.getElementById("ck");let saved={};try{saved=JSON.parse(localStorage.getItem("ck-rm2")||"{}")}catch(e){}
 let n=0;Object.entries(C).forEach(([g,items])=>{const f=document.createElement("fieldset");f.innerHTML=`<legend>${g}</legend>`+items.map(t=>{const id="ck"+(n++);return `<label for="${id}"><input type="checkbox" id="${id}" ${saved[id]?"checked":""}><span>${t}</span></label>`}).join("");ck.appendChild(f)});
-function upd(){const all=ck.querySelectorAll("input"),on=[...all].filter(i=>i.checked);document.getElementById("ckcount").textContent=`${on.length} / ${all.length} berkas`;document.getElementById("ckfill").style.width=(on.length/all.length*100)+"%";const s={};on.forEach(i=>s[i.id]=1);try{localStorage.setItem("ck-hgu",JSON.stringify(s))}catch(e){}}
+function upd(){const all=ck.querySelectorAll("input"),on=[...all].filter(i=>i.checked);document.getElementById("ckcount").textContent=`${on.length} / ${all.length} berkas`;document.getElementById("ckfill").style.width=(on.length/all.length*100)+"%";const s={};on.forEach(i=>s[i.id]=1);try{localStorage.setItem("ck-rm2",JSON.stringify(s))}catch(e){}}
 ck.addEventListener("change",upd);document.getElementById("ckreset").onclick=()=>{ck.querySelectorAll("input").forEach(i=>i.checked=false);upd()};upd();
 
-/* ---------- Letters ---------- */
 const L=[
-["A · Permintaan dokumen HGU kepada Direksi / pemegang HT",`Nomor : [...]
-Hal   : Permintaan Penyerahan Dokumen Hak Guna Usaha PT Rata Makmur (Dalam Pailit)
+["A · Permohonan penegasan kepada tim khusus Kanwil BPN Sumut",`Nomor : W.2.AHU.AHU.1-[...]
+Hal   : Permohonan Penegasan Status Tanah Eks HGU No. 2/Sei Tampa dan Kewajiban Ganti Rugi
 
-Berdasarkan Putusan Pengadilan Niaga [...] Nomor [...] tanggal [...], PT Rata Makmur dinyatakan pailit dan Balai Harta Peninggalan [...] diangkat sebagai Kurator.
+Yth. Kepala Kantor Wilayah BPN Provinsi Sumatera Utara
+c.q. Tim Khusus Penanganan Tanah Eks HGU No. 2/Sei Tampa
 
-Sesuai Pasal 98, 105 dan 110 UU No. 37 Tahun 2004, kami meminta Saudara menyerahkan paling lambat 7 (tujuh) hari: (1) asli sertipikat HGU No. [...]; (2) SK pemberian HGU; (3) surat ukur/peta bidang; (4) dokumen Hak Tanggungan; (5) data kebun plasma, izin usaha perkebunan, dan kewajiban kepada pekerja.
+Berdasarkan Putusan Pengadilan Niaga pada PN Medan No. 33/Pdt.Sus-PKPU/2022/PN Niaga Mdn tanggal 10 April 2023, PT Rata Makmur dinyatakan pailit dan Balai Harta Peninggalan Medan ditunjuk sebagai Kurator. Merujuk surat Kantor Pertanahan Kabupaten Langkat tanggal 12 Agustus 2024, HGU No. 2/Sei Tampa berakhir pada 31 Agustus 2013.
 
-[Untuk pemegang HT: bila asli sertipikat berada pada Saudara selaku pemegang Hak Tanggungan, mohon diberikan salinan yang dilegalisasi dan konfirmasi saldo tagihan per tanggal putusan.]`],
-["B · Permohonan SKPT dan pencatatan status pailit",`Kepada Yth. Kepala Kantor Pertanahan [Kabupaten ...]
-Hal : Permohonan Surat Keterangan Pendaftaran Tanah dan Pencatatan Status Pailit
+Kurator mohon penegasan tertulis mengenai:
+1. status tanah eks HGU No. 2/Sei Tampa dan rencana penataannya;
+2. kedudukan prioritas bekas pemegang hak menurut Pasal 22 ayat (3) PP 18/2021 dalam hal bekas pemegang hak dalam keadaan pailit;
+3. kewajiban pemohon hak baru untuk memberikan ganti rugi atas tanaman, bangunan, dan benda milik bekas pemegang hak (Pasal 4 ayat (4) dan Pasal 18 ayat (2) PP 40/1996), serta apakah bukti penyelesaiannya menjadi syarat permohonan;
+4. pelaksanaan inventarisasi dan pengukuran bersama untuk menyelesaikan perbedaan luas 338,7463 Ha dan 388,7463 Ha.
 
-Selaku Kurator PT Rata Makmur (Dalam Pailit) berdasarkan Putusan [...], kami mohon:
-1. penerbitan SKPT atas HGU No. [...] seluas [...] ha di [...];
-2. pencatatan dalam buku tanah bahwa pemegang hak dalam keadaan pailit dan harta berada di bawah penguasaan Kurator (Pasal 24 dan 98 UU No. 37 Tahun 2004);
-3. pengangkatan sita dan blokir yang ada, yang gugur demi hukum karena kepailitan (Pasal 31 UU No. 37 Tahun 2004).
+Seluruh pembayaran ganti rugi yang menjadi hak PT Rata Makmur (dalam pailit) hanya sah bila dibayarkan ke rekening harta pailit yang dikelola Kurator (Pasal 24 dan 69 UU 37/2004).`],
+["B · Permohonan izin kepada Hakim Pengawas",`Yth. Hakim Pengawas Kepailitan PT Rata Makmur (dalam pailit)
+Hal : Permohonan Izin Penjualan Hak Tagih Ganti Rugi atas Tanaman dan Bangunan di Kebun Sei Tampa
 
-Terlampir salinan putusan dan surat tugas.`],
-["C · Pemberitahuan kepada pemegang Hak Tanggungan",`Hal : Pemberitahuan Masa Penangguhan dan Jangka Waktu Eksekusi Hak Tanggungan atas HGU No. [...]
+Kurator mohon izin berdasarkan Pasal 185 ayat (2) UU 37/2004 untuk menjual secara di bawah tangan hak tagih PT Rata Makmur (dalam pailit) atas ganti rugi tanaman, bangunan, dan benda di atas tanah eks HGU No. 2/Sei Tampa, kepada [calon pembeli] dengan harga Rp [...], dengan pertimbangan:
+a. tanah eks HGU telah menjadi tanah negara sejak 31 Agustus 2013 dan bukan harta pailit;
+b. hak tagih ganti rugi bersumber dari Pasal 4 ayat (4) dan Pasal 18 ayat (2) PP 40/1996, dengan pihak pembayar [pemohon HGU baru / negara] sesuai penegasan Kanwil BPN Sumut tanggal [...];
+c. nilai menurut KJPP [...] tanggal [...] sebesar Rp [...];
+d. kreditor telah diberi tahu dalam rapat tanggal [...];
+e. penjualan melalui lelang [tidak memungkinkan / tidak lebih menguntungkan] karena [...].
 
-Sehubungan dengan kepailitan PT Rata Makmur, kami sampaikan:
-1. hak eksekusi Saudara ditangguhkan paling lama 90 hari sejak putusan diucapkan, yaitu sampai [tanggal] (Pasal 56);
-2. setelah keadaan insolvensi, Saudara wajib melaksanakan hak eksekusi paling lambat 2 bulan (Pasal 59 ayat (1));
-3. lewat jangka tersebut, Kurator akan menuntut penyerahan HGU untuk dijual (Pasal 59 ayat (2)).
+Pengalihan dilakukan dengan akta cessie (Pasal 613 KUHPerdata). Akta ditandatangani setelah seluruh harga diterima di rekening harta pailit.`],
+["C · Surat penawaran kepada PT Raya Padang Langkat",`Hal : Penawaran Hak Tagih Ganti Rugi atas Tanaman dan Bangunan Kebun Sei Tampa
 
-Mohon Saudara menyampaikan rencana eksekusi dan saldo tagihan kepada Kurator.`],
-["D · Permohonan izin kepada Hakim Pengawas",`Kepada Yth. Hakim Pengawas Kepailitan PT Rata Makmur (Dalam Pailit)
-Hal : Permohonan Izin Penjualan HGU No. [...]
+Menanggapi minat Saudara, Kurator PT Rata Makmur (dalam pailit) menyampaikan:
+1. Tanah eks HGU No. 2/Sei Tampa adalah tanah negara sejak 31 Agustus 2013. Kurator tidak menjual tanah dan tidak menjamin pemberian hak atas tanah kepada Saudara.
+2. Yang ditawarkan adalah hak tagih ganti rugi atas tanaman, bangunan, dan benda milik PT Rata Makmur di atas tanah tersebut, sesuai inventaris terlampir.
+3. Harga minimum Rp [...] berdasarkan penilaian KJPP [...].
+4. Pembayaran penuh ke rekening harta pailit: [Bank / No. Rek. / a.n. BHP Medan Kurator PT Rata Makmur (dalam pailit)].
+5. Penjualan tunduk pada izin Hakim Pengawas (Pasal 185 ayat (2) UU 37/2004).
 
-Kurator mohon izin berdasarkan Pasal [185 / 107] UU No. 37 Tahun 2004 untuk menjual HGU No. [...] beserta tanaman dan bangunan di atasnya melalui lelang di muka umum pada KPKNL [...], dengan nilai limit Rp [...] sesuai laporan KJPP [...] tanggal [...].
+Mohon tanggapan tertulis paling lambat [tanggal].`],
+["D · Pokok-pokok akta cessie",`AKTA CESSIE (POKOK-POKOK KLAUSUL)
 
-Pertimbangan: (a) harta pailit dalam keadaan insolvensi sejak [...] / [alasan penjualan dini]; (b) status HGU menurut SKPT [...]; (c) kedudukan pemegang Hak Tanggungan [...]; (d) biaya pemeliharaan kebun Rp [...] per bulan.
+Para pihak: Balai Harta Peninggalan Medan selaku Kurator PT Rata Makmur (dalam pailit), berdasarkan Putusan No. 33/Pdt.Sus-PKPU/2022/PN Niaga Mdn dan izin Hakim Pengawas No. [...] (Cedent); dan [pembeli] (Cessionaris).
 
-Pengalihan tidak dilakukan dengan cessie karena HGU adalah hak atas tanah yang peralihannya wajib melalui risalah lelang atau akta PPAT dan pendaftaran di Kantor Pertanahan.`],
-["E · Permohonan lelang ke KPKNL",`Kepada Yth. Kepala KPKNL [...]
-Hal : Permohonan Lelang Harta Pailit PT Rata Makmur (Dalam Pailit)
+1. Objek: hak tagih ganti rugi atas tanaman, bangunan, dan benda sebagaimana lampiran inventaris, yang bersumber dari Pasal 4 ayat (4) dan Pasal 18 ayat (2) PP 40/1996. BUKAN tanah dan BUKAN hak atas tanah.
+2. Pihak yang wajib membayar (cessus): [pemohon HGU baru / negara c.q. ...].
+3. Harga Rp [...] telah diterima penuh di rekening harta pailit pada [tanggal].
+4. Cedent hanya menjamin bahwa hak tagih ada pada saat penyerahan; tidak menjamin kemampuan atau kesediaan cessus membayar, maupun pemberian hak atas tanah (Pasal 1534–1535 KUHPerdata).
+5. Cessionaris menanggung sendiri biaya dan risiko penagihan.
+6. Cessie diberitahukan kepada cessus oleh [Cedent/Cessionaris] dalam 7 hari (Pasal 613 ayat (2) KUHPerdata).
+7. Penyelesaian sengketa: Pengadilan Niaga pada PN Medan (Pasal 3 ayat (1) UU 37/2004).`],
+["E · Tanggapan tertulis kepada debitor",`Yth. Direksi PT Rata Makmur (dalam pailit) c.q. Sdr. Arya A. Purba, S.H.
+Hal : Tanggapan atas Rapat 14 September 2026
 
-Berdasarkan Putusan [...] dan Penetapan/Izin Hakim Pengawas No. [...], Kurator mohon pelaksanaan lelang atas:
-HGU No. [...] seluas [...] ha di [...], beserta tanaman [...] dan bangunan [...].
-
-Nilai limit: Rp [...] (laporan KJPP terlampir).
-Syarat peserta: WNI atau badan hukum Indonesia yang berkedudukan di Indonesia (Pasal 30 UUPA).
-
-Terlampir: salinan putusan, penetapan HP, SKPT, salinan sertipikat, laporan penilaian, dan surat tugas.`]];
+1. Sejak 10 April 2023 Debitor kehilangan hak menguasai dan mengurus harta (Pasal 24 UU 37/2004). Setiap perjanjian mengenai kebun Sei Tampa, termasuk kontrak panen dan kesepakatan dengan investor, tidak mengikat harta pailit bila dibuat tanpa Kurator.
+2. Tanah eks HGU No. 2/Sei Tampa adalah tanah negara sejak 31 Agustus 2013 dan tidak dapat "diperbarui" karena tenggatnya telah lewat.
+3. Kurator akan membereskan hak tagih ganti rugi atas tanaman dan bangunan, serta menagih hasil kebun sejak 10 April 2023. Mohon Saudara menyerahkan data pengelola dan hasil panen dalam 14 hari.
+4. Tagihan KPP Pratama Binjai Rp1.108.581.903 tetap sesuai DPT. Setiap pembayaran wajib melalui rekening harta pailit.
+5. Mohon rencana pembayaran tertulis paling lambat [tanggal].`]];
 const lw=document.getElementById("letters");
 L.forEach(([t,b])=>{const d=document.createElement("details");d.className="letter";d.innerHTML=`<summary>${t}</summary><div class="lbody"><pre></pre><button type="button">Salin teks</button><span class="ok-msg" hidden>Tersalin</span></div>`;d.querySelector("pre").textContent=b;
  const m=d.querySelector(".ok-msg");d.querySelector("button").onclick=()=>{navigator.clipboard.writeText(b).then(()=>{m.hidden=false;setTimeout(()=>m.hidden=true,1800)}).catch(()=>{const r=document.createRange();r.selectNodeContents(d.querySelector("pre"));const s=getSelection();s.removeAllRanges();s.addRange(r)})};lw.appendChild(d)});
-
-
 </script>
 
-<p class="foot" id="foot">Kertas kerja internal Kurator BHP. Cocokkan kutipan pasal dengan naskah resmi (JDIH) sebelum dipakai di surat keluar, terutama PP 18/2021, PP 20/2021, dan PMK lelang yang berlaku.</p>
+<p class="foot" id="foot">Kertas kerja internal Tim Kurator BHP Medan · disusun dari berkas Drive per 28 September 2026. Cocokkan kutipan pasal dan putusan dengan naskah resmi sebelum dipakai di surat keluar.</p>
 <nav class="botnav" aria-label="Navigasi kartu">
   <div class="row">
     <button type="button" id="prevBtn">‹ Sebelumnya</button>
@@ -483,7 +459,7 @@ L.forEach(([t,b])=>{const d=document.createElement("details");d.className="lette
     t.querySelectorAll("tbody tr").forEach(r=>[...r.children].forEach((c,i)=>c.setAttribute("data-label",h[i]||"")))});
   const S=[...document.querySelectorAll("main>section")];
   S.forEach((s,i)=>{const h=s.querySelector("h2");if(h)h.setAttribute("data-n",`Bagian ${i} dari ${S.length-1}`)});
-  let cur=0,deck=true;try{const v=localStorage.getItem("hgu-cur");if(v)cur=Math.min(+v,S.length-1)}catch(e){}
+  let cur=0,deck=true;try{const v=localStorage.getItem("rm-cur2");if(v)cur=Math.min(+v,S.length-1)}catch(e){}
   const hash=location.hash.slice(1);const hi=S.findIndex(s=>s.id===hash);if(hi>=0)cur=hi;
   const body=document.body;body.classList.add("deck");
   function go(i,scroll){cur=Math.max(0,Math.min(S.length-1,i));
@@ -494,11 +470,11 @@ L.forEach(([t,b])=>{const d=document.createElement("details");d.className="lette
     document.getElementById("prevBtn").disabled=cur===0;
     const nb=document.getElementById("nextBtn");nb.textContent=cur===S.length-1?"Ke awal ↺":"Lanjut ›";
     if(scroll!==false)window.scrollTo({top:0,behavior:"smooth"});
-    try{localStorage.setItem("hgu-cur",cur)}catch(e){}}
+    try{localStorage.setItem("rm-cur2",cur)}catch(e){}}
   document.getElementById("prevBtn").onclick=()=>go(cur-1);
   document.getElementById("nextBtn").onclick=()=>go(cur===S.length-1?0:cur+1);
   document.getElementById("modeBtn").onclick=e=>{deck=!deck;body.classList.toggle("deck",deck);e.target.textContent=deck?"Semua":"Kartu";
-    if(!deck){document.getElementById("curTitle").textContent="Telaah HGU";document.getElementById("progTop").style.width="100%"}else go(cur)};
+    if(!deck){document.getElementById("curTitle").textContent="Cessie Sei Tampa";document.getElementById("progTop").style.width="100%"}else go(cur)};
   document.addEventListener("keydown",e=>{if(!deck||e.target.closest("input,textarea"))return;if(e.key==="ArrowRight")go(cur+1);if(e.key==="ArrowLeft")go(cur-1)});
   let x0=null,y0=null;const m=document.querySelector("main");
   m.addEventListener("touchstart",e=>{if(e.target.closest(".tbl,.tabs,pre"))return;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
