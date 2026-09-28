@@ -252,7 +252,8 @@ const NP=(n,left,html,extra='',b)=>`<p class="ni" data-n="${n}"${b?' data-b="1"'
 const identitas=r=>`${esc(r.jk)}, Lahir tanggal ${tgl(r.tglLahir)} (${usia(r.tglLahir,r.tglSumpah)}), agama ${esc(r.agama)}, Pekerjaan ${V(r.pekerjaan)}, alamat ${V(r.alamat)}`;
 function objekBA(r,d,o={}){const L=o.left||0;
   if(d.w){const l=d.anak.map(a=>`<b>${esc(a.nama)}</b>, ${esc(a.jk)}, lahir pada tanggal ${tgl(a.tglLahir)} (${usia(a.tglLahir,r.tglSumpah)})`);
-    return `<ul class="dash" style="margin-left:${L}pt">${(l.length?l:[V('')]).map((x,i,a)=>`<li>${x}${a.length>1?';':''}</li>`).join('')}</ul>`}
+    const it=(l.length?l:[V('')]).map((x,i,a)=>`<li>${x}${a.length>1?(i<a.length-1?';':'.'):''}</li>`).join('');
+    return o.nomor?`<ol${o.nomor==='a'?' type="a"':''} style="margin-left:${L}pt;margin-bottom:4pt">${it}</ol>`:`<ul class="dash" style="margin-left:${L}pt">${it}</ul>`}
   return `<p class="ni" style="margin-left:${L}pt"><b>${V(r.terampu.nama)}</b>, ${esc(r.terampu.jk)}, lahir pada tanggal ${tgl(r.terampu.tglLahir)} (${usia(r.terampu.tglLahir,r.tglSumpah)}), berada di bawah Pengampuan dikarenakan yang bersangkutan mengalami ${V(r.terampu.kondisi)}, sehingga tidak cakap untuk mengurus kepentingan pribadinya maupun melakukan tindakan hukum.</p>`}
 const HARTA=[['hartaTetap','BARANG-BARANG TETAP','tanah'],['hartaTunai','UANG TUNAI , TABUNGAN','rekening'],['hartaEmas','BARANG-BARANG EMAS, PERAK, DLL'],['hartaSurat','SURAT-SURAT BERHARGA/PIUTANG'],
   ['hartaPerabot','PERABOT RUMAH TANGGA, BARANG DAGANG, TERNAK'],['hartaBergerak','BARANG BERGERAK','harta']];
@@ -270,11 +271,11 @@ const PNBP='Nominal PNBP ditetapkan secara resmi berdasarkan Peraturan Pemerinta
 const BILLING='(Mekanisme pembayaran akan dipandu melalui kode pembayaran/<i>billing</i> kas negara secara elektronik pada saat kegiatan).';
 
 const DOCS={
-  permohonan:{nama:r=>'Surat Permohonan Penyumpahan',sty:{font:'Times New Roman',line:276},fn:r=>{const d=derive(r);return `<p class="ni" style="text-align:right">${tempatTgl(r)}</p><br>
-<p class="ni"><b>Kepada Yth;</b><br>Kepala Balai Harta Peninggalan Medan<br>Jl. Listrik No. 10 Medan</p><br>
-<table style="margin-bottom:10pt"><tr><td style="width:52pt">Perihal</td><td>:</td><td>Permohonan Penyumpahan ${d.w?'Wali<br>Anak Di Bawah Umur':'Pengampu'}</td></tr></table>
-<p class="ni">Dengan hormat,<br>Saya yang bertanda tangan di bawah ini :</p>
-<table style="margin:6pt 0 10pt 12pt"><tr><td style="width:100pt">Nama</td><td>:</td><td>${V(r.nama)}</td></tr><tr><td>Usia</td><td>:</td><td>${usia(r.tglLahir,r.tglSumpah)}</td></tr>
+  permohonan:{nama:r=>'Surat Permohonan Penyumpahan',sty:{font:'Times New Roman',line:360,tline:360},fn:r=>{const d=derive(r);return `<p class="ni" style="text-align:right;margin-top:24pt">${tempatTgl(r)}</p><br>
+<p class="ni" style="margin-top:6pt"><b>Kepada Yth;</b><br>Kepala Balai Harta Peninggalan Medan<br>Jl. Listrik No. 10 Medan</p><br>
+<table style="margin-top:6pt;margin-bottom:12pt"><tr><td style="width:52pt">Perihal</td><td>:</td><td>Permohonan Penyumpahan ${d.w?'Wali<br>Anak Di Bawah Umur':'Pengampu'}</td></tr></table>
+<p class="ni" style="margin-top:6pt">Dengan hormat,<br>Saya yang bertanda tangan di bawah ini :</p>
+<table style="margin:8pt 0 12pt 12pt"><tr><td style="width:100pt">Nama</td><td>:</td><td>${V(r.nama)}</td></tr><tr><td>Usia</td><td>:</td><td>${usia(r.tglLahir,r.tglSumpah)}</td></tr>
 <tr><td>Pekerjaan</td><td>:</td><td>${V(r.pekerjaan)}</td></tr><tr><td>Alamat</td><td>:</td><td>${V(r.alamat)}</td></tr><tr><td>No. KTP</td><td>:</td><td>${V(r.nik)}</td></tr><tr><td>No. HP</td><td>:</td><td>${esc(r.hp||'')}</td></tr></table>
 <p class="ni" style="margin-top:6pt">${d.w?'Dengan ini memohon kepada Kepala Balai Harta Peninggalan Medan agar melakukan penyumpahan terhadap WALI atas anak di bawah umur. Bersama ini saya lampirkan surat-surat yang diperlukan untuk melengkapi syarat-syarat penyumpahan wali.'
   :'Dengan ini mengajukan permohonan kepada Kepala Balai Harta Peninggalan Medan agar melakukan penyumpahan atas nama tersebut di atas sebagai Pengampu terhadap Terampu. Bersama ini saya lampirkan surat-surat yang diperlukan untuk melengkapi syarat-syarat penyumpahan pengampu.'}</p>
@@ -328,7 +329,7 @@ ${isi.length?bapList(r.isiBap):bapList(buatBap(r))}
 
   ba:{nama:r=>`BA Penyumpahan ${derive(r).jenisTxt}`,sty:{line:276},fn:r=>{const d=derive(r),m=d.madya;
     return kop()+judulBA(`BERITA ACARA PENYUMPAHAN ${d.jenisTxt.toUpperCase()}`,noManual(r,'nomorBA'))+
-`<p>Pada hari ini, ${tglBA(r.tglSumpah)}, telah hadir dihadapan saya, <b>${V(m.nama)}, NIP. ${V(m.nip)},</b> ${esc(m.jabatan||'')} pada Balai Harta Peninggalan Medan yang dalam ini bertindak dalam jabatan tersebut, yaitu <b>${V(r.nama)}</b>, ${identitas(r)}, yang berdasarkan Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)} telah diangkat menjadi <b>${d.J.toUpperCase()}</b> terhadap ${esc(d.statusRel.toLowerCase())}nya, yaitu:</p>${objekBA(r,d,{left:18})}
+`<p>Pada hari ini, ${tglBA(r.tglSumpah)}, telah hadir dihadapan saya, <b>${V(m.nama)}, NIP. ${V(m.nip)},</b> ${esc(m.jabatan||'')} pada Balai Harta Peninggalan Medan yang dalam ini bertindak dalam jabatan tersebut, yaitu <b>${V(r.nama)}</b>, ${identitas(r)}, yang berdasarkan Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)} telah diangkat menjadi <b>${d.J.toUpperCase()}</b> terhadap ${esc(d.statusRel.toLowerCase())}nya, yaitu:</p>${objekBA(r,d,{left:18,nomor:1})}
 <p style="margin-top:6pt">Yang hadir menerangkan, bahwa Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)} dan pernyataan ini adalah sebagai pengganti pemberitahuan sesuai dengan penetapan sebagaimana yang diwajibkan oleh undang-undang. Kemudian untuk memenuhi maksud dari ${d.w?'pasal 362 dan 366':'pasal 433 dan 449'} KUH Perdata, yang telah mengangkat sumpah dihadapan Balai Harta Peninggalan Medan, sesuai dengan agama yang dianutnya (${esc(r.agama)}), dengan mengucapkan perkataan sebagai berikut :</p>
 <p class="ctr" style="margin-top:6pt"><b><i>"${esc(d.laf)}"</i></b></p>
 <p class="ctr">----------------------------------------------Demikianlah----------------------------------------------</p>
@@ -338,7 +339,7 @@ ${isi.length?bapList(r.isiBap):bapList(buatBap(r))}
   harta:{nama:r=>'BA Inventarisasi Harta',sty:{line:276},fn:r=>{const d=derive(r),m=d.muda;
     return kop()+judulBA(`BERITA ACARA PENCATATAN/PENDAFTARAN HARTA KEKAYAAN MILIK<br>${d.w?'ANAK DI BAWAH UMUR ATAS NAMA':'TERAMPU AN.'} ${V(d.objek.toUpperCase())}`,noManual(r,'nomorBAHarta'))+
 `<p class="ni">-- Pada hari ini, ${tglBA(r.tglSumpah)}, kami yang bertanda tangan dibawah ini masing-masing yaitu :</p>
-${NP('1.',0,`<b>${V(r.nama)}</b>, ${identitas(r)}, yang berdasarkan Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)} telah diangkat menjadi <b>${d.J.toUpperCase()}</b> terhadap ${esc(d.statusRel.toLowerCase())}nya, yaitu:`,';margin-top:6pt')}${objekBA(r,d,{left:18})}
+${NP('1.',0,`<b>${V(r.nama)}</b>, ${identitas(r)}, yang berdasarkan Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)} telah diangkat menjadi <b>${d.J.toUpperCase()}</b> terhadap ${esc(d.statusRel.toLowerCase())}nya, yaitu:`,';margin-top:6pt')}${objekBA(r,d,{left:18,nomor:'a'})}
 ${NP('2.',0,`<b>${V(m.nama)},</b> ${esc(m.jabatan||'')} pada Balai Harta Peninggalan Medan yang dalam hal ini bertindak berdasarkan ketentuan Pasal ${d.w?'366':'433'} dan 470 Kitab Undang-Undang Hukum Perdata mewakili Balai Harta Peninggalan Medan selaku ${d.J} Pengawas dan memiliki kewenangan untuk membuat Inventarisasi Harta.`,';margin-top:4pt')}
 <p class="ni" style="margin-left:18pt;margin-top:4pt">--Penghadap telah mendaftarkan harta kekayaan ${d.w?'anak di bawah umur':'terampu'} yang akan disebut dibawah ini sebagai berikut :</p>
 ${NP('I.',18,'<b>AKTIVA</b>',';margin-top:8pt',1)}
@@ -700,7 +701,7 @@ function tableXml(t){
   const cols=w.map(x=>tw(x||rest)),tot=cols.reduce((a,b)=>a+b,0);
   const body=rows.map((r,ri)=>{let i=0;const h=Math.max(...[...r.cells].map(c=>ptOf(c.style.height)),0);
     return `<w:tr><w:trPr><w:cantSplit/>${h?`<w:trHeight w:val="${tw(h)}"/>`:''}</w:trPr>${[...r.cells].map(c=>{const sp=c.colSpan||1,cw=cols.slice(i,i+sp).reduce((a,b)=>a+b,0);i+=sp;
-      return `<w:tc><w:tcPr><w:tcW w:w="${cw}" w:type="dxa"/>${sp>1?`<w:gridSpan w:val="${sp}"/>`:''}</w:tcPr>${para(c,{jc:ttd&&t.classList.contains('ctr')?'center':'left',noInd:1,after:ttd?0:40,line:276,keep:ttd&&ri<rows.length-1})}</w:tc>`}).join('')}</w:tr>`}).join('');
+      return `<w:tc><w:tcPr><w:tcW w:w="${cw}" w:type="dxa"/>${sp>1?`<w:gridSpan w:val="${sp}"/>`:''}</w:tcPr>${para(c,{jc:ttd&&t.classList.contains('ctr')?'center':'left',noInd:1,after:ttd?0:40,line:STY.tline||276,keep:ttd&&ri<rows.length-1})}</w:tc>`}).join('')}</w:tr>`}).join('');
   return (ptOf(t.style.marginTop)?spacer(ptOf(t.style.marginTop),ttd):'')+`<w:tbl><w:tblPr><w:tblW w:w="${tot}" w:type="dxa"/><w:tblInd w:w="${tw(indL)}" w:type="dxa"/><w:tblLayout w:type="fixed"/>${noBorders}<w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${cols.map(c=>`<w:gridCol w:w="${c}"/>`).join('')}</w:tblGrid>${body}</w:tbl>`+spacer(ptOf(t.style.marginBottom)||4)}
 function blocksXml(html){
   const root=new DOMParser().parseFromString(`<div>${html}</div>`,'text/html').body.firstChild;let x='';
