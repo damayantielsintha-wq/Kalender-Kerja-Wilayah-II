@@ -575,6 +575,25 @@
   .batamen2 .bp-point { height: 100%; }
   .batamen2.pose-namaste .bp-point { opacity: 1; transform: translateX(-50%) scaleX(-1); }
   .batamen2 .bp-namaste { display: none; }
+  /* ====== Gerak natural tokoh 3D: napas, geser berat badan, condong saat bicara ====== */
+  .char .c3d { animation: c3idle 5.2s ease-in-out infinite; }
+  .char.dinda .c3d { animation-duration: 5.8s; animation-delay: -2.3s; }
+  @keyframes c3idle {
+    0%, 100% { scale: 1 1; rotate: -.6deg; translate: -50% 0; }
+    25% { scale: 1.004 1.012; }
+    50% { scale: 1 1; rotate: .7deg; translate: calc(-50% + 4px) 0; }
+    75% { scale: 1.004 1.012; }
+  }
+  .char.talking .c3d { animation: c3talk2 .9s ease-in-out infinite; }
+  .char.tasya.talking .c3d { --lean: 1.6deg; } .char.dinda.talking .c3d { --lean: -1.6deg; }
+  @keyframes c3talk2 {
+    0%, 100% { rotate: var(--lean, 1deg); translate: -50% 0; scale: 1 1; }
+    30% { rotate: calc(var(--lean, 1deg) * 1.6); translate: -50% -6px; scale: 1.006 1.01; }
+    60% { rotate: calc(var(--lean, 1deg) * .6); translate: -50% -2px; scale: 1 1; }
+  }
+  /* kamera melayang pelan (parallax) — latar & tokoh bergerak beda kecepatan */
+  #bg { animation: bgdrift 14s ease-in-out infinite; transform-origin: 50% 40%; }
+  @keyframes bgdrift { 0%, 100% { transform: scale(1.06) translateX(-10px); } 50% { transform: scale(1.08) translateX(10px); } }
   /* ====== Hormati prefers-reduced-motion ====== */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
