@@ -30,9 +30,12 @@ const PENGGUNA_AWAL = [
 
 /* ------------------------------------------------------------ web app */
 
+const UI_URL = 'https://raw.githubusercontent.com/damayantielsintha-wq/Kalender-Kerja-Wilayah-II/claude/dokumen-penyumpahan-app-3s2ts5/penyumpahan/Index.html';
 function doGet() {
-  return HtmlService.createHtmlOutputFromFile('Index')
-    .setTitle(APP)
+  let html = '';
+  try { const r = UrlFetchApp.fetch(UI_URL, { muteHttpExceptions: true }); if (r.getResponseCode() === 200) html = r.getContentText(); } catch (e) {}
+  return (html ? HtmlService.createHtmlOutput(html) : HtmlService.createHtmlOutputFromFile('Index'))
+    .setTitle('Dokumen Penyumpahan BHP')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
