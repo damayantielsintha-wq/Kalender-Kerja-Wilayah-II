@@ -485,8 +485,13 @@ function apiLoginCall(u,p,ing){if(!GAS)return new Promise((ok,no)=>{try{ok(DEMO.
   return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(no).apiLogin(u,p,!!ing))}
 const isSuper=()=>ME&&ME.role==='superadmin';
 /* token: 'Tetap masuk' = localStorage (bertahan), selain itu sessionStorage (hilang saat tab ditutup) */
-function simpanTok(t,ing){ss('bhpTok',null);try{(ing?localStorage:sessionStorage).setItem('bhpTok',t)}catch(e){try{sessionStorage.setItem('bhpTok',t)}catch(e2){}}}
-function sesiHabis(){TOKEN=null;ss('bhpTok',null);showLogin('Sesi berakhir, silakan login lagi.')}
+function simpanTok(t,ing){ss('bhpTok',null);try{(ing?localStorage:sessionStorage).setItem('bhpTok',t)}catch(e){try{sessionStorage.setItem('bhpTok',t)}catch(e2){}}
+  /* cadangan: token 'tetap masuk' juga ditaruh di alamat halaman (?sesi=…) supaya tetap masuk walau penyimpanan browser dihapus/berganti versi */
+  urlSesi(ing?t:null)}
+function urlSesi(t){try{if(GAS&&google.script.history)google.script.history.replace(null,t?{sesi:t}:{},'')}catch(e){}}
+function tokenDariUrl(){return new Promise(ok=>{if(!GAS||!google.script.url)return ok(null);let done=false;setTimeout(()=>{if(!done){done=true;ok(null)}},1500);
+  try{google.script.url.getLocation(l=>{if(done)return;done=true;const v=l&&l.parameter&&l.parameter.sesi;ok(v||null)})}catch(e){done=true;ok(null)}})}
+function sesiHabis(){TOKEN=null;ss('bhpTok',null);urlSesi(null);showLogin('Sesi berakhir, silakan login lagi.')}
 function showLogin(msg){
   document.body.classList.add('locked');
   $('#login').innerHTML=`<form class="card" onsubmit="event.preventDefault();doLogin(this)" style="max-width:380px;margin:12vh auto;padding:28px">
@@ -498,7 +503,7 @@ function showLogin(msg){
     <button class="pri" style="width:100%;margin-top:14px">Masuk</button>
     ${GAS?'':'<p class="hint" style="margin-top:12px">Mode demo (belum di-deploy): username <b>shela</b> atau <b>annisa</b>, password <b>demo</b>.</p>'}</form>`;
   $('#login').hidden=false}
-async function doLogin(f){const b=f.querySelector('button');b.disabled=true;b.textContent='Memeriksa…';
+async function doLogin(f){const b=f.querySelector('button');b.disabled=true;b.textContent='Memeriksa… (±5 detik)';
   try{const ing=f.ing&&f.ing.checked;const r=await apiLoginCall(f.u.value,f.p.value,ing);TOKEN=r.token;simpanTok(TOKEN,ing);INIT=r.init||null;await boot()}
   catch(e){showLogin(e.message||String(e))}}
 async function boot(){
@@ -509,7 +514,7 @@ async function boot(){
   }catch(e){if(!TOKEN)return;showLogin(e.message);return}
   $('#login').hidden=true;document.body.classList.remove('locked');renderHeader();cur=null;renderList();renderMain();
   if(ME.wajibGanti)gantiPassword(true)}
-async function logout(){await api('apiLogout').catch(()=>{});TOKEN=null;ss('bhpTok',null);ME=null;DB=[];cur=null;showLogin('Anda sudah keluar.')}
+async function logout(){await api('apiLogout').catch(()=>{});TOKEN=null;ss('bhpTok',null);urlSesi(null);ME=null;DB=[];cur=null;showLogin('Anda sudah keluar.')}
 function renderHeader(){$('#who').innerHTML=`${FOLDER?`<a class="btn" href="${FOLDER}" target="_blank" rel="noopener" title="Folder Drive">📁</a>`:''}<div class="uname"><b>${esc(ME.nama)}</b><small>${isSuper()?'Admin Utama':'Admin'}</small></div><button class="menubtn" onclick="menuUser()">👤 Menu ▾</button>`;
   document.querySelectorAll('.superOnly').forEach(e=>e.hidden=!isSuper());const lg=$('#brandLogo');if(lg)lg.src=SET.logo||LOGO_DEF;
   $('#pgDate').textContent=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
@@ -1210,7 +1215,8 @@ async function simpanKunci(){try{ADA_AI=await api('apiSimpanKunciAI',$('#gk').va
 function toggleTheme(){const r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem('bhpTheme',r.dataset.theme)}catch(e){}}
 try{document.documentElement.dataset.theme=localStorage.getItem('bhpTheme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}
 $('#q').oninput=renderList;
-TOKEN=ss('bhpTok');boot();
+(async()=>{TOKEN=ss('bhpTok');if(!TOKEN){TOKEN=await tokenDariUrl();if(TOKEN)try{localStorage.setItem('bhpTok',TOKEN)}catch(e){}}
+  if(TOKEN)$('#login').innerHTML='<div style="text-align:center;margin-top:30vh"><div class="spin"></div><b>Memuat data…</b></div>',$('#login').hidden=false;boot()})();
 </script>
 </body>
 </html>

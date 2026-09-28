@@ -179,7 +179,7 @@ function apiGantiPassword(token, lama, baru) {
 function apiInit(token) {
   const u = user_(token);
   const out = { user: u, settings: settings_(), berkas: berkas_(u.role === 'superadmin'), sps: spsInfo_(), folderUrl: PROPS.getProperty('FOLDER_ID') ? 'https://drive.google.com/drive/folders/' + PROPS.getProperty('FOLDER_ID') : folderRoot_().getUrl(), ai: !!PROPS.getProperty('CLAUDE_KEY') };
-  if (u.role === 'superadmin') { out.users = daftarPengguna_(); try { if (terapkanBapSiap_(u)) out.berkas = berkas_(true); } catch (e) {} }
+  if (u.role === 'superadmin') { out.users = daftarPengguna_(); try { if (perluBapSiap_() && terapkanBapSiap_(u)) out.berkas = berkas_(true); } catch (e) {} }
   return out;
 }
 function berkas_(termasukHapus) {
@@ -744,6 +744,14 @@ function cekSemua() {
    Diterapkan otomatis saat admin utama membuka aplikasi: hanya ke berkas yang nomor penetapannya cocok
    dan isi BAP-nya masih kosong (tidak menimpa BAP yang sudah diisi/diedit). */
 function kunciNo_(s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+/* hanya jalankan pengisian BAP bila daftar BAP atau jumlah baris berkas berubah sejak pengecekan terakhir (login lebih cepat) */
+function perluBapSiap_() {
+  if (typeof BAP_SIAP === 'undefined') return false;
+  const t = Object.keys(BAP_SIAP).length + '_' + (typeof BAP_SIAP_VERSI === 'undefined' ? 1 : BAP_SIAP_VERSI) + '_' + sheet_('Berkas').getLastRow();
+  if (PROPS.getProperty('BAP_SIAP_CEK') === t) return false;
+  PROPS.setProperty('BAP_SIAP_CEK', t);
+  return true;
+}
 function terapkanBapSiap_(u) {
   if (typeof BAP_SIAP === 'undefined') return 0;
   const tanda = 'BAP_SIAP_' + Object.keys(BAP_SIAP).length + '_' + (typeof BAP_SIAP_VERSI === 'undefined' ? 1 : BAP_SIAP_VERSI);
