@@ -625,6 +625,13 @@ const FINALE = {
   tagline: ['Pasti Selalu Ada', 'Solusinya!'],
 };
 
+/* Kalimat narator lain (dipakai juga oleh daftar rekaman suara) */
+const LINES = {
+  overlay: (o) => `Nah, catet ya. ${o.title}, bisa kamu urus di BHP. ${o.sub || ''}`,
+  closing: (ep) => `Jadi inget ya, urusan ${ep.tusi.toLowerCase()}, langsung aja ke BHP. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!`,
+  next: (n) => `Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor ${n.no}, soal ${n.short.toLowerCase()}. Tungguin ya!`,
+};
+
 /* Timing (ms). Durasi bubble dihitung dari panjang teks lalu dibatasi min/max. */
 const T = {
   wipe: 450, wipeHold: 250, sceneIntro: 400,
@@ -875,8 +882,38 @@ function pickVoice() {
 }
 const cleanSpeech = (t) => t.replace(/[\p{Extended_Pictographic}️‍]/gu, '').replace(/\s+/g, ' ').trim();
 /* Membacakan teks; selesai saat suara berakhir (dengan batas waktu aman). */
+/* ===== Suara AI neural (rekaman MP3) =====
+   Jalankan `python buat_suara.py` sekali → folder vo/ berisi MP3 + manifest.json.
+   Kalau ada, semua kalimat pakai rekaman suara manusia-AI itu; kalau tidak, fallback ke TTS browser. */
+const voKey = (who, text) => { // FNV-1a 32-bit atas UTF-8 — sama persis dengan buat_suara.py
+  let h = 0x811c9dc5;
+  for (const b of new TextEncoder().encode(`${who}|${cleanSpeech(text)}`)) { h ^= b; h = Math.imul(h, 0x01000193) >>> 0; }
+  return `${who}-${h.toString(16).padStart(8, '0')}`;
+};
+function allVoLines() {
+  const out = [], add = (who, text) => text && out.push({ who, text: cleanSpeech(text), key: voKey(who, text) });
+  EPISODES.forEach((ep, i) => {
+    for (const m of [...ep.messages, ep.punch]) { add(m.from, m.say || m.text); (m.list || []).forEach((x) => add(m.from, x.say || x.text)); }
+    add('narator', LINES.overlay(ep.overlay));
+    ep.pops.forEach((p) => add('boss', p.text));
+    add('boss', FINALE.line(ep));
+    add('narator', FINALE.tagline.join(' '));
+    add('narator', LINES.closing(ep));
+    add('dinda', LINES.next(EPISODES[(i + 1) % EPISODES.length]));
+  });
+  return out.filter((x, i, a) => a.findIndex((y) => y.key === x.key) === i);
+}
+let voSet = new Set();
+const voReady = fetch('vo/manifest.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : [])).then((keys) => { voSet = new Set(keys); updateSoundUi(); }).catch(() => {});
+if (params.has('naskah')) { // ?naskah → unduh daftar kalimat untuk buat_suara.py
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(allVoLines(), null, 1)], { type: 'application/json' }));
+  a.download = 'naskah-vo.json'; addEventListener('load', () => a.click());
+}
+
 function speak(text, who, audioSrc) {
   if (!soundOn) return Promise.resolve();
+  if (!audioSrc && text) { const k = voKey(who, text); if (voSet.has(k)) audioSrc = `vo/${k}.mp3`; }
   Music.duck(true);
   return speakRaw(text, who, audioSrc).then(() => Music.duck(false));
 }
@@ -1172,7 +1209,7 @@ async function showOverlay(o, num) {
   sleep(T.overlayIn + 150).then(() => Music.stamp(), () => {}); // saat stempel "BISA DI BHP" mendarat
   await Promise.all([
     sleep(T.overlayIn + T.overlayHold),
-    sleep(T.overlayIn).then(() => speak(`Nah, catet ya. ${o.title}, bisa kamu urus di BHP. ${o.sub || ''}`, 'narator')),
+    sleep(T.overlayIn).then(() => speak(LINES.overlay(o), 'narator')),
   ]);
 }
 
@@ -1275,8 +1312,8 @@ async function showClosing(ep) {
     Music.start(.55);
   });
   await Promise.all([sleep(T.replayAfter),
-    speak(`Jadi inget ya, urusan ${ep.tusi.toLowerCase()}, langsung aja ke BHP. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!`, 'narator')
-      .then(() => speak(`Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor ${next.no}, soal ${next.short.toLowerCase()}. Tungguin ya!`, 'dinda'))]);
+    speak(LINES.closing(ep), 'narator')
+      .then(() => speak(LINES.next(next), 'dinda'))]);
   endBtns.hidden = false;
   $('#nextBtn').focus({ preventScroll: true });
 }
@@ -1313,7 +1350,7 @@ const soundBtn = $('#soundBtn');
 function updateSoundUi() {
   soundBtn.textContent = soundOn ? '🔊 Narator: ON' : '🔇 Narator: OFF';
   soundBtn.setAttribute('aria-pressed', String(soundOn));
-  $('#voiceNote').textContent = !TTS ? 'Browser ini tidak mendukung suara.'
+  $('#voiceNote').textContent = voSet.size ? 'Suara: AI neural (rekaman)' : !TTS ? 'Browser ini tidak mendukung suara.'
     : idVoice ? `Suara: ${idVoice.name}` : 'Suara Bahasa Indonesia belum terpasang di perangkat ini.';
 }
 soundBtn.addEventListener('click', () => { soundOn = !soundOn; if (!soundOn) stopSpeech(); updateSoundUi(); });

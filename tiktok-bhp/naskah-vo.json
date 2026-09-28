@@ -1,0 +1,312 @@
+[
+ {
+  "who": "tasya",
+  "text": "Din, sumpah gue pusing deh. Tanah Papa kan mau gue balik nama, tapi Papa udah nggak ada… terus gue harus ke mana dulu sih?",
+  "key": "tasya-085494d1"
+ },
+ {
+  "who": "dinda",
+  "text": "Oh, itu lo butuh Surat Keterangan Hak Waris dulu, Sya. Urusnya di BHP aja, bisa online kok.",
+  "key": "dinda-c5a963f0"
+ },
+ {
+  "who": "tasya",
+  "text": "Hah, serius? Segampang itu doang?",
+  "key": "tasya-8ae9668f"
+ },
+ {
+  "who": "tasya",
+  "text": "Bentar... ini kantor apa jin botol?! Semua bisa!",
+  "key": "tasya-47875cba"
+ },
+ {
+  "who": "narator",
+  "text": "Nah, catet ya. Surat Keterangan Hak Waris, bisa kamu urus di BHP. bisa online",
+  "key": "narator-1ea8d17a"
+ },
+ {
+  "who": "boss",
+  "text": "Pasti ada solusi!",
+  "key": "boss-57ae112b"
+ },
+ {
+  "who": "boss",
+  "text": "Pasti ada solusi!!",
+  "key": "boss-1104d2be"
+ },
+ {
+  "who": "boss",
+  "text": "Psst… pasti ada solusi",
+  "key": "boss-d449912a"
+ },
+ {
+  "who": "boss",
+  "text": "Soal surat keterangan hak waris? Tenang, ada di BHP kok! Kita kan UPT-nya Kementerian Hukum. Jadi…",
+  "key": "boss-fe79ad37"
+ },
+ {
+  "who": "narator",
+  "text": "Pasti Selalu Ada Solusinya!",
+  "key": "narator-6661fbd7"
+ },
+ {
+  "who": "narator",
+  "text": "Jadi inget ya, urusan surat keterangan hak waris, langsung aja ke BHP. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!",
+  "key": "narator-b5e9d0c7"
+ },
+ {
+  "who": "dinda",
+  "text": "Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor 2, soal perwalian. Tungguin ya!",
+  "key": "dinda-5d71f33e"
+ },
+ {
+  "who": "tasya",
+  "text": "Din, eh, tetangga gue kan anaknya masih kecil-kecil, terus ibunya mau jual rumah. Emang boleh ya?",
+  "key": "tasya-9ec5dc81"
+ },
+ {
+  "who": "dinda",
+  "text": "Nah, itu namanya perwalian. Karena ada anak di bawah umur, walinya didampingi BHP. Jadi harta anaknya aman, ibunya juga nggak bakal dicurigain sama keluarga yang lain.",
+  "key": "dinda-30ab048d"
+ },
+ {
+  "who": "tasya",
+  "text": "Oh… jadi BHP tuh kayak bodyguard-nya wali sama harta si anak gitu?",
+  "key": "tasya-06c26c7a"
+ },
+ {
+  "who": "dinda",
+  "text": "Yap, persis.",
+  "key": "dinda-4eba70b1"
+ },
+ {
+  "who": "tasya",
+  "text": "Ini kantor apa jasa bodyguard?! Jagain harta anak juga!",
+  "key": "tasya-4d1cb35b"
+ },
+ {
+  "who": "narator",
+  "text": "Nah, catet ya. Perwalian, bisa kamu urus di BHP. BHP wali pengawas",
+  "key": "narator-83acf403"
+ },
+ {
+  "who": "boss",
+  "text": "Hadir! Pasti ada solusi",
+  "key": "boss-3e26f43f"
+ },
+ {
+  "who": "boss",
+  "text": "Soal perwalian anak di bawah umur? Tenang, ada di BHP kok! Kita kan UPT-nya Kementerian Hukum. Jadi…",
+  "key": "boss-31f52021"
+ },
+ {
+  "who": "narator",
+  "text": "Jadi inget ya, urusan perwalian anak di bawah umur, langsung aja ke BHP. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!",
+  "key": "narator-819976bd"
+ },
+ {
+  "who": "dinda",
+  "text": "Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor 3, soal kepailitan. Tungguin ya!",
+  "key": "dinda-a47fc6d6"
+ },
+ {
+  "who": "tasya",
+  "text": "Din, kasian deh, tetangga gue usahanya bangkrut. Utangnya di mana-mana.",
+  "key": "tasya-ad0645c5"
+ },
+ {
+  "who": "dinda",
+  "text": "Itu namanya pailit. Nah, BHP bisa lho jadi kuratornya.",
+  "key": "dinda-bcd041e6"
+ },
+ {
+  "who": "tasya",
+  "text": "Wah, mahal dong?",
+  "key": "tasya-d23bbaf7"
+ },
+ {
+  "who": "dinda",
+  "text": "Justru lebih hemat, Sya. Nggak ada fee macem-macem, soalnya kita kan mewakili negara.",
+  "key": "dinda-9c7bedc6"
+ },
+ {
+  "who": "tasya",
+  "text": "Udah bisa, hemat pula. Ini kantor apa toko diskonan?!",
+  "key": "tasya-8f940ea8"
+ },
+ {
+  "who": "narator",
+  "text": "Nah, catet ya. Kepailitan, bisa kamu urus di BHP. BHP kurator negara",
+  "key": "narator-221f08b1"
+ },
+ {
+  "who": "boss",
+  "text": "Tanpa fee ini itu. Pasti ada solusi",
+  "key": "boss-6adb16e4"
+ },
+ {
+  "who": "boss",
+  "text": "Soal kurator kepailitan? Tenang, ada di BHP kok! Kita kan UPT-nya Kementerian Hukum. Jadi…",
+  "key": "boss-23e36a72"
+ },
+ {
+  "who": "narator",
+  "text": "Jadi inget ya, urusan kurator kepailitan, langsung aja ke BHP. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!",
+  "key": "narator-a6380dd4"
+ },
+ {
+  "who": "dinda",
+  "text": "Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor 4, soal harta tak terurus. Tungguin ya!",
+  "key": "dinda-2a63a71f"
+ },
+ {
+  "who": "tasya",
+  "text": "Din, kalau ada orang ilang, nggak ada kabar, kayak mantan gue yang ghosting itu… hartanya nggak ada yang ngurus. Itu ke BHP juga?",
+  "key": "tasya-62f39baf"
+ },
+ {
+  "who": "dinda",
+  "text": "Hahaha, mantan lo mah nggak masuk, Sya. Kan nggak punya harta.",
+  "key": "dinda-b5be4f97"
+ },
+ {
+  "who": "tasya",
+  "text": "Eh, jahat banget!",
+  "key": "tasya-f1add6d6"
+ },
+ {
+  "who": "dinda",
+  "text": "Tapi serius deh, kalau ada orang yang beneran ilang dan hartanya nggak keurus, itu namanya, afwesikhait. Terus kalau hartanya nggak ada pemiliknya sama sekali, namanya, onbeherde nalatenskhap. Dua-duanya BHP yang jagain.",
+  "key": "dinda-f509a7c6"
+ },
+ {
+  "who": "tasya",
+  "text": "Din, kok kayaknya semua masalah bisa selesai di BHP?! Ini kantor apa dukun?!",
+  "key": "tasya-6444910a"
+ },
+ {
+  "who": "narator",
+  "text": "Nah, catet ya. Harta orang tak hadir & harta tak terurus , bisa kamu urus di BHP.",
+  "key": "narator-d4e294ae"
+ },
+ {
+  "who": "boss",
+  "text": "Bukan dukun. Pasti ada solusi",
+  "key": "boss-c839b160"
+ },
+ {
+  "who": "boss",
+  "text": "Soal harta orang tak hadir & harta tak terurus? Tenang, ada di BHP kok! Kita kan UPT-nya Kementerian Hukum. Jadi…",
+  "key": "boss-db454a1b"
+ },
+ {
+  "who": "narator",
+  "text": "Jadi inget ya, urusan harta orang tak hadir & harta tak terurus, langsung aja ke BHP. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!",
+  "key": "narator-0ad1cba7"
+ },
+ {
+  "who": "dinda",
+  "text": "Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor 5, soal surat wasiat. Tungguin ya!",
+  "key": "dinda-04e1419c"
+ },
+ {
+  "who": "tasya",
+  "text": "Din, almarhumah nenek gue ninggalin surat wasiat tertutup di notaris. Nah, bukanya tuh gimana ya?",
+  "key": "tasya-5a8cd7ee"
+ },
+ {
+  "who": "dinda",
+  "text": "Wasiat tertutup gitu dibukanya di BHP, terus dibikinin berita acaranya. Jadi resmi, dan nggak ada yang bisa asal buka sendiri.",
+  "key": "dinda-c7a7c1e9"
+ },
+ {
+  "who": "tasya",
+  "text": "Wih, kayak unboxing gitu ya, tapi versi resmi negara!",
+  "key": "tasya-883bdf0d"
+ },
+ {
+  "who": "dinda",
+  "text": "Hehe, unboxing paling sah se-Indonesia pokoknya.",
+  "key": "dinda-d20d5945"
+ },
+ {
+  "who": "tasya",
+  "text": "Surat wasiat juga?! Ini kantor apa agensi detektif?!",
+  "key": "tasya-107c287c"
+ },
+ {
+  "who": "narator",
+  "text": "Nah, catet ya. Pembukaan Surat Wasiat, bisa kamu urus di BHP. resmi & tercatat",
+  "key": "narator-d4277183"
+ },
+ {
+  "who": "boss",
+  "text": "Segel aman. Pasti ada solusi",
+  "key": "boss-1a31a49f"
+ },
+ {
+  "who": "boss",
+  "text": "Soal pembukaan surat wasiat? Tenang, ada di BHP kok! Kita kan UPT-nya Kementerian Hukum. Jadi…",
+  "key": "boss-d9ad19f8"
+ },
+ {
+  "who": "narator",
+  "text": "Jadi inget ya, urusan pembukaan surat wasiat, langsung aja ke BHP. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!",
+  "key": "narator-198f9f96"
+ },
+ {
+  "who": "dinda",
+  "text": "Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor 6, soal uang pihak ketiga. Tungguin ya!",
+  "key": "dinda-d38666ea"
+ },
+ {
+  "who": "tasya",
+  "text": "Din, misal warisan udah dibagi nih, tapi ada satu ahli waris yang nggak ketemu-ketemu. Bagiannya terus ke mana?",
+  "key": "tasya-5a4be9be"
+ },
+ {
+  "who": "dinda",
+  "text": "Tenang, bagiannya dikelola BHP sebagai uang pihak ketiga. Aman kok, sampai orangnya dateng dan ngurus sendiri.",
+  "key": "dinda-c5129758"
+ },
+ {
+  "who": "tasya",
+  "text": "Oh, jadi kayak celengan gitu, tapi yang jagain negara?",
+  "key": "tasya-b3c0f03b"
+ },
+ {
+  "who": "dinda",
+  "text": "Iya, celengan paling amanah deh pokoknya.",
+  "key": "dinda-bd726f9b"
+ },
+ {
+  "who": "tasya",
+  "text": "Duit orang yang ngilang juga dijagain?! Ini kantor apa brankas?!",
+  "key": "tasya-3a192034"
+ },
+ {
+  "who": "narator",
+  "text": "Nah, catet ya. Uang Pihak Ketiga, bisa kamu urus di BHP. dikelola aman oleh BHP",
+  "key": "narator-3e3f3bda"
+ },
+ {
+  "who": "boss",
+  "text": "Aman terkendali. Pasti ada solusi",
+  "key": "boss-75bae0ea"
+ },
+ {
+  "who": "boss",
+  "text": "Soal pengelolaan uang pihak ketiga? Tenang, ada di BHP kok! Kita kan UPT-nya Kementerian Hukum. Jadi…",
+  "key": "boss-5752a255"
+ },
+ {
+  "who": "narator",
+  "text": "Jadi inget ya, urusan pengelolaan uang pihak ketiga, langsung aja ke BHP. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!",
+  "key": "narator-4413e129"
+ },
+ {
+  "who": "dinda",
+  "text": "Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor 1, soal hak waris. Tungguin ya!",
+  "key": "dinda-3a58aa36"
+ }
+]
