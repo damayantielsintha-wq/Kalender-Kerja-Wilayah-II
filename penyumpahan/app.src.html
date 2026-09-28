@@ -201,6 +201,26 @@ function pd(s){if(!s)return null;const[a,b,c]=s.split('-').map(Number);return ne
 function tgl(s){const d=pd(s);return d?`${String(d.getDate()).padStart(2,'0')} ${BLN[d.getMonth()]} ${d.getFullYear()}`:'…'}
 function hari(s){const d=pd(s);return d?HARI[d.getDay()]:'…'}
 function usia(s,ref){const d=pd(s);if(!d)return'…';const r=pd(ref)||new Date();let u=r.getFullYear()-d.getFullYear();if(r<new Date(r.getFullYear(),d.getMonth(),d.getDate()))u--;return u+' Tahun'}
+function umurTh(s,ref){const d=pd(s);if(!d)return null;const r=pd(ref)||new Date();let u=r.getFullYear()-d.getFullYear();if(r<new Date(r.getFullYear(),d.getMonth(),d.getDate()))u--;return u}
+/* ---- filter kelayakan perwalian ---- */
+const BATAS_DEWASA=17;
+const MILITER=/\b(TNI|ABRI|tentara|prajurit|militer|angkatan\s+(darat|laut|udara)|kodim|korem|kodam|koramil|lanud|lantamal|yonif|kostrad|ASABRI|polri|kepolisian|polisi|bhayangkara|brimob|bintara|tamtama|perwira)\b/i;
+function anakWali(r){if(r.jenis!=='Perwalian')return[];const ref=r.tglSumpah||today();
+  const A=(r.anak||[]).filter(a=>a.nama&&a.wali!=='Tidak');
+  const kecil=A.filter(a=>{const u=umurTh(a.tglLahir,ref);return u===null||u<BATAS_DEWASA});
+  return kecil.length?kecil:A}
+function cekKelayakan(r){const tolak=[],info=[];if(!r||r.jenis!=='Perwalian')return{tolak,info};
+  const ref=r.tglSumpah||today(),A=(r.anak||[]).filter(a=>a&&a.nama&&a.wali!=='Tidak'&&a.diwalikan!==false);
+  const um=A.map(a=>({a,u:umurTh(a.tglLahir,ref)})),besar=um.filter(x=>x.u!==null&&x.u>=BATAS_DEWASA);
+  if(A.length&&besar.length===A.length)info.push(besar.every(x=>x.u>=18)?'Seluruh anak sudah DEWASA (18 tahun ke atas).':'Seluruh anak sudah HAMPIR DEWASA ('+BATAS_DEWASA+' tahun ke atas).');
+  else if(besar.length)info.push('Anak yang sudah '+BATAS_DEWASA+' tahun ke atas tidak dimasukkan (hanya anak yang lebih kecil): '+besar.map(x=>x.a.nama+' ('+x.u+' th)').join(', ')+'.');
+  const teks=[r.pekerjaan,r.alasan,r.ketMeninggal,r.terkaitMiliter,r.isiBap].join('.\n').replace(/[^.;\n]*(SKCK|catatan kepolisian|kepolisian (negara|resor|daerah|sektor)|polres|polda|polsek)[^.;\n]*/gi,' ');
+  const m=teks.match(MILITER);if(m||r.terkaitMiliter)tolak.push('Terkait TNI/Polri/ASABRI'+(m?' ("'+m[0]+'")':'')+' — penetapan wali ditolak.');
+  if(r.orangTuaHidup===true||r.orangTuaHidup==='Ya')tolak.push('Kedua orang tua anak masih hidup — penetapan wali ditolak.');
+  else if(!r.tglMeninggalPasangan&&!r.ketMeninggal&&!/meninggal|wafat|almarhum/i.test((r.isiBap||'')+(r.pasangan||''))&&r.orangTuaHidup!==false&&r.orangTuaHidup!=='Tidak')info.push('Belum ada data kematian orang tua anak — pastikan salah satu/kedua orang tua sudah meninggal.');
+  return{tolak,info}}
+function bannerKelayakan(r,full){const k=cekKelayakan(r);if(!k.tolak.length&&!k.info.length)return'';
+  return`<div class="full" style="border-radius:10px;padding:10px 12px;margin-bottom:10px;${k.tolak.length?'background:#fdecea;border:1px solid #e74c3c;color:#922':'background:#fff6db;border:1px solid #f6c343;color:#7a5a00'}">${k.tolak.length?'<b>⛔ DITOLAK OTOMATIS</b><br>'+k.tolak.map(esc).join('<br>'):''}${k.tolak.length&&k.info.length?'<br>':''}${k.info.map(x=>'⚠️ '+esc(x)).join('<br>')}</div>`}
 function terbilang(n){const s=['','Satu','Dua','Tiga','Empat','Lima','Enam','Tujuh','Delapan','Sembilan','Sepuluh','Sebelas'];
   if(n<12)return s[n];if(n<20)return terbilang(n-10)+' Belas';if(n<100)return terbilang(Math.floor(n/10))+' Puluh '+terbilang(n%10);
   if(n<200)return'Seratus '+terbilang(n-100);if(n<1000)return terbilang(Math.floor(n/100))+' Ratus '+terbilang(n%100);
@@ -215,7 +235,7 @@ function pjCari(v){const P=SET.pejabat||[];if(typeof v==='number')return P[v]||{
 function derive(r){
   const w=r.jenis==='Perwalian', J=w?'Wali':'Pengampu';
   const sapa=r.jk==='Laki-laki'?'Bapak':'Ibu';
-  const anak=w?r.anak.filter(a=>a.nama&&a.wali!=='Tidak'):[];
+  const anak=w?anakWali(r):[];
   const objek=w?anak.map(a=>a.nama).join(', '):r.terampu.nama;
   const statusRel=r.status||(w?'Anak':'Keluarga');
   const kel=r.kelurahan||'';
@@ -618,7 +638,7 @@ const DEMO=(()=>{const K='bhpDemo.v2',st=(()=>{try{return JSON.parse(localStorag
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1800)}
 function renderList(){const q=($('#q').value||'').toLowerCase();
   $('#list').innerHTML=DB.filter(r=>(r.nama+' '+derive(r).objek).toLowerCase().includes(q)).map(r=>`<div class="item ${cur&&cur.id===r.id?'on':''}" style="${r._dihapus?'opacity:.5':''}" onclick="pick('${r.id}')">${r._dihapus?'<span class="tag" style="color:var(--warn)">Terhapus</span>':''}
-  <b>${esc(r.nama||'(tanpa nama)')}</b><small>${esc(derive(r).objek||'-')}</small><br><span class="tag">${r.jenis}</span> <small>${r.tglSumpah?tgl(r.tglSumpah):''}</small></div>`).join('')||'<p class="hint">Belum ada berkas. Klik “📑 Berkas Baru” di menu kiri untuk memulai.</p>'}
+  <b>${esc(r.nama||'(tanpa nama)')}</b><small>${esc(derive(r).objek||'-')}</small><br><span class="tag">${r.jenis}</span>${cekKelayakan(r).tolak.length?' <span class="tag" style="color:#c0392b">⛔ Ditolak</span>':''} <small>${r.tglSumpah?tgl(r.tglSumpah):''}</small></div>`).join('')||'<p class="hint">Belum ada berkas. Klik “📑 Berkas Baru” di menu kiri untuk memulai.</p>'}
 function pick(id){WZ.on=false;setNav('berkas','Daftar Berkas');clearTimeout(saveT);if(cur)flush();cur=DB.find(r=>r.id===id);if(tab==='riw'&&!cur)tab='umum';renderMain();renderList()}
 function newRec(){if(cur){clearTimeout(saveT);flush()}cur=addRec(blank(),'Berkas baru (manual)');tab='umum';renderMain();renderList();flush()}
 function F(path,lbl,type='text',opt){const v=get(path);
@@ -642,7 +662,7 @@ function renderMain(){
   let h=`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><div class="seg">${['Pengampuan','Perwalian'].map(j=>`<button class="${cur.jenis===j?'on':''}" onclick="setv('jenis','${j}')">${j}</button>`).join('')}</div>
   <span style="margin-right:auto"><span class="hint" id="stat">✓ Tersimpan</span><br><span class="meta">${cur._meta?`Dibuat ${esc(cur._meta.dibuatOleh||'')} · diubah terakhir oleh <b>${esc(cur._meta.diubahOleh||'')}</b>, ${wkt(cur._meta.diubahPada)}`:''}</span></span>
   <button onclick="dupRec()">⧉ Duplikat</button>${isSuper()?(cur._dihapus?'<button onclick="restoreRec()">♻️ Pulihkan</button>':'<button onclick="delRec()" style="color:var(--warn)">🗑 Hapus</button>'):''}</div>
-  <div class="steps">${Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';renderMain()">${v}</button>`).join('')}</div><div class="grid">`;
+  ${bannerKelayakan(cur)}<div class="steps">${Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';renderMain()">${v}</button>`).join('')}</div><div class="grid">`;
   const pjOpt=v=>{const c=pjCari(v).nama;return SET.pejabat.map(p=>`<option ${p.nama===c?'selected':''} value="${esc(p.nama)}">${esc(p.nama||'(isi di Pengaturan)')} — ${esc(p.jabatan||'')}</option>`).join('')};
   if(tab==='umum')h+=`<div class="full"><label class="btn" style="display:inline-block;margin:0;color:var(--ink)">📑 Isi otomatis dari PDF Penetapan<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this,true)"></label></div>`+F('pengadilan','Pengadilan')+F('nomorPenetapan','Nomor Penetapan')+F('tglPenetapan','Tanggal Penetapan','date')+F('tanggalSurat','Tanggal Surat','date')+
     F('nomorSurat',`Nomor Surat ke ${d.J} (otomatis dari SPS)`)+F('nomorLurah','Nomor Surat ke Lurah (otomatis dari SPS)')+F('nomorBAP','Nomor BAP (diisi petugas di hari H; kosong = awalan saja)')+F('nomorBA','Nomor BA Sumpah (diisi petugas di hari H)')+F('nomorBAHarta','Nomor BA Inventarisasi (diisi petugas di hari H)');
@@ -832,8 +852,8 @@ async function imporCek(btn){btn.disabled=true;btn.textContent='Membaca sheet…
   try{if(GAS){const r=await api('apiInit');DB=r.berkas||DB;renderList()}const ada=new Set(DB.filter(x=>!x._dihapus).map(x=>(x.nomorPenetapan+'|'+x.nama).toUpperCase()));let html='';
     for(const [id,w] of [['impW',true],['impP',false]]){const nm=$('#'+id).value.trim();if(!nm)continue;
       const d=await api('apiBacaSheet',$('#impSs').value.trim(),nm);
-      const recs=d.rows.map(v=>recDariBaris(d.header,v,w)).filter(r=>r.nama);const baru=recs.filter(r=>!ada.has((r.nomorPenetapan+'|'+r.nama).toUpperCase()));IMP.push(...baru);
-      html+=`<div class="card" style="padding:10px;margin-bottom:8px"><b>${esc(d.judul)}</b><br><span class="hint">${recs.length} baris berisi · <b>${baru.length}</b> baru · ${recs.length-baru.length} sudah ada</span>
+      const recs=d.rows.map(v=>recDariBaris(d.header,v,w)).filter(r=>r.nama);const semuaBaru=recs.filter(r=>!ada.has((r.nomorPenetapan+'|'+r.nama).toUpperCase())),ditolak=semuaBaru.filter(r=>cekKelayakan(r).tolak.length),baru=semuaBaru.filter(r=>!cekKelayakan(r).tolak.length);IMP.push(...baru);
+      html+=`<div class="card" style="padding:10px;margin-bottom:8px"><b>${esc(d.judul)}</b><br><span class="hint">${recs.length} baris berisi · <b>${baru.length}</b> baru · ${recs.length-semuaBaru.length} sudah ada${ditolak.length?` · <b style="color:#c0392b">${ditolak.length} ditolak</b> (${ditolak.map(r=>esc(r.nama)+': '+esc(cekKelayakan(r).tolak.join(' '))).join('; ')})`:''}</span>
         <div style="max-height:180px;overflow:auto;margin-top:6px;font-size:13px">${baru.map((r,i)=>`<div>${i+1}. <b>${esc(r.nama)}</b> — ${esc(r.nomorPenetapan||'tanpa nomor')} · ${esc(derive(r).objek||'-')}${r.tglLahir?'':' <span style="color:var(--warn)">(tgl lahir pemohon kosong)</span>'}${(r.anak||[]).some(a=>a.nama&&!a.tglLahir)?' <span style="color:var(--warn)">(tgl lahir anak kosong)</span>':''}</div>`).join('')||'<i>Tidak ada data baru</i>'}</div></div>`}
     out.innerHTML=html;btn.disabled=false;if(IMP.length){btn.textContent=`⬇ Impor ${IMP.length} berkas`;btn.onclick=()=>imporJalan(btn)}else btn.textContent='🔍 Periksa lagi'}
   catch(e){out.innerHTML=`<p style="color:#c0392b">${esc(e.message||e)}</p>`;btn.disabled=false;btn.textContent='🔍 Periksa data'}}
@@ -975,7 +995,9 @@ Balas satu objek JSON dengan kunci:
 "terampu":{"nama":"","jk":"","tglLahir":"","kondisi":"diagnosis + dasar surat keterangan dokter (nama RS, nomor, tanggal)"},
 "alasan":"maksud/tujuan pemohon mengajukan permohonan, satu kalimat tanpa kata 'Bahwa' (mis. untuk mengurus dan menjual sebidang tanah warisan almarhum … guna biaya pendidikan anak)",
 "harta":[{"jenis":"tetap|tunai|emas|surat|perabot|bergerak|hutang","uraian":"uraian lengkap aset: jenis, luas, lokasi, nomor sertifikat/rekening, atas nama"}],
-"saksi":[{"nama":"","keterangan":"ringkasan keterangan saksi yang relevan, satu kalimat"}]}
+"saksi":[{"nama":"","keterangan":"ringkasan keterangan saksi yang relevan, satu kalimat"}],
+"orangTuaHidup":false,"terkaitMiliter":""}
+"orangTuaHidup": true HANYA bila menurut penetapan ayah DAN ibu kandung anak keduanya masih hidup (tidak ada yang meninggal dunia); false bila salah satu/keduanya telah meninggal. "terkaitMiliter": isi singkat bila pemohon ATAU orang tua anak yang meninggal adalah anggota TNI/Polri atau permohonan terkait ASABRI/dinas militer/kepolisian (mis. "almarhum anggota TNI AD, untuk pencairan ASABRI"); kosongkan bila tidak. Jangan anggap SKCK (Surat Keterangan Catatan Kepolisian) sebagai keterkaitan kepolisian.
 Untuk Perwalian: "anak" berisi SEMUA anak pemohon yang disebut dalam penetapan beserta tanggal lahirnya; "diwalikan" true hanya untuk anak yang ditetapkan di bawah perwalian pemohon dalam amar (anak di bawah umur), false untuk anak yang sudah dewasa/tidak termasuk amar. Kosongkan "terampu".
 Untuk Pengampuan: isi "terampu", kosongkan "anak" dan data pasangan kecuali relevan.`;
   const d=await api('apiBacaPenetapanAI',b64,file.type||'application/pdf',prompt);if(!d)throw new Error('AI Claude belum aktif');const n=normAI(d);n._ai=true;return n}
@@ -991,8 +1013,10 @@ function reviewHtml(d){PEN=d;const w=d.jenis==='Perwalian';
   if(w)(d.anak||[]).forEach((a,i)=>h+=row(`anak.${i}.nama`,`Anak ${i+1}`,a.nama)+row(`anak.${i}.tglLahir`,'Tgl lahir',a.tglLahir,'date')+row(`anak.${i}.jk`,'JK',a.jk));
   else{const t=d.terampu||{};h+=row('terampu.nama','Nama Terampu',t.nama)+row('terampu.tglLahir','Tgl Lahir Terampu',t.tglLahir,'date')+row('terampu.jk','JK Terampu',t.jk)+`<div class="full">${row('terampu.kondisi','Kondisi medis',t.kondisi)}</div>`}
   return h+`</div>${d._text?`<details style="margin-top:10px"><summary class="hint">Lihat teks hasil baca</summary><pre style="white-space:pre-wrap;max-height:200px;overflow:auto;font-size:11px">${esc(d._text)}</pre></details>`:''}`}
-function reviewPenetapan(d,fname){$('#penBody').innerHTML=`<h3>📑 Hasil baca: ${esc(fname)} ${d._ai?'<span class="tag">AI</span>':''}</h3><p class="hint">Periksa & koreksi dulu. Kolom kuning = tidak ditemukan di dokumen.</p>`+reviewHtml(d)+
-  `<p style="text-align:right;display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button onclick="penDlg.close()">Batal</button><button class="pri" onclick="applyPenetapan()">✔ Terapkan ke berkas</button></p>`;if(!$('#penDlg').open)$('#penDlg').showModal()}
+function reviewPenetapan(d,fname){$('#penBody').innerHTML=`<h3>📑 Hasil baca: ${esc(fname)} ${d._ai?'<span class="tag">AI</span>':''}</h3><p class="hint">Periksa & koreksi dulu. Kolom kuning = tidak ditemukan di dokumen.</p>`+bannerKelayakan(penRec(d))+reviewHtml(d)+
+  (cekKelayakan(penRec(d)).tolak.length?`<p style="text-align:right;display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="pri" onclick="penDlg.close()">Tutup (ditolak)</button><button onclick="PEN._paksa=true;applyPenetapan()" style="font-size:12px">Tetap simpan (abaikan penolakan)</button></p>`:
+  `<p style="text-align:right;display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button onclick="penDlg.close()">Batal</button><button class="pri" onclick="applyPenetapan()">✔ Terapkan ke berkas</button></p>`);if(!$('#penDlg').open)$('#penDlg').showModal()}
+const penRec=d=>({...d,anak:(d.anak||[]).map(a=>({...a,wali:a.diwalikan===false||a.wali==='Tidak'?'Tidak':'Ya'}))});
 const JENIS_HARTA={tetap:'hartaTetap',tunai:'hartaTunai',emas:'hartaEmas',surat:'hartaSurat',perabot:'hartaPerabot',bergerak:'hartaBergerak',hutang:'hartaHutang'};
 function terapkanTambahan(P,r){
   if(Array.isArray(P.harta)){const add={};P.harta.forEach(h=>{const f=JENIS_HARTA[String(h&&h.jenis||'').toLowerCase()]||'hartaBergerak',u=String(h&&h.uraian||'').trim();if(u)(add[f]=add[f]||[]).push(u)});
@@ -1000,9 +1024,10 @@ function terapkanTambahan(P,r){
   if(Array.isArray(P.saksi)&&!baris(r.saksiKet).length){const l=P.saksi.filter(x=>x&&x.keterangan).map(x=>`saksi ${String(x.nama||'').toUpperCase()} menerangkan ${String(x.keterangan).replace(/^(bahwa|menerangkan)\s+/i,'').replace(/[.;]\s*$/,'')}`.replace('saksi  ','saksi '));if(l.length)r.saksiKet=l.join('\n')}}
 function applyPenetapan(root,next){
   (root||$('#penBody')).querySelectorAll('[data-pk]').forEach(e=>{const ks=e.dataset.pk.split('.');let o=PEN;ks.slice(0,-1).forEach((k,i)=>{o[k]=o[k]??(/^\d+$/.test(ks[i+1])?[]:{});o=o[k]});o[ks.at(-1)]=e.value.trim()});
+  {const k=cekKelayakan(penRec(PEN));if(k.tolak.length&&!PEN._paksa){toast('⛔ Penetapan ditolak otomatis: '+k.tolak.join(' '));api('apiCatat','TOLAK_PENETAPAN','',PEN.nama||'',(PEN.nomorPenetapan||'')+' — '+k.tolak.join(' ')).catch(()=>{});return}}
   let r=(penFill&&cur&&!cur._dihapus)?cur:null;const baru=!r;if(!r)r=addRec(blank(),'Dibuat dari upload penetapan '+(PEN.nomorPenetapan||''));
-  ['jenis','pengadilan','nomorPenetapan','tglPenetapan','nama','nik','jk','tglLahir','agama','pekerjaan','alamat','kelurahan','status','pasangan','aktaNikah','tglMeninggalPasangan','ketMeninggal','alasan'].forEach(k=>{if(PEN[k])r[k]=typeof PEN[k]==='string'?PEN[k]:String(PEN[k])});
-  terapkanTambahan(PEN,r);if(typeof PEN.isiBap==='string'&&PEN.isiBap.trim())r.isiBap=PEN.isiBap;
+  ['jenis','pengadilan','nomorPenetapan','tglPenetapan','nama','nik','jk','tglLahir','agama','pekerjaan','alamat','kelurahan','status','pasangan','aktaNikah','tglMeninggalPasangan','ketMeninggal','alasan','terkaitMiliter'].forEach(k=>{if(PEN[k])r[k]=typeof PEN[k]==='string'?PEN[k]:String(PEN[k])});
+  if(typeof PEN.orangTuaHidup==='boolean')r.orangTuaHidup=PEN.orangTuaHidup;terapkanTambahan(PEN,r);if(typeof PEN.isiBap==='string'&&PEN.isiBap.trim())r.isiBap=PEN.isiBap;
   if(PEN.kelurahan)r._kelManual=true;
   if(PEN.jenis==='Perwalian'){const a=(PEN.anak||[]).filter(x=>x&&x.nama).map(x=>({nama:String(x.nama).toUpperCase(),jk:/perem/i.test(x.jk)?'Perempuan':'Laki-laki',tglLahir:x.tglLahir||'',wali:x.diwalikan===false||x.wali==='Tidak'?'Tidak':'Ya'}));if(a.length)r.anak=a}
   else if(PEN.terampu){const t=PEN.terampu;r.terampu={nama:t.nama||'',jk:/perem/i.test(t.jk)?'Perempuan':'Laki-laki',tglLahir:t.tglLahir||'',kondisi:t.kondisi||''}}
@@ -1023,8 +1048,8 @@ function wizard(step){WZ.on=true;$('.wrap').classList.add('wzmode');WZ.step=step
       <input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)"></label>
     <div class="wz-f"><button class="link" onclick="WZ.on=false;newRec();cur.jenis=WZ.jenis;save();renderMain()">Isi manual tanpa penetapan</button><span class="hint">Setelah upload, lanjut ke Bagian 2 otomatis</span></div></div>`}
   if(step===2){const d=WZ.data;m.innerHTML=`<div class="wz">${wzHead(2)}<h4>🔎 Bagian 2: Periksa Data dari Penetapan ${d._ai?'<span class="tag">AI</span>':''}</h4>
-    <p class="hint" style="margin-top:-6px">Kolom kuning belum ditemukan di dokumen — lengkapi bila perlu.</p>${boxCek(cekData(d))}<div id="wzBody">${reviewHtml(d)}</div>
-    <div class="wz-f"><button onclick="wizard(1)">← Kembali</button><button class="pri" onclick="applyPenetapan($('#wzBody'),()=>wizard(3))">Lanjut ke Bagian 3 →</button></div></div>`}
+    <p class="hint" style="margin-top:-6px">Kolom kuning belum ditemukan di dokumen — lengkapi bila perlu.</p>${boxCek(cekData(d))}${bannerKelayakan(penRec(d))}<div id="wzBody">${reviewHtml(d)}</div>
+    <div class="wz-f"><button onclick="wizard(1)">← Kembali</button>${cekKelayakan(penRec(d)).tolak.length?`<button onclick="PEN._paksa=true;applyPenetapan($('#wzBody'),()=>wizard(3))" style="font-size:12px">Tetap lanjut (abaikan penolakan)</button><button class="pri" onclick="WZ.on=false;renderMain()">Tutup — penetapan ditolak</button>`:`<button class="pri" onclick="applyPenetapan($('#wzBody'),()=>wizard(3))">Lanjut ke Bagian 3 →</button>`}</div></div>`}
   if(step===3){const pjOpt=v=>{const c=pjCari(v).nama;return SET.pejabat.map(p=>`<option ${p.nama===c?'selected':''} value="${esc(p.nama)}">${esc(p.nama)} — ${esc(p.jabatan||'')}</option>`).join('')};
     m.innerHTML=`<div class="wz">${wzHead(3)}<h4>📅 Bagian 3: Jadwal Sumpah & Pejabat</h4><div class="grid">
     ${F('tglSumpah','Tanggal Sumpah','date')}${F('waktu','Waktu')}${F('tempat','Tempat (kosong = kediaman)')}${F('hp','No. HP pemohon')}
