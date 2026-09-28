@@ -23,7 +23,7 @@ KARAKTER = {
     "boss":    "Pak Kepala kantor, bapak-bapak berwibawa tapi kocak dan hangat, suara berat, pede",
     "narator": "narator konten TikTok, asik, akrab, semangat tapi nggak lebay",
 }
-MODELS = ["gemini-3.8-flash-tts", "gemini-3.8-flash-lite-tts", "gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts", "gemini-3.1-flash-tts-preview"]
+MODELS = ["gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts", "gemini-3.8-flash-tts", "gemini-3.8-flash-lite-tts", "gemini-3.1-flash-tts-preview"]
 GEMINI_VOICE = {"tasya": "Leda", "dinda": "Aoede", "boss": "Algenib", "narator": "Puck"}
 OPENAI_VOICE = {"tasya": "coral", "dinda": "nova", "boss": "onyx", "narator": "ash"}
 
@@ -36,11 +36,13 @@ class KuotaHabis(Exception):
     pass
 
 def gemini_tts(text, who, path):
-    body = {"contents": [{"parts": [{"text": f"Ucapkan sebagai {KARAKTER[who]}. {GAYA}\n\n{text}"}]}],
+    body = {"contents": [{"parts": [{"text": ""}]}],
             "generationConfig": {"responseModalities": ["AUDIO"],
                                  "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": GEMINI_VOICE[who]}}}}}
     res = None
     for model in MODELS:  # kuota gratis dihitung per model → kalau habis, pindah model
+        # Model 2.5 paham arahan gaya; model 3.x ikut MEMBACAKAN arahan → kirim dialognya saja
+        body["contents"][0]["parts"][0]["text"] = (f"Ucapkan sebagai {KARAKTER[who]}. {GAYA}\n\n{text}" if model.startswith("gemini-2.5") else text)
         try:
             res = json.loads(post(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
                                   body, {"x-goog-api-key": GEMINI_KEY}))
