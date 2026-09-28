@@ -55,7 +55,7 @@ table.kop td.tx{text-align:center;line-height:1.15;font-size:12pt}
 table.kop .b{font-weight:bold}table.kop .s{font-size:10pt}
 .paper table{border-collapse:collapse}.paper td{vertical-align:top;padding:1pt 4pt}
 .ctr{text-align:center}.ttd{width:100%;margin-top:20pt}.ttd td{width:50%;text-align:center}
-.paper ol{margin:0 0 8pt;padding-left:20pt}
+.paper ol{margin:0 0 8pt;padding-left:18pt}.paper ol li{padding-left:0}.paper p[data-n]{padding-left:18pt;text-indent:-18pt}.paper p[data-n]::before{content:attr(data-n);display:inline-block;width:18pt;text-indent:0}.paper p[data-b]::before{font-weight:bold}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none}
 .toast.on{opacity:1}
 @media print{@page{size:A4;margin:0}body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{position:absolute;inset:0}.paper{box-shadow:none;margin:0;page-break-after:always}}
@@ -233,8 +233,9 @@ function head(no,hal,r){return `<table class="hd" style="width:100%;margin-botto
 const jadwal=(r,note)=>`<table style="margin:0 0 10pt 20pt"><tr><td style="width:90pt">Hari/Tanggal</td><td>:</td><td>${hari(r.tglSumpah)} / ${tgl(r.tglSumpah)}</td></tr>
 <tr><td>Pukul</td><td>:</td><td>${V(r.waktu)}${note?` (${note} <b>${esc(SET.wa)}</b>)`:''}</td></tr><tr><td>Tempat</td><td>:</td><td>${esc(r.tempat||'Kediaman '+(r.nama||''))}</td></tr></table>`;
 const ttdKepala=()=>`<p class="ni" style="margin-left:262pt;margin-top:20pt;text-align:left">Kepala,<br><br><br><br><b>${esc(SET.kepala)}</b></p>`;
+const lurahNm=r=>{const k=String(r.kelurahan||'').trim().replace(/^(Lurah|Kelurahan)\s+/i,'');return /^Desa\s/i.test(k)?'Kepala '+V(k):'Lurah '+V(k)};
 const kanwil=r=>r.kanwilTembusan||SET.kanwilTembusan;
-const tembusan=(r,lurah=true)=>`<p class="ni" style="margin-top:18pt">Tembusan:</p><ol><li>Direktur Jenderal Administrasi Hukum Umum Kementerian Hukum RI;</li><li>Direktur Perdata Direktorat Jenderal Administrasi Hukum Umum;</li><li>${esc(kanwil(r))}${lurah?';':''}</li>${lurah?`<li>Lurah ${V(r.kelurahan)}</li>`:''}</ol>`;
+const tembusan=(r,lurah=true)=>`<p class="ni" style="margin-top:18pt">Tembusan:</p><ol><li>Direktur Jenderal Administrasi Hukum Umum Kementerian Hukum RI;</li><li>Direktur Perdata Direktorat Jenderal Administrasi Hukum Umum;</li><li>${esc(kanwil(r))}${lurah?';':''}</li>${lurah?`<li>${lurahNm(r)}</li>`:''}</ol>`;
 const penetapan=r=>`Menindaklanjuti Penetapan ${esc(r.pengadilan)} Nomor: ${V(r.nomorPenetapan)} tertanggal ${tgl(r.tglPenetapan)} yang telah memperoleh kekuatan hukum tetap`;
 const blnThn=s=>{const d=pd(s);return d?`${BLN[d.getMonth()]} ${d.getFullYear()}`:'…'};
 const kota=r=>r.kotaPermohonan||((r.kelurahan||'').match(/(?:Kota|Kabupaten|Kab\.)\s+([^,]+)/i)||[])[1]||'Medan';
@@ -244,16 +245,17 @@ const ttd2=(kiri,kanan,namaKiri,namaKanan,nipKiri,nipKanan)=>`<table class="ttd"
 <tr><td><b>${namaKiri}</b>${nipKiri?`<br><b>NIP. ${nipKiri}</b>`:''}</td><td><b>${namaKanan}</b>${nipKanan?`<br><b>NIP. ${nipKanan}</b>`:''}</td></tr></table>`;
 const saksi=r=>`<table class="ttd" style="margin-top:24pt"><tr><td><b>Saksi 1</b></td><td><b>Saksi 2</b></td></tr><tr><td style="height:50pt"></td><td></td></tr>
 <tr><td>( ${esc(r.saksi1)||'.............................'} )<br>NIK.</td><td>( ${esc(r.saksi2)||'.............................'} )<br>NIK.</td></tr></table>`;
+const NP=(n,left,html,extra='',b)=>`<p class="ni" data-n="${n}"${b?' data-b="1"':''} style="margin-left:${left}pt${extra}">${html}</p>`;
 const identitas=r=>`${esc(r.jk)}, Lahir tanggal ${tgl(r.tglLahir)} (${usia(r.tglLahir,r.tglSumpah)}), agama ${esc(r.agama)}, Pekerjaan ${V(r.pekerjaan)}, alamat ${V(r.alamat)}`;
-function objekBA(r,d){
+function objekBA(r,d,o={}){const L=o.left||0;
   if(d.w){const l=d.anak.map(a=>`<b>${esc(a.nama)}</b>, ${esc(a.jk)}, lahir pada tanggal ${tgl(a.tglLahir)} (${usia(a.tglLahir,r.tglSumpah)})`);
-    return l.length>1?`<ol>${l.map(x=>`<li>${x};</li>`).join('')}</ol>`:`<p>${l[0]||V('')}</p>`}
-  return `<p><b>${V(r.terampu.nama)}</b>, ${esc(r.terampu.jk)}, lahir pada tanggal ${tgl(r.terampu.tglLahir)} (${usia(r.terampu.tglLahir,r.tglSumpah)}), berada di bawah Pengampuan dikarenakan yang bersangkutan mengalami ${V(r.terampu.kondisi)}, sehingga tidak cakap untuk mengurus kepentingan pribadinya maupun melakukan tindakan hukum.</p>`}
+    return l.length>1?`<ol${o.huruf?' type="a"':''} style="margin-left:${L}pt">${l.map(x=>`<li>${x};</li>`).join('')}</ol>`:`<p class="ni" style="margin-left:${L+18}pt">${l[0]||V('')}</p>`}
+  return `<p class="ni" style="margin-left:${L+18}pt"><b>${V(r.terampu.nama)}</b>, ${esc(r.terampu.jk)}, lahir pada tanggal ${tgl(r.terampu.tglLahir)} (${usia(r.terampu.tglLahir,r.tglSumpah)}), berada di bawah Pengampuan dikarenakan yang bersangkutan mengalami ${V(r.terampu.kondisi)}, sehingga tidak cakap untuk mengurus kepentingan pribadinya maupun melakukan tindakan hukum.</p>`}
 const HARTA=[['hartaTetap','BARANG-BARANG TETAP','tanah'],['hartaTunai','UANG TUNAI , TABUNGAN','rekening'],['hartaEmas','BARANG-BARANG EMAS, PERAK, DLL'],['hartaSurat','SURAT-SURAT BERHARGA/PIUTANG'],
   ['hartaPerabot','PERABOT RUMAH TANGGA, BARANG DAGANG, TERNAK'],['hartaBergerak','BARANG BERGERAK','harta']];
 const hv=(r,k,old)=>r[k]??(old?r[old]:'')??'';
 const baris=t=>String(t||'').split('\n').map(s=>s.trim()).filter(Boolean);
-const daftarHarta=t=>{const b=baris(t);return b.length?b.map((x,i)=>`<p class="ni" style="margin-left:54pt">${i+1}. ${esc(x)}</p>`).join(''):`<p class="ni" style="margin-left:54pt">-</p>`};
+const daftarHarta=t=>{const b=baris(t);return b.length?b.map((x,i)=>NP((i+1)+'.',36,esc(x))).join(''):`<p class="ni" style="margin-left:54pt">-</p>`};
 
 const DOCS={
   permohonan:{nama:r=>'Surat Permohonan Penyumpahan',fn:r=>{const d=derive(r);return `<p class="ni" style="text-align:right">${tempatTgl(r)}</p><br>
@@ -269,7 +271,7 @@ const DOCS={
 
   surat:{nama:r=>`Surat ke ${derive(r).J}`,fn:r=>{const d=derive(r);
     if(d.w)return kop()+head(r.nomorSurat,'Pengambilan Sumpah Wali Dan Inventarisasi Harta',r)+
-`<p class="ni">Yth. <b>${d.sapa} ${V(r.nama)}</b><br>di</p><p class="ni" style="margin-left:18pt;max-width:230pt">${V(r.alamat)}</p><br>
+`<p class="ni">Yth. <b>${d.sapa} ${V(r.nama)}</b><br>di</p><p class="ni" style="margin-left:18pt;max-width:230pt;text-align:left">${V(r.alamat)}</p><br>
 <p>${penetapan(r)}, ${d.sapa} telah ditunjuk secara resmi sebagai Wali atas <b>${V(d.objek)}</b> (selanjutnya disebut sebagai "Anak").</p>
 <p>Berkaitan dengan penetapan tersebut, Balai Harta Peninggalan Medan sangat menghargai serta mendukung penuh kesediaan ${d.sapa} dalam menjalankan tugas sebagai Wali. Berdasarkan amanat Pasal 366 Kitab Undang-Undang Hukum Perdata (KUHPerdata), BHP bertugas sebagai Wali Pengawas. Peran kami adalah mendampingi dan memberikan konsultasi hukum kepada ${d.sapa} guna memastikan bahwa pengelolaan aset dan perlindungan hak Anak berjalan dengan baik serta melindungi ${d.sapa} dari kemungkinan prasangka negatif dari pihak lain.</p>
 <p>Selanjutnya, sesuai dengan perintah peraturan perundang-undangan yang tertuang dalam Pasal 362 KUHPerdata, setiap wali diwajibkan untuk diangkat sumpah sebelum mulai menjalankan tugas. Penyumpahan ini sangat penting dan menjadi syarat sah agar ${d.sapa} dapat bertindak secara hukum mewakili Anak untuk berbagai keperluan administratif.</p>
@@ -279,7 +281,7 @@ const DOCS={
 <li>Biaya Penerimaan Negara Bukan Pajak (PNBP) sebesar Rp 200.000,- (Dua Ratus Ribu Rupiah) untuk layanan Berita Acara Penyumpahan Perwalian. Nominal ini ditetapkan secara resmi berdasarkan Peraturan Pemerintah Republik Indonesia Nomor 45 Tahun 2024 tentang Jenis dan Tarif atas Jenis Penerimaan Negara Bukan Pajak yang Berlaku pada Kementerian Hukum dan Hak Asasi Manusia. (Mekanisme pembayaran akan dipandu melalui kode pembayaran/<i>billing</i> kas negara secara elektronik pada saat kegiatan).</li></ol>
 <p>Demikian surat pemberitahuan ini kami sampaikan. Untuk informasi lebih lanjut, ${d.sapa} dapat menghubungi <i>Contact Person</i> (WhatsApp) Layanan Perwalian di nomor: <b>${esc(SET.wa)}</b>. Atas perhatian dan kesediaan ${d.sapa}, kami ucapkan terima kasih.</p>`+ttdKepala()+tembusan(r);
     return kop()+head(r.nomorSurat,'Pengambilan Sumpah Pengampu dan Inventarisasi Harta',r)+
-`<p class="ni">Yth. <b>${d.sapa} ${V(r.nama)}</b><br>di</p><p class="ni" style="margin-left:18pt;max-width:230pt">${V(r.alamat)}</p><br>
+`<p class="ni">Yth. <b>${d.sapa} ${V(r.nama)}</b><br>di</p><p class="ni" style="margin-left:18pt;max-width:230pt;text-align:left">${V(r.alamat)}</p><br>
 <p>${penetapan(r)}, ${d.sapa} telah ditunjuk secara resmi sebagai Pengampu atas <b>${V(d.objek)}</b> (selanjutnya disebut sebagai "Terampu").</p>
 <p>Berkaitan dengan penetapan tersebut, Balai Harta Peninggalan Medan sangat menghargai serta mendukung penuh kesediaan ${d.sapa} dalam menjalankan tugas sebagai Pengampu. Berdasarkan amanat Pasal 449 Kitab Undang-Undang Hukum Perdata (KUHPerdata), BHP bertugas mendampingi dan memberikan konsultasi hukum kepada ${d.sapa} guna memastikan bahwa pengelolaan aset dan perlindungan hak Terampu berjalan dengan baik serta melindungi ${d.sapa} dari kemungkinan prasangka negatif dari pihak lain.</p>
 <p>Selanjutnya, sesuai dengan perintah peraturan perundang-undangan yang tertuang dalam Pasal 362 KUHPerdata, setiap pengampu diwajibkan untuk diangkat sumpah sebelum mulai menjalankan tugas. Penyumpahan ini sangat penting dan menjadi syarat sah agar ${d.sapa} dapat bertindak secara hukum mewakili Terampu untuk berbagai keperluan administratif.</p>
@@ -293,7 +295,7 @@ const DOCS={
 
   lurah:{nama:()=>'Surat ke Lurah',fn:r=>{const d=derive(r);
     if(d.w)return kop()+head(r.nomorLurah,'Koordinasi Terkait Pengambilan Sumpah dan Inventarisasi Harta',r)+
-`<p class="ni">Yth. <b>Lurah ${V(r.kelurahan)}</b><br>di</p><p class="ni" style="margin-left:18pt;max-width:230pt">${esc(r.alamatKelurahan||'Tempat')}</p><br>
+`<p class="ni" style="text-align:left">Yth. <b>${lurahNm(r)}</b><br>di</p><p class="ni" style="margin-left:18pt;max-width:230pt;text-align:left">${esc(r.alamatKelurahan||'Tempat')}</p><br>
 <p>${penetapan(r)}, <b>${V(r.nama)}</b> telah ditunjuk secara resmi sebagai Wali atas <b>${V(d.objek)}</b> (selanjutnya disebut sebagai "Anak"). Adapun Wali tersebut merupakan warga yang berdomisili di lingkungan ${V(r.kelurahan)}.</p>
 <p>Berdasarkan amanat Pasal 366 Kitab Undang-Undang Hukum Perdata (KUHPerdata), BHP bertugas sebagai Wali Pengawas dalam rangka mendampingi dan memberikan konsultasi hukum kepada Wali guna memastikan bahwa pengelolaan aset dan perlindungan hak Anak berjalan dengan baik serta melindungi Wali dari kemungkinan prasangka negatif dari pihak lain.</p>
 <p>Selanjutnya, sesuai dengan perintah peraturan perundang-undangan yang tertuang dalam Pasal 362 KUHPerdata, setiap Wali diwajibkan untuk diangkat sumpah sebelum mulai menjalankan tugas. Penyumpahan ini sangat penting dan menjadi syarat sah agar Wali dapat bertindak secara hukum mewakili Anak untuk berbagai keperluan administratif.</p>
@@ -301,7 +303,7 @@ const DOCS={
 `<p>Sehubungan dengan hal tersebut, Tim Balai Harta Peninggalan Medan akan melakukan koordinasi dengan pihak Kelurahan untuk selanjutnya memohon kesediaan Bapak/Ibu untuk mendampingi Tim dalam pelaksanaan kunjungan ke kediaman <b>${V(r.nama)}</b>.</p>
 <p>Demikian surat pemberitahuan ini kami sampaikan. Untuk informasi lebih lanjut, Bapak/Ibu dapat menghubungi <i>Contact Person</i> (WhatsApp) Layanan Perwalian dan Pengampuan di nomor: <b>${esc(SET.wa)}</b>. Atas perhatian dan kesediaan Bapak/Ibu, kami ucapkan terima kasih.</p>`+ttdKepala()+tembusan(r,false);
     return kop()+head(r.nomorLurah,'Koordinasi Terkait Pengambilan Sumpah dan Inventarisasi Harta',r)+
-`<p class="ni">Yth. <b>Lurah ${V(r.kelurahan)}</b><br>di<br>${esc(r.alamatKelurahan||'Tempat')}</p><br>
+`<p class="ni" style="text-align:left">Yth. <b>${lurahNm(r)}</b><br>di</p><p class="ni" style="margin-left:18pt;max-width:230pt;text-align:left">${esc(r.alamatKelurahan||'Tempat')}</p><br>
 <p>${penetapan(r)}, <b>${V(r.nama)}</b> telah ditunjuk secara resmi sebagai Pengampu atas <b>${V(d.objek)}</b> (selanjutnya disebut sebagai "Terampu"). Adapun Pengampu tersebut merupakan warga yang berdomisili di lingkungan Kelurahan ${V(String(r.kelurahan||'').replace(/^Kelurahan\s+/i,''))}.</p>
 <p>Berdasarkan amanat Pasal 449 Kitab Undang-Undang Hukum Perdata (KUHPerdata), BHP bertugas sebagai Pengampu Pengawas dalam rangka mendampingi dan memberikan konsultasi hukum kepada Pengampu guna memastikan bahwa pengelolaan aset dan perlindungan hak Terampu berjalan dengan baik serta melindungi Pengampu dari kemungkinan prasangka negatif dari pihak lain.</p>
 <p>Selanjutnya, sesuai dengan perintah peraturan perundang-undangan yang tertuang dalam Pasal 362 KUHPerdata, setiap pengampu diwajibkan untuk diangkat sumpah sebelum mulai menjalankan tugas. Penyumpahan ini sangat penting dan menjadi syarat sah agar Pengampu dapat bertindak secara hukum mewakili Terampu untuk berbagai keperluan administratif.</p>
@@ -335,12 +337,12 @@ ${isi.length?`<ol>${isi.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:`<ol><li>${
   harta:{nama:()=>'BA Pencatatan Harta',fn:r=>{const d=derive(r),m=d.muda;
     return kop()+`<p class="ctr"><b>BERITA ACARA PENCATATAN/PENDAFTARAN HARTA KEKAYAAN MILIK<br>${d.w?'ANAK DI BAWAH UMUR ATAS NAMA':'TERAMPU AN.'} ${V(d.objek.toUpperCase())}<br>Nomor : ${V(r.nomorBAHarta)}</b></p><br>
 <p class="ni">-- Pada hari ini, ${tglBA(r.tglSumpah)}, kami yang bertanda tangan dibawah ini masing-masing yaitu :</p>
-<p class="ni" style="margin-left:18pt">1. <b>${V(r.nama)}</b>, ${identitas(r)}, yang berdasarkan Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)} telah diangkat menjadi <b>${d.J.toUpperCase()}</b> terhadap ${esc(d.statusRel.toLowerCase())}nya, yaitu:</p>${objekBA(r,d)}
-<p class="ni" style="margin-left:18pt">2. <b>${V(m.nama)}, ${esc(m.jabatan||'')} pada Balai Harta Peninggalan Medan yang dalam hal ini bertindak berdasarkan ketentuan Pasal ${d.w?'366':'433'} dan 470 Kitab Undang-Undang Hukum Perdata mewakili Balai Harta Peninggalan Medan selaku ${d.w?'Wali':'Pengampu'} Pengawas dan memiliki kewenangan untuk membuat Inventarisasi Harta.</b></p>
+${NP('1.',0,`<b>${V(r.nama)}</b>, ${identitas(r)}, yang berdasarkan Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)} telah diangkat menjadi <b>${d.J.toUpperCase()}</b> terhadap ${esc(d.statusRel.toLowerCase())}nya, yaitu:`)}${objekBA(r,d,{left:18,huruf:1})}
+${NP('2.',0,`<b>${V(m.nama)}, ${esc(m.jabatan||'')} pada Balai Harta Peninggalan Medan yang dalam hal ini bertindak berdasarkan ketentuan Pasal ${d.w?'366':'433'} dan 470 Kitab Undang-Undang Hukum Perdata mewakili Balai Harta Peninggalan Medan selaku ${d.w?'Wali':'Pengampu'} Pengawas dan memiliki kewenangan untuk membuat Inventarisasi Harta.</b>`,';margin-top:4pt')}
 <p class="ni">--Penghadap telah mendaftarkan harta kekayaan ${d.w?'anak di bawah umur':'terampu'} yang akan disebut dibawah ini sebagai berikut :</p>
-<p class="ni" style="margin-left:18pt"><b>I. AKTIVA</b></p>
-${HARTA.map(([k,l,o],i)=>`<p class="ni" style="margin-left:36pt">${'ABCDEF'[i]}. ${l} :</p>${daftarHarta(hv(r,k,o))}`).join('')}
-<p class="ni" style="margin-left:18pt;margin-top:6pt"><b>II. PASSIVA</b></p><p class="ni" style="margin-left:36pt"><b>HUTANG-HUTANG</b> :</p>${daftarHarta(r.hartaHutang)}
+${NP('I.',0,'<b>AKTIVA</b>',';margin-top:6pt',1)}
+${HARTA.map(([k,l,o],i)=>NP('ABCDEF'[i]+'.',18,l+' :')+daftarHarta(hv(r,k,o))).join('')}
+${NP('II.',0,'<b>PASSIVA</b>',';margin-top:6pt',1)}${NP('A.',18,'HUTANG-HUTANG :')}${daftarHarta(r.hartaHutang)}
 <p style="margin-top:8pt">Oleh karena tidak ada lagi yang akan dicatat dan didaftar, maka kami akhiri Berita Acara Pencatatan/Pendaftaran Harta kekayaan milik ${d.w?'anak di bawah umur':'terampu'} ini, yang diperbuat diatas kertas yang dibubuhi materai tempel Rp. 10.000,- pada hari dan tanggal yang tersebut diatas, untuk dipergunakan sebagaimana mestinya.</p>`+
     ttd2(esc((m.jabatan||'').toUpperCase()),d.J.toUpperCase(),V(m.nama),V(r.nama),V(m.nip),'')}}
 };
@@ -652,8 +654,9 @@ function blocksXml(html){
   for(const el of root.childNodes){
     if(el.nodeType!==1)continue;
     if(el.tagName==='TABLE')x+=el.classList.contains('kop')?kopXml():tableXml(el);
-    else if(el.tagName==='P'||el.tagName==='DIV')x+=para(el);
-    else if(el.tagName==='OL'||el.tagName==='UL')[...el.children].forEach((li,i)=>x+=para(li,{noInd:1,left:18+ptOf(el.style.marginLeft),hang:360,after:0,prefix:`<w:r><w:t>${el.tagName==='OL'?(i+1)+'.':'•'}</w:t></w:r><w:r><w:tab/></w:r>`}));
+    else if(el.tagName==='P'&&el.dataset.n)x+=para(el,{left:18,hang:360,prefix:`<w:r>${rPr(el.dataset.b?{b:1}:{})}<w:t>${xe(el.dataset.n)}</w:t></w:r><w:r><w:tab/></w:r>`});
+    else if(el.tagName==='P'||el.tagName==='DIV'){const nx=el.nextElementSibling;x+=para(el,nx&&nx.tagName==='TABLE'&&nx.classList.contains('ttd')?{keep:1}:{})}
+    else if(el.tagName==='OL'||el.tagName==='UL')[...el.children].forEach((li,i)=>x+=para(li,{noInd:1,left:18+ptOf(el.style.marginLeft),hang:360,after:0,prefix:`<w:r><w:t>${el.tagName==='OL'?(el.type==='a'?'abcdefghijklmnop'[i]:i+1)+'.':'•'}</w:t></w:r><w:r><w:tab/></w:r>`}));
     else if(el.tagName==='BR')x+=spacer(12)}
   return x}
 async function buatDocx(keys){
