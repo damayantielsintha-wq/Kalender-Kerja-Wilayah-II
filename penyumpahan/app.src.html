@@ -638,7 +638,7 @@ async function fileText(file){
   for(let i=1;i<=pdf.numPages;i++){stat(`Membaca halaman ${i}/${pdf.numPages}…`);const c=await(await pdf.getPage(i)).getTextContent();
     let y=null;c.items.forEach(it=>{const ny=it.transform[5];out+=(y!==null&&Math.abs(ny-y)>3?'\n':' ')+it.str;y=ny});out+='\n'}
   if(out.replace(/\s/g,'').length>200)return out;
-  const imgs=[];for(let i=1;i<=Math.min(pdf.numPages,12);i++){stat(`Menyiapkan OCR halaman ${i}…`);const pg=await pdf.getPage(i),vp=pg.getViewport({scale:2});
+  const imgs=[];for(let i=1;i<=Math.min(pdf.numPages,20);i++){stat(`Menyiapkan OCR halaman ${i}…`);const pg=await pdf.getPage(i),vp=pg.getViewport({scale:2});
     const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;imgs.push(cv)}
   return ocr(imgs)}
 async function ocr(imgs){await loadJs(TESS);const w=await Tesseract.createWorker('ind');let t='';
@@ -655,31 +655,32 @@ function parsePenetapan(raw){
     .replace(/\s+/g,' ');
   const R={};const m1=(re,s=flat)=>{const m=s.match(re);return m?m[1].trim():''};
   const NM="([A-Z][A-Z.' ]{2,}?)";
-  const cleanName=n=>(n||'').replace(/^(Sdr\.?|Sdri\.?|Tn\.?|Ny\.?|Nn\.?)\s*/i,'').replace(/[;:,.\s-]+$/,'').trim();
+  const cleanName=n=>(n||'').replace(/^[^A-Za-z]+/,'').replace(/^(Sdr\.?|Sdri\.?|Tn\.?|Ny\.?|Nn\.?)\s*/i,'').replace(/[;:,.\s-]+$/,'').trim();
   const D='(\\d{1,2}\\s+(?:'+BLN.join('|')+')\\s+\\d{4})';
-  R.nomorPenetapan=m1(/Nomor\s*:?\s*(\d+\s*\/\s*Pdt\.?\s*P\s*\/\s*\d{4}\s*\/\s*P[NA]\s*[A-Za-z.]+)/i).replace(/\s*\/\s*/g,'/').replace(/Pdt\.?\s*P/i,'Pdt.P');
+  R.nomorPenetapan=m1(/Nomor[\s:.\-]*(\d+\s*\/\s*Pdt\.?\s*P\s*\/\s*\d{4}\s*\/\s*P[NA]\s*[A-Za-z.]+)/i).replace(/\s*\/\s*/g,'/').replace(/Pdt\.?\s*P/i,'Pdt.P');
   R.pengadilan=m1(/(Pengadilan (?:Negeri|Agama) [A-Z][a-zA-Z]+(?: [A-Z][a-zA-Z]+)?)/).replace(/\s+(Yang|Kelas|Tersebut|Telah|Nomor)$/,'');
   const ai=flat.search(/MENETAPKAN|MENGADILI/);const amar=ai>=0?flat.slice(ai):flat;
   R.jenis=/pengampu/i.test(amar)||(!/\bwali\b/i.test(amar)&&/pengampu/i.test(flat))?'Pengampuan':'Perwalian';
   const tp=[...flat.matchAll(new RegExp('(?:ditetapkan|diucapkan|dijatuhkan)[^.]{0,120}?tanggal\\s+'+D,'gi'))];
   R.tglPenetapan=toISO(tp.length?tp[0][1]:'');
   /* pemohon */
-  const st=flat.search(/(?:permohonan\s+)?dari\s*:|diajukan oleh\s*:?|Pemohon\s*:/i);
+  const st=flat.search(/(?:permohonan\s+)?dari\s*:|(?:di)?ajukan\s+oleh\s*:?|Pemohon\s*:/i);
   let blk=st>=0?flat.slice(st,st+1500):'';const ct=blk.search(/sebagai\s*-*\s*Pemohon|selanjutnya disebut|Pengadilan (?:Negeri|Agama) tersebut/i);if(ct>0)blk=blk.slice(0,ct);
-  blk=blk.replace(/^(?:permohonan\s+)?(?:dari|diajukan oleh|Pemohon)\s*:?\s*/i,'');
+  blk=blk.replace(/^(?:permohonan\s+)?(?:dari|(?:di)?ajukan\s+oleh|Pemohon)\s*:?\s*/i,'').replace(/^[^A-Za-z]+/,'');
+  const cut2=blk.search(/\s(?:\S{1,6}\s)?hal ini\b|\smemberi kuasa/i);if(cut2>0)blk=blk.slice(0,cut2);
   const LB='(?:Nama|NIK|Tempat|Tgl|Tanggal Lahir|Umur|Jenis Kelamin|Agama|Pekerjaan|Alamat|Bertempat tinggal|Kewarganegaraan|Warga Negara|Pendidikan|Status)';
   const L=lab=>m1(new RegExp('\\b'+lab+'\\s*:?\\s*(.+?)(?=[,;]\\s*'+LB+'\\b|;|$)','i'),blk);
-  R.nama=cleanName(L('Nama')||m1(/^([^,;]+)/,blk));
+  R.nama=cleanName(L('Nama')||m1(/^([^,;]+)/,blk)).toUpperCase();
   R.nik=m1(/NIK\s*:?\s*(\d{16})/,blk);
-  const tl=blk.match(new RegExp('[Ll]ahir[^0-9]{0,60}?'+D));R.tglLahir=tl?toISO(tl[1]):'';
+  const tl=blk.match(new RegExp('[Ll]ahir.{0,60}?'+D));R.tglLahir=tl?toISO(tl[1]):'';
   R.jk=/perempuan|wanita/i.test(blk)?'Perempuan':/laki/i.test(blk)?'Laki-laki':'';
   const ag=(L('Agama')||'').toLowerCase();
   R.agama=!ag?'':/protestan|kristen/.test(ag)?'Kristen':/katol|kathol/.test(ag)?'Katholik':/bud/.test(ag)?'Buddha':/hindu/.test(ag)?'Hindu':/kong|konghu/.test(ag)?'Khonghucu':'Islam';
-  R.pekerjaan=L('Pekerjaan');
-  R.alamat=(L('(?:Alamat|Bertempat tinggal di|Bertempat tinggal|Tempat tinggal)')).replace(/^di\s+/i,'').replace(/\s*-\s*(?=[A-Z])/g,', ');
+  R.pekerjaan=L('Pekerjaan')||m1(/agama\s+[A-Za-z]+\s*,\s*(.+?)\s*,\s*(?:beralamat|bertempat|alamat)/i,blk).replace(/\s*,\s*/g,' ');
+  R.alamat=(L('(?:Alamat|Bertempat tinggal di|Bertempat tinggal|Tempat tinggal)')||m1(/(?:beralamat|bertempat tinggal)\s+(?:di\s+)?(.+?)(?:;|\s+sebagai\b|$)/i,blk)).replace(/^di\s+/i,'').replace(/\s*-\s*(?=[A-Z])/g,', ');
   const k=R.alamat.match(/Kel(?:urahan|\s*\/\s*Desa|\.)?\.?\s*([^,]+?),\s*Kec(?:amatan|\.)?\.?\s*([^,]+?)(?:,\s*([^,;]+?))?(?:,\s*([^,;]+))?$/i);
   R.kelurahan=k?[`Kelurahan ${k[1].replace(/^\.\s*/,'')}`,`Kecamatan ${k[2]}`,k[3],k[4]].filter(Boolean).join(', '):'';
-  const rel=m1(/\b(ibu kandung|ayah kandung|bapak kandung|saudara kandung|anak kandung|kakak kandung|adik kandung|suami|isteri|istri|paman|bibi|kakek|nenek|keponakan|cucu)(?=nya|\b)/i);
+  const rel=R.jenis==='Perwalian'?(m1(/\b(anak kandung|cucu kandung|cucu|keponakan|adik kandung)(?=nya|\b)/i)||'anak kandung'):m1(/\b(ibu kandung|ayah kandung|bapak kandung|saudara kandung|anak kandung|kakak kandung|adik kandung|suami|isteri|istri|paman|bibi|kakek|nenek|keponakan|cucu)(?=nya|\b)/i);
   R.status=rel?rel.replace(/\b\w/g,c=>c.toUpperCase()):'';
   const after=(n,src)=>{const i=src.indexOf(n);return i<0?'':src.slice(i,i+300)};
   if(R.jenis==='Pengampuan'){
@@ -697,7 +698,10 @@ function parsePenetapan(raw){
     const scan=src=>{for(const m of src.matchAll(new RegExp(NM+"\\s*,?\\s*(?:\\(?(laki-laki|perempuan|Laki-laki|Perempuan)\\)?\\s*,?\\s*)?[^A-Z0-9]{0,40}?[Ll]ahir[^0-9]{0,60}?"+D,'g'))){
       const nm=cleanName(m[1]).replace(/^(?:[a-z]\.|\d+\.)\s*/,'');if(nm.length<3||seen.has(nm)||nm===R.nama||/^(Tempat|Tanggal|Kartu|Akta)/.test(nm))continue;seen.add(nm);
       R.anak.push({nama:nm,jk:/perempuan/i.test(m[2]||after(nm,src).slice(0,120))?'Perempuan':'Laki-laki',tglLahir:toISO(m[3])})}};
-    scan(amar);if(!R.anak.length)scan(flat);
+    for(const src of [amar,flat]){if(R.anak.length)break;for(const m of src.matchAll(new RegExp("(?:^|\\s)\\d+\\.\\s+([A-Za-z][A-Za-z.' ]{2,120}?)\\s*,\\s*(laki-laki|perempuan)\\s*,[^0-9]{0,70}?"+D,'gi'))){
+      const nm=cleanName(m[1].replace(/\s+bin(ti)?\s+.*$/i,'')).toUpperCase();if(nm.length<3||seen.has(nm)||nm===R.nama)continue;seen.add(nm);
+      R.anak.push({nama:nm,jk:/perempuan/i.test(m[2])?'Perempuan':'Laki-laki',tglLahir:toISO(m[3])})}}
+    if(!R.anak.length)scan(amar);if(!R.anak.length)scan(flat);
   }
   return R}
 
