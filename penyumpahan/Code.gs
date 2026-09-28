@@ -604,3 +604,15 @@ function apiSinkronPegawai(token, ssId) {
   log_(u, 'PENGATURAN', '', '', 'Sinkron ' + out.length + ' pegawai dari ' + set.pegawaiSumber);
   return out;
 }
+
+/** Jalankan dari editor untuk menyeragamkan password semua akun (tanpa wajib ganti saat login). */
+function setPasswordSemua() {
+  const PASSWORD = 'wilayah2';
+  const sh = sheet_('Pengguna');
+  rows_('Pengguna').forEach(function (r) {
+    const salt = Utilities.getUuid();
+    sh.getRange(r._row, 4, 1, 4).setValues([[hash_(PASSWORD, salt), salt, true, false]]);
+  });
+  log_({ username: 'system', nama: 'Setup' }, 'RESET_PASSWORD', '', '', 'Password semua akun diseragamkan oleh pemilik skrip');
+  Logger.log('Password semua akun sudah diubah.');
+}
