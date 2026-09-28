@@ -349,7 +349,7 @@ const $=s=>document.querySelector(s);
 /* ---------------- server & sesi ---------------- */
 const GAS=typeof google!=='undefined'&&google.script&&google.script.run;
 let FOLDER='',TOKEN=null,ME=null,USERS=[],SPS={terhubung:false},ADA_AI=false,DB=[],SET=JSON.parse(JSON.stringify(DEF_SET));
-const ss=(k,v)=>{try{if(v===undefined)return sessionStorage.getItem(k);if(v===null)sessionStorage.removeItem(k);else sessionStorage.setItem(k,v)}catch(e){}};
+const ss=(k,v)=>{let r=null;for(const n of ['localStorage','sessionStorage']){try{const S=window[n];if(v===undefined){r=r||S.getItem(k)}else if(v===null)S.removeItem(k);else S.setItem(k,v)}catch(e){}}return r};
 function api(fn,...a){
   if(!GAS)return new Promise((ok,no)=>setTimeout(()=>{try{ok(DEMO[fn](TOKEN,...a))}catch(e){no(e)}},60));
   return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(e=>{if(/SESI_HABIS/.test(e.message||e)){sesiHabis();no(new Error('Sesi berakhir, silakan login lagi.'))}else no(e)})[fn](TOKEN,...a))}
@@ -450,6 +450,42 @@ async function simpanUser(u){try{await api('apiSimpanPengguna',{username:u,nama:
 async function resetPwd(u,n){if(!confirm('Reset password '+n+'?'))return;try{const p=await api('apiResetPassword',u);prompt(`Password sementara ${n} (sampaikan secara pribadi; wajib diganti saat login):`,p)}catch(e){alert(e.message)}}
 async function tambahUser(){try{const p=await api('apiSimpanPengguna',{username:$('#nu_u').value,nama:$('#nu_n').value,email:$('#nu_e').value,role:$('#nu_r').value});prompt('Pengguna ditambahkan. Password sementara:',p);kelolaPengguna()}catch(e){alert(e.message)}}
 
+/* ---------------- pemeriksaan otomatis (akurasi) ---------------- */
+function umurPada(lahir,ref){const d=pd(lahir),r=pd(ref)||new Date();if(!d)return null;let u=r.getFullYear()-d.getFullYear();if(r<new Date(r.getFullYear(),d.getMonth(),d.getDate()))u--;return u}
+function cekData(r){const w=[],t=today(),ref=r.tglSumpah||t;
+  if(r.nomorPenetapan&&!/^\d+\s*\/\s*Pdt\.?\s*P\s*\/\s*\d{4}\s*\/\s*(PN|PA|MS)/i.test(r.nomorPenetapan))w.push('Format nomor penetapan tidak lazim: '+r.nomorPenetapan);
+  if(r.tglPenetapan&&r.tglPenetapan>t)w.push('Tanggal penetapan di masa depan');
+  if(r.tglPenetapan&&r.tglSumpah&&r.tglSumpah<r.tglPenetapan)w.push('Tanggal sumpah lebih awal dari tanggal penetapan');
+  const up=umurPada(r.tglLahir,ref);if(up!==null&&(up<18||up>100))w.push('Umur pemohon '+up+' tahun — periksa tanggal lahir');
+  if(r.nik&&!/^\d{16}$/.test(String(r.nik).replace(/\s/g,'')))w.push('NIK harus 16 digit');
+  if(r.jenis==='Perwalian'){(r.anak||[]).filter(a=>a.nama).forEach(a=>{const u=umurPada(a.tglLahir,ref);if(u!==null&&u>=18)w.push(`Anak ${a.nama} sudah ${u} tahun — perwalian untuk anak di bawah umur`);if(!a.tglLahir)w.push(`Tanggal lahir anak ${a.nama} kosong`)});
+    if(r.nama&&(r.anak||[]).some(a=>a.nama===r.nama))w.push('Nama wali sama dengan nama anak — periksa')}
+  else{const u=umurPada(r.terampu&&r.terampu.tglLahir,ref);if(u!==null&&u<18)w.push('Terampu berumur '+u+' tahun — pengampuan untuk orang dewasa');if(r.terampu&&r.nama&&r.terampu.nama===r.nama)w.push('Nama pengampu sama dengan terampu — periksa')}
+  if(!r.kelurahan)w.push('Kelurahan kosong — Surat ke Lurah tidak lengkap');
+  return w}
+const boxCek=w=>w.length?`<div style="border:1.5px solid #f6c343;background:#fff6db;color:#6b4e00;border-radius:12px;padding:10px 14px;margin:10px 0"><b>⚠ Periksa sebelum lanjut</b><ul style="margin:6px 0 0;padding-left:18px">${w.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
+
+/* ---------------- proses otomatis: simpan → nomor SPS → Google Doc ---------------- */
+async function gdocCore(key,keys,judul){const blob=await buatDocx(keys);const b64=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(blob)});
+  const r=await api('apiBuatDokumen',cur.id,key,judul,b64);cur.dokumen=cur.dokumen||{};cur.dokumen[key]=r.dok;cur.folderUrl=r.folderUrl;cur._versi=r.versi;return r.dok}
+async function prosesOtomatis(){if(!cur)return;clearTimeout(saveT);await flush();
+  const perlu=Object.keys(NOMOR).map(k=>[k,kurang(k,cur)]).filter(x=>x[1].length);
+  if(perlu.length){dlg(`<h3>⚡ Proses Otomatis</h3><p>Isian belum lengkap, lengkapi dulu agar nomor & dokumen tidak salah:</p><ul>${perlu.map(([k,m])=>`<li><b>${DOCS[k].nama(cur)}</b>: ${esc(m.join(', '))}</li>`).join('')}</ul><p style="text-align:right"><button class="pri" onclick="dlgClose()">Mengerti</button></p>`);return}
+  const w=cekData(cur);const tanpa=Object.entries(NOMOR).filter(([k,f])=>!cur[f]);
+  dlg(`<h3>⚡ Proses Otomatis</h3>${boxCek(w)}<p>Langkah yang akan dijalankan:</p><ol><li>Simpan berkas</li>${tanpa.length?`<li>Ambil <b>${tanpa.length} nomor</b> dari SPS (tanggal hari ini, ${cur.jenis==='Perwalian'?'AH.06.02':'AH.06.03'}): ${tanpa.map(([k])=>DOCS[k].nama(cur)).join(', ')}</li>`:'<li>Semua dokumen sudah bernomor</li>'}<li>Buat <b>Google Doc lengkap</b> (6 dokumen) di folder Drive berkas</li></ol>
+    <p class="hint">Nomor SPS yang sudah diambil tidak bisa dibatalkan dari aplikasi. Pastikan data sudah benar.</p>
+    <p style="text-align:right;display:flex;gap:8px;justify-content:flex-end"><button onclick="dlgClose()">Batal</button><button class="pri" onclick="jalankanOtomatis()">${w.length?'Tetap lanjutkan':'Ya, proses sekarang'} →</button></p>`)}
+async function jalankanOtomatis(){const tanpa=Object.entries(NOMOR).filter(([k,f])=>!cur[f]);
+  const L=[['simpan','Simpan berkas'],...tanpa.map(([k])=>['n_'+k,'Nomor SPS — '+DOCS[k].nama(cur)]),['doc','Google Doc lengkap']];
+  dlg(`<h3>⚡ Memproses…</h3><div class="log">${L.map(([id,t])=>`<div class="logi" id="pr_${id}">⏳ ${esc(t)}</div>`).join('')}</div><p id="prEnd" style="text-align:right;margin-top:12px"></p>`,true);
+  const set=(id,ok,t)=>{const e=$('#pr_'+id);if(e)e.innerHTML=(ok?'✅ ':'❌ ')+esc(t)};let gagal=false;
+  try{await flush();set('simpan',1,'Berkas tersimpan')}catch(e){set('simpan',0,e.message);gagal=true}
+  for(const [k,f] of tanpa){if(gagal)break;try{const inf=infoNomor(k,cur);const r=await api('apiAmbilNomor',cur.id,f,inf);cur[f]=r.nomor;cur._versi=r.versi;if(r.tanggalSurat)cur.tanggalSurat=r.tanggalSurat;set('n_'+k,1,DOCS[k].nama(cur)+': '+r.nomor)}
+    catch(e){set('n_'+k,0,DOCS[k].nama(cur)+' — '+(e.message||e));gagal=true}}
+  let dok=null;if(!gagal){try{if(GAS){dok=await gdocCore('semua',Object.keys(DOCS),'Dokumen Lengkap');set('doc',1,'Google Doc dibuat')}else{await dl(Object.keys(DOCS));set('doc',1,'Mode demo: DOCX diunduh')}}catch(e){set('doc',0,e.message||e);gagal=true}}
+  $('#prEnd').innerHTML=(dok?`<a class="btn pri" href="${dok.url}" target="_blank" rel="noopener">📄 Buka Google Doc</a> `:'')+(cur.folderUrl?`<a class="btn" href="${cur.folderUrl}" target="_blank" rel="noopener">📁 Folder</a> `:'')+`<button onclick="dlgClose();tab='dok';renderMain()">${gagal?'Tutup & periksa':'Selesai'}</button>`;
+  $('#gDlg').dataset.lock='';renderMain()}
+
 /* ---------------- kelengkapan & nomor SPS ---------------- */
 const NOMOR={surat:'nomorSurat',lurah:'nomorLurah',bap:'nomorBAP',ba:'nomorBA',harta:'nomorBAHarta'};
 function kurang(k,r){const d=derive(r),m=[];const need=(v,l)=>{if(!String(v??'').trim())m.push(l)};
@@ -544,7 +580,7 @@ function renderMain(){
     F('saksi1','Saksi 1 (opsional)')+F('saksi2','Saksi 2 (opsional)')+`<div class="full"><label>Lafaz sumpah (otomatis sesuai agama)</label><textarea disabled>${esc(d.laf)}</textarea></div>`;
   if(tab==='harta')h+=F('isiBap','Isi BA Penghadapan — satu keterangan "Bahwa …" per baris (terisi otomatis oleh Gemini dari penetapan)','area')+
     HARTA.map(([k,l,o])=>{if(cur[k]===undefined&&o)cur[k]=cur[o]||'';return F(k,'Aktiva — '+l+' (satu per baris)','area')}).join('')+F('hartaHutang','Passiva — Hutang-hutang (satu per baris)','area');
-  if(tab==='dok')h+=`<div class="full"><div class="docs">${Object.entries(DOCS).map(([k,o])=>{const nf=NOMOR[k],ku=nf?kurang(k,cur):[];
+  if(tab==='dok')h+=`<div class="full"><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px"><button class="pri" style="padding:11px 18px;border-radius:12px" onclick="prosesOtomatis()">⚡ Proses Otomatis</button><span class="hint">Sekali klik: cek kelengkapan → ambil semua nomor SPS → buat Google Doc lengkap.</span></div>${boxCek(cekData(cur))}<div class="docs">${Object.entries(DOCS).map(([k,o])=>{const nf=NOMOR[k],ku=nf?kurang(k,cur):[];
     return`<div class="doc"><b>${o.nama(cur)}</b>${nf?(cur[nf]?`<span class="nomor">No. ${esc(cur[nf])}</span>`:ku.length?`<span class="kurang">Belum bisa ambil nomor. Kurang: ${esc(ku.join(', '))}</span>`:`<button class="pri" onclick="ambilNomor('${k}',this)">🔢 Ambil nomor SPS</button>`):''}
     ${gdocBtn(k,[k],o.nama(cur))}<div><button onclick="preview('${k}')">👁 Pratinjau</button></div></div>`}).join('')}
     <div class="doc" style="border-color:var(--pri)"><b>📦 Seluruh Dokumen</b><span class="hint">Satu Google Doc berisi semua dokumen</span>${gdocBtn('semua',Object.keys(DOCS),'Dokumen Lengkap')}</div></div>
@@ -693,7 +729,8 @@ async function handlePenetapan(file){
   try{
     let data;
     if(ADA_AI){stat('Menganalisis dengan AI Gemini…');try{data=await geminiExtract(file)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}}
-    let rx=null;try{const text=await fileText(file);if(text.replace(/\s/g,'').length>=80){rx=parsePenetapan(text);rx._text=text}}catch(e){if(!data)throw e}
+    let rx=null;const cukup=data&&data.nama&&(data.nomorPenetapan||data.tglPenetapan);
+    if(!cukup)try{const text=await fileText(file);if(text.replace(/\s/g,'').length>=80){rx=parsePenetapan(text);rx._text=text}}catch(e){if(!data)throw e}
     if(data&&rx)data=gabung(data,rx);else data=data||rx;if(!data)throw new Error('Teks tidak terbaca dari file.');
     if(WZ.on){if(!WZ.pilih||!data.jenis)data.jenis=data.jenis||WZ.jenis;if(WZ.pilih)data.jenis=WZ.jenis;WZ.data=data;wizard(2);return}
     reviewPenetapan(data,file.name);
@@ -705,10 +742,17 @@ async function fileText(file){
   const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;let out='';
   for(let i=1;i<=pdf.numPages;i++){stat(`Membaca halaman ${i}/${pdf.numPages}…`);const c=await(await pdf.getPage(i)).getTextContent();
     let y=null;c.items.forEach(it=>{const ny=it.transform[5];out+=(y!==null&&Math.abs(ny-y)>3?'\n':' ')+it.str;y=ny});out+='\n'}
-  if(out.replace(/\s/g,'').length>200)return out;
-  const imgs=[];for(let i=1;i<=Math.min(pdf.numPages,20);i++){stat(`Menyiapkan OCR halaman ${i}…`);const pg=await pdf.getPage(i),vp=pg.getViewport({scale:2});
-    const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;imgs.push(cv)}
-  return ocr(imgs)}
+  if(out.replace(/\s/g,'').length>200){pdf.destroy();return out}
+  /* scan: OCR halaman demi halaman supaya hemat memori (HP) */
+  const HP=matchMedia('(max-width:900px)').matches||/Android|iPhone|iPad/i.test(navigator.userAgent);
+  const maks=Math.min(pdf.numPages,HP?8:20),skala=HP?1.4:2;
+  await loadJs(TESS);const wk=await Tesseract.createWorker('ind');let t='';
+  try{for(let i=1;i<=maks;i++){stat(`Membaca scan halaman ${i}/${maks}…${HP?' (mode hemat memori)':''}`);
+      const pg=await pdf.getPage(i),vp=pg.getViewport({scale:skala});const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;
+      await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;t+=(await wk.recognize(cv)).data.text+'\n';
+      cv.width=cv.height=0;pg.cleanup()}}
+  finally{await wk.terminate();pdf.destroy()}
+  return t}
 async function ocr(imgs){await loadJs(TESS);const w=await Tesseract.createWorker('ind');let t='';
   for(let i=0;i<imgs.length;i++){stat(`OCR (scan) halaman ${i+1}/${imgs.length}… agak lama`);t+=(await w.recognize(imgs[i])).data.text+'\n'}await w.terminate();return t}
 
@@ -836,14 +880,14 @@ function wizard(step){WZ.on=true;$('.wrap').classList.add('wzmode');WZ.step=step
       <input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)"></label>
     <div class="wz-f"><button class="link" onclick="WZ.on=false;newRec();cur.jenis=WZ.jenis;save();renderMain()">Isi manual tanpa penetapan</button><span class="hint">Setelah upload, lanjut ke Bagian 2 otomatis</span></div></div>`}
   if(step===2){const d=WZ.data;m.innerHTML=`<div class="wz">${wzHead(2)}<h4>🔎 Bagian 2: Periksa Data dari Penetapan ${d._ai?'<span class="tag">AI</span>':''}</h4>
-    <p class="hint" style="margin-top:-6px">Kolom kuning belum ditemukan di dokumen — lengkapi bila perlu.</p><div id="wzBody">${reviewHtml(d)}</div>
+    <p class="hint" style="margin-top:-6px">Kolom kuning belum ditemukan di dokumen — lengkapi bila perlu.</p>${boxCek(cekData(d))}<div id="wzBody">${reviewHtml(d)}</div>
     <div class="wz-f"><button onclick="wizard(1)">← Kembali</button><button class="pri" onclick="applyPenetapan($('#wzBody'),()=>wizard(3))">Lanjut ke Bagian 3 →</button></div></div>`}
   if(step===3){const pjOpt=v=>{const c=pjCari(v).nama;return SET.pejabat.map(p=>`<option ${p.nama===c?'selected':''} value="${esc(p.nama)}">${esc(p.nama)} — ${esc(p.jabatan||'')}</option>`).join('')};
     m.innerHTML=`<div class="wz">${wzHead(3)}<h4>📅 Bagian 3: Jadwal Sumpah & Pejabat</h4><div class="grid">
     ${F('tglSumpah','Tanggal Sumpah','date')}${F('waktu','Waktu')}${F('tempat','Tempat (kosong = kediaman)')}${F('hp','No. HP pemohon')}
     <div><label>Pejabat penyumpah (Madya)</label><select onchange="setv('madya',this.value)">${pjOpt(cur.madya)}</select></div>
     <div><label>Pejabat BAP & inventarisasi (Muda)</label><select onchange="setv('muda',this.value);setv('bapOleh',this.value)">${pjOpt(cur.muda)}</select></div></div>
-    <div class="wz-f"><button onclick="WZ.on=false;tab='umum';setNav('berkas','Daftar Berkas');renderMain()">Lengkapi detail lain</button><button class="pri" onclick="WZ.on=false;tab='dok';setNav('berkas','Daftar Berkas');renderMain();toast('Berkas tersimpan')">Simpan & Lihat Dokumen →</button></div></div>`}
+    <div class="wz-f"><button onclick="WZ.on=false;tab='umum';setNav('berkas','Daftar Berkas');renderMain()">Lengkapi detail lain</button><span style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="WZ.on=false;tab='dok';setNav('berkas','Daftar Berkas');renderMain();toast('Berkas tersimpan')">Simpan & Lihat Dokumen</button><button class="pri" onclick="WZ.on=false;tab='dok';setNav('berkas','Daftar Berkas');renderMain();prosesOtomatis()">⚡ Proses Otomatis →</button></span></div></div>`}
 }
 
 /* ---------------- pengaturan (admin utama) ---------------- */
