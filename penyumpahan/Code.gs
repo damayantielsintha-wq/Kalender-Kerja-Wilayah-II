@@ -22,7 +22,7 @@ const PENGGUNA_AWAL = [
   ['annisa', 'Annisa Dwi Marina', 'admin', 'annisadwimarina@gmail.com'],
   ['elsintha', 'Elsintha Damayanti', 'admin', 'damayantielsintha@gmail.com'],
   ['yusril', 'Yusril Ihza Mahendra', 'admin'],
-  ['andre', 'Andre Yosua Surbakti', 'admin'],
+  ['andre', 'Andre Yosua Surbakti', 'admin', 'andrebhpmedan@gmail.com'],
   ['fairuz', 'Nur Fairuz Diba Nasution', 'admin'],
   ['nanang', 'Nanang Surya Purnama', 'admin'],
   ['taufik', 'M. Taufik Rahman', 'admin'],
@@ -432,12 +432,12 @@ function spsAmbil_(jenis, perihal, pegawai) {
 
 /**
  * Ambil nomor surat dari SPS untuk satu dokumen berkas.
- * dok: 'nomorSurat' | 'nomorLurah' | 'nomorBA' | 'nomorBAHarta'
+ * dok: 'nomorSurat' | 'nomorLurah' | 'nomorBAP' | 'nomorBA' | 'nomorBAHarta'
  * info.kurang: daftar isian yang belum lengkap (dicek di browser; server menolak bila tidak kosong).
  */
 function apiAmbilNomor(token, id, dok, info) {
   const u = user_(token);
-  if (['nomorSurat', 'nomorLurah', 'nomorBA', 'nomorBAHarta'].indexOf(dok) < 0) throw new Error('Jenis dokumen tidak dikenal.');
+  if (['nomorSurat', 'nomorLurah', 'nomorBAP', 'nomorBA', 'nomorBAHarta'].indexOf(dok) < 0) throw new Error('Jenis dokumen tidak dikenal.');
   if (info.kurang && info.kurang.length) throw new Error('Isian belum lengkap: ' + info.kurang.join(', '));
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
@@ -558,4 +558,41 @@ function apiTesGemini(token) {
     payload: JSON.stringify({ contents: [{ parts: [{ text: 'Balas satu kata: siap' }] }] }) });
   if (res.getResponseCode() !== 200) throw new Error('Gemini HTTP ' + res.getResponseCode() + ': ' + res.getContentText().slice(0, 200));
   return 'Gemini (' + model + ') terhubung.';
+}
+
+/* ------------------------------------------------------------ data pegawai (sheet "Dokumen Otomatis") */
+
+const PEGAWAI_SS_DEFAULT = '1aOsRbouL5P6yrdunrPAuG4IdNehjvPoT9MoL5CrAPFM';
+/**
+ * Baca pegawai dari sheet "Data Lengkap Pegawai" (cadangan: "Daftar Pegawai") dan simpan ke Pengaturan.pejabat.
+ * Kolom dikenali dari judul: nama, NIP, jabatan (baris judul dicari di 5 baris pertama).
+ */
+function apiSinkronPegawai(token, ssId) {
+  const u = super_(token);
+  const ss = SpreadsheetApp.openById(ssId || PEGAWAI_SS_DEFAULT);
+  const sh = ss.getSheetByName('Data Lengkap Pegawai') || ss.getSheetByName('Daftar Pegawai');
+  if (!sh) throw new Error('Sheet "Data Lengkap Pegawai" / "Daftar Pegawai" tidak ditemukan.');
+  const v = sh.getDataRange().getDisplayValues();
+  let h = -1, cn = -1, ci = -1, cj = -1;
+  for (let i = 0; i < Math.min(5, v.length) && h < 0; i++) {
+    const row = v[i].map(function (x) { return String(x).toLowerCase(); });
+    cn = row.findIndex(function (x) { return /nama/.test(x) && !/jabatan|pangkat|unit/.test(x); });
+    ci = row.findIndex(function (x) { return /^nip\b|\bnip\b/.test(x); });
+    cj = row.findIndex(function (x) { return /jabatan/.test(x); });
+    if (cn >= 0 && ci >= 0) h = i;
+  }
+  if (h < 0) throw new Error('Kolom Nama & NIP tidak dikenali pada sheet ' + sh.getName() + '.');
+  const out = [], seen = {};
+  v.slice(h + 1).forEach(function (r) {
+    const nama = String(r[cn] || '').trim(), nip = String(r[ci] || '').replace(/\s/g, '');
+    if (!nama || seen[nama.toUpperCase()]) return;
+    seen[nama.toUpperCase()] = 1;
+    out.push({ nama: nama.toUpperCase().replace(/,\s*S\..*$/, '').trim(), namaLengkap: nama, nip: nip, jabatan: cj >= 0 ? String(r[cj] || '').trim() : '' });
+  });
+  const set = settings_();
+  set.pejabat = out;
+  set.pegawaiSumber = ss.getName() + ' / ' + sh.getName();
+  apiSimpanPengaturan(token, { pejabat: out, pegawaiSumber: set.pegawaiSumber });
+  log_(u, 'PENGATURAN', '', '', 'Sinkron ' + out.length + ' pegawai dari ' + set.pegawaiSumber);
+  return out;
 }
