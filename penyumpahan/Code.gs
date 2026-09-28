@@ -559,22 +559,22 @@ function apiBuatDokumen(token, id, key, judul, b64) {
   }
 }
 
-/* ------------------------------------------------------------ AI pembaca penetapan (Claude; cadangan Gemini) */
+/* ------------------------------------------------------------ AI pembaca penetapan (Claude) */
 
 const CLAUDE_MODEL = 'claude-sonnet-5';
 
 function apiSimpanKunciAI(token, key) {
   const u = super_(token);
   key = String(key || '').trim();
-  if (/^sk-ant-/.test(key)) PROPS.setProperty('CLAUDE_KEY', key);
-  else if (key) PROPS.setProperty('GEMINI_KEY', key);
-  else { PROPS.deleteProperty('CLAUDE_KEY'); PROPS.deleteProperty('GEMINI_KEY'); }
-  log_(u, 'PENGATURAN', '', '', 'Kunci AI ' + (key ? 'disimpan' : 'dihapus'));
-  return apiAdaAI(token);
+  if (key && !/^sk-ant-/.test(key)) throw new Error('Kunci Claude harus diawali sk-ant- (buat di console.anthropic.com → API Keys).');
+  if (key) PROPS.setProperty('CLAUDE_KEY', key); else PROPS.deleteProperty('CLAUDE_KEY');
+  PROPS.deleteProperty('GEMINI_KEY');
+  log_(u, 'PENGATURAN', '', '', 'Kunci AI Claude ' + (key ? 'disimpan' : 'dihapus'));
+  return !!key;
 }
 function apiAdaAI(token) {
   user_(token);
-  return !!(PROPS.getProperty('CLAUDE_KEY') || PROPS.getProperty('GEMINI_KEY'));
+  return !!PROPS.getProperty('CLAUDE_KEY');
 }
 function claude_(content, maxTokens) {
   const res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
@@ -582,15 +582,9 @@ function claude_(content, maxTokens) {
     headers: { 'x-api-key': PROPS.getProperty('CLAUDE_KEY'), 'anthropic-version': '2023-06-01' },
     payload: JSON.stringify({ model: PROPS.getProperty('CLAUDE_MODEL') || CLAUDE_MODEL, max_tokens: maxTokens || 4000, messages: [{ role: 'user', content: content }] }) });
   if (res.getResponseCode() !== 200) throw new Error('Claude HTTP ' + res.getResponseCode() + ': ' + res.getContentText().slice(0, 300));
-  return JSON.parse(res.getContentText()).content.map(function (c) { return c.text || ''; }).join('');
-}
-function gemini_(parts) {
-  const model = PROPS.getProperty('GEMINI_MODEL') || 'gemini-2.5-flash';
-  const res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(PROPS.getProperty('GEMINI_KEY')), {
-    method: 'post', contentType: 'application/json', muteHttpExceptions: true,
-    payload: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: 'application/json' } }) });
-  if (res.getResponseCode() !== 200) throw new Error('Gemini HTTP ' + res.getResponseCode() + ': ' + res.getContentText().slice(0, 300));
-  return JSON.parse(res.getContentText()).candidates[0].content.parts.map(function (p) { return p.text || ''; }).join('');
+  const j = JSON.parse(res.getContentText());
+  if (j.stop_reason === 'refusal') throw new Error('Claude menolak memproses dokumen ini.');
+  return j.content.map(function (c) { return c.text || ''; }).join('');
 }
 function jsonDari_(t) {
   t = String(t || '').replace(/```(?:json)?/g, '');
@@ -598,24 +592,31 @@ function jsonDari_(t) {
   if (i < 0 || j < i) throw new Error('Jawaban AI bukan JSON.');
   return JSON.parse(t.slice(i, j + 1));
 }
-/** Baca file penetapan (PDF/gambar, base64) dengan AI dan kembalikan objek data. */
+/** Baca file penetapan (PDF/gambar, base64) dengan Claude dan kembalikan objek data. */
 function apiBacaPenetapanAI(token, b64, mime, prompt) {
   user_(token);
+  if (!PROPS.getProperty('CLAUDE_KEY')) return null;
   mime = mime || 'application/pdf';
-  if (PROPS.getProperty('CLAUDE_KEY')) {
-    const doc = /pdf/.test(mime)
-      ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } }
-      : { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } };
-    return jsonDari_(claude_([doc, { type: 'text', text: prompt + '\nBalas HANYA JSON, tanpa penjelasan.' }], 6000));
-  }
-  if (PROPS.getProperty('GEMINI_KEY')) return jsonDari_(gemini_([{ inline_data: { mime_type: mime, data: b64 } }, { text: prompt }]));
-  return null;
+  const doc = /pdf/.test(mime)
+    ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } }
+    : { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } };
+  return jsonDari_(claude_([doc, { type: 'text', text: prompt + '\nBalas HANYA satu objek JSON, tanpa penjelasan.' }], 8000));
 }
 function apiTesAI(token) {
   super_(token);
-  if (PROPS.getProperty('CLAUDE_KEY')) { claude_([{ type: 'text', text: 'Balas satu kata: siap' }], 20); return 'Claude (' + (PROPS.getProperty('CLAUDE_MODEL') || CLAUDE_MODEL) + ') terhubung.'; }
-  if (PROPS.getProperty('GEMINI_KEY')) { gemini_([{ text: 'Balas JSON {"ok":true}' }]); return 'Gemini terhubung.'; }
-  throw new Error('Kunci AI belum diisi.');
+  if (!PROPS.getProperty('CLAUDE_KEY')) throw new Error('Kunci Claude belum diisi.');
+  claude_([{ type: 'text', text: 'Balas satu kata: siap' }], 20);
+  return 'Claude (' + (PROPS.getProperty('CLAUDE_MODEL') || CLAUDE_MODEL) + ') terhubung.';
+}
+
+/* ------------------------------------------------------------ impor dari sheet AutoCrat (mis. PERWALIAN RIAU) */
+function apiBacaSheet(token, ssId, nama) {
+  super_(token);
+  const ss = SpreadsheetApp.openById(ssId || PEGAWAI_SS_DEFAULT);
+  const sh = ss.getSheetByName(nama);
+  if (!sh) throw new Error('Sheet "' + nama + '" tidak ditemukan di ' + ss.getName() + '.');
+  const v = sh.getDataRange().getDisplayValues();
+  return { judul: ss.getName() + ' / ' + nama, header: v[0] || [], rows: v.slice(1).filter(function (r) { return r.join('').trim(); }) };
 }
 
 /* ------------------------------------------------------------ data pegawai (sheet "Dokumen Otomatis") */
@@ -675,17 +676,7 @@ function cekSemua() {
   const P = PropertiesService.getScriptProperties();
   // 1. AI
   if (P.getProperty('CLAUDE_KEY')) { try { claude_([{ type: 'text', text: 'Balas satu kata: siap' }], 20); Logger.log('CLAUDE  ✅ Terhubung.'); } catch (e) { Logger.log('CLAUDE  ❌ ' + e.message); } }
-  const key = P.getProperty('GEMINI_KEY');
-  if (!key) Logger.log('GEMINI  ❌ Kunci belum tersimpan. Simpan di aplikasi: Pengaturan → AI Gemini → Simpan kunci.');
-  else {
-    try {
-      const r = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(key), {
-        method: 'post', contentType: 'application/json', muteHttpExceptions: true,
-        payload: JSON.stringify({ contents: [{ parts: [{ text: 'Balas satu kata: siap' }] }] }) });
-      const c = r.getResponseCode();
-      Logger.log(c === 200 ? 'GEMINI  ✅ Terhubung (gemini-2.5-flash).' : 'GEMINI  ❌ HTTP ' + c + ': ' + r.getContentText().slice(0, 300));
-    } catch (e) { Logger.log('GEMINI  ❌ ' + e.message); }
-  }
+  else Logger.log('CLAUDE  ❌ Kunci belum tersimpan. Simpan di aplikasi: Pengaturan → AI → Simpan kunci.');
   // 2. SPS (cek ketersediaan nomor 7 hari lalu; tidak mengambil nomor)
   const cookie = (P.getProperty('SPS_COOKIE') || '').trim(), akun = P.getProperty('SPS_USER');
   if (!cookie && !akun) Logger.log('SPS     ❌ Cookie/akun SPS belum tersimpan. Isi di aplikasi: Pengaturan → Koneksi SPS.');
