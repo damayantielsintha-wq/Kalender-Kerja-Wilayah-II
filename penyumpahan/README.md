@@ -29,3 +29,6 @@ Pengganti alur AutoCrat di spreadsheet *Dokumen Otomatis (Penetapan Baru)*. Apli
 Database (Spreadsheet) hanya dimiliki akun Shela; admin lain mengakses lewat aplikasi, sehingga riwayat tidak bisa diubah dari luar aplikasi.
 
 **Coba tanpa deploy:** buka `Index.html` di browser → mode demo (username `shela`/`annisa`, password `demo`; data di browser saja, tanpa SPS).
+
+## Pengembangan
+Sumber tampilan ada di `app.src.html`. Setelah mengubahnya, jalankan `python3 build.py` untuk membuat `Index.html`. Script dibungkus base64url karena Apps Script merusak JavaScript inline modern. `doGet` mengambil `Index.html` langsung dari GitHub, jadi perubahan tampilan tidak perlu deploy ulang.

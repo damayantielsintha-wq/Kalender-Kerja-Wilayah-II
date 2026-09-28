@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dokumen Penyumpahan BHP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f5fb;--card:#fff;--ink:#1c1f2e;--mut:#6b7087;--line:#e3e5ef;--pri:#4f46e5;--pri2:#eef0ff;--ok:#0f9d6b;--warn:#c2410c;--rad:14px}
+:root[data-theme=dark]{--bg:#10121a;--card:#1a1d29;--ink:#e8eaf3;--mut:#9398ae;--line:#2a2e3e;--pri:#8b83ff;--pri2:#24264a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Plus Jakarta Sans",system-ui,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+header h1{font-size:16px;margin:0 auto 0 0;display:flex;gap:8px;align-items:center}
+header h1 span{background:var(--pri);color:#fff;border-radius:8px;padding:2px 8px;font-size:12px}
+button,.btn{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600}
+button:hover{border-color:var(--pri)}
+.pri{background:var(--pri);color:#fff;border-color:var(--pri)}
+.wrap{display:grid;grid-template-columns:280px 1fr;gap:16px;padding:16px;max-width:1500px;margin:auto}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:16px}
+.list{display:flex;flex-direction:column;gap:6px;max-height:70vh;overflow:auto}
+.item{padding:10px;border-radius:10px;border:1px solid var(--line);cursor:pointer}
+.item.on{border-color:var(--pri);background:var(--pri2)}
+.item b{display:block;font-size:13px}.item small{color:var(--mut)}
+.tag{font-size:11px;padding:1px 7px;border-radius:99px;background:var(--pri2);color:var(--pri);font-weight:700}
+input,select,textarea{font:inherit;width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+textarea{min-height:64px;resize:vertical}
+label{font-size:12px;color:var(--mut);font-weight:600;display:block;margin-bottom:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.full{grid-column:1/-1}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.steps button{border-radius:99px;font-size:13px}
+.steps button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+h3{margin:4px 0 12px;font-size:15px}
+.hint{font-size:12px;color:var(--mut)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;border-radius:0}.seg button.on{background:var(--pri);color:#fff}
+.child{border:1px dashed var(--line);border-radius:10px;padding:10px;margin-bottom:8px}
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.doc{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.doc b{font-size:13px}.doc div{display:flex;gap:6px}
+.doc button{flex:1;padding:6px;font-size:12px}
+#prev{background:#8a8fa3;padding:20px;border-radius:var(--rad);overflow:auto;max-height:80vh}
+.paper{background:#fff;color:#000;width:210mm;min-height:297mm;margin:0 auto 20px;padding:48pt 48pt 48pt 71pt;font:12pt/1.5 Arial,"Liberation Sans",Helvetica,sans-serif;box-shadow:0 4px 20px #0003}
+.paper p{margin:0;text-align:justify;text-indent:36pt}
+.paper p.ni,.paper p.ctr{text-indent:0}.paper p.ctr,.paper .ctr{text-align:center}
+table.kop{width:100%;border-collapse:collapse;border-bottom:1.25pt solid #000;margin:0 0 12pt}
+.paper table.hd td:first-child{padding-left:0}.paper table.hd td:last-child{padding-right:0}
+table.kop td{padding:0 0 3pt;vertical-align:middle}
+table.kop td.lg{width:62pt;padding:0}
+table.kop td.lg img{width:58pt;height:65pt;display:block}
+table.kop td.tx{text-align:center;line-height:1.15;font-size:12pt}
+table.kop .b{font-weight:bold}table.kop .s{font-size:10pt}
+.paper table{border-collapse:collapse}.paper td{vertical-align:top;padding:1pt 4pt}
+.ctr{text-align:center}.ttd{width:100%;margin-top:20pt}.ttd td{width:50%;text-align:center}
+.paper ol{margin:0 0 8pt;padding-left:20pt}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none}
+.toast.on{opacity:1}
+@media print{@page{size:A4;margin:0}body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{position:absolute;inset:0}.paper{box-shadow:none;margin:0;page-break-after:always}}
+body.locked header,body.locked .wrap{display:none}
+#login{position:fixed;inset:0;background:var(--bg);z-index:20;overflow:auto;padding:0 16px}
+.log{display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto}
+.logi{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.lh{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ld{margin-top:4px;font-size:13px}.dif{margin:0;padding-left:18px}
+del{color:#b91c1c;text-decoration:line-through}ins{color:#047857;text-decoration:none;font-weight:600}
+.meta{font-size:12px;color:var(--mut)}
+.nomor{font-size:12px;padding:6px 8px;border-radius:8px;background:var(--pri2)}
+.kurang{font-size:11px;color:var(--warn)}
+</style>
+</head>
+<body>
+<header>
+  <h1>⚖️ Dokumen Penyumpahan <span>BHP Medan</span></h1>
+  <input id="q" placeholder="Cari nama…" style="width:170px">
+  <button onclick="newRec()" class="pri">+ Data baru</button>
+  <label class="btn pri" style="margin:0">📑 Upload Penetapan<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)"></label>
+  <label class="btn" style="margin:0;color:var(--ink)">⬆ Impor CSV<input type="file" accept=".csv" hidden onchange="importCsv(this)"></label>
+  <button class="superOnly" onclick="riwayatSemua()">🕘 Riwayat</button>
+  <button class="superOnly" onclick="kelolaPengguna()">👥 Pengguna</button>
+  <button class="superOnly" onclick="openSet()">⚙ Pengaturan</button>
+  <button onclick="toggleTheme()" title="Tema">🌓</button>
+  <span id="who"></span>
+</header>
+
+<div class="wrap">
+  <aside class="card">
+    <h3>Daftar Berkas</h3>
+    <div class="list" id="list"></div>
+  </aside>
+
+  <main class="card" id="main"></main>
+</div>
+<div id="login" hidden></div>
+<dialog id="gDlg" oncancel="if(this.dataset.lock)event.preventDefault()" style="border:0;border-radius:16px;padding:0;max-width:860px;width:95%;background:var(--card);color:var(--ink)"><div style="padding:18px" id="gBody"></div></dialog>
+<div class="toast" id="toast"></div>
+
+<dialog id="penDlg" style="border:0;border-radius:16px;padding:0;max-width:760px;width:95%;background:var(--card);color:var(--ink)"><div style="padding:18px" id="penBody"></div></dialog>
+<dialog id="setDlg" style="border:0;border-radius:16px;padding:0;max-width:720px;width:95%;background:var(--card);color:var(--ink)">
+  <div style="padding:18px" id="setBody"></div>
+</dialog>
+
+<script>
+/* ---------------- data ---------------- */
+const DEF_SET={
+  instansi:'KEMENTERIAN HUKUM REPUBLIK INDONESIA',kanwil:'KANTOR WILAYAH SUMATERA UTARA',
+  balai:'BALAI HARTA PENINGGALAN MEDAN',alamat:'Jalan Listrik No. 10 Medan',
+  telp:'Telepon: (061) 451 7830, Faksimile: (061) 451 4328',
+  web:'Laman: www.bhpmedan.kemenkum.go.id, Pos-el: bhp.medan@kemenkum.go.id',
+  kepala:'Syafriadi Lubis',wa:'0851-2156-2136',
+  kanwilTembusan:'Kepala Kantor Wilayah Kementerian Hukum Sumatera Utara',
+  pejabat:[{nama:'SYUHADA',nip:'196706121989031001',jabatan:'Kurator Keperdataan Ahli Madya'},{nama:'MARIANI BR MARBUN',nip:'197604222003122001',jabatan:'Kurator Keperdataan Ahli Madya'},{nama:'TUMIAR SIMANJORANG',nip:'197306111993032001',jabatan:'Kurator Keperdataan Ahli Madya'},{nama:'DARTIMNOV MT HARAHAP',nip:'',jabatan:'Kurator Keperdataan Ahli Madya'},{nama:'NANANG SURYA PURNAMA',nip:'198106282000031001',jabatan:'Kurator Keperdataan Ahli Muda'}],
+  lafaz:{
+    Islam:'WALLAHI (Demi Allah) saya bersumpah, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya.',
+    Kristen:'Demi Tuhan saya berjanji, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya. Semoga Tuhan menolong saya.',
+    Katholik:'Demi Tuhan saya berjanji, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya. Semoga Tuhan menolong saya.',
+    Hindu:'Om Atah Paramawisesa, saya bersumpah, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya.',
+    Buddha:'Demi Sang Hyang Adi Buddha, saya bersumpah, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya.',
+    Khonghucu:'Kehadirat Tian di tempat yang Maha Tinggi dengan bimbingan Nabi Kongzi, saya bersumpah, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya. Wei De Dong Tian.'
+  }
+};
+let cur=null, tab='umum';
+
+const blank=()=>({id:newId(),jenis:'Pengampuan',tanggalSurat:today(),
+  nomorSurat:'',nomorLurah:'',nomorBAP:'',nomorBA:'',nomorBAHarta:'',hp:'',alamatKelurahan:'',kotaPermohonan:'',kanwilTembusan:'',isiBap:'',
+  nama:'',nik:'',jk:'Perempuan',tglLahir:'',agama:'Islam',pekerjaan:'',alamat:'',kelurahan:'',status:'',
+  terampu:{nama:'',jk:'Laki-laki',tglLahir:'',kondisi:''},anak:[{nama:'',jk:'Laki-laki',tglLahir:''}],
+  pengadilan:'Pengadilan Negeri Pekanbaru',nomorPenetapan:'',tglPenetapan:'',
+  tglSumpah:'',waktu:'10:00 - 16:00 WIB',tempat:'',madya:'SYUHADA',muda:'NANANG SURYA PURNAMA',bapOleh:'NANANG SURYA PURNAMA',hartaTetap:'',hartaTunai:'',hartaEmas:'',hartaSurat:'',hartaPerabot:'',hartaBergerak:'',hartaHutang:'',saksi1:'',saksi2:''});
+
+/* ---------------- util tanggal & terbilang ---------------- */
+const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+function today(){const d=new Date(Date.now()+7*3600e3);return d.toISOString().slice(0,10)}
+function pd(s){if(!s)return null;const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)}
+function tgl(s){const d=pd(s);return d?`${String(d.getDate()).padStart(2,'0')} ${BLN[d.getMonth()]} ${d.getFullYear()}`:'…'}
+function hari(s){const d=pd(s);return d?HARI[d.getDay()]:'…'}
+function usia(s,ref){const d=pd(s);if(!d)return'…';const r=pd(ref)||new Date();let u=r.getFullYear()-d.getFullYear();if(r<new Date(r.getFullYear(),d.getMonth(),d.getDate()))u--;return u+' Tahun'}
+function terbilang(n){const s=['','Satu','Dua','Tiga','Empat','Lima','Enam','Tujuh','Delapan','Sembilan','Sepuluh','Sebelas'];
+  if(n<12)return s[n];if(n<20)return terbilang(n-10)+' Belas';if(n<100)return terbilang(Math.floor(n/10))+' Puluh '+terbilang(n%10);
+  if(n<200)return'Seratus '+terbilang(n-100);if(n<1000)return terbilang(Math.floor(n/100))+' Ratus '+terbilang(n%100);
+  if(n<2000)return'Seribu '+terbilang(n-1000);return terbilang(Math.floor(n/1000))+' Ribu '+terbilang(n%1000)}
+const tb=n=>terbilang(n).replace(/\s+/g,' ').trim();
+function tglBA(s){const d=pd(s);return d?`${HARI[d.getDay()]}, tanggal ${tb(d.getDate())} bulan ${BLN[d.getMonth()]} tahun ${tb(d.getFullYear())}`:'…'}
+const esc=v=>String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const V=v=>v?esc(v):'<span style="background:#fde68a">……</span>';
+
+/* ---------------- turunan ---------------- */
+function pjCari(v){const P=SET.pejabat||[];if(typeof v==='number')return P[v]||{};return P.find(p=>p.nama===v)||{nama:v||'',nip:'',jabatan:''}}
+function derive(r){
+  const w=r.jenis==='Perwalian', J=w?'Wali':'Pengampu';
+  const sapa=r.jk==='Laki-laki'?'Bapak':'Ibu';
+  const anak=w?r.anak.filter(a=>a.nama):[];
+  const objek=w?anak.map(a=>a.nama).join(', '):r.terampu.nama;
+  const statusRel=r.status||(w?'Anak':'Keluarga');
+  const kel=r.kelurahan||'';
+  let laf=(SET.lafaz[r.agama]||SET.lafaz.Islam).replace('{JENIS}',w?'Perwalian':'Pengampuan')
+    .replace('{STATUS}',statusRel.toLowerCase()).replace('{PENGADILAN}',r.pengadilan);
+  return{w,J,sapa,objek,statusRel,kel,laf,madya:pjCari(r.madya),muda:pjCari(r.muda),anak,
+    pihak:w?'Anak':'Terampu',jenisTxt:w?'Perwalian':'Pengampuan'};
+}
+
+const LOGO_DEF='data:image/png;base64,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\/\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\/\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\/\/JjSsa9VbPJBH31min7dWsVP85N6DzVDD4MmbNDO8fwr2hXLlQf2SrMPSrIPSjeuk097Ny3c1sVDxCD3oHT4Bt5t/nlh0rYt8uXLleMm6Y3hdInZN3iUbfGSpM0bE16fnmrKcBhC7menaNevVy76NenhJ8yum1yNO9penKpZvVJ5aJ/s6GHp4X2y1auUz72iTb/ZxcVOSOXwjBqj37heBVf+bYnygfF6W2NnryHWeT8mb90ERZZ/9qW6aRenwIB6Ngg8UKue9q9mp2zZKNu4Xj7jw9SMtg5CNkDWc5DlpwVJmzckzP4+6dYhJrndy9X6Rj5kWrFCufR31bD7TQrn9bwfgtzLGPe0MTdbfKace3CfZNVq5aG98tws8S+LknoOtoLnb9DONu9H1clSYWGOYPNG+bJlqunv6cLtXOCiX3xVU5wnhIS5WcKXX0+zNHTaGzvfn6muKODv3Ca98wG9wu6BJnz8Gd3ObbKyAsHuHZI/fpfv3SktyhGvXZM06F67xBQgXt2c4Z7yauqxTNHpcm5pHv/Lr5MadXCIjL5mt9gWLU6qKuHt2JrQe4ihU1/TmtXK0nzB4sXKfneaQm1sE1/QoIvnC/fvkW1YpzxyWHqiWACfH51gUDrAaQV0Qferb6aeKhOcreDmZQunv5fcohvyVYf2oiKfKuWuWyvvfodFjDY7ocWJBLvvnkcNe3ZKTpVxq4p5a1fL+w41g5PD45cf/OiubdLTZVBk0XszU3wtHQKD54ln9PlHREcOicdO1CW5r3MgVC7/Y88aCo6KzlVy5y9MuXes9fOv1YXHhDmZ4ude1oEbaNje9tN8VVWJcMOf0rGT0roPNN/UxZGY7oXReso0DTTz+eOcqhLOymUJvQabfC2tH3yScryYt2eH5K6HdMlud+ue1p8WJFYU8rMOSl6Yqu4+wPDoBO2776eOnahv3NEhNKB1Rr4h2Kij/ZvZqtI8YUmesDRPsHwZun8BzQCN+uiT2twsSXmB8OPP1C+/nlyQIzq0T/TiK2p/C1vnfpaFvyQeL+ZnHpS+9o5+0Gj7zFkaMP5kKfenBcneFk4AwtnU/ekXqVC6c5Wc8nz+93OVd4zUvfVOUsFR/tnjnLMVnF3bxQPvNsiseMVTEwInN/XN1GNZIrhOWZ7wwB7xuEmoHuBbsdE/bLRh707JX5UcYGLbJvldD+iVDseE57RFx4SQZPxTcOaNAIS+4Kj4XCXvi281Hfu5X3lTCz2pOFc47R1tqg8BMX++6kSJcNkf8v4j9M6bnGpvOt+AIsSXpmnKCwR/nUDVmpclnP6++pbbDR/OSmKA0Iecwx4wbd0kPV3OWbVS0aG3NcHuMWU4fc2t+pArwQ5hCvLqEosfYFqzSp5/RLxtiyrrgHT3Dun947WJbi9XE/A3t86bl3S8SJB5QLZtCzgD/i+LlF1vt+gC7hEPmrZtlp4s4/3+e1K3wb6UQJN+d7n27EgAe7ZukXXpb4FRI6Otc8HPKafKeUVHRfnZouV/KCY9n/L99/KSXGFRjrCykHt4n+i+MVqlAwEBQXG4rXPO9yroIevXKffuVuYdAU+Q7G7mQJEmAWKX5K/jaBdWGXiyrxKDrQ0Tn08DIMBnPPb0jQJEPgKCs2qV8vV3tX8sU5UjDyx9ZIJe5fQ0am9bMF91qkx4aK/wq29Uk6dpeg+xQpyV6vO9NE0LHfdsJedYJh969pZN8smvpnw7R8UAYW3kHPeU6eBeyZlKzg8/qsJtIAjwdLzNBnErOAAIRc0NkFdXe9LHTEjL3CcBV\/\/9vNR1a5U5WaLXpidZGrggjpNZPCMfNBzcJT1VyjtRwss8IHr2JY0pw6XxecZM0B3cIzpRzP/q27SGnTPEtpZNu/r\/\/DPpTAX30F7RwHuMQoOvZQ/bmlWJlYX8dWsSNqxN2Lw+4cuvVOvWSPOypWtWKbL2C3MzRU8+kwbxKY4Sgj3usKxbA+GIeNbXqb/+llaSK1qyRNGxr0Vg8MO8Ztj9RvAQwHdZHq+iULBvp/ThJ1JenpZSlCPKQ0Bok9P9aD/fhWs+tl1q0b8JBFAPjZp1SF6QIz+wR/7hJ+qbbrHBpKtRe/uC+YlnyoUnS3iFOdJ9e5Inv2bUh7ypfv+U1zVlhYKTpbzflkD8JSs8Kly9KmHd2gRoNgyE1tHEMeEFU+Z+6ZlK7rffqYKtHADBDz+pV6+Wr14l/2l+cu+hNp7OE2jpmPlJUkmeeO3axBdfM/7wUwp00IW/JDTtYuGj2WYo/WbHnDmJVaVcGAuW/q5o08siMvm0AQ9EJ9C/jxcLPvpcG2jfUGRrHeoQWrUyGYDIOiC68wGDxOLrOtAC8UdRjuDr2covvlZCBLB1kyTnsGjX9oSPPk3eskFSfEz00rSUNJ8Xohm5DY1Q2QfEe3fJn3zR9NZ7MJiKwV2NHquD4BQmVsMxEOUF3PVrxds2yYpzRRAVLVigBH+DPYQ2Jd13AwBhQECc4GTuFy5YKPvgo6SHHtc16WSX23wwC2jUAQFxukyYtV8w70fl2zPSBoy0gDNP9VFAQAf96NPEadOTsg8KS/N5JbkCCNb27BCPfEhrb+wY9zR4CCl4ke/nJoKHuGWAfclSdQEa5jlZ+yX3PApxq7v7HdbVKxNh9PlpgWrEQ7r3PlJDkHtoX8Id9xpgogFAyG3uKa9pygv5x4u4n3yRnOZzcLTBVL93zCTdwb0IiFlfacMdERAZnQOrVyEgAJTBowxyuw+mrGDAsUzBa2+pnpuStGMrNCfvZJkAgo+xEzUr/pBDoPD+R8mGMLqNDsMZoFlZKFz3p3zwfbpR41IP75fk5wjffCfN1sgN0ygCRFEO77Mv5a9PTz6wR1qaz887wq8qQWHmjQCE0uUfj4AQna3kfjU7CTqlPuiE2QEa3dNCPG0YAbEgsapE9PtSCBsNxpBDYYOxH8UQJKiE9nj17eReQ/SLf1WCF4HBFZwNAAEewhByjnjIuH2LDOYOMO1s1cOi8af3u9Owbi2KKjL3S+58wJLqcT78hAG8CET1+/cpfluu37415XihsKpU/MobyRqfm4OWiTxPTzHA8FRZxH\/\/k1SF3QXTAZXLBxffsUUKLmrBwpQ2fQJye/OOt6dv26o8XcHZuVUKcwely3ffWOPRQ5LMfeLHn1KPfEC7aoUM3AxcHOaxPQcafl6ogKBkzlwVODMIONr1sqxdI4f5SG6WdMlSw9Jl2pJ8ETi8+QsSW3R3yK0UEOALp72dBEX+drbqRDEqMt4DhmKIFE+Aq7vugdATIN77OFXj91BrfHillgWEcNWKhDtH6yDGhLqDqmEDMeX1FFcz++PP6o4ckkDVMEAku11tepkhBoRag1Z56sWUpp3Ndz+i2bNdfKoM4j55l35WV1PHm++qi47xIW4vKxAW50nKCkTQZuBU/liaGG4LYwoA4X16irGiEJwBAJGmsAMlGWJzsFM/229LVRBU7tsDHt7c/jb3q9MNEAaeKuf8uhhGKFtyuvfJ57QF2UIY7O9+UHtLf9MP85SVhbxjWdL7x2mbdDDNnqMCIH5fqoQ5C8yxH3pMX5AjPVPBqSjil+RKQOD/gNRN62UD7zEnu70MEK++lRJsbRv5kOHQHsl5/HjBjQKE0z/+GQTEmQreex+l4aEUr/iiSXkGTxdu2N4+H4aMcmFxjmDLpoQVy5Pem6lr1NEF6IAbL8sXVBYJJk+DoMzdqIP12+8SoRNDfLp7u3jEg1qFPd0Qck+arDm4VwxOFdzviuUJMCQDHxCiz/o8FWho3tU+bx5MOPk7t0o+/Fj94lTN9PdS1q6WlRfysg8o+g43iYw+kdH79GRTeYEI8nrv47QEAAJZGLI2dMP5h/dJjhfxD+6VbdygPJYtBm8ETEyYrFPY0jV+78uvp4LlWzfBFMnQuINlxofJ+UdE6/+U9xhoTL/Z9ulnKZD1lo0JTTqYwdT3P1afLOMfOSSEOfBL09JefiNt3jxFwRFB1n7xk89qjWH38NFGCI8Kjginvqm2NnJ5mjs/+0p9okRwHoDIFD12A0w7FY7A6MfMO7Yl5ByWTn1Ln+LxUrdzsGCuFWxl\/\/zLlKOZstxsUW62JCdTNn+BulVPe6rX8+RzhgO7ZYf2yZ58Xq+w+5QO7/AHDGvXKHMOi1euUNxxt1Fu9UJw3qC9/a0ZqTu2yQpzhDB/gQlt5gHJvB+TOvSxJDo83QbYFv6StHu7HM4JtbGrHOnOpo4Jz2s3b5Af2J3w4ONGuLLQ4B0z0bJ/jwKigVfe1MutZOt9hsgQaNzJ/vZ7qbu2ySDOhzGl+Jhw/275ex9pPM0dHI3fEAIgNPt2ySCLDn2s0ISPPa1f96dq1pfJGe1sQMCUabo9O2R/rkls3d0YbOOY80Nq9iHp3HlJ7XuZktzuNJ/rtuHG35eq9uyQT31D677JeftdplUrlTu3yp+arMFrqd5eQywrVyceyxJv25wweqxR5YLp6/UMhNgUvLmba9xT+qcma7sNtEutAXpVH9/V1IY0fvcdd5ufmqx75iXNMy9pn5qihdm/tbFbZvW262V/4lndE8/p2vWxw5QMIlBbY/fw+02TXtCOHm+ACT1ed0I3inwtnXc/on9rRtrnX6V98EkauNZmXawwEIhMgYx27vvHG8dONHToY1PY0d0NidnftLPjgccME1/QdRlgl1kCfG2gZQ/X48/qn3hO2+0Ou0hPuzF8owRi1dFj9e+8r4GLw18IGtw3Ofh43TrR6bt1sBXGsuEPmKyN0hNs/ma3OEeNNd06xAxzXfi3Uz/7+Kd1j04wem62g/GjxpgnPq/rP8IMuJN7YJAKhoknn4ODVl0wPdTWOXq8cdwkfYe+ZPtkMNGVPuBu86QXtWMm6pvd4hAbr3MgoNWl5kBKulft8cpt5IYQswOA3IQMKu0++DbVC3GDT+31qZw+gSHA1QZlFj94FEgrteDbVGlBvjYIHVqd7k1ye8VoWZpqNq4mCKGopWG6p4Xb0dSd7PbwtH7s9qFFg0luHwzP6CKUcwpD2iQXyjTBTt1slJr9KemeFGQkagYmykGBji6Q6PTaGqV7mruh/RR2L1iCb0mHeJpAgs0HCVUOL7mFCx0AKIEYiIceGgvLrFB2H4QaYqNfaAyAJVAcAIVH3+EkxYeD0PwCfRDaGwxLcXtlVvocNAkC27xQBLQSj/K9voFoQNqMbryMaCBIpePaj9oSQt2zplsFJyenUfsGYoS+DeG2JPXIzpERewdKta9Q1dMfWBmlNaCzRkRiLhkDQvgge78CfSnqIM6RXZxqJjFZoAviry5UwIg96Jq11Hxsu9Si/0kgGOGtHxGReqRqoVpVsv6lwhF2A8fmyPqKDl+q5x45H3+INABjRgPqM/tSkba/sIUXOcj+NvZgjbrugWBaCBUGtzc5J7p5agCCEUnOVCjrtIhi2zhGUTnSqaI6MREbCHKEPqG6wawkGnr7Uw2WVCsLrUjlsC4SIQN/W9Olaqn52HapRdceiOoHcd5IZJ80PsJu1JiTI6r5tMg2a/ZpVNVXSxUrOlVk43XsOcyZ1Ge8KTDqQ81iQxBrYUQXPV7tW/RvLTUf2y61KJLwmgFxUdU5SUPkb2jFfBt1Gr0dnv6XVjULoRaIWBuvo3JhZXfJqrFcOLvINcmObVp0wujjdEK2MdVLXWNedRG7Kq47IK6A6mdh/XTNMuJeRl6RhHEgrnZ21ywj7mXkFUkYB+JqZ3fNMuJeRl6RhHEgrnZ21ywj7mXkFUkYB+JqZ3fNMuJeRl6RhHEgrnZ21ywj7mXkxUrYSBvq8ucmDARr5nN5iq7u6t9eSPVIUm/Vz8L66ZplpLuMvCIJ2UBUq6a4/t8JLXlpQ53+3LSd88fqDUpXq7jict3cex3EEOUVlRu27oorri079laeqPo/clzFPcBYVmIAAAAASUVORK5CYII=';
+const kop=()=>`<table class="kop"><tr><td class="lg"><img src="${SET.logo||LOGO_DEF}" width="77" height="87" alt="logo"></td><td class="tx">${esc(SET.instansi)}<br>${esc(SET.kanwil)}<br><span class="b">${esc(SET.balai)}</span><br><span class="s">${esc(SET.alamat)}<br>${esc(SET.telp)}<br>${esc(SET.web)}</span></td></tr></table>`;
+/* ---------------- dokumen (sesuai template di folder Drive BHP Medan) ---------------- */
+function head(no,hal,r){return `<table class="hd" style="width:100%;margin-bottom:12pt"><tr><td style="width:70pt">Nomor</td><td>:</td><td>${V(no)}</td><td style="text-align:right">${tgl(r.tanggalSurat)}</td></tr>
+<tr><td>Sifat</td><td>:</td><td>Segera</td><td></td></tr><tr><td>Lampiran</td><td>:</td><td>-</td><td></td></tr>
+<tr><td>Hal</td><td>:</td><td colspan=2>${hal}</td></tr></table>`}
+const jadwal=(r,note)=>`<table style="margin:0 0 10pt 20pt"><tr><td style="width:90pt">Hari/Tanggal</td><td>:</td><td>${hari(r.tglSumpah)} / ${tgl(r.tglSumpah)}</td></tr>
+<tr><td>Pukul</td><td>:</td><td>${V(r.waktu)}${note?` (${note} <b>${esc(SET.wa)}</b>)`:''}</td></tr><tr><td>Tempat</td><td>:</td><td>${esc(r.tempat||'Kediaman '+(r.nama||''))}</td></tr></table>`;
+const ttdKepala=()=>`<p class="ni" style="margin-left:262pt;margin-top:20pt;text-align:left">Kepala,<br><br><br><br><b>${esc(SET.kepala)}</b></p>`;
+const kanwil=r=>r.kanwilTembusan||SET.kanwilTembusan;
+const tembusan=(r,lurah=true)=>`<p class="ni" style="margin-top:18pt">Tembusan:</p><ol><li>Direktur Jenderal Administrasi Hukum Umum Kementerian Hukum RI;</li><li>Direktur Perdata Direktorat Jenderal Administrasi Hukum Umum;</li><li>${esc(kanwil(r))}${lurah?';':''}</li>${lurah?`<li>Lurah ${V(r.kelurahan)}</li>`:''}</ol>`;
+const penetapan=r=>`Menindaklanjuti Penetapan ${esc(r.pengadilan)} Nomor: ${V(r.nomorPenetapan)} tertanggal ${tgl(r.tglPenetapan)} yang telah memperoleh kekuatan hukum tetap`;
+const blnThn=s=>{const d=pd(s);return d?`${BLN[d.getMonth()]} ${d.getFullYear()}`:'…'};
+const kota=r=>r.kotaPermohonan||((r.kelurahan||'').match(/(?:Kota|Kabupaten|Kab\.)\s+([^,]+)/i)||[])[1]||'Medan';
+const tempatTgl=r=>`${esc(kota(r))},&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${blnThn(r.tglSumpah)}`;
+const bapP=r=>pjCari(r.bapOleh===undefined?r.muda:r.bapOleh);
+const ttd2=(kiri,kanan,namaKiri,namaKanan,nipKiri,nipKanan)=>`<table class="ttd" style="margin-top:18pt"><tr><td><b>${kiri}</b></td><td><b>${kanan}</b></td></tr><tr><td style="height:60pt"></td><td></td></tr>
+<tr><td><b>${namaKiri}</b>${nipKiri?`<br><b>NIP. ${nipKiri}</b>`:''}</td><td><b>${namaKanan}</b>${nipKanan?`<br><b>NIP. ${nipKanan}</b>`:''}</td></tr></table>`;
+const saksi=r=>`<table class="ttd" style="margin-top:24pt"><tr><td><b>Saksi 1</b></td><td><b>Saksi 2</b></td></tr><tr><td style="height:50pt"></td><td></td></tr>
+<tr><td>( ${esc(r.saksi1)||'.............................'} )<br>NIK.</td><td>( ${esc(r.saksi2)||'.............................'} )<br>NIK.</td></tr></table>`;
+const identitas=r=>`${esc(r.jk)}, Lahir tanggal ${tgl(r.tglLahir)} (${usia(r.tglLahir,r.tglSumpah)}), agama ${esc(r.agama)}, Pekerjaan ${V(r.pekerjaan)}, alamat ${V(r.alamat)}`;
+function objekBA(r,d){
+  if(d.w){const l=d.anak.map(a=>`<b>${esc(a.nama)}</b>, ${esc(a.jk)}, lahir pada tanggal ${tgl(a.tglLahir)} (${usia(a.tglLahir,r.tglSumpah)})`);
+    return l.length>1?`<ol>${l.map(x=>`<li>${x};</li>`).join('')}</ol>`:`<p>${l[0]||V('')}</p>`}
+  return `<p><b>${V(r.terampu.nama)}</b>, ${esc(r.terampu.jk)}, lahir pada tanggal ${tgl(r.terampu.tglLahir)} (${usia(r.terampu.tglLahir,r.tglSumpah)}), berada di bawah Pengampuan dikarenakan yang bersangkutan mengalami ${V(r.terampu.kondisi)}, sehingga tidak cakap untuk mengurus kepentingan pribadinya maupun melakukan tindakan hukum.</p>`}
+const HARTA=[['hartaTetap','BARANG-BARANG TETAP','tanah'],['hartaTunai','UANG TUNAI , TABUNGAN','rekening'],['hartaEmas','BARANG-BARANG EMAS, PERAK, DLL'],['hartaSurat','SURAT-SURAT BERHARGA/PIUTANG'],
+  ['hartaPerabot','PERABOT RUMAH TANGGA, BARANG DAGANG, TERNAK'],['hartaBergerak','BARANG BERGERAK','harta']];
+const hv=(r,k,old)=>r[k]??(old?r[old]:'')??'';
+const baris=t=>String(t||'').split('\n').map(s=>s.trim()).filter(Boolean);
+const daftarHarta=t=>{const b=baris(t);return b.length?b.map((x,i)=>`<p class="ni" style="margin-left:54pt">${i+1}. ${esc(x)}</p>`).join(''):`<p class="ni" style="margin-left:54pt">-</p>`};
+
+const DOCS={
+  permohonan:{nama:r=>'Surat Permohonan Penyumpahan',fn:r=>{const d=derive(r);return `<p class="ni" style="text-align:right">${tempatTgl(r)}</p><br>
+<p class="ni"><b>Kepada Yth;</b><br>Kepala Balai Harta Peninggalan Medan<br>Jl. Listrik No. 10 Medan</p><br>
+<table style="margin-bottom:10pt"><tr><td style="width:60pt">Perihal</td><td>:</td><td>Permohonan Penyumpahan ${d.w?'Wali<br>Anak Di Bawah Umur':'Pengampu'}</td></tr></table>
+<p class="ni">Dengan hormat,</p><p class="ni">Saya yang bertanda tangan di bawah ini :</p>
+<table style="margin:6pt 0 10pt 36pt"><tr><td style="width:80pt">Nama</td><td>:</td><td>${V(r.nama)}</td></tr><tr><td>Usia</td><td>:</td><td>${usia(r.tglLahir,r.tglSumpah)}</td></tr>
+<tr><td>Pekerjaan</td><td>:</td><td>${V(r.pekerjaan)}</td></tr><tr><td>Alamat</td><td>:</td><td>${V(r.alamat)}</td></tr><tr><td>No. KTP</td><td>:</td><td>${V(r.nik)}</td></tr><tr><td>No. HP</td><td>:</td><td>${esc(r.hp||'')}</td></tr></table>
+<p>${d.w?'Dengan ini memohon kepada Kepala Balai Harta Peninggalan Medan agar melakukan penyumpahan terhadap WALI atas anak di bawah umur. Bersama ini saya lampirkan surat-surat yang diperlukan untuk melengkapi syarat-syarat penyumpahan wali.'
+  :'Dengan ini mengajukan permohonan kepada Kepala Balai Harta Peninggalan Medan agar melakukan penyumpahan atas nama tersebut di atas sebagai Pengampu terhadap Terampu. Bersama ini saya lampirkan surat-surat yang diperlukan untuk melengkapi syarat-syarat penyumpahan pengampu.'}</p>
+<p>Demikian diajukan permohonan ini, dan atas perhatiannya, diucapkan terima kasih.</p>
+<p class="ni" style="margin-left:262pt;margin-top:20pt;text-align:left">Pemohon,<br><br><br><br><br><b>${V(r.nama)}</b></p>`}},
+
+  surat:{nama:r=>`Surat ke ${derive(r).J}`,fn:r=>{const d=derive(r);
+    if(d.w)return kop()+head(r.nomorSurat,'Pengambilan Sumpah Wali Dan Inventarisasi Harta',r)+
+`<p class="ni">Yth. <b>${d.sapa} ${V(r.nama)}</b><br>di</p><p class="ni" style="margin-left:18pt;max-width:230pt">${V(r.alamat)}</p><br>
+<p>${penetapan(r)}, ${d.sapa} telah ditunjuk secara resmi sebagai Wali atas <b>${V(d.objek)}</b> (selanjutnya disebut sebagai "Anak").</p>
+<p>Berkaitan dengan penetapan tersebut, Balai Harta Peninggalan Medan sangat menghargai serta mendukung penuh kesediaan ${d.sapa} dalam menjalankan tugas sebagai Wali. Berdasarkan amanat Pasal 366 Kitab Undang-Undang Hukum Perdata (KUHPerdata), BHP bertugas sebagai Wali Pengawas. Peran kami adalah mendampingi dan memberikan konsultasi hukum kepada ${d.sapa} guna memastikan bahwa pengelolaan aset dan perlindungan hak Anak berjalan dengan baik serta melindungi ${d.sapa} dari kemungkinan prasangka negatif dari pihak lain.</p>
+<p>Selanjutnya, sesuai dengan perintah peraturan perundang-undangan yang tertuang dalam Pasal 362 KUHPerdata, setiap wali diwajibkan untuk diangkat sumpah sebelum mulai menjalankan tugas. Penyumpahan ini sangat penting dan menjadi syarat sah agar ${d.sapa} dapat bertindak secara hukum mewakili Anak untuk berbagai keperluan administratif.</p>
+<p>Dalam rangka mewujudkan pelayanan publik, Tim BHP Medan akan melakukan kunjungan untuk menyelenggarakan kegiatan Pengangkatan Sumpah tersebut di kediaman ${d.sapa} pada:</p>`+jadwal(r)+
+`<p>Guna kelengkapan administrasi Berita Acara Penyumpahan dan Pencatatan Harta sesuai ketentuan peraturan perundang-undangan, kami memohon kesediaan ${d.sapa} untuk mempersiapkan dokumen pendukung pada saat kegiatan, yang meliputi:</p>
+<ol><li>Fotokopi Kartu Tanda Penduduk (KTP) Wali dan Anak;</li><li>Fotokopi Kartu Keluarga (KK);</li><li>Fotokopi Akta Kelahiran Anak;</li><li>Fotokopi Dokumen Kepemilikan Aset / Harta Kekayaan Yang Menjadi Hak Anak;</li><li>Fotokopi Kartu Tanda Penduduk (KTP) 2 (dua) orang saksi dari pihak Kepala Lingkungan dan/atau Keluarga;</li><li>Meterai senilai Rp 10.000,- (Sepuluh Ribu Rupiah) sebanyak 4 (empat) lembar;</li>
+<li>Biaya Penerimaan Negara Bukan Pajak (PNBP) sebesar Rp 200.000,- (Dua Ratus Ribu Rupiah) untuk layanan Berita Acara Penyumpahan Perwalian. Nominal ini ditetapkan secara resmi berdasarkan Peraturan Pemerintah Republik Indonesia Nomor 45 Tahun 2024 tentang Jenis dan Tarif atas Jenis Penerimaan Negara Bukan Pajak yang Berlaku pada Kementerian Hukum dan Hak Asasi Manusia. (Mekanisme pembayaran akan dipandu melalui kode pembayaran/<i>billing</i> kas negara secara elektronik pada saat kegiatan).</li></ol>
+<p>Demikian surat pemberitahuan ini kami sampaikan. Untuk informasi lebih lanjut, ${d.sapa} dapat menghubungi <i>Contact Person</i> (WhatsApp) Layanan Perwalian di nomor: <b>${esc(SET.wa)}</b>. Atas perhatian dan kesediaan ${d.sapa}, kami ucapkan terima kasih.</p>`+ttdKepala()+tembusan(r);
+    return kop()+head(r.nomorSurat,'Pengambilan Sumpah Pengampu dan Inventarisasi Harta',r)+
+`<p class="ni">Yth. <b>${d.sapa} ${V(r.nama)}</b><br>di</p><p class="ni" style="margin-left:18pt;max-width:230pt">${V(r.alamat)}</p><br>
+<p>${penetapan(r)}, ${d.sapa} telah ditunjuk secara resmi sebagai Pengampu atas <b>${V(d.objek)}</b> (selanjutnya disebut sebagai "Terampu").</p>
+<p>Berkaitan dengan penetapan tersebut, Balai Harta Peninggalan Medan sangat menghargai serta mendukung penuh kesediaan ${d.sapa} dalam menjalankan tugas sebagai Pengampu. Berdasarkan amanat Pasal 449 Kitab Undang-Undang Hukum Perdata (KUHPerdata), BHP bertugas mendampingi dan memberikan konsultasi hukum kepada ${d.sapa} guna memastikan bahwa pengelolaan aset dan perlindungan hak Terampu berjalan dengan baik serta melindungi ${d.sapa} dari kemungkinan prasangka negatif dari pihak lain.</p>
+<p>Selanjutnya, sesuai dengan perintah peraturan perundang-undangan yang tertuang dalam Pasal 362 KUHPerdata, setiap pengampu diwajibkan untuk diangkat sumpah sebelum mulai menjalankan tugas. Penyumpahan ini sangat penting dan menjadi syarat sah agar ${d.sapa} dapat bertindak secara hukum mewakili Terampu untuk berbagai keperluan administratif.</p>
+<p>Dalam rangka mewujudkan pelayanan publik, Tim Balai Harta Peninggalan Medan akan melakukan kunjungan untuk menyelenggarakan kegiatan Pengangkatan Sumpah tersebut di kediaman ${d.sapa} pada:</p>`+
+    jadwal(r,'Untuk konfirmasi waktu pelaksanaan sumpah, mohon untuk menghubungi Whatsapp Layanan Perwalian Pengampuan di nomor')+
+`<p>Guna kelengkapan administrasi Berita Acara Penyumpahan dan pencatatan administrasi sesuai prosedur hukum, kami memohon kesediaan ${d.sapa} untuk mempersiapkan dokumen pendukung pada saat kegiatan, yang meliputi:</p>
+<ol><li>Fotokopi Kartu Tanda Penduduk (KTP) Pengampu dan Terampu;</li><li>Fotokopi Kartu Keluarga (KK);</li><li>Fotokopi Akta Kelahiran Terampu;</li><li>Fotokopi Kartu Tanda Penduduk (KTP) 2 (dua) orang saksi dari pihak Kepala Lingkungan dan/atau Keluarga;</li><li>Meterai senilai Rp 10.000,- (Sepuluh Ribu Rupiah) sebanyak 4 (empat) lembar;</li><li>Biaya Penerimaan Negara Bukan Pajak (PNBP) sebesar Rp 200.000,- (Dua Ratus Ribu Rupiah) untuk layanan Berita Acara Penyumpahan Pengampuan dan biaya sebesar Rp 40.000,- (Empat Puluh Ribu Rupiah) untuk 4 (empat) lembar meterai Rp 10.000,-</li></ol>
+<p>Nominal PNBP ditetapkan secara resmi berdasarkan Peraturan Pemerintah Republik Indonesia Nomor 45 Tahun 2024 tentang Jenis dan Tarif atas Jenis Penerimaan Negara Bukan Pajak yang Berlaku pada Kementerian Hukum dan Hak Asasi Manusia.</p>
+<p>(Mekanisme pembayaran akan dipandu melalui kode pembayaran/<i>billing</i> kas negara secara elektronik pada saat kegiatan).</p>
+<p>Demikian surat pemberitahuan ini kami sampaikan. Atas perhatian dan kesediaan ${d.sapa}, kami ucapkan terima kasih.</p>`+ttdKepala()+tembusan(r)}},
+
+  lurah:{nama:()=>'Surat ke Lurah',fn:r=>{const d=derive(r);
+    if(d.w)return kop()+head(r.nomorLurah,'Koordinasi Terkait Pengambilan Sumpah dan Inventarisasi Harta',r)+
+`<p class="ni">Yth. <b>Lurah ${V(r.kelurahan)}</b><br>di</p><p class="ni" style="margin-left:18pt;max-width:230pt">${esc(r.alamatKelurahan||'Tempat')}</p><br>
+<p>${penetapan(r)}, <b>${V(r.nama)}</b> telah ditunjuk secara resmi sebagai Wali atas <b>${V(d.objek)}</b> (selanjutnya disebut sebagai "Anak"). Adapun Wali tersebut merupakan warga yang berdomisili di lingkungan ${V(r.kelurahan)}.</p>
+<p>Berdasarkan amanat Pasal 366 Kitab Undang-Undang Hukum Perdata (KUHPerdata), BHP bertugas sebagai Wali Pengawas dalam rangka mendampingi dan memberikan konsultasi hukum kepada Wali guna memastikan bahwa pengelolaan aset dan perlindungan hak Anak berjalan dengan baik serta melindungi Wali dari kemungkinan prasangka negatif dari pihak lain.</p>
+<p>Selanjutnya, sesuai dengan perintah peraturan perundang-undangan yang tertuang dalam Pasal 362 KUHPerdata, setiap Wali diwajibkan untuk diangkat sumpah sebelum mulai menjalankan tugas. Penyumpahan ini sangat penting dan menjadi syarat sah agar Wali dapat bertindak secara hukum mewakili Anak untuk berbagai keperluan administratif.</p>
+<p>Dalam rangka mewujudkan pelayanan publik, Tim Balai Harta Peninggalan Medan akan melakukan kunjungan untuk menyelenggarakan kegiatan Pengangkatan Sumpah tersebut di kediaman Wali pada:</p>`+jadwal(r)+
+`<p>Sehubungan dengan hal tersebut, Tim Balai Harta Peninggalan Medan akan melakukan koordinasi dengan pihak Kelurahan untuk selanjutnya memohon kesediaan Bapak/Ibu untuk mendampingi Tim dalam pelaksanaan kunjungan ke kediaman <b>${V(r.nama)}</b>.</p>
+<p>Demikian surat pemberitahuan ini kami sampaikan. Untuk informasi lebih lanjut, Bapak/Ibu dapat menghubungi <i>Contact Person</i> (WhatsApp) Layanan Perwalian dan Pengampuan di nomor: <b>${esc(SET.wa)}</b>. Atas perhatian dan kesediaan Bapak/Ibu, kami ucapkan terima kasih.</p>`+ttdKepala()+tembusan(r,false);
+    return kop()+head(r.nomorLurah,'Koordinasi Terkait Pengambilan Sumpah dan Inventarisasi Harta',r)+
+`<p class="ni">Yth. <b>Lurah ${V(r.kelurahan)}</b><br>di<br>${esc(r.alamatKelurahan||'Tempat')}</p><br>
+<p>${penetapan(r)}, <b>${V(r.nama)}</b> telah ditunjuk secara resmi sebagai Pengampu atas <b>${V(d.objek)}</b> (selanjutnya disebut sebagai "Terampu"). Adapun Pengampu tersebut merupakan warga yang berdomisili di lingkungan Kelurahan ${V(String(r.kelurahan||'').replace(/^Kelurahan\s+/i,''))}.</p>
+<p>Berdasarkan amanat Pasal 449 Kitab Undang-Undang Hukum Perdata (KUHPerdata), BHP bertugas sebagai Pengampu Pengawas dalam rangka mendampingi dan memberikan konsultasi hukum kepada Pengampu guna memastikan bahwa pengelolaan aset dan perlindungan hak Terampu berjalan dengan baik serta melindungi Pengampu dari kemungkinan prasangka negatif dari pihak lain.</p>
+<p>Selanjutnya, sesuai dengan perintah peraturan perundang-undangan yang tertuang dalam Pasal 362 KUHPerdata, setiap pengampu diwajibkan untuk diangkat sumpah sebelum mulai menjalankan tugas. Penyumpahan ini sangat penting dan menjadi syarat sah agar Pengampu dapat bertindak secara hukum mewakili Terampu untuk berbagai keperluan administratif.</p>
+<p>Dalam rangka mewujudkan pelayanan publik, Tim Balai Harta Peninggalan Medan akan melakukan kunjungan untuk menyelenggarakan kegiatan Pengangkatan Sumpah tersebut di kediaman Pengampu pada:</p>`+
+    jadwal(r,'Untuk konfirmasi waktu pelaksanaan sumpah, mohon diinformasikan kepada Pengampu untuk menghubungi Whatsapp Layanan Perwalian Pengampuan di nomor')+
+`<p>Besar harapan kami agar Bapak/Ibu Lurah berkenan membantu meneruskan surat ini kepada pihak Pengampu sesuai data administrasi setempat. Sehubungan dengan hal tersebut, Tim Balai Harta Peninggalan Medan akan berkoordinasi dengan pihak Kelurahan untuk memohon kesediaan Bapak/Ibu mendampingi tim dalam pelaksanaan kunjungan ke kediaman <b>${V(r.nama)}</b>.</p>
+<p>Demikian surat pemberitahuan ini kami sampaikan. Atas perhatian dan kesediaan Bapak/Ibu, kami ucapkan terima kasih.</p>`+ttdKepala()+tembusan(r)}},
+
+  bap:{nama:()=>'BA Penghadapan (BAP)',fn:r=>{const d=derive(r),p=bapP(r),isi=baris(r.isiBap);
+    return kop()+`<p class="ctr"><b>BERITA ACARA PENGHADAPAN</b><br>${d.w?`Perwalian atas Anak Di Bawah Umur an. ${V(d.objek)}`:`Pengampuan atas Terampu ${V(d.objek)}`}<br><b>Nomor : ${V(r.nomorBAP)}</b></p><br>
+<p>Pada hari ini, ${tglBA(r.tglSumpah)}, telah hadir dihadapan saya, <b>${V(p.nama)}, NIP. ${V(p.nip)},</b> ${esc(p.jabatan||'')} pada Balai Harta Peninggalan Medan yang dalam ini bertindak dalam jabatan tersebut, yaitu :</p>
+<table style="margin:6pt 0 10pt 36pt"><tr><td style="width:130pt">Nama</td><td>:</td><td><b>${V(r.nama)}</b></td></tr><tr><td>Tanggal Lahir/Umur</td><td>:</td><td>${tgl(r.tglLahir)} (${usia(r.tglLahir,r.tglSumpah)})</td></tr>
+<tr><td>Agama</td><td>:</td><td>${esc(r.agama)}</td></tr><tr><td>Pekerjaan</td><td>:</td><td>${V(r.pekerjaan)}</td></tr><tr><td>Alamat</td><td>:</td><td>${V(r.alamat)}</td></tr></table>
+<p>Berkenaan dengan ${d.w?'perwalian':'pengampuan'} atas nama <b>${V(d.objek)}</b>, terhadap pertanyaan-pertanyaan kami, penghadap tersebut diatas telah memberikan keterangan-keterangan dan penjelasan tentang hal-hal yang akan disebut dibawah ini serta menguatkannya dengan pernyataan.</p>
+${isi.length?`<ol>${isi.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:`<ol><li>${V('')}</li></ol>`}
+<p>Oleh karena tidak ada lagi yang perlu diterangkan dan dijelaskan, maka Berita Acara Penghadapan ini ditutup pada hari dan tanggal tersebut diatas, kemudian ditandatangani oleh saya dan penghadap.</p>`+
+    ttd2(esc((p.jabatan||'').toUpperCase()),d.J.toUpperCase(),V(p.nama),V(r.nama),V(p.nip),'')+
+`<p class="ctr" style="margin-top:18pt"><b>P E R N Y A T A A N</b></p>
+<p>Saya yang bertanda tangan di bawah ini, dengan ini menyatakan bahwa keterangan-keterangan dan penjelasan tersebut diatas adalah keterangan dan penjelasan yang sebenarnya, bahwa saya mengetahui dan menyadari apabila keterangan-keterangan dan penjelasan tersebut tidak benar adanya, saya bersedia dituntut dihadapan Pengadilan dan menanggung segala akibatnya. Kemudian saya bertanggung jawab sepenuhnya terhadap ${d.w?'Anak di bawah umur yang berada di bawah perwalian':'Terampu yang berada di bawah pengampuan'} saya sebagaimana yang diamanatkan oleh peraturan perundang-undangan.</p>
+<p class="ni" style="margin-left:262pt;margin-top:12pt;text-align:left">${tempatTgl(r)}<br>Yang membuat pernyataan,<br><br><br><br><br><b>${V(r.nama)}</b></p>`+saksi(r)}},
+
+  ba:{nama:r=>`BA Penyumpahan ${derive(r).jenisTxt}`,fn:r=>{const d=derive(r),m=d.madya;
+    return kop()+`<p class="ctr"><b>BERITA ACARA PENYUMPAHAN ${d.jenisTxt.toUpperCase()}</b><br><b>Nomor : ${V(r.nomorBA)}</b></p><br>
+<p>Pada hari ini, ${tglBA(r.tglSumpah)}, telah hadir dihadapan saya, <b>${V(m.nama)}, NIP. ${V(m.nip)},</b> ${esc(m.jabatan||'')} pada Balai Harta Peninggalan Medan yang dalam ini bertindak dalam jabatan tersebut, yaitu <b>${V(r.nama)}</b>, ${identitas(r)}, yang berdasarkan Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)} telah diangkat menjadi <b>${d.J.toUpperCase()}</b> terhadap ${esc(d.statusRel.toLowerCase())}nya, yaitu:</p>${objekBA(r,d)}
+<p>Yang hadir menerangkan, bahwa Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)} dan pernyataan ini adalah sebagai pengganti pemberitahuan sesuai dengan penetapan sebagaimana yang diwajibkan oleh undang-undang. Kemudian untuk memenuhi maksud dari ${d.w?'pasal 362 dan 366':'pasal 433 dan 449'} KUH Perdata, yang telah mengangkat sumpah dihadapan Balai Harta Peninggalan Medan, sesuai dengan agama yang dianutnya (${esc(r.agama)}), dengan mengucapkan perkataan sebagai berikut :</p>
+<p class="ctr"><b><i>"${esc(d.laf)}"</i></b></p>
+<p class="ctr">----------------------------------------------Demikianlah----------------------------------------------</p>
+<p>Berita Acara Penyumpahan ${d.jenisTxt} ini diperbuat sebagaimana mestinya, diperbuat diatas kertas yang dibubuhi materai tempel Rp. 10.000,- kemudian ditandatangani sebagaimana mestinya.</p>`+
+    ttd2('YANG MENGANGKAT SUMPAH',esc((m.jabatan||'').toUpperCase()),V(r.nama),V(m.nama),'',V(m.nip))+saksi(r)}},
+
+  harta:{nama:()=>'BA Pencatatan Harta',fn:r=>{const d=derive(r),m=d.muda;
+    return kop()+`<p class="ctr"><b>BERITA ACARA PENCATATAN/PENDAFTARAN HARTA KEKAYAAN MILIK<br>${d.w?'ANAK DI BAWAH UMUR ATAS NAMA':'TERAMPU AN.'} ${V(d.objek.toUpperCase())}<br>Nomor : ${V(r.nomorBAHarta)}</b></p><br>
+<p class="ni">-- Pada hari ini, ${tglBA(r.tglSumpah)}, kami yang bertanda tangan dibawah ini masing-masing yaitu :</p>
+<p class="ni" style="margin-left:18pt">1. <b>${V(r.nama)}</b>, ${identitas(r)}, yang berdasarkan Penetapan ${esc(r.pengadilan)} Nomor : ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)} telah diangkat menjadi <b>${d.J.toUpperCase()}</b> terhadap ${esc(d.statusRel.toLowerCase())}nya, yaitu:</p>${objekBA(r,d)}
+<p class="ni" style="margin-left:18pt">2. <b>${V(m.nama)}, ${esc(m.jabatan||'')} pada Balai Harta Peninggalan Medan yang dalam hal ini bertindak berdasarkan ketentuan Pasal ${d.w?'366':'433'} dan 470 Kitab Undang-Undang Hukum Perdata mewakili Balai Harta Peninggalan Medan selaku ${d.w?'Wali':'Pengampu'} Pengawas dan memiliki kewenangan untuk membuat Inventarisasi Harta.</b></p>
+<p class="ni">--Penghadap telah mendaftarkan harta kekayaan ${d.w?'anak di bawah umur':'terampu'} yang akan disebut dibawah ini sebagai berikut :</p>
+<p class="ni" style="margin-left:18pt"><b>I. AKTIVA</b></p>
+${HARTA.map(([k,l,o],i)=>`<p class="ni" style="margin-left:36pt">${'ABCDEF'[i]}. ${l} :</p>${daftarHarta(hv(r,k,o))}`).join('')}
+<p class="ni" style="margin-left:18pt;margin-top:6pt"><b>II. PASSIVA</b></p><p class="ni" style="margin-left:36pt"><b>HUTANG-HUTANG</b> :</p>${daftarHarta(r.hartaHutang)}
+<p style="margin-top:8pt">Oleh karena tidak ada lagi yang akan dicatat dan didaftar, maka kami akhiri Berita Acara Pencatatan/Pendaftaran Harta kekayaan milik ${d.w?'anak di bawah umur':'terampu'} ini, yang diperbuat diatas kertas yang dibubuhi materai tempel Rp. 10.000,- pada hari dan tanggal yang tersebut diatas, untuk dipergunakan sebagaimana mestinya.</p>`+
+    ttd2(esc((m.jabatan||'').toUpperCase()),d.J.toUpperCase(),V(m.nama),V(r.nama),V(m.nip),'')}}
+};
+
+const $=s=>document.querySelector(s);
+/* ---------------- server & sesi ---------------- */
+const GAS=typeof google!=='undefined'&&google.script&&google.script.run;
+let FOLDER='',TOKEN=null,ME=null,USERS=[],SPS={terhubung:false},ADA_AI=false,DB=[],SET=JSON.parse(JSON.stringify(DEF_SET));
+const ss=(k,v)=>{try{if(v===undefined)return sessionStorage.getItem(k);if(v===null)sessionStorage.removeItem(k);else sessionStorage.setItem(k,v)}catch(e){}};
+function api(fn,...a){
+  if(!GAS)return new Promise((ok,no)=>setTimeout(()=>{try{ok(DEMO[fn](TOKEN,...a))}catch(e){no(e)}},60));
+  return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(e=>{if(/SESI_HABIS/.test(e.message||e)){sesiHabis();no(new Error('Sesi berakhir, silakan login lagi.'))}else no(e)})[fn](TOKEN,...a))}
+function apiLoginCall(u,p){if(!GAS)return new Promise((ok,no)=>{try{ok(DEMO.apiLogin(u,p))}catch(e){no(e)}});
+  return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(no).apiLogin(u,p))}
+const isSuper=()=>ME&&ME.role==='superadmin';
+function sesiHabis(){TOKEN=null;ss('bhpTok',null);showLogin('Sesi berakhir, silakan login lagi.')}
+function showLogin(msg){
+  document.body.classList.add('locked');
+  $('#login').innerHTML=`<form class="card" onsubmit="event.preventDefault();doLogin(this)" style="max-width:380px;margin:12vh auto;padding:28px">
+    <div style="text-align:center;margin-bottom:14px"><img src="${LOGO_DEF}" style="height:64px"><h2 style="margin:10px 0 2px;font-size:18px">Dokumen Penyumpahan</h2><span class="hint">Balai Harta Peninggalan Medan</span></div>
+    ${msg?`<p style="color:var(--warn);font-size:13px">${esc(msg)}</p>`:''}
+    <label>Username</label><input name="u" autocomplete="username" required autofocus>
+    <label style="margin-top:10px">Password</label><input name="p" type="password" autocomplete="current-password" required>
+    <button class="pri" style="width:100%;margin-top:16px">Masuk</button>
+    ${GAS?'':'<p class="hint" style="margin-top:12px">Mode demo (belum di-deploy): username <b>shela</b> atau <b>annisa</b>, password <b>demo</b>.</p>'}</form>`;
+  $('#login').hidden=false}
+async function doLogin(f){const b=f.querySelector('button');b.disabled=true;b.textContent='Memeriksa…';
+  try{const r=await apiLoginCall(f.u.value,f.p.value);TOKEN=r.token;ss('bhpTok',TOKEN);await boot()}
+  catch(e){showLogin(e.message||String(e))}}
+async function boot(){
+  if(!TOKEN){showLogin();return}
+  try{const r=await api('apiInit');ME=r.user;USERS=r.users||[];SPS=r.sps||SPS;SET=Object.assign(JSON.parse(JSON.stringify(DEF_SET)),r.settings||{});DB=r.berkas||[];FOLDER=r.folderUrl||'';
+    DB.sort((a,b)=>String(b._meta?.diubahPada||'').localeCompare(String(a._meta?.diubahPada||'')));
+    api('apiAdaGemini').then(v=>ADA_AI=v).catch(()=>{});
+  }catch(e){if(!TOKEN)return;showLogin(e.message);return}
+  $('#login').hidden=true;document.body.classList.remove('locked');renderHeader();cur=null;renderList();renderMain();
+  if(ME.wajibGanti)gantiPassword(true)}
+async function logout(){await api('apiLogout').catch(()=>{});TOKEN=null;ss('bhpTok',null);ME=null;DB=[];cur=null;showLogin('Anda sudah keluar.')}
+function renderHeader(){$('#who').innerHTML=`${FOLDER?`<a class="btn" href="${FOLDER}" target="_blank" rel="noopener">📁 Folder Drive</a> `:''}<button onclick="menuUser()" title="Akun">👤 ${esc(ME.nama)} <span class="tag">${isSuper()?'Admin Utama':'Admin'}</span></button>`;
+  document.querySelectorAll('.superOnly').forEach(e=>e.hidden=!isSuper())}
+function menuUser(){dlg(`<h3>👤 ${esc(ME.nama)}</h3><p class="hint">Username: <b>${esc(ME.username)}</b> · ${isSuper()?'Admin Utama (akses penuh)':'Admin'}</p>
+  <p style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="gantiPassword()">🔑 Ganti password</button><button onclick="logout()" style="color:var(--warn)">⎋ Keluar</button><button onclick="dlgClose()">Tutup</button></p>`)}
+function gantiPassword(wajib){dlg(`<form onsubmit="event.preventDefault();simpanPwd(this)"><h3>🔑 ${wajib?'Buat password baru (wajib saat login pertama)':'Ganti password'}</h3>
+  <label>Password lama / sementara</label><input name="a" type="password" required><label style="margin-top:8px">Password baru (min. 8 karakter)</label><input name="b" type="password" minlength="8" required>
+  <label style="margin-top:8px">Ulangi password baru</label><input name="c" type="password" minlength="8" required><p class="err hint" style="color:var(--warn)"></p>
+  <p style="text-align:right">${wajib?'':'<button type="button" onclick="dlgClose()">Batal</button> '}<button class="pri">Simpan</button></p></form>`,wajib)}
+async function simpanPwd(f){const e=f.querySelector('.err');if(f.b.value!==f.c.value){e.textContent='Password baru tidak sama.';return}
+  try{await api('apiGantiPassword',f.a.value,f.b.value);ME.wajibGanti=false;dlgClose();toast('Password diganti')}catch(x){e.textContent=x.message}}
+function dlg(h,modal){const d=$('#gDlg');$('#gBody').innerHTML=h;d.dataset.lock=modal?'1':'';if(!d.open)d.showModal()}
+function dlgClose(){$('#gDlg').close()}
+
+/* ---------------- simpan otomatis ke server (dengan cek bentrok) ---------------- */
+let saveT=null,saving=false,again=false;
+function save(){if(!cur)return;setStat('✎ Belum tersimpan…');clearTimeout(saveT);saveT=setTimeout(flush,900)}
+async function flush(){if(!cur)return;if(saving){again=true;return}saving=true;const r0=cur;
+  try{const r=await api('apiSimpan',JSON.parse(JSON.stringify(r0)),r0._versi);
+    if(r.konflik){alert(`Berkas ini baru saja diubah oleh ${r.oleh}. Data terbaru dimuat ulang; ulangi perubahan Anda bila perlu.`);
+      const i=DB.indexOf(r0);const s=r.server;s._meta=r0._meta;DB[i]=s;if(cur===r0)cur=s;renderMain();renderList()}
+    else{r0._versi=r.versi;if(r.diubahOleh)r0._meta={...(r0._meta||{dibuatOleh:ME.nama,dibuatPada:r.diubahPada}),diubahOleh:r.diubahOleh,diubahPada:r.diubahPada};delete r0.asal;setStat('✓ Tersimpan')}}
+  catch(e){setStat('⚠ Gagal menyimpan');toast(e.message)}
+  saving=false;if(again){again=false;flush()}}
+function setStat(t){const e=$('#stat');if(e)e.textContent=t}
+function newId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function addRec(r,asal){r.id=r.id||newId();r.asal=asal;r._meta={dibuatOleh:ME.nama,dibuatPada:new Date().toISOString(),diubahOleh:ME.nama,diubahPada:new Date().toISOString()};DB.unshift(r);return r}
+
+/* ---------------- riwayat ---------------- */
+const LBL={jenis:'Jenis perkara',tanggalSurat:'Tanggal surat',nomorSurat:'Nomor surat ke pengampu/wali',nomorLurah:'Nomor surat lurah',nomorBAP:'Nomor BAP',nomorBA:'Nomor BA sumpah',isiBap:'Isi BAP',hp:'No. HP',alamatKelurahan:'Alamat kelurahan',kotaPermohonan:'Kota permohonan',kanwilTembusan:'Tembusan kanwil',bapOleh:'Pejabat BAP',hartaTetap:'Barang tetap',hartaTunai:'Uang/tabungan',hartaEmas:'Emas/perak',hartaSurat:'Surat berharga',hartaPerabot:'Perabot/dagang/ternak',hartaBergerak:'Barang bergerak',hartaHutang:'Hutang',nomorBAHarta:'Nomor BA harta',
+  nama:'Nama pengampu/wali',nik:'NIK',jk:'Jenis kelamin',tglLahir:'Tanggal lahir',agama:'Agama',pekerjaan:'Pekerjaan',alamat:'Alamat',kelurahan:'Kelurahan/Kec/Kota',status:'Hubungan',
+  'terampu.nama':'Nama terampu','terampu.jk':'JK terampu','terampu.tglLahir':'Tgl lahir terampu','terampu.kondisi':'Kondisi medis',pengadilan:'Pengadilan',nomorPenetapan:'Nomor penetapan',tglPenetapan:'Tanggal penetapan',
+  tglSumpah:'Tanggal sumpah',waktu:'Waktu',tempat:'Tempat',madya:'Pejabat penyumpah',muda:'Pejabat inventarisasi',harta:'Harta lainnya',tanah:'Tanah/bangunan',rekening:'Rekening',saksi1:'Saksi 1',saksi2:'Saksi 2'};
+const AKSI={BUAT:['➕','Membuat berkas'],UBAH:['✏️','Mengubah'],HAPUS:['🗑','Menghapus berkas'],PULIHKAN:['♻️','Memulihkan berkas'],UNDUH_DOCX:['⬇','Mengunduh DOCX'],BUAT_DOKUMEN:['📄','Membuat Google Doc'],AMBIL_NOMOR:['🔢','Mengambil nomor SPS'],
+  LOGIN:['🔓','Login'],LOGOUT:['🔒','Logout'],LOGIN_GAGAL:['⛔','Login gagal'],GANTI_PASSWORD:['🔑','Ganti password'],RESET_PASSWORD:['🔑','Reset password'],PENGATURAN:['⚙','Pengaturan'],
+  TAMBAH_PENGGUNA:['👤','Tambah pengguna'],UBAH_PENGGUNA:['👤','Ubah pengguna'],BACA_PENETAPAN:['📑','Baca penetapan'],IMPOR_CSV:['⬆','Impor CSV'],SETUP:['🛠','Setup']};
+const fLbl=f=>{const m=f.match(/^anak\.(\d+)\.(\w+)$/);if(m)return`Anak ${+m[1]+1} – ${{nama:'nama',jk:'JK',tglLahir:'tgl lahir'}[m[2]]||m[2]}`;return LBL[f]||f};
+const wkt=s=>{const d=new Date(s);return isNaN(d)?s:d.toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})};
+function detailHtml(x){let d=x.detail||'';const [j,rest]=d.split(' | ');
+  try{const a=JSON.parse(j);if(Array.isArray(a))return`<ul class="dif">${a.map(c=>`<li><b>${esc(fLbl(c.f))}</b>: <del>${esc(String(c.dari).slice(0,120))||'∅'}</del> → <ins>${esc(String(c.ke).slice(0,160))||'∅'}</ins></li>`).join('')}</ul>${rest?`<small>${esc(rest)}</small>`:''}`}catch(e){}
+  return esc(d)}
+function riwayatRows(list,showBerkas){return list.length?`<div class="log">${list.map(x=>{const a=AKSI[x.aksi]||['•',x.aksi];
+  return`<div class="logi"><div class="lh"><span>${a[0]}</span><b>${esc(x.nama)}</b><span class="hint">${a[1]}</span>${showBerkas&&x.berkas?`<a href="#" onclick="event.preventDefault();dlgClose();pick('${x.berkasId}')">${esc(x.berkas)}</a>`:''}<span class="hint" style="margin-left:auto">${wkt(x.waktu)}</span></div>${x.detail?`<div class="ld">${detailHtml(x)}</div>`:''}</div>`}).join('')}</div>`:'<p class="hint">Belum ada catatan.</p>'}
+async function tabRiwayat(){const el=$('#riw');el.innerHTML='<p class="hint">Memuat riwayat…</p>';
+  try{el.innerHTML=riwayatRows(await api('apiRiwayat',{berkasId:cur.id}),false)}catch(e){el.innerHTML=`<p class="hint">${esc(e.message)}</p>`}}
+async function riwayatSemua(f={}){if(!isSuper())return;
+  const us=USERS.map(u=>`<option value="${u.username}" ${f.username===u.username?'selected':''}>${esc(u.nama)}</option>`).join('');
+  const ak=Object.entries(AKSI).map(([k,v])=>`<option value="${k}" ${f.aksi===k?'selected':''}>${v[1]}</option>`).join('');
+  dlg(`<h3>🕘 Riwayat Seluruh Perubahan</h3><div class="grid" style="margin-bottom:10px"><div><label>Admin</label><select id="fu"><option value="">Semua admin</option>${us}</select></div>
+  <div><label>Aksi</label><select id="fa"><option value="">Semua aksi</option>${ak}</select></div><div><label>Cari</label><input id="fq" value="${esc(f.q||'')}" placeholder="nama berkas / isi"></div>
+  <div><label>&nbsp;</label><button class="pri" onclick="riwayatSemua({username:fu.value,aksi:fa.value,q:fq.value})">Terapkan</button></div></div><div id="rall"><p class="hint">Memuat…</p></div>
+  <p style="text-align:right"><button onclick="dlgClose()">Tutup</button></p>`);
+  try{$('#rall').innerHTML=riwayatRows(await api('apiRiwayat',f),true)}catch(e){$('#rall').innerHTML=esc(e.message)}}
+
+/* ---------------- pengguna (admin utama) ---------------- */
+async function kelolaPengguna(){if(!isSuper())return;USERS=await api('apiPengguna');
+  dlg(`<h3>👥 Kelola Pengguna</h3><p class="hint">Isi email Google tiap admin agar otomatis mendapat akses Editor ke folder Drive dokumen. Admin nonaktif otomatis dicabut aksesnya.</p><div class="log">${USERS.map(u=>`<div class="logi"><div class="grid" style="align-items:end">
+    <div><label>Nama</label><input id="n_${u.username}" value="${esc(u.nama)}"></div><div><label>Username</label><input disabled value="${u.username}"></div>
+    <div><label>Email Google (akses folder Drive)</label><input id="e_${u.username}" value="${esc(u.email||'')}" placeholder="nama@gmail.com"></div>
+    <div><label>Peran</label><select id="r_${u.username}"><option value="admin">Admin</option><option value="superadmin" ${u.role==='superadmin'?'selected':''}>Admin Utama</option></select></div>
+    <div><label><input type="checkbox" id="a_${u.username}" ${u.aktif?'checked':''} style="width:auto"> Aktif</label><span class="hint">Login terakhir: ${u.loginTerakhir?wkt(u.loginTerakhir):'-'}</span></div></div>
+    <p style="display:flex;gap:6px;margin:8px 0 0"><button onclick="simpanUser('${u.username}')">Simpan</button><button onclick="resetPwd('${u.username}','${esc(u.nama)}')">🔑 Reset password</button><button onclick="dlgClose();riwayatSemua({username:'${u.username}'})">🕘 Riwayat</button></p></div>`).join('')}</div>
+    <h3 style="margin-top:16px">+ Tambah pengguna</h3><div class="grid"><div><label>Nama</label><input id="nu_n"></div><div><label>Username</label><input id="nu_u"></div><div><label>Email Google</label><input id="nu_e"></div>
+    <div><label>Peran</label><select id="nu_r"><option value="admin">Admin</option><option value="superadmin">Admin Utama</option></select></div><div><label>&nbsp;</label><button class="pri" onclick="tambahUser()">Tambah</button></div></div>
+    <p style="text-align:right"><button onclick="dlgClose()">Tutup</button></p>`)}
+async function simpanUser(u){try{await api('apiSimpanPengguna',{username:u,nama:$('#n_'+u).value,email:$('#e_'+u).value,role:$('#r_'+u).value,aktif:$('#a_'+u).checked});toast('Disimpan; akses folder Drive diperbarui')}catch(e){alert(e.message)}}
+async function resetPwd(u,n){if(!confirm('Reset password '+n+'?'))return;try{const p=await api('apiResetPassword',u);prompt(`Password sementara ${n} (sampaikan secara pribadi; wajib diganti saat login):`,p)}catch(e){alert(e.message)}}
+async function tambahUser(){try{const p=await api('apiSimpanPengguna',{username:$('#nu_u').value,nama:$('#nu_n').value,email:$('#nu_e').value,role:$('#nu_r').value});prompt('Pengguna ditambahkan. Password sementara:',p);kelolaPengguna()}catch(e){alert(e.message)}}
+
+/* ---------------- kelengkapan & nomor SPS ---------------- */
+const NOMOR={surat:'nomorSurat',lurah:'nomorLurah',bap:'nomorBAP',ba:'nomorBA',harta:'nomorBAHarta'};
+function kurang(k,r){const d=derive(r),m=[];const need=(v,l)=>{if(!String(v??'').trim())m.push(l)};
+  need(r.pengadilan,'Pengadilan');need(r.nomorPenetapan,'Nomor penetapan');need(r.tglPenetapan,'Tanggal penetapan');need(r.nama,'Nama '+d.J);need(r.alamat,'Alamat');need(r.kelurahan,'Kelurahan');need(r.tglSumpah,'Tanggal sumpah');need(r.waktu,'Waktu');
+  if(d.w){if(!d.anak.length)m.push('Data anak')}else need(r.terampu.nama,'Nama terampu');
+  if(k==='surat'||k==='lurah')need(r.tanggalSurat,'Tanggal surat');
+  if(k==='ba'){need(r.tglLahir,'Tgl lahir '+d.J);need(r.agama,'Agama');need(r.pekerjaan,'Pekerjaan');need(r.status,'Hubungan');need(d.madya.nama,'Nama pejabat madya');need(d.madya.nip,'NIP pejabat madya');
+    if(d.w)d.anak.forEach((a,i)=>need(a.tglLahir,`Tgl lahir anak ${i+1}`));else{need(r.terampu.tglLahir,'Tgl lahir terampu');need(r.terampu.kondisi,'Kondisi medis')}}
+  if(k==='harta'){need(d.muda.nama,'Nama pejabat inventarisasi');need(d.muda.nip,'NIP pejabat inventarisasi');need(r.tglLahir,'Tgl lahir '+d.J);need(r.pekerjaan,'Pekerjaan')}
+  if(k==='bap'){const p=bapP(r);need(p.nama,'Nama pejabat BAP');need(p.nip,'NIP pejabat BAP');need(r.isiBap,'Isi BAP');need(r.tglLahir,'Tgl lahir '+d.J);need(r.pekerjaan,'Pekerjaan')}
+  return m}
+function infoNomor(k,r){const d=derive(r);return{kurang:kurang(k,r),
+  perihal:{surat:`Pengambilan Sumpah ${d.J} dan Inventarisasi Harta`,lurah:'Koordinasi Terkait Pengambilan Sumpah dan Inventarisasi Harta',bap:`Berita Acara Penghadapan ${d.jenisTxt} an. ${r.nama}`,ba:`Berita Acara Penyumpahan ${d.jenisTxt} an. ${r.nama}`,harta:`Berita Acara Pencatatan Harta ${d.jenisTxt} an. ${r.nama}`}[k],
+  tujuan:k==='lurah'?'Lurah '+r.kelurahan:r.nama,tanggal:k==='surat'||k==='lurah'?r.tanggalSurat:r.tglSumpah}}
+async function ambilNomor(k,btn){const inf=infoNomor(k,cur);if(inf.kurang.length){alert('Lengkapi dulu: '+inf.kurang.join(', '));return}
+  if(!confirm(`Ambil nomor SPS (${cur.jenis==='Perwalian'?'AH.06.02':'AH.06.03'}, tanggal hari ini ${tgl(today())}${k==='surat'||k==='lurah'?' — tanggal surat ikut disesuaikan':''}) untuk "${DOCS[k].nama(cur)}"?\nPerihal: ${inf.perihal}\n\nNomor yang sudah diambil tidak bisa dibatalkan dari aplikasi ini.`))return;
+  btn.disabled=true;btn.textContent='Menghubungi SPS…';clearTimeout(saveT);await flush();
+  try{const r=await api('apiAmbilNomor',cur.id,NOMOR[k],inf);cur[NOMOR[k]]=r.nomor;cur._versi=r.versi;if(r.tanggalSurat)cur.tanggalSurat=r.tanggalSurat;toast('Nomor: '+r.nomor);renderMain()}
+  catch(e){alert('Gagal mengambil nomor: '+(e.message||e));btn.disabled=false;btn.textContent='🔢 Ambil nomor SPS'}}
+
+/* ---------------- mode demo (tanpa server, untuk mencoba) ---------------- */
+const DEMO=(()=>{const K='bhpDemo.v2',st=(()=>{try{return JSON.parse(localStorage.getItem(K))}catch(e){}})()||{berkas:[],log:[],set:{},users:[['shela','Shela Natasha','superadmin'],['annisa','Annisa Dwi Marina','admin'],['elsintha','Elsintha Damayanti','admin'],['yusril','Yusril Ihza Mahendra','admin'],['andre','Andre Yosua Surbakti','admin'],['fairuz','Nur Fairuz Diba Nasution','admin'],['nanang','Nanang Surya Purnama','admin'],['taufik','M. Taufik Rahman','admin']].map(([username,nama,role])=>({username,nama,role,aktif:true,wajibGanti:false,loginTerakhir:''}))};
+  const put=()=>{try{localStorage.setItem(K,JSON.stringify(st))}catch(e){}};const who=t=>{const u=st.users.find(x=>x.username===t);if(!u)throw new Error('SESI_HABIS');return u};
+  const log=(u,aksi,id,b,d)=>{st.log.push({waktu:new Date().toISOString(),username:u.username,nama:u.nama,aksi,berkasId:id||'',berkas:b||'',detail:d||''});put()};
+  const flat=(o,p='',out={})=>{for(const k in o){if(k[0]==='_'||k==='asal')continue;const v=o[k],q=p?p+'.'+k:k;if(v&&typeof v==='object')flat(v,q,out);else out[q]=String(v??'')}return out};
+  const sup=t=>{const u=who(t);if(u.role!=='superadmin')throw new Error('Hanya admin utama.');return u};
+  return{apiLogin(u,p){u=String(u).toLowerCase().trim();const x=st.users.find(y=>y.username===u&&y.aktif);if(!x||p!=='demo'){log({username:u,nama:'?'},'LOGIN_GAGAL');throw new Error('Username atau password salah.')}x.loginTerakhir=new Date().toISOString();log(x,'LOGIN');return{token:u,user:x}},
+    apiLogout(t){log(who(t),'LOGOUT');return true},apiGantiPassword(t){log(who(t),'GANTI_PASSWORD');return true},
+    apiInit(t){const u=who(t);return{user:u,settings:st.set,users:u.role==='superadmin'?st.users:undefined,sps:{terhubung:false,url:'https:\/\/sps.batamen.com'},berkas:JSON.parse(JSON.stringify(st.berkas.filter(b=>u.role==='superadmin'||!b._dihapus)))}},
+    apiSimpan(t,rec,v){const u=who(t),now=new Date().toISOString();const i=st.berkas.findIndex(b=>b.id===rec.id);
+      if(i<0){rec._versi=1;rec._meta={dibuatOleh:u.nama,dibuatPada:now,diubahOleh:u.nama,diubahPada:now};const a=rec.asal;delete rec.asal;st.berkas.push(rec);log(u,'BUAT',rec.id,rec.nama,a||'Berkas baru');return{versi:1,diubahOleh:u.nama,diubahPada:now}}
+      const old=st.berkas[i];if(v&&old._versi!==v)return{konflik:true,oleh:old._meta.diubahOleh,server:JSON.parse(JSON.stringify(old))};
+      const a=flat(old),b=flat(rec),dif=[...new Set([...Object.keys(a),...Object.keys(b)])].filter(k=>k!=='id'&&(a[k]||'')!==(b[k]||'')).map(f=>({f,dari:a[f]||'',ke:b[f]||''}));
+      if(!dif.length)return{versi:old._versi};rec._versi=old._versi+1;rec._meta={...old._meta,diubahOleh:u.nama,diubahPada:now};delete rec.asal;st.berkas[i]=rec;log(u,'UBAH',rec.id,rec.nama,JSON.stringify(dif));return{versi:rec._versi,diubahOleh:u.nama,diubahPada:now}},
+    apiHapus(t,id){const u=sup(t),b=st.berkas.find(x=>x.id===id);b._dihapus=true;log(u,'HAPUS',id,b.nama,'Dipindah ke arsip terhapus');return true},
+    apiPulihkan(t,id){const u=sup(t),b=st.berkas.find(x=>x.id===id);b._dihapus=false;log(u,'PULIHKAN',id,b.nama);return true},
+    apiCatat(t,a,id,n,d){log(who(t),a,id,n,d);return true},
+    apiRiwayat(t,f={}){const u=who(t);if(u.role!=='superadmin'&&!f.berkasId)throw new Error('Pilih berkas.');return st.log.filter(x=>(!f.berkasId||x.berkasId===f.berkasId)&&(!f.username||x.username===f.username)&&(!f.aksi||x.aksi===f.aksi)&&(!f.q||(x.berkas+x.detail).toLowerCase().includes(f.q.toLowerCase()))).slice().reverse().slice(0,300)},
+    apiSimpanPengaturan(t,s){const u=sup(t);st.set=s;log(u,'PENGATURAN','','','Pengaturan diubah');return true},
+    apiPengguna(t){sup(t);return st.users},apiResetPassword(t,x){const u=sup(t);log(u,'RESET_PASSWORD','','','Password '+x+' direset');return 'demo'},
+    apiSimpanPengguna(t,d){const u=sup(t);const x=st.users.find(y=>y.username===d.username);if(x){Object.assign(x,{nama:d.nama,role:d.role,aktif:d.aktif!==false});log(u,'UBAH_PENGGUNA','','',d.nama);return null}
+      st.users.push({username:d.username.toLowerCase(),nama:d.nama,role:d.role,aktif:true,wajibGanti:true,loginTerakhir:''});log(u,'TAMBAH_PENGGUNA','','',d.nama);return 'demo'},
+    apiAmbilNomor(){throw new Error('Pengambilan nomor SPS hanya berjalan setelah aplikasi di-deploy ke Google Apps Script.')},
+    apiTesSps(){throw new Error('Hanya tersedia setelah di-deploy.')},apiSimpanKredensialSps(){throw new Error('Hanya tersedia setelah di-deploy.')},
+    apiSimpanKunciGemini(){throw new Error('Hanya tersedia setelah di-deploy.')},apiAdaGemini(){return false},apiBacaPenetapanAI(){return null}}})();
+
+/* ---------------- render UI ---------------- */
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1800)}
+function renderList(){const q=($('#q').value||'').toLowerCase();
+  $('#list').innerHTML=DB.filter(r=>(r.nama+' '+derive(r).objek).toLowerCase().includes(q)).map(r=>`<div class="item ${cur&&cur.id===r.id?'on':''}" style="${r._dihapus?'opacity:.5':''}" onclick="pick('${r.id}')">${r._dihapus?'<span class="tag" style="color:var(--warn)">Terhapus</span>':''}
+  <b>${esc(r.nama||'(tanpa nama)')}</b><small>${esc(derive(r).objek||'-')}</small><br><span class="tag">${r.jenis}</span> <small>${r.tglSumpah?tgl(r.tglSumpah):''}</small></div>`).join('')||'<p class="hint">Belum ada data. Klik “+ Data baru” atau impor CSV dari spreadsheet.</p>'}
+function pick(id){clearTimeout(saveT);if(cur)flush();cur=DB.find(r=>r.id===id);if(tab==='riw'&&!cur)tab='umum';renderMain();renderList()}
+function newRec(){if(cur){clearTimeout(saveT);flush()}cur=addRec(blank(),'Berkas baru (manual)');tab='umum';renderMain();renderList();flush()}
+function F(path,lbl,type='text',opt){const v=get(path);
+  if(type==='select')return`<div><label>${lbl}</label><select onchange="setv('${path}',this.value)">${opt.map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select></div>`;
+  if(type==='area')return`<div class="full"><label>${lbl}</label><textarea oninput="setv('${path}',this.value)">${esc(v)}</textarea></div>`;
+  return`<div><label>${lbl}</label><input type="${type}" value="${esc(v)}" oninput="setv('${path}',this.value)"></div>`}
+function get(p){return p.split('.').reduce((o,k)=>o?.[k],cur)??''}
+function setv(p,v){if(cur._dihapus){toast('Berkas terhapus tidak bisa diubah');return}const ks=p.split('.');let o=cur;ks.slice(0,-1).forEach(k=>o=o[k]);o[ks.at(-1)]=v;
+  if(p==='alamat'&&!cur._kelManual){const m=v.match(/Kelurahan[^,]*,\s*Kecamatan[^,]*(,[^,]*){0,2}/i);if(m){cur.kelurahan=m[0];const i=document.querySelector('[data-kel]');if(i)i.value=cur.kelurahan}}
+  if(p==='kelurahan')cur._kelManual=true;
+  save();renderList();if(p==='jenis')renderMain()}
+function renderMain(){
+  if(!cur){$('#main').innerHTML=`<div style="text-align:center;padding:60px 10px"><div style="font-size:48px">📄</div><h3>Pilih berkas di kiri atau buat data baru</h3><p class="hint">Isi sekali → semua surat & berita acara terbuat otomatis sesuai format BHP.</p><button class="pri" onclick="newRec()">+ Data baru</button>
+<label id="drop" class="card" style="display:block;margin:24px auto 0;max-width:460px;border:2px dashed var(--pri);cursor:pointer" ondragover="event.preventDefault()" ondrop="event.preventDefault();handlePenetapan(event.dataTransfer.files[0])">
+<div style="font-size:32px">📑</div><b>Upload / seret PDF Penetapan Pengadilan di sini</b><br><span class="hint">Nama, NIK, TTL, agama, pekerjaan, alamat, nomor & tanggal penetapan, terampu/anak akan terisi otomatis</span>
+<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)"></label></div>`;return}
+  const d=derive(cur),w=d.w;
+  const TABS={umum:'1. Perkara',pihak:`2. ${d.J}`,objek:`3. ${w?'Anak':'Terampu'}`,jadwal:'4. Jadwal & Pejabat',harta:'5. BAP & Harta',dok:'📄 Dokumen',riw:'🕘 Riwayat'};
+  let h=`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><div class="seg">${['Pengampuan','Perwalian'].map(j=>`<button class="${cur.jenis===j?'on':''}" onclick="setv('jenis','${j}')">${j}</button>`).join('')}</div>
+  <span style="margin-right:auto"><span class="hint" id="stat">✓ Tersimpan</span><br><span class="meta">${cur._meta?`Dibuat ${esc(cur._meta.dibuatOleh||'')} · diubah terakhir oleh <b>${esc(cur._meta.diubahOleh||'')}</b>, ${wkt(cur._meta.diubahPada)}`:''}</span></span>
+  <button onclick="dupRec()">⧉ Duplikat</button>${isSuper()?(cur._dihapus?'<button onclick="restoreRec()">♻️ Pulihkan</button>':'<button onclick="delRec()" style="color:var(--warn)">🗑 Hapus</button>'):''}</div>
+  <div class="steps">${Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';renderMain()">${v}</button>`).join('')}</div><div class="grid">`;
+  const pjOpt=v=>{const c=pjCari(v).nama;return SET.pejabat.map(p=>`<option ${p.nama===c?'selected':''} value="${esc(p.nama)}">${esc(p.nama||'(isi di Pengaturan)')} — ${esc(p.jabatan||'')}</option>`).join('')};
+  if(tab==='umum')h+=`<div class="full"><label class="btn" style="display:inline-block;margin:0;color:var(--ink)">📑 Isi otomatis dari PDF Penetapan<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this,true)"></label></div>`+F('pengadilan','Pengadilan')+F('nomorPenetapan','Nomor Penetapan')+F('tglPenetapan','Tanggal Penetapan','date')+F('tanggalSurat','Tanggal Surat','date')+
+    F('nomorSurat',`Nomor Surat ke ${d.J} (otomatis dari SPS)`)+F('nomorLurah','Nomor Surat ke Lurah (SPS)')+F('nomorBAP','Nomor BAP (SPS)')+F('nomorBA','Nomor BA Sumpah (SPS)')+F('nomorBAHarta','Nomor BA Harta (SPS)');
+  if(tab==='pihak')h+=F('nama',`Nama ${d.J}`)+F('nik','NIK')+F('jk','Jenis Kelamin','select',['Laki-laki','Perempuan'])+F('tglLahir','Tanggal Lahir','date')+
+    `<div><label>Usia (otomatis)</label><input disabled value="${usia(cur.tglLahir,cur.tglSumpah)}"></div>`+F('agama','Agama','select',Object.keys(SET.lafaz))+F('pekerjaan','Pekerjaan')+
+    F('status',`Hubungan dgn ${d.pihak} (mis. Ibu Kandung, Saudara Kandung)`)+F('hp','No. HP (surat permohonan)')+F('alamat','Alamat lengkap','area')+
+    `<div class="full"><label>Kelurahan, Kecamatan, Kota (terisi otomatis dari alamat)</label><input data-kel value="${esc(cur.kelurahan)}" oninput="setv('kelurahan',this.value)"></div>`+F('alamatKelurahan','Alamat kantor kelurahan (surat lurah)')+F('kotaPermohonan',`Kota di surat permohonan/pernyataan (kosong = ${kota(cur)})`);
+  if(tab==='objek'){if(w){h+=`<div class="full">${cur.anak.map((a,i)=>`<div class="child grid">${F(`anak.${i}.nama`,`Nama Anak ${i+1}`)}${F(`anak.${i}.jk`,'Jenis Kelamin','select',['Laki-laki','Perempuan'])}${F(`anak.${i}.tglLahir`,'Tanggal Lahir','date')}<div><label>&nbsp;</label><button onclick="cur.anak.splice(${i},1);save();renderMain()">Hapus</button></div></div>`).join('')}
+    <button onclick="cur.anak.push({nama:'',jk:'Laki-laki',tglLahir:''});save();renderMain()">+ Tambah anak</button></div>`}
+    else h+=F('terampu.nama','Nama Terampu')+F('terampu.jk','Jenis Kelamin','select',['Laki-laki','Perempuan'])+F('terampu.tglLahir','Tanggal Lahir','date')+
+    `<div><label>Usia (otomatis)</label><input disabled value="${usia(cur.terampu.tglLahir,cur.tglSumpah)}"></div>`+F('terampu.kondisi','Kondisi medis + surat dokter','area')}
+  if(tab==='jadwal')h+=F('tglSumpah','Tanggal Sumpah','date')+F('waktu','Waktu')+F('tempat','Tempat (kosong = kediaman)')+
+    `<div><label>Hari/tanggal di BA (otomatis)</label><input disabled value="${tglBA(cur.tglSumpah)}"></div>
+    <div><label>Pejabat penyumpah (Madya)</label><select onchange="setv('madya',this.value)">${pjOpt(cur.madya)}</select></div>
+    <div><label>Pejabat inventarisasi harta (Muda)</label><select onchange="setv('muda',this.value)">${pjOpt(cur.muda)}</select></div>
+    <div><label>Pejabat BAP</label><select onchange="setv('bapOleh',this.value)">${pjOpt(cur.bapOleh??cur.muda)}</select></div>`+F('kanwilTembusan',`Tembusan Kanwil (kosong = ${SET.kanwilTembusan})`)+
+    F('saksi1','Saksi 1 (opsional)')+F('saksi2','Saksi 2 (opsional)')+`<div class="full"><label>Lafaz sumpah (otomatis sesuai agama)</label><textarea disabled>${esc(d.laf)}</textarea></div>`;
+  if(tab==='harta')h+=F('isiBap','Isi BA Penghadapan — satu keterangan "Bahwa …" per baris (terisi otomatis oleh Gemini dari penetapan)','area')+
+    HARTA.map(([k,l,o])=>{if(cur[k]===undefined&&o)cur[k]=cur[o]||'';return F(k,'Aktiva — '+l+' (satu per baris)','area')}).join('')+F('hartaHutang','Passiva — Hutang-hutang (satu per baris)','area');
+  if(tab==='dok')h+=`<div class="full"><div class="docs">${Object.entries(DOCS).map(([k,o])=>{const nf=NOMOR[k],ku=nf?kurang(k,cur):[];
+    return`<div class="doc"><b>${o.nama(cur)}</b>${nf?(cur[nf]?`<span class="nomor">No. ${esc(cur[nf])}</span>`:ku.length?`<span class="kurang">Belum bisa ambil nomor. Kurang: ${esc(ku.join(', '))}</span>`:`<button class="pri" onclick="ambilNomor('${k}',this)">🔢 Ambil nomor SPS</button>`):''}
+    ${gdocBtn(k,[k],o.nama(cur))}<div><button onclick="preview('${k}')">👁 Pratinjau</button></div></div>`}).join('')}
+    <div class="doc" style="border-color:var(--pri)"><b>📦 Seluruh Dokumen</b><span class="hint">Satu Google Doc berisi semua dokumen</span>${gdocBtn('semua',Object.keys(DOCS),'Dokumen Lengkap')}</div></div>
+    <p class="hint">Kolom kuning = belum diisi. Dokumen dibuat sebagai <b>Google Docs</b> (bisa langsung diedit) di folder Drive berkas ini${cur.folderUrl?` — <a href="${cur.folderUrl}" target="_blank" rel="noopener">📁 buka folder</a>`:''}. Nomor surat diambil dari SPS setelah isian lengkap. Semua tercatat di riwayat.</p><div id="prev"></div></div>`;
+  if(tab==='riw')h+=`<div class="full"><div id="riw"></div></div>`;
+  $('#main').innerHTML=h+'</div>';
+  if(tab==='dok')preview('permohonan');
+  if(tab==='riw')tabRiwayat();
+  if(cur._dihapus)$('#main').querySelectorAll('input,textarea,select').forEach(e=>e.disabled=true);
+}
+function preview(k){$('#prev').innerHTML=`<div class="paper">${DOCS[k].fn(cur)}</div>`}
+/* ---------------- DOCX (Office Open XML asli) ---------------- */
+const JSZIP='https:\/\/cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+const DX={W:9525,page:'<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="964" w:right="964" w:bottom="964" w:left="1417" w:header="709" w:footer="709" w:gutter="0"/>'};
+const xe=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const tw=pt=>Math.round(pt*20);
+const ptOf=v=>v&&/pt$/.test(v)?parseFloat(v):v&&/px$/.test(v)?parseFloat(v)*.75:0;
+let imgId=1;
+function rPr(st){const x=(st.b?'<w:b/><w:bCs/>':'')+(st.i?'<w:i/><w:iCs/>':'')+(st.u?'<w:u w:val="single"/>':'')+(st.sz?`<w:sz w:val="${Math.round(st.sz*2)}"/><w:szCs w:val="${Math.round(st.sz*2)}"/>`:'');return x?`<w:rPr>${x}</w:rPr>`:''}
+function tokens(node,st,out){
+  for(const n of node.childNodes){
+    if(n.nodeType===3){out.push({t:n.nodeValue.replace(/[ \t\n\r]+/g,' '),st});continue}
+    if(n.nodeType!==1)continue;
+    if(n.tagName==='BR'){out.push({br:1});continue}
+    if(n.tagName==='IMG'){out.push({img:n});continue}
+    const s={...st};if(/^(B|STRONG)$/.test(n.tagName))s.b=1;if(/^(I|EM)$/.test(n.tagName))s.i=1;if(n.tagName==='U')s.u=1;
+    if(ptOf(n.style.fontSize))s.sz=ptOf(n.style.fontSize);if(n.style.fontWeight==='bold'||+n.style.fontWeight>=600)s.b=1;
+    tokens(n,s,out)}
+  return out}
+function runs(tk){
+  /* rapikan spasi di awal/akhir baris seperti HTML */
+  for(let i=0;i<tk.length;i++){const k=tk[i];if(k.t===undefined)continue;
+    if(i===0||tk[i-1].br)k.t=k.t.replace(/^ /,'');if(i===tk.length-1||tk[i+1].br)k.t=k.t.replace(/ $/,'')}
+  return tk.map(k=>k.br?'<w:r><w:br/></w:r>':k.img?imgRun(k.img):k.t?`<w:r>${rPr(k.st)}<w:t xml:space="preserve">${xe(k.t)}</w:t></w:r>`:'').join('')}
+function imgRun(){const id=imgId++,cx=736600,cy=825500;
+  return `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${id}" name="Logo ${id}"/><a:graphic xmlns:a="http:\/\/schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http:\/\/schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http:\/\/schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="${id}" name="logo.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdLogo"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`}
+function para(el,o={}){
+  const cs=el.classList, s=el.style;
+  let jc=o.jc||'both';if(cs.contains('ctr')||s.textAlign==='center')jc='center';else if(s.textAlign==='right')jc='right';else if(s.textAlign==='left')jc='left';
+  const first=(o.noInd||cs.contains('ni')||cs.contains('ctr')||jc==='center')?0:720;
+  const left=tw(ptOf(s.marginLeft)+(o.left||0)), mw=ptOf(s.maxWidth), right=mw?tw(476-ptOf(s.marginLeft)-mw):0;
+  const lh=parseFloat(s.lineHeight)||0, line=o.line||(lh&&lh<5?Math.round(lh*240):360);
+  const base={};if(ptOf(s.fontSize))base.sz=ptOf(s.fontSize);
+  const tk=tokens(el,base,[]);if(jc==='both'&&tk.some(k=>k.br))jc='left';
+  const r=(o.prefix||'')+runs(tk);
+  const ind=left||first||right||o.hang?`<w:ind w:left="${left}" w:right="${right}"${o.hang?` w:hanging="${o.hang}"`:` w:firstLine="${first}"`}/>`:'';
+  return `<w:p><w:pPr>${o.keep?'<w:keepNext/><w:keepLines/>':''}<w:spacing w:before="${tw(ptOf(s.marginTop))}" w:after="${o.after??tw(ptOf(s.marginBottom))}" w:line="${line}" w:lineRule="auto"/>${ind}<w:jc w:val="${jc}"/></w:pPr>${r}</w:p>`}
+const spacer=pt=>`<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="${Math.max(20,tw(pt))}" w:lineRule="exact"/></w:pPr><w:r><w:rPr><w:sz w:val="2"/></w:rPr><w:t></w:t></w:r></w:p>`;
+const noBorders='<w:tblBorders><w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="nil"/><w:right w:val="nil"/><w:insideH w:val="nil"/><w:insideV w:val="nil"/></w:tblBorders>';
+function kopXml(){
+  const L=[[SET.instansi,12],[SET.kanwil,12],[SET.balai,12,1],[SET.alamat,10],[SET.telp,10],[SET.web,10]];
+  const lg=1240,W=DX.W;
+  const tx=L.map(([t,sz,b],i)=>`<w:p><w:pPr><w:spacing w:before="0" w:after="${i===L.length-1?60:0}" w:line="264" w:lineRule="auto"/><w:jc w:val="center"/></w:pPr><w:r>${rPr({sz,b})}<w:t xml:space="preserve">${xe(t||'')}</w:t></w:r></w:p>`).join('');
+  return `<w:tbl><w:tblPr><w:tblW w:w="${W}" w:type="dxa"/><w:tblLayout w:type="fixed"/><w:tblBorders><w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="single" w:sz="10" w:space="0" w:color="000000"/><w:right w:val="nil"/><w:insideH w:val="nil"/><w:insideV w:val="nil"/></w:tblBorders><w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid><w:gridCol w:w="${lg}"/><w:gridCol w:w="${W-lg}"/></w:tblGrid><w:tr><w:tc><w:tcPr><w:tcW w:w="${lg}" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr><w:p><w:pPr><w:spacing w:before="0" w:after="60"/></w:pPr>${imgRun()}</w:p></w:tc><w:tc><w:tcPr><w:tcW w:w="${W-lg}" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>${tx}</w:tc></w:tr></w:tbl>`+spacer(12)}
+function tableXml(t){
+  const rows=[...t.rows];if(!rows.length)return'';
+  const n=Math.max(...rows.map(r=>[...r.cells].reduce((a,c)=>a+(c.colSpan||1),0)));
+  const ttd=t.classList.contains('ttd'),indL=ptOf(t.style.marginLeft);
+  const avail=476-indL;const w=Array(n).fill(0);
+  rows.forEach(r=>{let i=0;[...r.cells].forEach(c=>{if((c.colSpan||1)===1&&!w[i]){const p=ptOf(c.style.width);if(p)w[i]=p;else if(c.textContent.trim()===':')w[i]=12}i+=c.colSpan||1})});
+  const free=w.filter(x=>!x).length,rest=Math.max(40,(avail-w.reduce((a,b)=>a+b,0))/(free||1));
+  const cols=w.map(x=>tw(x||rest)),tot=cols.reduce((a,b)=>a+b,0);
+  const body=rows.map(r=>{let i=0;const h=Math.max(...[...r.cells].map(c=>ptOf(c.style.height)),0);
+    return `<w:tr><w:trPr><w:cantSplit/>${h?`<w:trHeight w:val="${tw(h)}"/>`:''}</w:trPr>${[...r.cells].map(c=>{const sp=c.colSpan||1,cw=cols.slice(i,i+sp).reduce((a,b)=>a+b,0);i+=sp;
+      return `<w:tc><w:tcPr><w:tcW w:w="${cw}" w:type="dxa"/>${sp>1?`<w:gridSpan w:val="${sp}"/>`:''}</w:tcPr>${para(c,{jc:ttd?'center':'left',noInd:1,after:ttd?0:40,line:276,keep:ttd})}</w:tc>`}).join('')}</w:tr>`}).join('');
+  return (ptOf(t.style.marginTop)?spacer(ptOf(t.style.marginTop)):'')+`<w:tbl><w:tblPr><w:tblW w:w="${tot}" w:type="dxa"/><w:tblInd w:w="${tw(indL)}" w:type="dxa"/><w:tblLayout w:type="fixed"/>${noBorders}<w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${cols.map(c=>`<w:gridCol w:w="${c}"/>`).join('')}</w:tblGrid>${body}</w:tbl>`+spacer(ptOf(t.style.marginBottom)||4)}
+function blocksXml(html){
+  const root=new DOMParser().parseFromString(`<div>${html}</div>`,'text/html').body.firstChild;let x='';
+  for(const el of root.childNodes){
+    if(el.nodeType!==1)continue;
+    if(el.tagName==='TABLE')x+=el.classList.contains('kop')?kopXml():tableXml(el);
+    else if(el.tagName==='P'||el.tagName==='DIV')x+=para(el);
+    else if(el.tagName==='OL'||el.tagName==='UL')[...el.children].forEach((li,i)=>x+=para(li,{noInd:1,left:18+ptOf(el.style.marginLeft),hang:360,after:0,prefix:`<w:r><w:t>${el.tagName==='OL'?(i+1)+'.':'•'}</w:t></w:r><w:r><w:tab/></w:r>`}));
+    else if(el.tagName==='BR')x+=spacer(12)}
+  return x}
+async function buatDocx(keys){
+  await loadJs(JSZIP);imgId=1;
+  const body=keys.map(k=>blocksXml(DOCS[k].fn(cur))).join('<w:p><w:r><w:br w:type="page"/></w:r></w:p>');
+  const doc=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http:\/\/schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http:\/\/schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http:\/\/schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http:\/\/schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http:\/\/schemas.openxmlformats.org/drawingml/2006/picture"><w:body>${body}<w:sectPr>${DX.page}</w:sectPr></w:body></w:document>`;
+  const z=new JSZip();
+  z.file('[Content_Types].xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http:\/\/schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>');
+  z.file('_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http:\/\/schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http:\/\/schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+  z.file('word/_rels/document.xml.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http:\/\/schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdStyles" Type="http:\/\/schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rIdLogo" Type="http:\/\/schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/logo.png"/></Relationships>');
+  z.file('word/styles.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http:\/\/schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:eastAsia="Arial" w:cs="Arial"/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="id-ID"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="240" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style><w:style w:type="table" w:default="1" w:styleId="TableNormal"><w:name w:val="Normal Table"/><w:tblPr><w:tblInd w:w="0" w:type="dxa"/><w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="108" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="108" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style></w:styles>');
+  z.file('word/document.xml',doc);
+  z.file('word/media/logo.png',(SET.logo||LOGO_DEF).split(',')[1],{base64:true});
+  return z.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})}
+async function dl(keys){
+  try{const blob=await buatDocx(keys);
+    const n=((keys.length>1?'Dokumen Lengkap':DOCS[keys[0]].nama(cur))+' - '+(cur.nama||'tanpa nama')).replace(/[\\/:*?"<>|]/g,'')+'.docx';
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=n;document.body.appendChild(a);a.click();a.remove();
+    toast('Diunduh: '+n);api('apiCatat','UNDUH_DOCX',cur.id,cur.nama,keys.map(k=>DOCS[k].nama(cur)).join(', ')).catch(()=>{})}
+  catch(e){alert('Gagal membuat DOCX: '+e.message)}}
+
+function gdocBtn(key,keys,judul){const d=(cur.dokumen||{})[key];const ks=JSON.stringify(keys).replace(/"/g,"'");
+  return d?`<span class="nomor">📄 <a href="${d.url}" target="_blank" rel="noopener">Buka Google Doc</a><br><small>${esc(d.oleh)} · ${wkt(d.waktu)}</small></span><div><button onclick="buatGDoc('${key}',${ks},'${esc(judul)}',this,1)">↻ Buat ulang</button></div>`
+    :`<div><button class="pri" onclick="buatGDoc('${key}',${ks},'${esc(judul)}',this)">📄 Buat Google Doc</button></div>`}
+async function buatGDoc(key,keys,judul,btn,ulang){
+  if(ulang&&!confirm('Buat ulang "'+judul+'" dari data terbaru?\nVersi lama (termasuk editan manual di Google Docs) dipindah ke subfolder Arsip, tidak dihapus.'))return;
+  if(!GAS){toast('Mode demo: dokumen diunduh sebagai .docx (Google Doc dibuat setelah di-deploy)');return dl(keys)}
+  const w=window.open('about:blank','_blank');btn.disabled=true;btn.textContent='Membuat…';clearTimeout(saveT);await flush();
+  try{const blob=await buatDocx(keys);const b64=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(blob)});
+    const r=await api('apiBuatDokumen',cur.id,key,judul,b64);cur.dokumen=cur.dokumen||{};cur.dokumen[key]=r.dok;cur.folderUrl=r.folderUrl;cur._versi=r.versi;
+    if(w)w.location=r.dok.url;toast('Google Doc dibuat');renderMain()}
+  catch(e){if(w)w.close();alert('Gagal membuat dokumen: '+(e.message||e));btn.disabled=false;btn.textContent='📄 Buat Google Doc'}}
+function dupRec(){const r=JSON.parse(JSON.stringify(cur));['id','_versi','_meta','_dihapus','dokumen','folderUrl'].forEach(k=>delete r[k]);Object.values(NOMOR).forEach(k=>r[k]='');r.nama+=' (salinan)';cur=addRec(r,'Duplikat dari '+r.nama.replace(/ \(salinan\)$/,''));renderMain();renderList();flush()}
+async function delRec(){if(!confirm('Hapus berkas '+(cur.nama||'')+'? (bisa dipulihkan oleh admin utama)'))return;clearTimeout(saveT);
+  try{await api('apiHapus',cur.id);cur._dihapus=true;toast('Berkas dihapus');renderMain();renderList()}catch(e){alert(e.message)}}
+async function restoreRec(){try{await api('apiPulihkan',cur.id);cur._dihapus=false;toast('Dipulihkan');renderMain();renderList()}catch(e){alert(e.message)}}
+
+/* ---------------- CSV (kompatibel kolom spreadsheet AutoCrat) ---------------- */
+function parseCsv(t){const rows=[];let r=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];
+  if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==','){r.push(f);f=''}
+  else if(c=='\n'||c=='\r'){if(c=='\r'&&t[i+1]=='\n')i++;r.push(f);rows.push(r);r=[];f=''}else f+=c}
+  if(f||r.length){r.push(f);rows.push(r)}return rows}
+function toISO(s){if(!s)return'';const m=s.match(/(\d{1,2})\s+(\w+)\s+(\d{4})/);if(!m)return'';const b=BLN.findIndex(x=>x.toLowerCase()===m[2].toLowerCase());
+  return b<0?'':`${m[3]}-${String(b+1).padStart(2,'0')}-${m[1].padStart(2,'0')}`}
+function importCsv(inp){const f=inp.files[0];if(!f)return;f.text().then(t=>{const rows=parseCsv(t);const H=rows.shift().map(h=>h.trim());let n=0;
+  rows.forEach(v=>{const g=k=>{const i=H.indexOf(k);return i<0?'':(v[i]||'').trim()};const w=H.includes('Nama_Wali');
+    const nama=g(w?'Nama_Wali':'Nama_Pengampu');if(!nama)return;const r=blank();
+    Object.assign(r,{jenis:w?'Perwalian':'Pengampuan',nama,nik:g(w?'NIK_Wali':'NIK_Pengampu'),jk:/laki/i.test(g(w?'Jenis_Kelamin_Wali':'Jenis_Kelamin_Pengampu'))?'Laki-laki':'Perempuan',
+      tglLahir:toISO(g(w?'Tanggal_Lahir_Wali':'Tanggal_Lahir_Pengampu')),agama:g(w?'Agama_Wali':'Agama_Pengampu')||'Islam',pekerjaan:g(w?'Pekerjaan_Wali':'Pekerjaan_Pengampu'),
+      alamat:g(w?'Alamat_Wali':'Alamat_Pengampu'),kelurahan:g('Kel_Kec_Kota'),status:g(w?'Status_Dengan_Wali':'Status_Dengan_Pengampu'),
+      nomorSurat:g(w?'Nomor_Surat_Wali':'Nomor_Surat_Pengampu'),nomorLurah:g('Nomor_Surat_Lurah'),tanggalSurat:toISO(g('Tanggal_Surat'))||today(),
+      nomorPenetapan:g('Nomor_Penetapan'),tglPenetapan:toISO(g('Tanggal_Penetapan')),tglSumpah:toISO(g('Hari_Tanggal_Sumpah')),waktu:g('Waktu_Sumpah')||r.waktu,tempat:g('Tempat_Sumpah'),
+      pengadilan:g('Lokasi_Pengadilan')||r.pengadilan,tanah:g('Daftar_Tanah'),rekening:g('Daftar_Rekening'),
+      nomorBA:g(w?'Nomor_BA_Sumpah_Wali':'Nomor_BA_Sumpah_Pengampu'),nomorBAHarta:g(w?'Nomor_BA_Harta_Wali':'Nomor_BA_Harta_Pengampu')});
+    if(w){r.anak=[{nama:g('Nama_Anak')||g('Nama_Anak_1'),jk:/perem/i.test(g('Jenis_Kelamin_Anak'))?'Perempuan':'Laki-laki',tglLahir:toISO(g('Tanggal_Lahir_Anak'))}]}
+    else r.terampu={nama:g('Nama_Terampu'),jk:/perem/i.test(g('Jenis_Kelamin_Terampu'))?'Perempuan':'Laki-laki',tglLahir:toISO(g('Tanggal_Lahir_Terampu')),kondisi:g('Kondisi_Medis_Terampu')};
+    addRec(r,'Impor CSV: '+f.name);n++;api('apiSimpan',JSON.parse(JSON.stringify(r))).then(x=>{r._versi=x.versi}).catch(e=>toast(e.message))});renderList();toast(n+' berkas diimpor');api('apiCatat','IMPOR_CSV','','',n+' berkas dari '+f.name).catch(()=>{});inp.value=''})}
+function exportCsv(){const H=['Jenis','Nama','NIK','Jenis_Kelamin','Tanggal_Lahir','Agama','Pekerjaan','Alamat','Kel_Kec_Kota','Status','Objek','Nomor_Penetapan','Tanggal_Penetapan','Tanggal_Sumpah','Nomor_Surat','Nomor_Surat_Lurah','Nomor_BA'];
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const t=[H.join(',')].concat(DB.map(r=>[r.jenis,r.nama,r.nik,r.jk,tgl(r.tglLahir),r.agama,r.pekerjaan,r.alamat,r.kelurahan,r.status,derive(r).objek,r.nomorPenetapan,tgl(r.tglPenetapan),tgl(r.tglSumpah),r.nomorSurat,r.nomorLurah,r.nomorBA].map(q).join(','))).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+t],{type:'text/csv'}));a.download='data-penyumpahan.csv';a.click()}
+
+/* ---------------- baca PDF penetapan ---------------- */
+const loadJs=src=>new Promise((ok,no)=>{if(document.querySelector(`script[src="${src}"]`))return ok();const e=document.createElement('script');e.src=src;e.onload=ok;e.onerror=()=>no(new Error('Gagal memuat '+src));document.head.appendChild(e)});
+const PDFJS='https:\/\/cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+const TESS='https:\/\/cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+let penFill=false;
+function uploadPenetapan(inp,fill){penFill=!!fill;const f=inp.files[0];inp.value='';if(f)handlePenetapan(f)}
+function busy(t){$('#penBody').innerHTML=`<div style="text-align:center;padding:30px"><div style="font-size:32px">⏳</div><b id="penStat">${t}</b><p class="hint">Dokumen diproses di browser Anda.</p></div>`;if(!$('#penDlg').open)$('#penDlg').showModal()}
+const stat=t=>{const e=$('#penStat');if(e)e.textContent=t};
+async function handlePenetapan(file){
+  if(!file)return;busy('Membaca '+file.name+'…');
+  try{
+    let data;
+    if(ADA_AI){stat('Menganalisis dengan AI Gemini…');try{data=await geminiExtract(file)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}}
+    let rx=null;try{const text=await fileText(file);if(text.replace(/\s/g,'').length>=80){rx=parsePenetapan(text);rx._text=text}}catch(e){if(!data)throw e}
+    if(data&&rx)data=gabung(data,rx);else data=data||rx;if(!data)throw new Error('Teks tidak terbaca dari file.');
+    reviewPenetapan(data,file.name);
+  }catch(e){$('#penBody').innerHTML=`<h3>Gagal membaca penetapan</h3><p>${esc(e.message)}</p><p class="hint">Coba file PDF asli (bukan foto miring/buram), atau isi Gemini API key di Pengaturan.</p><p style="text-align:right"><button onclick="penDlg.close()">Tutup</button></p>`}
+}
+async function fileText(file){
+  if(file.type.startsWith('image/'))return ocr([file]);
+  await loadJs(PDFJS);pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS.replace('pdf.min.js','pdf.worker.min.js');
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;let out='';
+  for(let i=1;i<=pdf.numPages;i++){stat(`Membaca halaman ${i}/${pdf.numPages}…`);const c=await(await pdf.getPage(i)).getTextContent();
+    let y=null;c.items.forEach(it=>{const ny=it.transform[5];out+=(y!==null&&Math.abs(ny-y)>3?'\n':' ')+it.str;y=ny});out+='\n'}
+  if(out.replace(/\s/g,'').length>200)return out;
+  const imgs=[];for(let i=1;i<=Math.min(pdf.numPages,12);i++){stat(`Menyiapkan OCR halaman ${i}…`);const pg=await pdf.getPage(i),vp=pg.getViewport({scale:2});
+    const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;imgs.push(cv)}
+  return ocr(imgs)}
+async function ocr(imgs){await loadJs(TESS);const w=await Tesseract.createWorker('ind');let t='';
+  for(let i=0;i<imgs.length;i++){stat(`OCR (scan) halaman ${i+1}/${imgs.length}… agak lama`);t+=(await w.recognize(imgs[i])).data.text+'\n'}await w.terminate();return t}
+
+/* heuristik teks penetapan PN (format direktori putusan MA) */
+function parsePenetapan(raw){
+  let t=raw.replace(/\r/g,'').replace(/[ \t]+/g,' ').replace(/\b((?:[A-Z] ){3,}[A-Z])\b/g,m=>m.replace(/ /g,''));
+  let flat=t.replace(/\s*\n\s*/g,' ')
+    .replace(/Mahkamah Agu[^\n]*?epublik Indonesia/g,' ').replace(/Disclaimer Kepaniteraan.*?Halaman \d+/g,' ')
+    .replace(/Direktori Putusan Mahkamah Agung Republik Indonesia putusan\.mahkamahagung\.go\.id/g,' ')
+    .replace(/Hal(?:aman)?\.?\s*\d+\s*dari\s*\d+\s*Halaman[^;]*?PN\s*\w+/gi,' ')
+    .replace(/\b(\d{1,2})\s*[–—\-\/.]\s*(\d{1,2})\s*[–—\-\/.]\s*(\d{4})\b/g,(m,d,b,y)=>+b>=1&&+b<=12?`${d.padStart(2,'0')} ${BLN[b-1]} ${y}`:m)
+    .replace(/\s+/g,' ');
+  const R={};const m1=(re,s=flat)=>{const m=s.match(re);return m?m[1].trim():''};
+  const NM="([A-Z][A-Z.' ]{2,}?)";
+  const cleanName=n=>(n||'').replace(/^(Sdr\.?|Sdri\.?|Tn\.?|Ny\.?|Nn\.?)\s*/i,'').replace(/[;:,.\s-]+$/,'').trim();
+  const D='(\\d{1,2}\\s+(?:'+BLN.join('|')+')\\s+\\d{4})';
+  R.nomorPenetapan=m1(/Nomor\s*:?\s*(\d+\s*\/\s*Pdt\.?\s*P\s*\/\s*\d{4}\s*\/\s*P[NA]\s*[A-Za-z.]+)/i).replace(/\s*\/\s*/g,'/').replace(/Pdt\.?\s*P/i,'Pdt.P');
+  R.pengadilan=m1(/(Pengadilan (?:Negeri|Agama) [A-Z][a-zA-Z]+(?: [A-Z][a-zA-Z]+)?)/).replace(/\s+(Yang|Kelas|Tersebut|Telah|Nomor)$/,'');
+  const ai=flat.search(/MENETAPKAN|MENGADILI/);const amar=ai>=0?flat.slice(ai):flat;
+  R.jenis=/pengampu/i.test(amar)||(!/\bwali\b/i.test(amar)&&/pengampu/i.test(flat))?'Pengampuan':'Perwalian';
+  const tp=[...flat.matchAll(new RegExp('(?:ditetapkan|diucapkan|dijatuhkan)[^.]{0,120}?tanggal\\s+'+D,'gi'))];
+  R.tglPenetapan=toISO(tp.length?tp[0][1]:'');
+  /* pemohon */
+  const st=flat.search(/(?:permohonan\s+)?dari\s*:|diajukan oleh\s*:?|Pemohon\s*:/i);
+  let blk=st>=0?flat.slice(st,st+1500):'';const ct=blk.search(/sebagai\s*-*\s*Pemohon|selanjutnya disebut|Pengadilan (?:Negeri|Agama) tersebut/i);if(ct>0)blk=blk.slice(0,ct);
+  blk=blk.replace(/^(?:permohonan\s+)?(?:dari|diajukan oleh|Pemohon)\s*:?\s*/i,'');
+  const LB='(?:Nama|NIK|Tempat|Tgl|Tanggal Lahir|Umur|Jenis Kelamin|Agama|Pekerjaan|Alamat|Bertempat tinggal|Kewarganegaraan|Warga Negara|Pendidikan|Status)';
+  const L=lab=>m1(new RegExp('\\b'+lab+'\\s*:?\\s*(.+?)(?=[,;]\\s*'+LB+'\\b|;|$)','i'),blk);
+  R.nama=cleanName(L('Nama')||m1(/^([^,;]+)/,blk));
+  R.nik=m1(/NIK\s*:?\s*(\d{16})/,blk);
+  const tl=blk.match(new RegExp('[Ll]ahir[^0-9]{0,60}?'+D));R.tglLahir=tl?toISO(tl[1]):'';
+  R.jk=/perempuan|wanita/i.test(blk)?'Perempuan':/laki/i.test(blk)?'Laki-laki':'';
+  const ag=(L('Agama')||'').toLowerCase();
+  R.agama=!ag?'':/protestan|kristen/.test(ag)?'Kristen':/katol|kathol/.test(ag)?'Katholik':/bud/.test(ag)?'Buddha':/hindu/.test(ag)?'Hindu':/kong|konghu/.test(ag)?'Khonghucu':'Islam';
+  R.pekerjaan=L('Pekerjaan');
+  R.alamat=(L('(?:Alamat|Bertempat tinggal di|Bertempat tinggal|Tempat tinggal)')).replace(/^di\s+/i,'').replace(/\s*-\s*(?=[A-Z])/g,', ');
+  const k=R.alamat.match(/Kel(?:urahan|\s*\/\s*Desa|\.)?\.?\s*([^,]+?),\s*Kec(?:amatan|\.)?\.?\s*([^,]+?)(?:,\s*([^,;]+?))?(?:,\s*([^,;]+))?$/i);
+  R.kelurahan=k?[`Kelurahan ${k[1].replace(/^\.\s*/,'')}`,`Kecamatan ${k[2]}`,k[3],k[4]].filter(Boolean).join(', '):'';
+  const rel=m1(/\b(ibu kandung|ayah kandung|bapak kandung|saudara kandung|anak kandung|kakak kandung|adik kandung|suami|isteri|istri|paman|bibi|kakek|nenek|keponakan|cucu)(?=nya|\b)/i);
+  R.status=rel?rel.replace(/\b\w/g,c=>c.toUpperCase()):'';
+  const after=(n,src)=>{const i=src.indexOf(n);return i<0?'':src.slice(i,i+300)};
+  if(R.jenis==='Pengampuan'){
+    const endN="(?=\\s*[,;(]|\\s+(?:bin|binti|[Ll]ahir|Tempat|[Uu]mur|NIK|[Yy]ang|karena|dikarenakan)\\b)";
+    let n=m1(new RegExp('[Pp]engampu[^A-Z]{0,80}?(?:bernama|terhadap|atas|dari|bagi)\\s*:?\\s*-?\\s*'+NM+endN),amar)
+       ||m1(new RegExp('(?:di ?bawah pengampuan)[^A-Z]{0,40}?'+NM+endN),amar)
+       ||m1(new RegExp('[Pp]engampu[^A-Z]{0,80}?(?:bernama|terhadap|atas|dari|bagi)\\s*:?\\s*-?\\s*'+NM+endN));
+    n=cleanName(n);const ctx=after(n,amar)||after(n,flat);
+    const tt=ctx.match(new RegExp('[Ll]ahir[^0-9]{0,60}?'+D));
+    let kond=m1(/(?:mengalami|menderita|mengidap)\s+(?:penyakit\s+)?(.{5,160}?)(?=\s+Untuk\b|\s+sesuai\b|\s+sehingga\b|;|\.\s|$)/i,amar)||m1(/(?:mengalami|menderita|mengidap)\s+(?:penyakit\s+)?(.{5,160}?)(?=\s+Untuk\b|\s+sesuai\b|\s+sehingga\b|;|\.\s|$)/i);
+    const sk=m1(/(Surat Keterangan Dokter.{0,120}?)(?=;|\s+diberi\b)/i);if(kond&&sk)kond+=' sesuai dengan '+sk;
+    R.terampu={nama:n,jk:/perempuan|wanita|\bibu\b|nenek|isteri|istri/i.test(R.status+' '+ctx)?'Perempuan':'Laki-laki',tglLahir:tt?toISO(tt[1]):'',kondisi:kond};
+  }else{
+    const seen=new Set();R.anak=[];
+    const scan=src=>{for(const m of src.matchAll(new RegExp(NM+"\\s*,?\\s*(?:\\(?(laki-laki|perempuan|Laki-laki|Perempuan)\\)?\\s*,?\\s*)?[^A-Z0-9]{0,40}?[Ll]ahir[^0-9]{0,60}?"+D,'g'))){
+      const nm=cleanName(m[1]).replace(/^(?:[a-z]\.|\d+\.)\s*/,'');if(nm.length<3||seen.has(nm)||nm===R.nama||/^(Tempat|Tanggal|Kartu|Akta)/.test(nm))continue;seen.add(nm);
+      R.anak.push({nama:nm,jk:/perempuan/i.test(m[2]||after(nm,src).slice(0,120))?'Perempuan':'Laki-laki',tglLahir:toISO(m[3])})}};
+    scan(amar);if(!R.anak.length)scan(flat);
+  }
+  return R}
+
+function gabung(ai,rx){const o={...rx,...ai};for(const k in rx)if(typeof rx[k]!=='object'&&!ai[k])o[k]=rx[k];
+  if(ai.terampu||rx.terampu){o.terampu={...(rx.terampu||{})};for(const k in (ai.terampu||{}))if(ai.terampu[k])o.terampu[k]=ai.terampu[k]}
+  o.anak=(ai.anak&&ai.anak.filter(a=>a&&a.nama).length)?ai.anak:rx.anak;if(Array.isArray(ai.isiBap))o.isiBap=ai.isiBap.join('\n');o._text=rx._text;o._ai=true;return o}
+async function geminiExtract(file){
+  const b64=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(file)});
+  const prompt=`Anda asisten Balai Harta Peninggalan (BHP) Medan. Baca PENETAPAN PENGADILAN terlampir (perwalian anak atau pengampuan orang dewasa) dan ekstrak data untuk Berita Acara Penyumpahan.
+Balas HANYA JSON dengan kunci berikut (string kosong bila tidak ada di dokumen, jangan mengarang):
+{"jenis":"Pengampuan|Perwalian","pengadilan":"mis. Pengadilan Negeri Pekanbaru","nomorPenetapan":"mis. 48/Pdt.P/2025/PN Pbr","tglPenetapan":"YYYY-MM-DD",
+"nama":"pemohon yang DITETAPKAN sebagai wali/pengampu, HURUF KAPITAL tanpa gelar sapaan","nik":"16 digit","jk":"Laki-laki|Perempuan","tglLahir":"YYYY-MM-DD","agama":"Islam|Kristen|Katholik|Hindu|Buddha|Khonghucu",
+"pekerjaan":"","alamat":"alamat lengkap pemohon seperti tertulis (RT/RW, kelurahan, kecamatan, kota, provinsi)","kelurahan":"format: Kelurahan X, Kecamatan Y, Kota/Kabupaten Z, Provinsi",
+"status":"hubungan TERAMPU/ANAK terhadap pemohon, Title Case, mis. Ibu Kandung, Istri, Saudara Kandung, Anak Kandung",
+"terampu":{"nama":"KAPITAL","jk":"Laki-laki|Perempuan","tglLahir":"YYYY-MM-DD","kondisi":"diagnosis medis + dasar surat keterangan dokter (nama RS & nomor surat) bila ada"},
+"anak":[{"nama":"KAPITAL","jk":"Laki-laki|Perempuan","tglLahir":"YYYY-MM-DD"}],
+"isiBap":["kalimat keterangan untuk Berita Acara Penghadapan, masing-masing diawali \"Bahwa\" dan diakhiri titik koma, disusun dari duduk perkara/fakta hukum penetapan: perkawinan/hubungan keluarga beserta nomor akta, kematian orang tua/suami bila ada, anak-anak/terampu beserta akta kelahiran, kondisi medis & surat dokter, aset yang dimiliki (jenis, luas, lokasi, nomor sertifikat, atas nama), tujuan permohonan (mis. menjual/menjaminkan aset), dan penetapan pengadilan yang mengangkat pemohon; gunakan sebutan \"penghadap\" untuk pemohon; 4-8 kalimat"]}
+Aturan: ambil nomor & tanggal dari bagian kepala dan penutup penetapan (bukan footer halaman). Tanggal penetapan = tanggal "Demikianlah ditetapkan". Tanggal format 26-06-1982 berarti 26 Juni 1982.
+Untuk Pengampuan isi "terampu" dan kosongkan "anak"; untuk Perwalian isi semua anak yang disebut di amar dan kosongkan "terampu". Jenis kelamin boleh disimpulkan dari hubungan (Ibu/Istri = Perempuan).`;
+  const d=await api('apiBacaPenetapanAI',b64,file.type||'application/pdf',prompt);if(!d)throw new Error('AI tidak aktif');d._ai=true;return d}
+
+const PEN_LBL={jenis:'Jenis',pengadilan:'Pengadilan',nomorPenetapan:'Nomor Penetapan',tglPenetapan:'Tanggal Penetapan',nama:'Nama Pemohon (Wali/Pengampu)',nik:'NIK',jk:'Jenis Kelamin',tglLahir:'Tanggal Lahir',agama:'Agama',pekerjaan:'Pekerjaan',alamat:'Alamat',kelurahan:'Kelurahan/Kec/Kota',status:'Hubungan'};
+let PEN=null;
+function reviewPenetapan(d,fname){PEN=d;const w=d.jenis==='Perwalian';
+  const row=(k,lbl,v,type='text')=>`<div><label>${lbl}</label><input type="${type}" value="${esc(v||'')}" data-pk="${k}" style="${v?'':'background:#fde68a33;border-color:#f59e0b'}"></div>`;
+  let h=`<h3>📑 Hasil baca: ${esc(fname)} ${d._ai?'<span class="tag">AI</span>':''}</h3><p class="hint">Periksa & koreksi dulu. Kolom oranye = tidak ditemukan di dokumen.</p><div class="grid">`;
+  h+=`<div><label>Jenis</label><select data-pk="jenis">${['Pengampuan','Perwalian'].map(j=>`<option ${j===d.jenis?'selected':''}>${j}</option>`).join('')}</select></div>`;
+  ['pengadilan','nomorPenetapan','tglPenetapan','nama','nik','jk','tglLahir','agama','pekerjaan','status'].forEach(k=>h+=row(k,PEN_LBL[k],d[k],/^tgl/.test(k)?'date':'text'));
+  h+=`<div class="full">${row('alamat','Alamat',d.alamat)}</div><div class="full">${row('kelurahan','Kelurahan, Kecamatan, Kota',d.kelurahan)}</div>`;
+  if(w)(d.anak||[]).forEach((a,i)=>h+=row(`anak.${i}.nama`,`Anak ${i+1}`,a.nama)+row(`anak.${i}.tglLahir`,'Tgl lahir',a.tglLahir,'date')+row(`anak.${i}.jk`,'JK',a.jk));
+  else{const t=d.terampu||{};h+=row('terampu.nama','Nama Terampu',t.nama)+row('terampu.tglLahir','Tgl Lahir Terampu',t.tglLahir,'date')+row('terampu.jk','JK Terampu',t.jk)+`<div class="full">${row('terampu.kondisi','Kondisi medis',t.kondisi)}</div>`}
+  h+=`</div>${d._text?`<details style="margin-top:10px"><summary class="hint">Lihat teks hasil baca</summary><pre style="white-space:pre-wrap;max-height:200px;overflow:auto;font-size:11px">${esc(d._text)}</pre></details>`:''}
+  <p style="text-align:right;display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button onclick="penDlg.close()">Batal</button><button class="pri" onclick="applyPenetapan()">✔ Terapkan ke berkas</button></p>`;
+  $('#penBody').innerHTML=h;if(!$('#penDlg').open)$('#penDlg').showModal()}
+function applyPenetapan(){
+  $('#penBody').querySelectorAll('[data-pk]').forEach(e=>{const ks=e.dataset.pk.split('.');let o=PEN;ks.slice(0,-1).forEach((k,i)=>{o[k]=o[k]??(/^\d+$/.test(ks[i+1])?[]:{});o=o[k]});o[ks.at(-1)]=e.value.trim()});
+  let r=(penFill&&cur&&!cur._dihapus)?cur:null;const baru=!r;if(!r)r=addRec(blank(),'Dibuat dari upload penetapan '+(PEN.nomorPenetapan||''));
+  ['jenis','pengadilan','nomorPenetapan','tglPenetapan','nama','nik','jk','tglLahir','agama','pekerjaan','alamat','kelurahan','status','isiBap'].forEach(k=>{if(PEN[k])r[k]=PEN[k]});
+  if(PEN.kelurahan)r._kelManual=true;
+  if(PEN.jenis==='Perwalian'){const a=(PEN.anak||[]).filter(x=>x&&x.nama).map(x=>({nama:x.nama,jk:/perem/i.test(x.jk)?'Perempuan':'Laki-laki',tglLahir:x.tglLahir||''}));if(a.length)r.anak=a}
+  else if(PEN.terampu){const t=PEN.terampu;r.terampu={nama:t.nama||'',jk:/perem/i.test(t.jk)?'Perempuan':'Laki-laki',tglLahir:t.tglLahir||'',kondisi:t.kondisi||''}}
+  cur=r;tab='jadwal';penDlg.close();renderList();renderMain();if(baru)flush();else save();api('apiCatat','BACA_PENETAPAN',r.id,r.nama,'Isian diambil dari penetapan '+(PEN.nomorPenetapan||'')+(PEN._ai?' (AI)':'')).catch(()=>{});toast('Data penetapan diterapkan — lanjut isi jadwal sumpah')}
+
+
+/* ---------------- pengaturan (admin utama) ---------------- */
+function openSet(){if(!isSuper())return;const s=SET;const L={instansi:'Instansi',kanwil:'Kantor wilayah',balai:'Nama balai',alamat:'Alamat',telp:'Telepon',web:'Laman & pos-el',kepala:'Nama Kepala',wa:'Nomor WA layanan',kanwilTembusan:'Tembusan kanwil'};
+  dlg(`<h3>⚙ Pengaturan <span class="tag">Admin Utama</span></h3><div class="grid">
+  ${Object.keys(L).map(k=>`<div><label>${L[k]}</label><input value="${esc(s[k])}" oninput="SET['${k}']=this.value"></div>`).join('')}
+  <div class="full"><label>Logo kop</label><div style="display:flex;gap:10px;align-items:center"><img src="${s.logo||LOGO_DEF}" style="height:48px"><label class="btn" style="margin:0;color:var(--ink)">Ganti logo<input type="file" accept="image/*" hidden onchange="gantiLogo(this)"></label>${s.logo?'<button onclick="delete SET.logo;openSet()">Pakai logo bawaan</button>':''}</div></div>
+  <div class="full"><label>Pejabat BHP ${s.pegawaiSumber?`<span class="hint">(sumber: ${esc(s.pegawaiSumber)})</span>`:''}</label>
+  <p style="display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 8px"><button onclick="sinkronPegawai(this)">🔄 Ambil dari sheet Data Pegawai (Dokumen Otomatis)</button></p>${s.pejabat.map((p,i)=>`<div class="grid child"><input placeholder="Nama" value="${esc(p.nama)}" oninput="SET.pejabat[${i}].nama=this.value"><input placeholder="NIP" value="${esc(p.nip)}" oninput="SET.pejabat[${i}].nip=this.value"><input placeholder="Jabatan" value="${esc(p.jabatan)}" oninput="SET.pejabat[${i}].jabatan=this.value"></div>`).join('')}
+  <button onclick="SET.pejabat.push({nama:'',nip:'',jabatan:''});openSet()">+ Pejabat</button></div>
+  <div class="full"><label>Lafaz sumpah per agama ({JENIS}, {STATUS}, {PENGADILAN} diganti otomatis)</label>${Object.keys(s.lafaz).map(a=>`<label>${a}</label><textarea oninput="SET.lafaz['${a}']=this.value">${esc(s.lafaz[a])}</textarea>`).join('')}</div>
+  <div class="full card" style="padding:12px"><h3>🔢 Koneksi SPS (sps.batamen.com)</h3>
+    <p class="hint">Status: ${SPS.terhubung?'<b style="color:var(--ok)">tersimpan</b>':'<b style="color:var(--warn)">belum diisi</b>'}${SPS.cookie?' · cookie':''}${SPS.akun?' · akun':''}. Nomor diambil dengan kode <b>AH.06.03</b> (pengampuan) / <b>AH.06.02</b> (perwalian), nama pegawai = admin yang login. Kredensial disimpan di server, tidak terlihat admin lain.</p>
+    <div class="grid"><div><label>Username SPS</label><input id="spsU" autocomplete="off"></div><div><label>Password SPS</label><input id="spsP" type="password" autocomplete="new-password"></div>
+    <div class="full"><label>atau Cookie SPS (sama seperti SPS_COOKIE di skrip SAPA WALI)</label><input id="spsC" type="password" autocomplete="off" placeholder="XSRF-TOKEN=…; sps_session=…"></div>
+    <div><button onclick="simpanSps()">Simpan kredensial</button></div><div><button onclick="tesSps(this)">🔌 Tes koneksi</button></div></div></div>
+  <div class="full card" style="padding:12px"><h3>✨ AI Gemini untuk membaca penetapan</h3><p class="hint">Status: ${ADA_AI?'<b style="color:var(--ok)">terhubung</b>':'<b style="color:var(--warn)">belum terhubung</b>'}. Buat kunci gratis di <a href="https:\/\/aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> (login dengan akun Google Anda), lalu tempel di sini. Kunci disimpan di server, tidak terlihat admin lain.</p><div class="grid"><div><label>Gemini API key</label><input id="gk" type="password" autocomplete="new-password"></div><div><label>&nbsp;</label><button onclick="simpanGemini()">Simpan kunci</button></div><div><label>&nbsp;</label><button onclick="tesGemini(this)">🔌 Tes Gemini</button></div></div></div>
+  </div><p style="text-align:right;margin-top:12px"><button onclick="dlgClose();boot()">Batal</button> <button class="pri" onclick="simpanSet()">Simpan pengaturan</button></p>`)}
+function gantiLogo(inp){const f=inp.files[0];if(!f)return;const img=new Image();img.onload=()=>{const c=document.createElement('canvas'),k=Math.min(1,300/img.height);c.width=img.width*k;c.height=img.height*k;c.getContext('2d').drawImage(img,0,0,c.width,c.height);SET.logo=c.toDataURL('image/png');openSet()};img.src=URL.createObjectURL(f)}
+async function sinkronPegawai(b){b.disabled=true;b.textContent='Membaca sheet…';try{const p=await api('apiSinkronPegawai','');SET.pejabat=p;toast(p.length+' pegawai dimuat');openSet()}catch(e){alert('Gagal: '+(e.message||e));b.disabled=false}}
+async function simpanSet(){try{await api('apiSimpanPengaturan',JSON.parse(JSON.stringify(SET)));dlgClose();toast('Pengaturan disimpan');renderMain()}catch(e){alert(e.message)}}
+async function simpanSps(){try{SPS=await api('apiSimpanKredensialSps',$('#spsU').value.trim(),$('#spsP').value,$('#spsC').value.trim());toast('Kredensial SPS disimpan');openSet()}catch(e){alert(e.message)}}
+async function tesSps(b){b.disabled=true;try{alert(await api('apiTesSps'))}catch(e){alert('Gagal: '+(e.message||e))}b.disabled=false}
+async function tesGemini(b){b.disabled=true;try{alert(await api('apiTesGemini'))}catch(e){alert('Gagal: '+(e.message||e))}b.disabled=false}
+async function simpanGemini(){try{ADA_AI=await api('apiSimpanKunciGemini',$('#gk').value.trim());toast('Disimpan');openSet()}catch(e){alert(e.message)}}
+
+function toggleTheme(){const r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem('bhpTheme',r.dataset.theme)}catch(e){}}
+try{document.documentElement.dataset.theme=localStorage.getItem('bhpTheme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}
+$('#q').oninput=renderList;
+TOKEN=ss('bhpTok');boot();
+</script>
+</body>
+</html>
