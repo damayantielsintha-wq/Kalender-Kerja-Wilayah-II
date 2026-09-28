@@ -32,9 +32,7 @@ const PENGGUNA_AWAL = [
 
 const UI_URL = 'https://raw.githubusercontent.com/damayantielsintha-wq/Kalender-Kerja-Wilayah-II/claude/dokumen-penyumpahan-app-3s2ts5/penyumpahan/Index.html';
 function doGet() {
-  let html = '';
-  try { const r = UrlFetchApp.fetch(UI_URL, { muteHttpExceptions: true }); if (r.getResponseCode() === 200) html = r.getContentText(); } catch (e) {}
-  return (html ? HtmlService.createHtmlOutput(html) : HtmlService.createHtmlOutputFromFile('Index'))
+  return HtmlService.createHtmlOutputFromFile('Index')
     .setTitle('Dokumen Penyumpahan BHP')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
@@ -146,7 +144,7 @@ function apiLogin(username, password) {
   CacheService.getScriptCache().put('sess_' + token, username, SESSION_JAM * 3600);
   sheet_('Pengguna').getRange(p._row, 9).setValue(new Date());
   log_(p, 'LOGIN', '', '', '');
-  return { token: token, user: { username: p.username, nama: p.nama, role: p.role, wajibGanti: p.wajibGanti === true } };
+  return { token: token, user: { username: p.username, nama: p.nama, role: p.role, wajibGanti: p.wajibGanti === true }, init: apiInit(token) };
 }
 function apiLogout(token) {
   try { const u = user_(token); log_(u, 'LOGOUT', '', '', ''); } catch (e) {}
@@ -168,7 +166,7 @@ function apiGantiPassword(token, lama, baru) {
 
 function apiInit(token) {
   const u = user_(token);
-  const out = { user: u, settings: settings_(), berkas: berkas_(u.role === 'superadmin'), sps: spsInfo_(), folderUrl: folderRoot_().getUrl() };
+  const out = { user: u, settings: settings_(), berkas: berkas_(u.role === 'superadmin'), sps: spsInfo_(), folderUrl: PROPS.getProperty('FOLDER_ID') ? 'https://drive.google.com/drive/folders/' + PROPS.getProperty('FOLDER_ID') : folderRoot_().getUrl(), ai: !!PROPS.getProperty('CLAUDE_KEY') };
   if (u.role === 'superadmin') out.users = daftarPengguna_();
   return out;
 }

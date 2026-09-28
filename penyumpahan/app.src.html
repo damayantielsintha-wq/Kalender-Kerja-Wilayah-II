@@ -392,7 +392,7 @@ function bapList(t){const c=[0,0,0];return baris(t).map(x=>{const m=x.match(/^(-
 const $=s=>document.querySelector(s);
 /* ---------------- server & sesi ---------------- */
 const GAS=typeof google!=='undefined'&&google.script&&google.script.run;
-let FOLDER='',TOKEN=null,ME=null,USERS=[],SPS={terhubung:false},ADA_AI=false,DB=[],SET=JSON.parse(JSON.stringify(DEF_SET));
+let INIT=null,FOLDER='',TOKEN=null,ME=null,USERS=[],SPS={terhubung:false},ADA_AI=false,DB=[],SET=JSON.parse(JSON.stringify(DEF_SET));
 const ss=(k,v)=>{let r=null;for(const n of ['localStorage','sessionStorage']){try{const S=window[n];if(v===undefined){r=r||S.getItem(k)}else if(v===null)S.removeItem(k);else S.setItem(k,v)}catch(e){}}return r};
 function api(fn,...a){
   if(!GAS)return new Promise((ok,no)=>setTimeout(()=>{try{ok(DEMO[fn](TOKEN,...a))}catch(e){no(e)}},60));
@@ -412,13 +412,13 @@ function showLogin(msg){
     ${GAS?'':'<p class="hint" style="margin-top:12px">Mode demo (belum di-deploy): username <b>shela</b> atau <b>annisa</b>, password <b>demo</b>.</p>'}</form>`;
   $('#login').hidden=false}
 async function doLogin(f){const b=f.querySelector('button');b.disabled=true;b.textContent='Memeriksa…';
-  try{const r=await apiLoginCall(f.u.value,f.p.value);TOKEN=r.token;ss('bhpTok',TOKEN);await boot()}
+  try{const r=await apiLoginCall(f.u.value,f.p.value);TOKEN=r.token;ss('bhpTok',TOKEN);INIT=r.init||null;await boot()}
   catch(e){showLogin(e.message||String(e))}}
 async function boot(){
   if(!TOKEN){showLogin();return}
-  try{const r=await api('apiInit');ME=r.user;USERS=r.users||[];SPS=r.sps||SPS;SET=Object.assign(JSON.parse(JSON.stringify(DEF_SET)),r.settings||{});DB=r.berkas||[];FOLDER=r.folderUrl||'';
+  try{const r=INIT||await api('apiInit');INIT=null;ME=r.user;USERS=r.users||[];SPS=r.sps||SPS;SET=Object.assign(JSON.parse(JSON.stringify(DEF_SET)),r.settings||{});DB=r.berkas||[];FOLDER=r.folderUrl||'';
     DB.sort((a,b)=>String(b._meta?.diubahPada||'').localeCompare(String(a._meta?.diubahPada||'')));
-    api('apiAdaAI').then(v=>ADA_AI=v).catch(()=>{});
+    if(r.ai!==undefined)ADA_AI=r.ai;else api('apiAdaAI').then(v=>ADA_AI=v).catch(()=>{});
   }catch(e){if(!TOKEN)return;showLogin(e.message);return}
   $('#login').hidden=true;document.body.classList.remove('locked');renderHeader();cur=null;renderList();renderMain();
   if(ME.wajibGanti)gantiPassword(true)}
