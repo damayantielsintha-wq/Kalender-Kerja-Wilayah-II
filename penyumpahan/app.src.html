@@ -577,7 +577,7 @@ const DEMO=(()=>{const K='bhpDemo.v2',st=(()=>{try{return JSON.parse(localStorag
       st.users.push({username:d.username.toLowerCase(),nama:d.nama,role:d.role,aktif:true,wajibGanti:true,loginTerakhir:''});log(u,'TAMBAH_PENGGUNA','','',d.nama);return 'demo'},
     apiAmbilNomor(){throw new Error('Pengambilan nomor SPS hanya berjalan setelah aplikasi di-deploy ke Google Apps Script.')},
     apiTesSps(){throw new Error('Hanya tersedia setelah di-deploy.')},apiSimpanKredensialSps(){throw new Error('Hanya tersedia setelah di-deploy.')},
-    apiAdaAI(){return false},apiSimpanBanyak(t,l){return{jumlah:l.length}},apiBacaSheet(t,ss,n){const w=/WALI/i.test(n);return w?{judul:'Contoh / '+n,header:['Nama_Wali','NIK_Wali','Jenis_Kelamin_Wali','Tanggal_Lahir_Wali','Agama_Wali','Pekerjaan_Wali','Alamat_Wali','Kel_Kec_Kota','Status_Dengan_Wali','Lokasi_Pengadilan','Nomor_Penetapan','Tanggal_Penetapan','Nama_Anak_1','Jenis_Kelamin_Anak_1','Tanggal_Lahir_Anak_1','Nama_Anak_2','Tanggal_Lahir_Anak_2'],
+    apiAdaAI(){return false},apiSimpanBanyak(t,l){return{jumlah:l.length,lewat:0,ids:l.map(r=>r.id)}},apiBacaSheet(t,ss,n){const w=/WALI/i.test(n);return w?{judul:'Contoh / '+n,header:['Nama_Wali','NIK_Wali','Jenis_Kelamin_Wali','Tanggal_Lahir_Wali','Agama_Wali','Pekerjaan_Wali','Alamat_Wali','Kel_Kec_Kota','Status_Dengan_Wali','Lokasi_Pengadilan','Nomor_Penetapan','Tanggal_Penetapan','Nama_Anak_1','Jenis_Kelamin_Anak_1','Tanggal_Lahir_Anak_1','Nama_Anak_2','Tanggal_Lahir_Anak_2'],
       rows:[['Rina Wati','1471014506850003','Perempuan','05/06/1985','Islam','Wiraswasta','Jl. Durian No. 5 Pekanbaru','Kelurahan Labuh Baru Timur, Kecamatan Payung Sekaki, Kota Pekanbaru','Anak Kandung','Pengadilan Negeri Pekanbaru','48/Pdt.P/2025/PN Pbr','12 Juni 2025','Andi Saputra','Laki-laki','30 Mei 2011','Sari Putri','17-08-2014'],['','','','','','','','','','','','','','','','','']]}
       :{judul:'Contoh / '+n,header:['Nama_Pengampu','Tanggal_Lahir_Pengampu','Nama_Terampu','Tanggal_Lahir_Terampu','Kondisi_Medis_Terampu','Nomor_Penetapan'],rows:[['Budi','1970-01-02','Joko','1990-03-04','gangguan jiwa','9/Pdt.P/2025/PN Dum']]}},apiSimpanKunciAI(){throw new Error('Hanya tersedia setelah di-deploy.')},apiBacaPenetapanAI(){return null}}})();
 
@@ -796,7 +796,7 @@ function imporSheetDlg(){dlg(`<h3>📥 Impor dari Spreadsheet</h3><p class="hint
   <div><label>Sheet Perwalian</label><input id="impW" value="PERWALIAN RIAU"></div><div><label>Sheet Pengampuan</label><input id="impP" value="PENGAMPUAN RIAU"></div></div>
   <div id="impOut" style="margin-top:10px"></div><p style="text-align:right;display:flex;gap:8px;justify-content:flex-end"><button onclick="dlgClose()">Tutup</button><button class="pri" id="impBtn" onclick="imporCek(this)">🔍 Periksa data</button></p>`)}
 async function imporCek(btn){btn.disabled=true;btn.textContent='Membaca sheet…';const out=$('#impOut');IMP=[];
-  try{const ada=new Set(DB.filter(x=>!x._dihapus).map(x=>(x.nomorPenetapan+'|'+x.nama).toUpperCase()));let html='';
+  try{if(GAS){const r=await api('apiInit');DB=r.berkas||DB;renderList()}const ada=new Set(DB.filter(x=>!x._dihapus).map(x=>(x.nomorPenetapan+'|'+x.nama).toUpperCase()));let html='';
     for(const [id,w] of [['impW',true],['impP',false]]){const nm=$('#'+id).value.trim();if(!nm)continue;
       const d=await api('apiBacaSheet',$('#impSs').value.trim(),nm);
       const recs=d.rows.map(v=>recDariBaris(d.header,v,w)).filter(r=>r.nama);const baru=recs.filter(r=>!ada.has((r.nomorPenetapan+'|'+r.nama).toUpperCase()));IMP.push(...baru);
@@ -804,12 +804,15 @@ async function imporCek(btn){btn.disabled=true;btn.textContent='Membaca sheet…
         <div style="max-height:180px;overflow:auto;margin-top:6px;font-size:13px">${baru.map((r,i)=>`<div>${i+1}. <b>${esc(r.nama)}</b> — ${esc(r.nomorPenetapan||'tanpa nomor')} · ${esc(derive(r).objek||'-')}${r.tglLahir?'':' <span style="color:var(--warn)">(tgl lahir pemohon kosong)</span>'}${(r.anak||[]).some(a=>a.nama&&!a.tglLahir)?' <span style="color:var(--warn)">(tgl lahir anak kosong)</span>':''}</div>`).join('')||'<i>Tidak ada data baru</i>'}</div></div>`}
     out.innerHTML=html;btn.disabled=false;if(IMP.length){btn.textContent=`⬇ Impor ${IMP.length} berkas`;btn.onclick=()=>imporJalan(btn)}else btn.textContent='🔍 Periksa lagi'}
   catch(e){out.innerHTML=`<p style="color:#c0392b">${esc(e.message||e)}</p>`;btn.disabled=false;btn.textContent='🔍 Periksa data'}}
-async function imporJalan(btn){btn.disabled=true;let n=0,gagal=0;const semua=IMP.slice(),PAKET=40;
+async function imporJalan(btn){btn.disabled=true;let n=0,lewat=0;const gagal=[],semua=IMP.slice(),PAKET=40;
   semua.forEach(r=>{r.asal='Impor dari sheet '+(r.jenis==='Perwalian'?$('#impW').value:$('#impP').value)});
   for(let i=0;i<semua.length;i+=PAKET){const pk=semua.slice(i,i+PAKET);btn.textContent=`Menyimpan ${Math.min(i+PAKET,semua.length)}/${semua.length}…`;
-    try{await api('apiSimpanBanyak',pk.map(r=>JSON.parse(JSON.stringify(r))));pk.forEach(r=>{addRec(r,r.asal);r._versi=1});n+=pk.length}catch(e){gagal+=pk.length;console.warn(e)}}
+    try{const x=await api('apiSimpanBanyak',pk.map(r=>JSON.parse(JSON.stringify(r))));const ok=new Set(x.ids||[]);lewat+=x.lewat||0;
+      pk.forEach(r=>{if(ok.has(r.id)){addRec(r,r.asal);r._versi=1;n++}})}
+    catch(e){gagal.push(e.message||String(e))}}
   api('apiCatat','IMPOR_CSV','','',`${n} berkas diimpor dari spreadsheet`).catch(()=>{});renderList();
-  $('#impOut').innerHTML=`<p>✅ <b>${n}</b> berkas diimpor${gagal?`, <span style="color:#c0392b">${gagal} gagal — klik Periksa lagi lalu impor ulang (yang sudah masuk dilewati)</span>`:''}. Periksa tiap berkas (tab 1–5) sebelum membuat dokumen.</p>`;btn.textContent='Selesai';btn.onclick=dlgClose;btn.disabled=false;IMP=null}
+  $('#impOut').innerHTML=`<p>✅ <b>${n}</b> berkas baru diimpor${lewat?` · ${lewat} dilewati karena sudah ada di database`:''}.</p>${gagal.length?`<p style="color:#c0392b">Sebagian gagal: ${esc([...new Set(gagal)].join('; '))}<br>Klik <b>Periksa lagi</b> lalu impor ulang — yang sudah masuk otomatis dilewati.</p>`:''}<p class="hint">Periksa tiap berkas (tab 1–5) sebelum membuat dokumen.</p>`;
+  IMP=null;btn.disabled=false;if(gagal.length){btn.textContent='🔍 Periksa lagi';btn.onclick=()=>imporCek(btn)}else{btn.textContent='Selesai';btn.onclick=dlgClose}}
 function exportCsv(){const H=['Jenis','Nama','NIK','Jenis_Kelamin','Tanggal_Lahir','Agama','Pekerjaan','Alamat','Kel_Kec_Kota','Status','Objek','Nomor_Penetapan','Tanggal_Penetapan','Tanggal_Sumpah','Nomor_Surat','Nomor_Surat_Lurah','Nomor_BA'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   const t=[H.join(',')].concat(DB.map(r=>[r.jenis,r.nama,r.nik,r.jk,tgl(r.tglLahir),r.agama,r.pekerjaan,r.alamat,r.kelurahan,r.status,derive(r).objek,r.nomorPenetapan,tgl(r.tglPenetapan),tgl(r.tglSumpah),r.nomorSurat,r.nomorLurah,r.nomorBA].map(q).join(','))).join('\n');

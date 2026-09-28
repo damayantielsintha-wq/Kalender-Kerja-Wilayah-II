@@ -221,12 +221,19 @@ function apiSimpanBanyak(token, recs) {
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
-    const ada = {};
-    rows_('Berkas').forEach(function (r) { ada[r.id] = 1; });
+    const ada = {}, kunci = {};
+    const kk = function (r) { return [r.jenis, r.nomorPenetapan, r.nama].map(function (x) { return String(x || '').trim().toUpperCase(); }).join('|'); };
+    rows_('Berkas').forEach(function (r) {
+      ada[r.id] = 1;
+      if (r.dihapus === true) return;
+      try { kunci[kk(JSON.parse(r.data))] = 1; } catch (e) {}
+    });
     const now = new Date(), baris = [], log = [];
+    let lewat = 0;
     (recs || []).forEach(function (rec) {
       if (!rec || !rec.id || ada[rec.id]) return;
-      ada[rec.id] = 1;
+      if (kunci[kk(rec)]) { lewat++; return; }
+      ada[rec.id] = 1; kunci[kk(rec)] = 1;
       baris.push([rec.id, rec.jenis, rec.nama || '', objek_(rec), JSON.stringify(bersihkan_(rec)), 1, u.nama, now, u.nama, now, false]);
       log.push([now, u.username, u.nama, 'BUAT', rec.id, rec.nama || '', rec.asal || 'Impor spreadsheet']);
     });
@@ -236,7 +243,7 @@ function apiSimpanBanyak(token, recs) {
       const lg = sheet_('Riwayat');
       lg.getRange(lg.getLastRow() + 1, 1, log.length, 7).setValues(log);
     }
-    return { jumlah: baris.length };
+    return { jumlah: baris.length, lewat: lewat, ids: baris.map(function (b) { return b[0]; }) };
   } finally {
     lock.releaseLock();
   }
