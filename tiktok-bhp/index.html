@@ -465,8 +465,8 @@
   .cz.d { bottom: 262px; left: 0; width: 720px; height: 30px; background: var(--gold); clip-path: polygon(0 0, 100% 0, 96% 100%, 0 100%); }
   .cz.e { top: 230px; right: 0; width: 360px; height: 22px; background: var(--gold); clip-path: polygon(8% 0, 100% 0, 100% 100%, 0 100%); }
   .czhead { top: 120px; left: 64px; text-align: left; display: flex; align-items: center; gap: 22px; }
-  .czlogo { width: 96px; height: 96px; border-radius: 26px; background: var(--navy); display: grid; place-items: center; box-shadow: 0 10px 24px rgba(11,42,91,.25); }
-  .czlogo svg { width: 58px; height: 58px; stroke: var(--gold); }
+  .czlogo { width: 92px; height: 101px; border-radius: 8px; overflow: hidden; display: grid; place-items: center; box-shadow: 0 10px 24px rgba(11,42,91,.25); }
+  .czlogo svg { width: 100%; height: 100%; display: block; }
   .czhead b { display: block; max-width: 560px; font: 700 34px/1.1 Oswald, var(--font); letter-spacing: .02em; }
   .czhead small { display: block; margin-top: 6px; font-size: 25px; font-weight: 600; color: var(--ink-soft); }
   #closing.modern .tusicard { top: 330px; left: 64px; right: 64px; width: auto; padding: 0; background: none; border: 0; box-shadow: none; text-align: left; }
@@ -757,6 +757,14 @@ const ICONS = {
 const svg = (name, sw = 2) =>
   `<svg viewBox="0 0 24 24" fill="none" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
 
+/* Logo Pengayoman (Kementerian Hukum) — digambar ulang sebagai vektor */
+const PENGAYOMAN = `<svg viewBox="0 0 100 110" aria-label="Logo Pengayoman"><rect width="100" height="110" rx="6" fill="#23308F"/>
+  <g fill="none" stroke="#F4D338" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M36 44 C36 20 64 20 64 44"/><path d="M18 60 C16 40 40 34 46 50"/><path d="M82 60 C84 40 60 34 54 50"/>
+    <path d="M26 58 C28 48 38 46 42 54"/><path d="M74 58 C72 48 62 46 58 54"/>
+    <path d="M46 36 V90 M54 36 V90 M40 54 V90 M60 54 V90 M24 62 V76 M76 62 V76"/><path d="M34 90 H66"/></g>
+  <text x="50" y="104" text-anchor="middle" font-family="Plus Jakarta Sans, Arial, sans-serif" font-weight="800" font-size="11" fill="#F4D338" letter-spacing=".5">PENGAYOMAN</text></svg>`;
+
 /* ===================== Tokoh kartun (SVG) ===================== */
 const FACE = (skin, lx, rx, ey) => `
   <g class="eyes">
@@ -936,7 +944,8 @@ function tableSvg(name) {
     <path d="M0 140 H1080 M0 260 H1080 M0 380 H1080" stroke="#000" stroke-width="3" opacity=".07"/>
     <path d="M330 0 H750 V250 L540 300 L330 250 Z" fill="#0B2A5B"/>
     <path d="M350 0 V240 L540 284 L730 240 V0" fill="none" stroke="#F2B705" stroke-width="8"/>
-    <text x="540" y="160" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="64" letter-spacing="8" fill="#F2B705">BHP</text></svg>`;
+    <svg x="495" y="36" width="90" height="99">${PENGAYOMAN.replace('<svg ', '<svg width="90" height="99" ')}</svg>
+    <text x="540" y="210" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="54" letter-spacing="8" fill="#F2B705">BHP</text></svg>`;
 }
 const CUPS = {
   kopi: (x) => `<g transform="translate(${x} 0)">
@@ -1462,7 +1471,7 @@ async function showClosing(ep) {
   const next = EPISODES[(currentEp + 1) % EPISODES.length];
   const isLast = currentEp === EPISODES.length - 1;
   $('#tusiCard').innerHTML = `<small>TUSI #${ep.no} · BHP MEDAN</small><b></b><span>✔ ADA DI BHP</span>`;
-  $('.czlogo').innerHTML = svg('building', 2);
+  $('.czlogo').innerHTML = PENGAYOMAN;
   $('#tusiCard b').textContent = ep.tusi;
   $('#teaser').innerHTML = `<small>NEXT EPISODE 👉</small><b>Tusi #${next.no}: ${next.short} ${next.emoji}</b>`;
   $('#nextBtn').textContent = isLast ? 'Mulai lagi dari Tusi #1 👉' : `Tusi #${next.no}: ${next.short} 👉`;
