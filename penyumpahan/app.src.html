@@ -728,7 +728,7 @@ async function handlePenetapan(file){
   if(!file)return;busy('Membaca '+file.name+'…');
   try{
     let data;
-    if(ADA_AI){stat('Menganalisis dengan AI (Claude)…');try{data=await geminiExtract(file)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}}
+    if(ADA_AI){stat('Menganalisis dengan AI Gemini…');try{data=await geminiExtract(file)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}}
     let rx=null;const cukup=data&&data.nama&&(data.nomorPenetapan||data.tglPenetapan);
     if(!cukup)try{const text=await fileText(file);if(text.replace(/\s/g,'').length>=80){rx=parsePenetapan(text);rx._text=text}}catch(e){if(!data)throw e}
     if(data&&rx)data=gabung(data,rx);else data=data||rx;if(!data)throw new Error('Teks tidak terbaca dari file.');
@@ -876,7 +876,7 @@ function wizard(step){WZ.on=true;$('.wrap').classList.add('wzmode');WZ.step=step
     ${[['Pengampuan','Pengampu atas orang dewasa yang berada di bawah pengampuan (terampu).'],['Perwalian','Wali atas anak yang masih di bawah umur.']].map(([j,d])=>`<div class="opt ${WZ.jenis===j?'on':''}" onclick="WZ.jenis='${j}';WZ.pilih=true;wizard(1)"><b>${j}</b><span>${d}</span></div>`).join('')}</div>
     <div class="lbl">Upload Penetapan Pengadilan</div>
     <label class="drop" id="wzDrop" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="event.preventDefault();this.classList.remove('over');handlePenetapan(event.dataTransfer.files[0])">
-      <div class="ic">📄</div><b>Klik atau seret file PDF penetapan ke sini</b><small>PDF asli atau hasil scan · data dibaca otomatis${ADA_AI?' dengan AI Claude':''}</small>
+      <div class="ic">📄</div><b>Klik atau seret file PDF penetapan ke sini</b><small>PDF asli atau hasil scan · data dibaca otomatis${ADA_AI?' dengan AI Gemini':''}</small>
       <input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)"></label>
     <div class="wz-f"><button class="link" onclick="WZ.on=false;newRec();cur.jenis=WZ.jenis;save();renderMain()">Isi manual tanpa penetapan</button><span class="hint">Setelah upload, lanjut ke Bagian 2 otomatis</span></div></div>`}
   if(step===2){const d=WZ.data;m.innerHTML=`<div class="wz">${wzHead(2)}<h4>🔎 Bagian 2: Periksa Data dari Penetapan ${d._ai?'<span class="tag">AI</span>':''}</h4>
@@ -904,7 +904,7 @@ function openSet(){if(!isSuper())return;const s=SET;const L={instansi:'Instansi'
     <div class="grid"><div><label>Username SPS</label><input id="spsU" autocomplete="off"></div><div><label>Password SPS</label><input id="spsP" type="password" autocomplete="new-password"></div>
     <div class="full"><label>atau Cookie SPS (sama seperti SPS_COOKIE di skrip SAPA WALI)</label><input id="spsC" type="password" autocomplete="off" placeholder="XSRF-TOKEN=…; sps_session=…"></div>
     <div><button onclick="simpanSps()">Simpan kredensial</button></div><div><button onclick="tesSps(this)">🔌 Tes koneksi</button></div></div></div>
-  <div class="full card" style="padding:12px"><h3>✨ AI Claude untuk membaca penetapan</h3><p class="hint">Status: ${ADA_AI?'<b style="color:var(--ok)">terhubung</b>':'<b style="color:var(--warn)">belum terhubung</b>'}. Buat kunci di <a href="https:\/\/console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a> (menu API Keys → Create Key, isi saldo di Billing), lalu tempel di sini. Kunci disimpan di server, tidak terlihat admin lain.</p><div class="grid"><div><label>Claude API key (sk-ant-…)</label><input id="gk" type="password" autocomplete="new-password"></div><div><label>&nbsp;</label><button onclick="simpanGemini()">Simpan kunci</button></div><div><label>&nbsp;</label><button onclick="tesGemini(this)">🔌 Tes AI</button></div></div></div>
+  <div class="full card" style="padding:12px"><h3>✨ AI Gemini untuk membaca penetapan</h3><p class="hint">Status: ${ADA_AI?'<b style="color:var(--ok)">terhubung</b>':'<b style="color:var(--warn)">belum terhubung</b>'}. Buat kunci gratis di <a href="https:\/\/aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> (login dengan akun Google Anda), lalu tempel di sini. Kunci disimpan di server, tidak terlihat admin lain.</p><div class="grid"><div><label>Gemini API key (AIza…)</label><input id="gk" type="password" autocomplete="new-password"></div><div><label>&nbsp;</label><button onclick="simpanGemini()">Simpan kunci</button></div><div><label>&nbsp;</label><button onclick="tesGemini(this)">🔌 Tes AI</button></div></div></div>
   </div><p style="text-align:right;margin-top:12px"><button onclick="dlgClose();boot()">Batal</button> <button class="pri" onclick="simpanSet()">Simpan pengaturan</button></p>`)}
 function gantiLogo(inp){const f=inp.files[0];if(!f)return;const img=new Image();img.onload=()=>{const c=document.createElement('canvas'),k=Math.min(1,300/img.height);c.width=img.width*k;c.height=img.height*k;c.getContext('2d').drawImage(img,0,0,c.width,c.height);SET.logo=c.toDataURL('image/png');openSet()};img.src=URL.createObjectURL(f)}
 async function sinkronPegawai(b){b.disabled=true;b.textContent='Membaca sheet…';try{const p=await api('apiSinkronPegawai','');SET.pejabat=p;toast(p.length+' pegawai dimuat');openSet()}catch(e){alert('Gagal: '+(e.message||e));b.disabled=false}}
