@@ -1,141 +1,174 @@
 <title>Telaah Cessie PT Rata Makmur</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
 <style>
 :root{
-  --bg:#F2F4F5; --panel:#FFFFFF; --ink:#14232E; --muted:#5A6A74; --line:#D6DDE1;
-  --accent:#1F6F5C; --accent-soft:#E1EFEA; --gold:#9C7426; --gold-soft:#F5ECD9;
-  --bad:#A8412E; --bad-soft:#F6E3DE; --ok:#2E7D4F; --ok-soft:#E2F1E7;
-  --serif:"Newsreader",Georgia,"Times New Roman",serif;
-  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --bg:#EEF2F7; --panel:#FFFFFF; --ink:#0E1B2C; --muted:#5B6B80; --line:#DCE3EC;
+  --navy:#0A3A73; --accent:#1559B7; --accent-soft:#E6EEFA; --gold:#A57C12; --gold-soft:#FBF3DC;
+  --bad:#B42318; --bad-soft:#FDECEA; --ok:#157A46; --ok-soft:#E3F4EA;
+  --shadow:0 1px 2px rgba(10,58,115,.06),0 8px 24px rgba(10,58,115,.08);
+  --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:var(--sans); --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  color-scheme:dark;--bg:#0F171C;--panel:#16222A;--ink:#E4EBEE;--muted:#98A8B1;--line:#2A3942;
-  --accent:#5FBFA2;--accent-soft:#17352D;--gold:#D6AE5C;--gold-soft:#342B19;
-  --bad:#E48A74;--bad-soft:#3A221D;--ok:#72C995;--ok-soft:#1B3325;}}
-:root[data-theme="dark"]{
-  color-scheme:dark;--bg:#0F171C;--panel:#16222A;--ink:#E4EBEE;--muted:#98A8B1;--line:#2A3942;
-  --accent:#5FBFA2;--accent-soft:#17352D;--gold:#D6AE5C;--gold-soft:#342B19;
-  --bad:#E48A74;--bad-soft:#3A221D;--ok:#72C995;--ok-soft:#1B3325;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#0A1220;--panel:#111C2E;--ink:#E6ECF4;--muted:#93A3B8;--line:#22314A;--navy:#0D2A52;
+  --accent:#6EA8FF;--accent-soft:#16294A;--gold:#E2BC55;--gold-soft:#2D2614;
+  --bad:#FF8A7A;--bad-soft:#3A1C1A;--ok:#6FD49A;--ok-soft:#15301F;--shadow:0 8px 24px rgba(0,0,0,.35);}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0A1220;--panel:#111C2E;--ink:#E6ECF4;--muted:#93A3B8;--line:#22314A;--navy:#0D2A52;
+  --accent:#6EA8FF;--accent-soft:#16294A;--gold:#E2BC55;--gold-soft:#2D2614;
+  --bad:#FF8A7A;--bad-soft:#3A1C1A;--ok:#6FD49A;--ok-soft:#15301F;--shadow:0 8px 24px rgba(0,0,0,.35);}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font:15px/1.65 var(--sans);padding-inline:16px}
-.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:220px minmax(0,1fr);gap:40px;padding-block:32px 80px}
-nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);align-self:start;font-size:13px}
-nav.toc b{display:block;font:600 11px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
-nav.toc a{display:block;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line)}
-nav.toc a:hover,nav.toc a.on{color:var(--accent);border-left-color:var(--accent)}
-@media (max-width:860px){.wrap{grid-template-columns:1fr}nav.toc{display:none}}
-header.hero{border-bottom:1px solid var(--line);padding-bottom:28px;margin-bottom:8px}
-.eyebrow{font:600 11px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
-h1{font:650 clamp(30px,5vw,46px)/1.1 var(--serif);margin:10px 0 14px;text-wrap:balance}
-h2{font:650 28px/1.2 var(--serif);margin:0 0 6px;text-wrap:balance}
-h3{font:600 16px/1.35 var(--sans);margin:0 0 6px}
-.lede{max-width:66ch;color:var(--muted);font-size:16.5px;margin:0}
-.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.chip{font:500 12px var(--sans);padding:4px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+html,body{background:var(--bg)}
+body{color:var(--ink);font:15px/1.6 var(--sans);padding-inline:0;-webkit-font-smoothing:antialiased}
+/* app bar */
+.appbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--navy);color:#fff;padding:12px 16px 0}
+.appbar .row{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.seal{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.12);display:grid;place-items:center;flex:none}
+.appbar .ttl{flex:1;min-width:0}
+.appbar .ttl small{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.75;font-weight:600}
+.appbar .ttl b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iconbtn{background:rgba(255,255,255,.12);border:0;color:#fff;border-radius:10px;padding:8px 11px;font:600 13px var(--sans);cursor:pointer}
+.iconbtn:hover{background:rgba(255,255,255,.2);color:#fff}
+.prog-top{max-width:760px;margin:12px auto 0;height:4px;background:rgba(255,255,255,.18);border-radius:4px 4px 0 0;overflow:hidden}
+.prog-top i{display:block;height:100%;background:#F2C94C;width:0;transition:width .35s ease}
+/* stage */
+main{max-width:760px;margin:0 auto;padding:18px 16px calc(96px + env(safe-area-inset-bottom,0px))}
+main>section{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:22px 18px;animation:in .3s ease}
+body.deck main>section{display:none}
+body.deck main>section.cur{display:block}
+body:not(.deck) main{display:grid;gap:16px}
+@keyframes in{from{opacity:.4;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (min-width:640px){main>section{padding:30px 32px}}
+.eyebrow{font:700 11px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.hero{background:linear-gradient(160deg,var(--panel) 55%,var(--accent-soft))!important}
+h1{font:800 clamp(24px,6.5vw,34px)/1.2 var(--sans);margin:8px 0 12px;text-wrap:balance;letter-spacing:-.01em}
+h2{font:800 22px/1.25 var(--sans);margin:0 0 6px;text-wrap:balance;letter-spacing:-.01em}
+h2::before{content:attr(data-n);display:block;font:700 11px var(--sans);letter-spacing:.12em;color:var(--accent);margin-bottom:6px;text-transform:uppercase}
+h3{font:700 15px/1.35 var(--sans);margin:0 0 4px}
+.lede{color:var(--muted);font-size:15.5px;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.chip{font:600 11.5px var(--sans);padding:5px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
 .chip.g{background:var(--gold-soft);color:var(--gold)}
-section{padding-top:48px;scroll-margin-top:20px}
-section>.sub{color:var(--muted);max-width:66ch;margin:0 0 20px}
-.pasal{font:500 12px var(--mono);color:var(--gold);white-space:nowrap}
-.thesis{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);padding:18px 22px;font:500 19px/1.5 var(--serif);max-width:none}
-.note{background:var(--gold-soft);color:var(--ink);border-radius:8px;padding:12px 16px;font-size:14px}
-/* timeline */
-.tl{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:28px 20px 20px;overflow-x:auto}
-.tl svg{min-width:640px;width:100%;height:auto;display:block}
-/* wizard */
-.wiz{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px}
-.wiz .prog{display:flex;gap:6px;margin-bottom:18px}
-.wiz .prog i{flex:1;height:4px;border-radius:2px;background:var(--line)}
-.wiz .prog i.done{background:var(--accent)}
-.q{font:600 20px/1.35 var(--serif);margin:0 0 6px}
-.qhelp{color:var(--muted);font-size:14px;margin:0 0 16px;max-width:70ch}
-.btns{display:flex;flex-wrap:wrap;gap:10px}
-button{font:500 14px var(--sans);cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:9px 16px}
+section>.sub{color:var(--muted);margin:0 0 16px;font-size:14.5px}
+.pasal{font:500 11.5px var(--mono);color:var(--gold);background:var(--gold-soft);padding:1px 6px;border-radius:5px;white-space:nowrap}
+td.pasal,dd.pasal{background:none;padding:0}
+.thesis{background:var(--accent-soft);border-radius:14px;padding:16px 18px;font:600 16px/1.6 var(--sans);margin:0}
+.thesis em{font-style:normal;color:var(--accent)}
+.note{background:var(--gold-soft);border-radius:12px;padding:12px 14px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.cell{background:var(--bg);border-radius:14px;padding:14px 16px}
+.cell p{margin:0;color:var(--muted);font-size:14px}
+.cell .n{width:30px;height:30px;border-radius:9px;background:var(--accent);color:var(--panel);display:grid;place-items:center;font:800 14px var(--sans);margin-bottom:10px}
+/* tables → cards on mobile */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font:700 11px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:var(--bg)}
+td{padding:11px 12px;border-top:1px solid var(--line);vertical-align:top}
+@media (max-width:640px){
+  .tbl{border:0;overflow:visible}
+  table,tbody,tr,td{display:block;width:100%} thead{display:none}
+  tr{background:var(--bg);border-radius:14px;padding:6px 14px;margin-bottom:10px}
+  td{border:0;padding:6px 0;display:grid;grid-template-columns:96px 1fr;gap:10px}
+  td::before{content:attr(data-label);font:700 10.5px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+  td:first-child{font-weight:700;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:2px}
+  td[data-label=""]{grid-template-columns:1fr} td[data-label=""]::before{display:none}
+}
+.st{display:inline-block;font:700 11px var(--sans);padding:2px 8px;border-radius:6px}
+.st.bad{background:var(--bad-soft);color:var(--bad)}.st.ok{background:var(--ok-soft);color:var(--ok)}.st.mid{background:var(--gold-soft);color:var(--gold)}
+/* buttons */
+button{font:600 14px var(--sans);cursor:pointer;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:11px 16px;min-height:44px}
 button:hover{border-color:var(--accent);color:var(--accent)}
-button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 button.pri{background:var(--accent);border-color:var(--accent);color:var(--panel)}
 button.pri:hover{filter:brightness(1.08);color:var(--panel)}
-.verdict{border-radius:10px;padding:18px 20px;margin-top:4px}
-.verdict.bad{background:var(--bad-soft)} .verdict.ok{background:var(--ok-soft)} .verdict.mid{background:var(--gold-soft)}
-.verdict .tag{font:600 11px var(--sans);letter-spacing:.12em;text-transform:uppercase}
-.verdict.bad .tag{color:var(--bad)} .verdict.ok .tag{color:var(--ok)} .verdict.mid .tag{color:var(--gold)}
-.verdict ol{margin:10px 0 0;padding-left:20px}
-.trail{font-size:13px;color:var(--muted);margin-top:14px}
-/* tables */
-.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
-table{border-collapse:collapse;width:100%;font-size:14px;min-width:640px}
-th{font:600 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--bg)}
-td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
-tr:last-child td{border-bottom:0}
-td .pasal{white-space:normal}
-.st{display:inline-block;font:600 11px var(--sans);padding:2px 8px;border-radius:4px}
-.st.bad{background:var(--bad-soft);color:var(--bad)} .st.ok{background:var(--ok-soft);color:var(--ok)} .st.mid{background:var(--gold-soft);color:var(--gold)}
-/* syarat grid */
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
-.cell{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
-.cell p{margin:0;color:var(--muted);font-size:14px}
-.cell .n{font:650 26px var(--serif);color:var(--accent)}
+/* wizard */
+.wiz{background:var(--bg);border-radius:16px;padding:18px}
+.wiz .prog{display:flex;gap:5px;margin-bottom:14px}.wiz .prog i{flex:1;height:4px;border-radius:2px;background:var(--line)}.wiz .prog i.done{background:var(--accent)}
+.q{font:800 18px/1.35 var(--sans);margin:6px 0}
+.qhelp{color:var(--muted);font-size:14px;margin:0 0 14px}
+.btns{display:flex;flex-direction:column;gap:8px}
+@media (min-width:640px){.btns{flex-direction:row;flex-wrap:wrap}}
+.btns button{text-align:left}
+.verdict{border-radius:14px;padding:16px}
+.verdict.bad{background:var(--bad-soft)}.verdict.ok{background:var(--ok-soft)}.verdict.mid{background:var(--gold-soft)}
+.verdict .tag{font:700 11px var(--sans);letter-spacing:.1em;text-transform:uppercase}
+.verdict.bad .tag{color:var(--bad)}.verdict.ok .tag{color:var(--ok)}.verdict.mid .tag{color:var(--gold)}
+.verdict ol{margin:10px 0 0;padding-left:20px}.verdict li{margin-bottom:4px}
+.trail{font-size:12.5px;color:var(--muted);margin-top:12px}
 /* tahap */
-.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px}
-.tabs button{white-space:nowrap;padding:8px 14px}
-.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.stage-h{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:12px}
-.stage-h span{color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin:0 -18px 12px;padding-inline:18px;scrollbar-width:none}
+.tabs button{white-space:nowrap;padding:8px 14px;min-height:38px;border-radius:999px}
+.tabs button[aria-selected="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.stage-h{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;align-items:baseline;margin-bottom:10px}
+.stage-h h3{font:800 18px var(--sans)!important}.stage-h span{color:var(--muted);font-size:13px}
 .steps{display:grid;gap:10px}
-.step{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;grid-template-columns:44px 1fr;gap:12px}
-.step .num{font:500 13px var(--mono);color:var(--accent);padding-top:2px}
-.step dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:8px 0 0;font-size:13.5px}
-.step dt{color:var(--muted)} .step dd{margin:0}
+.step{background:var(--bg);border-radius:14px;padding:14px;display:grid;grid-template-columns:38px 1fr;gap:10px}
+.step .num{width:32px;height:32px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font:700 12px var(--mono)}
+.step dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:8px 0 0;font-size:13.5px}
+.step dt{color:var(--muted);font-weight:600}.step dd{margin:0}
 /* checklist */
-.ck{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-.ck fieldset{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:14px 16px;margin:0}
-.ck legend{font:600 13px var(--sans);padding:0 6px}
-.ck label{display:flex;gap:10px;font-size:14px;padding:4px 0;cursor:pointer}
-.ck input{accent-color:var(--accent);margin-top:4px}
+.ck{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.ck fieldset{border:0;border-radius:14px;background:var(--bg);padding:14px 16px;margin:0}
+.ck legend{font:700 13px var(--sans);float:left;width:100%;margin-bottom:6px}
+.ck label{display:flex;gap:10px;font-size:14px;padding:7px 0;cursor:pointer;clear:both}
+.ck input{accent-color:var(--accent);width:18px;height:18px;margin-top:2px;flex:none}
 .ckbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;font-size:13px;color:var(--muted)}
-.ckbar .bar{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
-.ckbar .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.ckbar .bar{flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
+.ckbar .bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+.ckbar button{min-height:36px;padding:6px 12px}
 /* letters */
-details.letter{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:10px}
-details.letter summary{cursor:pointer;padding:14px 16px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:10px}
-details.letter summary::after{content:"+";color:var(--muted)} details.letter[open] summary::after{content:"–"}
+details.letter{background:var(--bg);border-radius:14px;margin-bottom:10px}
+details.letter summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.letter summary::-webkit-details-marker{display:none}
+details.letter summary::after{content:"+";color:var(--accent);font-size:18px;line-height:1}details.letter[open] summary::after{content:"–"}
 .lbody{padding:0 16px 16px}
-.lbody pre{white-space:pre-wrap;font:14px/1.6 var(--serif);background:var(--bg);padding:16px;border-radius:8px;margin:0 0 10px}
+.lbody pre{white-space:pre-wrap;font:14px/1.65 var(--sans);background:var(--panel);border:1px solid var(--line);padding:14px;border-radius:10px;margin:0 0 10px}
 .ok-msg{font-size:13px;color:var(--ok);margin-left:8px}
-ol.rec{padding-left:22px} ol.rec li{margin-bottom:6px}
-footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+ol.rec{padding-left:20px}ol.rec li{margin-bottom:8px}
+/* bottom nav */
+.botnav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.botnav .row{max-width:760px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.botnav button{flex:1}
+.botnav .cnt{font:700 13px var(--sans);color:var(--muted);min-width:56px;text-align:center;font-variant-numeric:tabular-nums}
+body:not(.deck) .botnav{display:none}
+/* menu sheet */
+.sheet[hidden]{display:none}
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(6,20,40,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet .box{background:var(--panel);width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:80vh;overflow:auto}
+@media (min-width:640px){.sheet{align-items:center}.sheet .box{border-radius:20px}}
+.sheet h3{font:800 17px var(--sans);margin:0 0 10px}
+.sheet ol{list-style:none;padding:0;margin:0 0 12px;display:grid;gap:4px}
+.sheet li button{width:100%;text-align:left;border:0;background:var(--bg);display:flex;gap:12px;align-items:center}
+.sheet li button span{font:700 12px var(--mono);color:var(--accent);width:22px}
+.sheet li button.on{background:var(--accent-soft);color:var(--accent)}
+.foot{font-size:12.5px;color:var(--muted);text-align:center;padding:4px 8px 0;max-width:760px;margin:0 auto}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
+<header class="appbar">
+  <div class="row">
+    <div class="seal" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F2C94C" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M5 7h14M7 7l-3 7a3 3 0 0 0 6 0L7 7zM17 7l-3 7a3 3 0 0 0 6 0l-3-7zM8 21h8"/></svg></div>
+    <div class="ttl"><small>BHP · Kurator PT Rata Makmur</small><b id="curTitle">Telaah HGU</b></div>
+    <button class="iconbtn" id="modeBtn" type="button">Semua</button>
+    <button class="iconbtn" id="menuBtn" type="button" aria-haspopup="dialog">Menu</button>
+  </div>
+  <div class="prog-top"><i id="progTop"></i></div>
+</header>
 
-<div class="wrap">
-<nav class="toc" aria-label="Daftar isi">
-  <b>Telaah HGU</b>
-  <a href="#inti">Jawaban singkat</a>
-  <a href="#beda">Cessie vs peralihan HGU</a>
-  <a href="#maksud">Apa yang mau dialihkan?</a>
-  <a href="#cek">Uji HGU sebelum dijual</a>
-  <a href="#jalur">Jalur yang benar</a>
-  <a href="#langkah">Langkah BHP</a>
-  <a href="#matriks">Berkas &amp; tujuan</a>
-  <a href="#kebun">Khusus perkebunan</a>
-  <a href="#checklist">Checklist berkas</a>
-  <a href="#risiko">Risiko bagi Kurator</a>
-  <a href="#surat">Draf surat</a>
-  <a href="#simpulan">Kesimpulan</a>
-</nav>
+
+
 
 <main>
-<header class="hero">
+<section id="cover" class="hero" data-t="Sampul">
   <div class="eyebrow">Balai Harta Peninggalan · Kertas Kerja Kurator</div>
   <h1>Rencana Kurator "meng-cessie-kan" HGU PT Rata Makmur</h1>
   <p class="lede">Bisakah Kurator mengalihkan Hak Guna Usaha milik debitur pailit dengan cessie? Telaah ini menjawabnya dari aturan hukum, lalu menunjukkan jalur yang benar: berkas apa, ke mana, dan berdasarkan pasal apa.</p>
   <div class="meta">
     <span class="chip">UU 37/2004 (UUK-PKPU)</span><span class="chip">UUPA 5/1960</span><span class="chip">PP 24/1997</span><span class="chip">PP 18/2021</span><span class="chip">UU 4/1996 Hak Tanggungan</span><span class="chip g">Data perkara: isi bagian [ … ]</span>
   </div>
-</header>
+</section>
 
-<section id="inti">
+<section id="inti" data-t="Jawaban singkat">
   <h2>Jawaban singkat</h2>
   <p class="thesis">HGU tidak bisa dialihkan dengan cessie. Cessie hanya untuk piutang atas nama dan benda tak bertubuh lain. HGU adalah hak atas tanah, sehingga peralihannya wajib dengan akta PPAT dan didaftarkan di Kantor Pertanahan. Dalam kepailitan, Kurator mengalihkannya melalui <em>penjualan</em>: lelang di muka umum, atau di bawah tangan dengan izin Hakim Pengawas.</p>
   <div class="grid" style="margin-top:16px">
@@ -146,7 +179,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:v
   </div>
 </section>
 
-<section id="beda">
+<section id="beda" data-t="Cessie vs HGU">
   <h2>Cessie berbeda dengan peralihan HGU</h2>
   <p class="sub">Objek menentukan cara penyerahannya (levering). Inilah titik awal alur berpikirnya.</p>
   <div class="tbl"><table>
@@ -162,13 +195,13 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:v
   <p class="note" style="margin-top:12px">HGU bisa diperjualbelikan dan dijaminkan <span class="pasal">UUPA Ps. 28(3), 33</span>, tetapi penyerahannya mengikuti hukum pertanahan, bukan Pasal 613 KUHPerdata.</p>
 </section>
 
-<section id="maksud">
+<section id="maksud" data-t="Apa yang dialihkan">
   <h2>Apa sebenarnya yang mau dialihkan?</h2>
   <p class="sub">Istilah "cessie HGU" di lapangan sering dipakai untuk beberapa hal yang berbeda. Pilih yang sesuai; tiap pilihan punya jalur hukum sendiri.</p>
   <div class="wiz" id="wiz" aria-live="polite"></div>
 </section>
 
-<section id="cek">
+<section id="cek" data-t="Uji HGU">
   <h2>Uji HGU sebelum dijual</h2>
   <p class="sub">Tujuh hal ini menentukan apakah HGU masih boedel, siapa yang berhak atas hasilnya, dan berapa nilainya.</p>
   <div class="tbl"><table>
@@ -184,7 +217,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:v
     </tbody></table></div>
 </section>
 
-<section id="jalur">
+<section id="jalur" data-t="Jalur yang benar">
   <h2>Jalur yang benar</h2>
   <p class="sub">Urutan berpikir: apakah sudah boleh dijual, siapa yang menjual, lalu dengan cara apa.</p>
   <div class="grid">
@@ -204,14 +237,14 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:v
     </tbody></table></div>
 </section>
 
-<section id="langkah">
+<section id="langkah" data-t="Langkah BHP">
   <h2>Langkah BHP, tahap demi tahap</h2>
   <p class="sub">Setiap langkah memuat apa yang dilakukan, berkasnya, ke mana dikirim, dan dasar pasalnya.</p>
   <div class="tabs" role="tablist" id="tabs"></div>
   <div id="stage"></div>
 </section>
 
-<section id="matriks">
+<section id="matriks" data-t="Berkas & tujuan">
   <h2>Berkas, tujuan, dan pasal</h2>
   <div class="tbl"><table>
     <thead><tr><th>Kebutuhan</th><th>Berkas</th><th>Ditujukan kepada</th><th>Pasal</th></tr></thead>
@@ -232,7 +265,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:v
     </tbody></table></div>
 </section>
 
-<section id="kebun">
+<section id="kebun" data-t="Khusus perkebunan">
   <h2>Hal khusus HGU perkebunan</h2>
   <div class="grid">
     <div class="cell"><h3>Tanaman &amp; bangunan</h3><p>Asas pemisahan horizontal: tanaman dan pabrik ikut dijaminkan hanya bila dicantumkan dalam APHT. Nilai dan jual sebagai satu paket agar tidak terpecah. <span class="pasal">UU 4/1996 Ps. 4(4)</span></p></div>
@@ -244,14 +277,14 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:v
   </div>
 </section>
 
-<section id="checklist">
+<section id="checklist" data-t="Checklist">
   <h2>Checklist berkas</h2>
   <p class="sub">Centang yang sudah ada. Tanda centang tersimpan di peramban Anda saja.</p>
   <div class="ckbar"><span id="ckcount">0 / 0</span><div class="bar"><i id="ckfill"></i></div><button id="ckreset" type="button">Kosongkan</button></div>
   <div class="ck" id="ck"></div>
 </section>
 
-<section id="risiko">
+<section id="risiko" data-t="Risiko Kurator">
   <h2>Risiko bagi Kurator</h2>
   <div class="tbl"><table>
     <thead><tr><th>Risiko</th><th>Akibat</th><th>Mitigasi</th></tr></thead>
@@ -266,13 +299,13 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:v
     </tbody></table></div>
 </section>
 
-<section id="surat">
+<section id="surat" data-t="Draf surat">
   <h2>Draf surat</h2>
   <p class="sub">Siap disalin lalu disesuaikan dengan format surat BHP. Isi bagian dalam kurung siku.</p>
   <div id="letters"></div>
 </section>
 
-<section id="simpulan">
+<section id="simpulan" data-t="Kesimpulan">
   <h2>Kesimpulan dan rekomendasi</h2>
   <ol class="rec">
     <li>HGU tidak dapat dialihkan dengan cessie. Cessie hanya untuk piutang atas nama dan benda tak bertubuh lain <span class="pasal">KUHPer 613</span>; HGU beralih dengan akta PPAT atau risalah lelang yang didaftarkan <span class="pasal">UUPA 28(3); PP 24/1997 Ps. 37, 41</span>.</li>
@@ -292,9 +325,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:v
   </ol>
 </section>
 
-<footer>Kertas kerja internal Kurator BHP. Cocokkan setiap kutipan pasal dengan naskah resmi (JDIH) sebelum dipakai di surat keluar, terutama PP 18/2021, PP 20/2021, dan PMK tentang lelang yang berlaku. Periksa juga apakah SK pemberian HGU PT Rata Makmur memuat syarat tambahan untuk peralihan hak.</footer>
+
 </main>
-</div>
 
 <script>
 /* ---------- Wizard: apa yang mau dialihkan ---------- */
@@ -431,7 +463,54 @@ const lw=document.getElementById("letters");
 L.forEach(([t,b])=>{const d=document.createElement("details");d.className="letter";d.innerHTML=`<summary>${t}</summary><div class="lbody"><pre></pre><button type="button">Salin teks</button><span class="ok-msg" hidden>Tersalin</span></div>`;d.querySelector("pre").textContent=b;
  const m=d.querySelector(".ok-msg");d.querySelector("button").onclick=()=>{navigator.clipboard.writeText(b).then(()=>{m.hidden=false;setTimeout(()=>m.hidden=true,1800)}).catch(()=>{const r=document.createRange();r.selectNodeContents(d.querySelector("pre"));const s=getSelection();s.removeAllRanges();s.addRange(r)})};lw.appendChild(d)});
 
-const links=[...document.querySelectorAll("nav.toc a")];
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id))}),{rootMargin:"-40% 0px -55% 0px"});
-document.querySelectorAll("main section").forEach(s=>io.observe(s));
+
+</script>
+
+<p class="foot" id="foot">Kertas kerja internal Kurator BHP. Cocokkan kutipan pasal dengan naskah resmi (JDIH) sebelum dipakai di surat keluar, terutama PP 18/2021, PP 20/2021, dan PMK lelang yang berlaku.</p>
+<nav class="botnav" aria-label="Navigasi kartu">
+  <div class="row">
+    <button type="button" id="prevBtn">‹ Sebelumnya</button>
+    <span class="cnt" id="cnt">1 / 13</span>
+    <button type="button" class="pri" id="nextBtn">Lanjut ›</button>
+  </div>
+</nav>
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-label="Daftar isi">
+  <div class="box"><h3>Daftar isi</h3><ol id="sheetList"></ol><button type="button" id="sheetClose" style="width:100%">Tutup</button></div>
+</div>
+<script>
+(function(){
+  document.querySelectorAll("table").forEach(t=>{const h=[...t.querySelectorAll("thead th")].map(x=>x.textContent.trim());
+    t.querySelectorAll("tbody tr").forEach(r=>[...r.children].forEach((c,i)=>c.setAttribute("data-label",h[i]||"")))});
+  const S=[...document.querySelectorAll("main>section")];
+  S.forEach((s,i)=>{const h=s.querySelector("h2");if(h)h.setAttribute("data-n",`Bagian ${i} dari ${S.length-1}`)});
+  let cur=0,deck=true;try{const v=localStorage.getItem("hgu-cur");if(v)cur=Math.min(+v,S.length-1)}catch(e){}
+  const hash=location.hash.slice(1);const hi=S.findIndex(s=>s.id===hash);if(hi>=0)cur=hi;
+  const body=document.body;body.classList.add("deck");
+  function go(i,scroll){cur=Math.max(0,Math.min(S.length-1,i));
+    S.forEach((s,k)=>s.classList.toggle("cur",k===cur));
+    document.getElementById("cnt").textContent=`${cur+1} / ${S.length}`;
+    document.getElementById("progTop").style.width=((cur+1)/S.length*100)+"%";
+    document.getElementById("curTitle").textContent=S[cur].dataset.t;
+    document.getElementById("prevBtn").disabled=cur===0;
+    const nb=document.getElementById("nextBtn");nb.textContent=cur===S.length-1?"Ke awal ↺":"Lanjut ›";
+    if(scroll!==false)window.scrollTo({top:0,behavior:"smooth"});
+    try{localStorage.setItem("hgu-cur",cur)}catch(e){}}
+  document.getElementById("prevBtn").onclick=()=>go(cur-1);
+  document.getElementById("nextBtn").onclick=()=>go(cur===S.length-1?0:cur+1);
+  document.getElementById("modeBtn").onclick=e=>{deck=!deck;body.classList.toggle("deck",deck);e.target.textContent=deck?"Semua":"Kartu";
+    if(!deck){document.getElementById("curTitle").textContent="Telaah HGU";document.getElementById("progTop").style.width="100%"}else go(cur)};
+  document.addEventListener("keydown",e=>{if(!deck||e.target.closest("input,textarea"))return;if(e.key==="ArrowRight")go(cur+1);if(e.key==="ArrowLeft")go(cur-1)});
+  let x0=null,y0=null;const m=document.querySelector("main");
+  m.addEventListener("touchstart",e=>{if(e.target.closest(".tbl,.tabs,pre"))return;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+  m.addEventListener("touchend",e=>{if(x0===null||!deck)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
+    if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)go(cur+(dx<0?1:-1))});
+  const sheet=document.getElementById("sheet"),list=document.getElementById("sheetList");
+  function openSheet(){list.innerHTML=S.map((s,i)=>`<li><button type="button" data-i="${i}" class="${i===cur&&deck?"on":""}"><span>${String(i).padStart(2,"0")}</span>${s.dataset.t}</button></li>`).join("");
+    list.querySelectorAll("button").forEach(b=>b.onclick=()=>{sheet.hidden=true;const i=+b.dataset.i;if(deck)go(i);else S[i].scrollIntoView({behavior:"smooth"})});sheet.hidden=false;list.querySelector("button").focus()}
+  document.getElementById("menuBtn").onclick=openSheet;
+  document.getElementById("sheetClose").onclick=()=>sheet.hidden=true;
+  sheet.onclick=e=>{if(e.target===sheet)sheet.hidden=true};
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")sheet.hidden=true});
+  go(cur,false);
+})();
 </script>
