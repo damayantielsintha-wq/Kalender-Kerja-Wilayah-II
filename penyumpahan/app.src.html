@@ -661,7 +661,7 @@ function renderMain(){
   const TABS={umum:'1. Perkara',pihak:`2. ${d.J}`,objek:`3. ${w?'Anak':'Terampu'}`,jadwal:'4. Jadwal & Pejabat',harta:'5. BAP & Harta',dok:'📄 Dokumen',riw:'🕘 Riwayat'};
   let h=`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><div class="seg">${['Pengampuan','Perwalian'].map(j=>`<button class="${cur.jenis===j?'on':''}" onclick="setv('jenis','${j}')">${j}</button>`).join('')}</div>
   <span style="margin-right:auto"><span class="hint" id="stat">✓ Tersimpan</span><br><span class="meta">${cur._meta?`Dibuat ${esc(cur._meta.dibuatOleh||'')} · diubah terakhir oleh <b>${esc(cur._meta.diubahOleh||'')}</b>, ${wkt(cur._meta.diubahPada)}`:''}</span></span>
-  <button onclick="dupRec()">⧉ Duplikat</button>${isSuper()?(cur._dihapus?'<button onclick="restoreRec()">♻️ Pulihkan</button>':'<button onclick="delRec()" style="color:var(--warn)">🗑 Hapus</button>'):''}</div>
+  <button onclick="screenshot('#main',cur.nama)" title="Simpan tampilan ini sebagai gambar PNG">📸 Screenshot</button><button onclick="dupRec()">⧉ Duplikat</button>${isSuper()?(cur._dihapus?'<button onclick="restoreRec()">♻️ Pulihkan</button>':'<button onclick="delRec()" style="color:var(--warn)">🗑 Hapus</button>'):''}</div>
   ${bannerKelayakan(cur)}<div class="steps">${Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';renderMain()">${v}</button>`).join('')}</div><div class="grid">`;
   const pjOpt=v=>{const c=pjCari(v).nama;return SET.pejabat.map(p=>`<option ${p.nama===c?'selected':''} value="${esc(p.nama)}">${esc(p.nama||'(isi di Pengaturan)')} — ${esc(p.jabatan||'')}</option>`).join('')};
   if(tab==='umum')h+=`<div class="full"><label class="btn" style="display:inline-block;margin:0;color:var(--ink)">📑 Isi otomatis dari PDF Penetapan<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this,true)"></label></div>`+F('pengadilan','Pengadilan')+F('nomorPenetapan','Nomor Penetapan')+F('tglPenetapan','Tanggal Penetapan','date')+F('tanggalSurat','Tanggal Surat','date')+
@@ -866,6 +866,15 @@ async function imporJalan(btn){btn.disabled=true;let n=0,lewat=0;const gagal=[],
   api('apiCatat','IMPOR_CSV','','',`${n} berkas diimpor dari spreadsheet`).catch(()=>{});renderList();
   $('#impOut').innerHTML=`<p>✅ <b>${n}</b> berkas baru diimpor${lewat?` · ${lewat} dilewati karena sudah ada di database`:''}.</p>${gagal.length?`<p style="color:#c0392b">Sebagian gagal: ${esc([...new Set(gagal)].join('; '))}<br>Klik <b>Periksa lagi</b> lalu impor ulang — yang sudah masuk otomatis dilewati.</p>`:''}<p class="hint">Periksa tiap berkas (tab 1–5) sebelum membuat dokumen.</p>`;
   IMP=null;btn.disabled=false;if(gagal.length){btn.textContent='🔍 Periksa lagi';btn.onclick=()=>imporCek(btn)}else{btn.textContent='Selesai';btn.onclick=dlgClose}}
+async function screenshot(sel,nama){const el=document.querySelector(sel);if(!el)return;toast('Membuat screenshot…');
+  try{await loadJs('https:\/\/cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    const bg=getComputedStyle(document.body).backgroundColor||'#fff';
+    const c=await html2canvas(el,{scale:2,backgroundColor:bg,useCORS:true,windowWidth:el.scrollWidth,height:el.scrollHeight,
+      onclone:d=>{const x=d.querySelector(sel);if(x){x.style.maxHeight='none';x.style.overflow='visible';x.style.height='auto'}}});
+    const url=c.toDataURL('image/png'),fn='screenshot-'+String(nama||'berkas').replace(/[^\w]+/g,'-').slice(0,40)+'-'+today()+'.png';
+    const a=document.createElement('a');a.href=url;a.download=fn;document.body.appendChild(a);a.click();a.remove();
+    const w=window.open();if(w)w.document.write('<title>'+fn+'</title><p style="font:14px sans-serif">Tekan lama / klik kanan gambar → Simpan gambar.</p><img src="'+url+'" style="max-width:100%">');
+    toast('📸 Screenshot tersimpan')}catch(e){toast('Gagal screenshot: '+(e.message||e))}}
 function exportCsv(){const H=['Jenis','Nama','NIK','Jenis_Kelamin','Tanggal_Lahir','Agama','Pekerjaan','Alamat','Kel_Kec_Kota','Status','Objek','Nomor_Penetapan','Tanggal_Penetapan','Tanggal_Sumpah','Nomor_Surat','Nomor_Surat_Lurah','Nomor_BA'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   const t=[H.join(',')].concat(DB.map(r=>[r.jenis,r.nama,r.nik,r.jk,tgl(r.tglLahir),r.agama,r.pekerjaan,r.alamat,r.kelurahan,r.status,derive(r).objek,r.nomorPenetapan,tgl(r.tglPenetapan),tgl(r.tglSumpah),r.nomorSurat,r.nomorLurah,r.nomorBA].map(q).join(','))).join('\n');
@@ -1014,8 +1023,8 @@ function reviewHtml(d){PEN=d;const w=d.jenis==='Perwalian';
   else{const t=d.terampu||{};h+=row('terampu.nama','Nama Terampu',t.nama)+row('terampu.tglLahir','Tgl Lahir Terampu',t.tglLahir,'date')+row('terampu.jk','JK Terampu',t.jk)+`<div class="full">${row('terampu.kondisi','Kondisi medis',t.kondisi)}</div>`}
   return h+`</div>${d._text?`<details style="margin-top:10px"><summary class="hint">Lihat teks hasil baca</summary><pre style="white-space:pre-wrap;max-height:200px;overflow:auto;font-size:11px">${esc(d._text)}</pre></details>`:''}`}
 function reviewPenetapan(d,fname){$('#penBody').innerHTML=`<h3>📑 Hasil baca: ${esc(fname)} ${d._ai?'<span class="tag">AI</span>':''}</h3><p class="hint">Periksa & koreksi dulu. Kolom kuning = tidak ditemukan di dokumen.</p>`+bannerKelayakan(penRec(d))+reviewHtml(d)+
-  (cekKelayakan(penRec(d)).tolak.length?`<p style="text-align:right;display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="pri" onclick="penDlg.close()">Tutup (ditolak)</button><button onclick="PEN._paksa=true;applyPenetapan()" style="font-size:12px">Tetap simpan (abaikan penolakan)</button></p>`:
-  `<p style="text-align:right;display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button onclick="penDlg.close()">Batal</button><button class="pri" onclick="applyPenetapan()">✔ Terapkan ke berkas</button></p>`);if(!$('#penDlg').open)$('#penDlg').showModal()}
+  (cekKelayakan(penRec(d)).tolak.length?`<p style="text-align:right;display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button onclick="screenshot('#penBody',PEN&&PEN.nama)">📸 Screenshot</button><button class="pri" onclick="penDlg.close()">Tutup (ditolak)</button><button onclick="PEN._paksa=true;applyPenetapan()" style="font-size:12px">Tetap simpan (abaikan penolakan)</button></p>`:
+  `<p style="text-align:right;display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button onclick="screenshot('#penBody',PEN&&PEN.nama)">📸 Screenshot</button><button onclick="penDlg.close()">Batal</button><button class="pri" onclick="applyPenetapan()">✔ Terapkan ke berkas</button></p>`);if(!$('#penDlg').open)$('#penDlg').showModal()}
 const penRec=d=>({...d,anak:(d.anak||[]).map(a=>({...a,wali:a.diwalikan===false||a.wali==='Tidak'?'Tidak':'Ya'}))});
 const JENIS_HARTA={tetap:'hartaTetap',tunai:'hartaTunai',emas:'hartaEmas',surat:'hartaSurat',perabot:'hartaPerabot',bergerak:'hartaBergerak',hutang:'hartaHutang'};
 function terapkanTambahan(P,r){
