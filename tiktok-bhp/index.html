@@ -143,17 +143,15 @@
 
   /* ====== Balon bicara ====== */
   #talk {
-    position: absolute; left: 40px; right: 40px; top: 190px; height: 800px; z-index: 4;
+    position: absolute; left: 48px; right: 48px; top: 200px; height: 800px; z-index: 4;
     display: flex; flex-direction: column; justify-content: flex-end; gap: 22px;
     padding-bottom: 34px; overflow: hidden;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 80px);
-            mask-image: linear-gradient(to bottom, transparent 0, #000 80px);
   }
   .line { display: flex; flex: none; }
   .line.right { justify-content: flex-end; }
   .bubble {
-    position: relative; max-width: 860px; padding: 22px 32px 24px;
-    border-radius: 40px; font-size: 42px; line-height: 1.36; font-weight: 600;
+    position: relative; max-width: 840px; padding: 24px 34px 28px;
+    border-radius: 36px; font-size: 42px; line-height: 1.38; font-weight: 600; letter-spacing: -.005em; text-align: left; text-wrap: pretty;
     box-shadow: 0 10px 0 rgba(11,42,91,.10), 0 16px 30px rgba(15,23,42,.14);
     transform-origin: 25% 100%;
     animation: pop .42s cubic-bezier(.2,1.4,.4,1) backwards;
@@ -176,9 +174,9 @@
     opacity: 0; transform: translateX(40px); transition: opacity .3s, transform .45s cubic-bezier(.2,1.4,.4,1); }
   .listcard li.in { opacity: 1; transform: none; }
   .listcard li span { font-size: 48px; flex: none; }
-  .line.old .bubble { opacity: .72; transform: scale(.92); }
+  .line.old .bubble { opacity: .5; transform: scale(.94); filter: saturate(.8); }
   .line.old .bubble::after { display: none; }
-  .bubble .name { font-size: 28px; font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 12px; }
+  .bubble .name { font-size: 26px; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; letter-spacing: .02em; }
   .left .bubble .name { color: var(--gold-deep); }
   .right .bubble .name { color: var(--gold); }
   .bubble .tag { font-size: 20px; font-weight: 700; padding: 3px 12px; border-radius: 20px; letter-spacing: .04em; }
@@ -544,6 +542,16 @@
   .bboard .chalk { position: absolute; right: 26px; bottom: 16px; font: 700 22px/1 var(--font); color: #94A3B8; }
   #closing.modern .bbubble { left: 420px; top: 610px; width: 600px; text-align: left; }
   #closing.modern .bbubble::after { left: -34px; top: 60px; border: 16px solid transparent; border-right: 22px solid var(--navy); }
+  /* Kata demi kata menyala mengikuti ucapan */
+  .bubble .w { opacity: .18; animation: wIn .22s ease-out forwards; }
+  .line.old .bubble .w { opacity: 1; animation: none; }
+  @keyframes wIn { from { opacity: .18; } to { opacity: 1; } }
+  /* Kartu "Ada di BHP": jarak lega, rata kiri */
+  #overlay { gap: 36px; padding: 40px 44px 40px 40px; text-align: left; }
+  #overlay .onum { top: -30px; left: -30px; }
+  #overlay .otitle { text-wrap: balance; }
+  .kepala .kb { text-wrap: balance; }
+  #tagline { top: 300px; }
   /* ====== Hormati prefers-reduced-motion ====== */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -1374,7 +1382,9 @@ async function wipe(label, swap) {
 async function sendMessage(m) {
   const c = CHARACTERS[m.from], ch = cast[m.from];
   if (m.fresh) talk.innerHTML = '';
-  talk.querySelectorAll('.line').forEach((l) => l.classList.add('old'));
+  const prev = [...talk.querySelectorAll('.line')];
+  prev.slice(0, -1).forEach((l) => l.remove());          // cukup 1 balon lama + 1 baru → tidak menumpuk
+  prev.forEach((l) => l.classList.add('old'));
 
   // 1) Tokoh "mikir" + balon titik-titik
   const line = document.createElement('div');
@@ -1392,7 +1402,9 @@ async function sendMessage(m) {
   const b = document.createElement('div');
   b.className = m.list ? 'bubble listcard' : 'bubble';
   b.innerHTML = `<div class="name">${c.name}<span class="tag">${c.tag}</span></div><div class="text"></div>`;
-  b.querySelector('.text').textContent = m.text;
+  const words = m.text.split(/\s+/), talkEst = clamp(m.text.length * T.talkPerChar, 600, holdDur(m) - 300);
+  const per = clamp(talkEst / words.length, 70, 260) / SPEED;
+  b.querySelector('.text').innerHTML = words.map((w, i) => `<span class="w" style="animation-delay:${Math.round(i * per)}ms">${w.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]))}</span>`).join(' ');
   if (m.list) {
     b.querySelector('.text').className = 'ltitle';
     const ul = document.createElement('ul');
