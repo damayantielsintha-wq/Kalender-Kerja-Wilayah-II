@@ -179,7 +179,7 @@ function apiGantiPassword(token, lama, baru) {
 function apiInit(token) {
   const u = user_(token);
   const out = { user: u, settings: settings_(), berkas: berkas_(u.role === 'superadmin'), sps: spsInfo_(), folderUrl: PROPS.getProperty('FOLDER_ID') ? 'https://drive.google.com/drive/folders/' + PROPS.getProperty('FOLDER_ID') : folderRoot_().getUrl(), ai: !!PROPS.getProperty('CLAUDE_KEY') };
-  if (u.role === 'superadmin') out.users = daftarPengguna_();
+  if (u.role === 'superadmin') { out.users = daftarPengguna_(); try { if (terapkanBapSiap_(u)) out.berkas = berkas_(true); } catch (e) {} }
   return out;
 }
 function berkas_(termasukHapus) {
@@ -738,4 +738,32 @@ function cekSemua() {
   catch (e) { Logger.log('DRIVE   ❌ Drive API belum ditambahkan: Services (+) → Drive API → Add. (' + e.message + ')'); }
   // 4. Pegawai
   try { const n = (settings_().pejabat || []).length; Logger.log('PEGAWAI ' + (n ? '✅ ' + n + ' pejabat tersimpan.' : 'ℹ Belum sinkron — Pengaturan → Ambil dari sheet Data Pegawai.')); } catch (e) {}
+}
+
+/* ------------------------------------------------------------ isi BAP yang sudah disusun (file BapSiap.gs)
+   Diterapkan otomatis saat admin utama membuka aplikasi: hanya ke berkas yang nomor penetapannya cocok
+   dan isi BAP-nya masih kosong (tidak menimpa BAP yang sudah diisi/diedit). */
+function kunciNo_(s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+function terapkanBapSiap_(u) {
+  if (typeof BAP_SIAP === 'undefined') return 0;
+  const tanda = 'BAP_SIAP_' + Object.keys(BAP_SIAP).length + '_' + (typeof BAP_SIAP_VERSI === 'undefined' ? 1 : BAP_SIAP_VERSI);
+  const map = {};
+  Object.keys(BAP_SIAP).forEach(function (k) { map[kunciNo_(k)] = BAP_SIAP[k]; });
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) return 0;
+  let n = 0;
+  try {
+    const sh = sheet_('Berkas'), now = new Date();
+    rows_('Berkas').forEach(function (r) {
+      if (r.dihapus === true) return;
+      let d; try { d = JSON.parse(r.data); } catch (e) { return; }
+      const isi = map[kunciNo_(d.nomorPenetapan)];
+      if (!isi || String(d.isiBap || '').trim()) return;
+      d.isiBap = isi.join('\n');
+      sh.getRange(r._row, 5, 1, 6).setValues([[JSON.stringify(d), Number(r.versi) + 1, r.dibuatOleh, r.dibuatPada, u.nama, now]]);
+      log_(u, 'UBAH', r.id, r.nama, 'Isi BAP diisi dari susunan penetapan ' + d.nomorPenetapan);
+      n++;
+    });
+  } finally { lock.releaseLock(); }
+  return n;
 }
