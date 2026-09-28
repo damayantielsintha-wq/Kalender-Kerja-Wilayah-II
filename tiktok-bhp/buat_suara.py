@@ -23,6 +23,7 @@ KARAKTER = {
     "boss":    "Pak Kepala kantor, bapak-bapak berwibawa tapi kocak dan hangat, suara berat, pede",
     "narator": "narator konten TikTok, asik, akrab, semangat tapi nggak lebay",
 }
+MODELS = ["gemini-3.8-flash-tts", "gemini-3.8-flash-lite-tts", "gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts", "gemini-3.1-flash-tts-preview"]
 GEMINI_VOICE = {"tasya": "Leda", "dinda": "Aoede", "boss": "Algenib", "narator": "Puck"}
 OPENAI_VOICE = {"tasya": "coral", "dinda": "nova", "boss": "onyx", "narator": "ash"}
 
@@ -31,18 +32,23 @@ def post(url, body, headers):
     with urllib.request.urlopen(req, timeout=180) as r:
         return r.read()
 
+class KuotaHabis(Exception):
+    pass
+
 def gemini_tts(text, who, path):
     body = {"contents": [{"parts": [{"text": f"Ucapkan sebagai {KARAKTER[who]}. {GAYA}\n\n{text}"}]}],
             "generationConfig": {"responseModalities": ["AUDIO"],
                                  "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": GEMINI_VOICE[who]}}}}}
-    for coba in range(6):
+    res = None
+    for model in MODELS:  # kuota gratis dihitung per model → kalau habis, pindah model
         try:
-            res = json.loads(post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent",
+            res = json.loads(post(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
                                   body, {"x-goog-api-key": GEMINI_KEY}))
             break
         except urllib.error.HTTPError as e:
-            if e.code not in (429, 500, 503) or coba == 5: raise
-            time.sleep(30)  # kuota gratis per menit → tunggu sebentar
+            print("   ", model, e.code)
+            if e.code not in (429, 500, 503): raise
+    if res is None: raise KuotaHabis()
     pcm = base64.b64decode(res["candidates"][0]["content"]["parts"][0]["inlineData"]["data"])
     wav = path[:-4] + ".wav"  # PCM 24kHz 16-bit mono → WAV → MP3 (ffmpeg)
     with open(wav, "wb") as f:
@@ -82,7 +88,10 @@ async def main():
     out = os.path.join(here, "vo"); os.makedirs(out, exist_ok=True)
     engine = "gemini" if GEMINI_KEY else "openai" if OPENAI_KEY else "edge"
     tanda = os.path.join(out, "engine.txt")
-    if not os.path.exists(tanda) or open(tanda).read().strip() != engine:  # ganti mesin → rekam ulang semua
+    lama = open(tanda).read().strip() if os.path.exists(tanda) else ""
+    if engine == "edge" and lama in ("gemini", "openai"):  # jangan timpa rekaman natural dengan suara Edge
+        engine = lama
+    if lama != engine:  # ganti mesin → rekam ulang semua
         for f in os.listdir(out):
             if f.endswith(".mp3"): os.remove(os.path.join(out, f))
         open(tanda, "w").write(engine)
@@ -93,10 +102,18 @@ async def main():
         if not os.path.exists(path):
             print(f"[{i}/{len(lines)}] {ln['who']}: {ln['text'][:60]}")
             teks = ln["text"].replace("BHP", "Be Ha Pe").replace("UPT", "U Pe Te")
-            if engine == "gemini": gemini_tts(teks, ln["who"], path)
+            if engine != "edge" and not (GEMINI_KEY or OPENAI_KEY):
+                continue  # rekaman natural belum lengkap tapi key tidak ada → lewati
+            if engine == "gemini":
+                try:
+                    gemini_tts(teks, ln["who"], path)
+                except KuotaHabis:
+                    print("Kuota gratis Gemini hari ini habis. Jalankan lagi besok — yang sudah jadi tidak diulang.")
+                    break
             elif engine == "openai": openai_tts(teks, ln["who"], path)
             else: await edge_tts.Communicate(lafal(ln["text"]), **SUARA[ln["who"]]).save(path)
         keys.append(ln["key"])
+    keys = [ln["key"] for ln in lines if os.path.exists(os.path.join(out, ln["key"] + ".mp3"))]
     json.dump(keys, open(os.path.join(out, "manifest.json"), "w"), indent=1)
     print(f"Beres! {len(keys)} rekaman di folder vo/")
 
