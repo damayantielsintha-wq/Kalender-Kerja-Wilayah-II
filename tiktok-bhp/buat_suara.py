@@ -41,13 +41,18 @@ def gemini_tts(text, who, path):
                                   body, {"x-goog-api-key": GEMINI_KEY}))
             break
         except urllib.error.HTTPError as e:
-            if e.code != 429 or coba == 5: raise
+            if e.code not in (429, 500, 503) or coba == 5: raise
             time.sleep(30)  # kuota gratis per menit → tunggu sebentar
     pcm = base64.b64decode(res["candidates"][0]["content"]["parts"][0]["inlineData"]["data"])
     wav = path[:-4] + ".wav"  # PCM 24kHz 16-bit mono → WAV → MP3 (ffmpeg)
     with open(wav, "wb") as f:
         f.write(b"RIFF" + struct.pack("<I", 36 + len(pcm)) + b"WAVEfmt " + struct.pack("<IHHIIHH", 16, 1, 1, 24000, 48000, 2, 16) + b"data" + struct.pack("<I", len(pcm)) + pcm)
-    os.system(f'ffmpeg -loglevel error -y -i "{wav}" -b:a 96k "{path}"'); os.remove(wav)
+    ff = "ffmpeg"
+    try:
+        import imageio_ffmpeg; ff = imageio_ffmpeg.get_ffmpeg_exe()
+    except ImportError:
+        pass
+    os.system(f'"{ff}" -loglevel error -y -i "{wav}" -b:a 96k "{path}"'); os.remove(wav)
 
 def openai_tts(text, who, path):
     data = post("https://api.openai.com/v1/audio/speech",
