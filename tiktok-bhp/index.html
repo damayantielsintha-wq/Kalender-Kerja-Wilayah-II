@@ -594,6 +594,11 @@
   /* kamera melayang pelan (parallax) — latar & tokoh bergerak beda kecepatan */
   #bg { animation: bgdrift 14s ease-in-out infinite; transform-origin: 50% 40%; }
   @keyframes bgdrift { 0%, 100% { transform: scale(1.06) translateX(-10px); } 50% { transform: scale(1.08) translateX(10px); } }
+  /* ====== Latar 3D & Pak Kepala 3D ====== */
+  #bg .bgphoto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .kepala .kfig .k3d { position: absolute; left: 50%; bottom: 0; height: 100%; transform: translateX(-50%); filter: drop-shadow(0 16px 24px rgba(0,0,0,.25)); }
+  .kepala.speaking .k3d { animation: c3talk .34s ease-in-out infinite; }
+  .kepala::before { display: none; }
   /* ====== Hormati prefers-reduced-motion ====== */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -720,7 +725,7 @@ const lafal = (t) => LEXICON.reduce((a, [re, to]) => a.replace(re, to), t);
    Tempat nongol (pops.spot): 'right' | 'left' | 'top' (terbalik dari atas) | 'table' (dari balik meja) | 'cup' (dari balik gelas) */
 const EPISODES = [
   {
-    no: 1, short: 'Hak Waris', emoji: '📄', title: 'Hak Waris', icon: 'doc', bg: 'kafe', cups: ['kopi', 'kopi'],
+    no: 1, short: 'Hak Waris', emoji: '📄', title: 'Hak Waris', icon: 'doc', bg: 'pelayanan', cups: ['kopi', 'kopi'],
     messages: [
       { from: 'tasya', act: 'sad',     emote: '😵‍💫', text: 'Din, sumpah gue pusing deh. Tanah Papa kan mau gue balik nama, tapi Papa udah nggak ada… terus gue harus ke mana dulu sih?' },
       { from: 'dinda', act: 'explain', emote: '💡', text: 'Oh, itu lo butuh Surat Keterangan Hak Waris dulu, Sya. Urusnya di BHP aja, bisa online kok.' },
@@ -735,7 +740,7 @@ const EPISODES = [
     ],
   },
   {
-    no: 2, short: 'Perwalian', emoji: '🛡️', title: 'Perwalian', icon: 'shield', bg: 'teras', cups: ['esteh', 'esteh'],
+    no: 2, short: 'Perwalian', emoji: '🛡️', title: 'Perwalian', icon: 'shield', bg: 'pelayanan', cups: ['esteh', 'esteh'],
     messages: [
       { from: 'tasya', act: 'tilt',    emote: '🤔', text: 'Din, eh, tetangga gue kan anaknya masih kecil-kecil, terus ibunya mau jual rumah. Emang boleh ya?' },
       { from: 'dinda', act: 'explain', emote: '🛡️', text: 'Nah, itu namanya perwalian. Karena ada anak di bawah umur, walinya didampingi BHP. Jadi harta anaknya aman, ibunya juga nggak bakal dicurigain sama keluarga yang lain.' },
@@ -751,7 +756,7 @@ const EPISODES = [
     ],
   },
   {
-    no: 3, short: 'Kepailitan', emoji: '⚖️', title: 'Kepailitan', icon: 'scale', bg: 'kedai', cups: ['esteh', 'kopi'],
+    no: 3, short: 'Kepailitan', emoji: '⚖️', title: 'Kepailitan', icon: 'scale', bg: 'rapat', cups: ['esteh', 'kopi'],
     messages: [
       { from: 'tasya', act: 'sad',     emote: '😰', text: 'Din, kasian deh, tetangga gue usahanya bangkrut. Utangnya di mana-mana.' },
       { from: 'dinda', act: 'explain', emote: '⚖️', text: 'Itu namanya pailit. Nah, BHP bisa lho jadi kuratornya.' },
@@ -767,7 +772,7 @@ const EPISODES = [
     ],
   },
   {
-    no: 4, short: 'Harta Tak Terurus', emoji: '🗂️', title: 'Harta Tak Terurus', icon: 'folder', bg: 'malam', cups: ['boba', 'boba'],
+    no: 4, short: 'Harta Tak Terurus', emoji: '🗂️', title: 'Harta Tak Terurus', icon: 'folder', bg: 'aula', cups: ['boba', 'boba'],
     messages: [
       { from: 'tasya', act: 'phone',   emote: '👻', text: 'Din, kalau ada orang ilang, nggak ada kabar, kayak mantan gue yang ghosting itu… hartanya nggak ada yang ngurus. Itu ke BHP juga?' },
       { from: 'dinda', act: 'laugh',   emote: '😏', text: 'Hahaha, mantan lo mah nggak masuk, Sya. Kan nggak punya harta.' },
@@ -785,7 +790,7 @@ const EPISODES = [
   },
   {
     // ⚠️ Naskah baru — mohon dicek kebenaran isinya sebelum tayang
-    no: 5, short: 'Surat Wasiat', emoji: '📜', title: 'Surat Wasiat', icon: 'doc', bg: 'kafe', cups: ['esteh', 'kopi'],
+    no: 5, short: 'Surat Wasiat', emoji: '📜', title: 'Surat Wasiat', icon: 'doc', bg: 'rapat', cups: ['esteh', 'kopi'],
     messages: [
       { from: 'tasya', act: 'tilt',    emote: '📜', text: 'Din, almarhumah nenek gue ninggalin surat wasiat tertutup di notaris. Nah, bukanya tuh gimana ya?' },
       { from: 'dinda', act: 'explain', emote: '🔏', text: 'Wasiat tertutup gitu dibukanya di BHP, terus dibikinin berita acaranya. Jadi resmi, dan nggak ada yang bisa asal buka sendiri.' },
@@ -802,7 +807,7 @@ const EPISODES = [
   },
   {
     // ⚠️ Naskah baru — mohon dicek kebenaran isinya sebelum tayang
-    no: 6, short: 'Uang Pihak Ketiga', emoji: '💰', title: 'Uang Pihak Ketiga', icon: 'building', bg: 'kedai', cups: ['boba', 'esteh'],
+    no: 6, short: 'Uang Pihak Ketiga', emoji: '💰', title: 'Uang Pihak Ketiga', icon: 'building', bg: 'pelayanan', cups: ['boba', 'esteh'],
     messages: [
       { from: 'tasya', act: 'tilt',    emote: '🤔', text: 'Din, misal warisan udah dibagi nih, tapi ada satu ahli waris yang nggak ketemu-ketemu. Bagiannya terus ke mana?' },
       { from: 'dinda', act: 'explain', emote: '💰', text: 'Tenang, bagiannya dikelola BHP sebagai uang pihak ketiga. Aman kok, sampai orangnya dateng dan ngurus sendiri.' },
@@ -1344,7 +1349,7 @@ function setSegment(i) {
 const app = $('#app'), world = $('#world'), talk = $('#talk');
 const overlay = $('#overlay'), kepala = $('#kepala'), tagline = $('#tagline'), flash = $('#flash');
 const wipeEl = $('#wipe'), startEl = $('#start'), closingEl = $('#closing'), endBtns = $('#endBtns');
-kepala.querySelector('.kfig').innerHTML = KEPALA_SVG;
+kepala.querySelector('.kfig').innerHTML = '<img class="k3d" src="img/kepala-3d-atas.png" alt="Kepala BHP Medan">';
 const cast = { tasya: $('#tasya'), dinda: $('#dinda') };
 /* Tokoh 3D (render ala Pixar) */
 const TASYA_3D = '<img class="c3d" src="img/tasya-3d.png" alt="Tasya">', DINDA_3D = '<img class="c3d" src="img/dinda-3d.png" alt="Dinda">';
@@ -1401,13 +1406,16 @@ function resetStage() {
   app.classList.remove('resetting');
 }
 
+/* Latar 3D kantor BHP Medan (papan nama & logo Pengayoman sudah diganti yang resmi) */
+const PHOTO_BG = { pelayanan: 'img/bg-pelayanan.jpg', rapat: 'img/bg-rapat.jpg', aula: 'img/bg-aula.jpg' };
 function setScene(sc) {
   resetStage();
   $('#chip .ico').innerHTML = svg(sc.icon, 2.2);
   $('#chip .txt').innerHTML = `Tusi #${sc.no} <small>· ${sc.title}</small>`;
-  $('#bg').innerHTML = bgSvg(sc.bg);
-  $('#table').innerHTML = tableSvg(sc.bg);
-  $('#props').innerHTML = propsSvg(sc.cups || ['kopi', 'kopi']);
+  const photo = PHOTO_BG[sc.bg];
+  $('#bg').innerHTML = photo ? `<img class="bgphoto" src="${photo}" alt="">` : bgSvg(sc.bg);
+  $('#table').innerHTML = photo ? '' : tableSvg(sc.bg);
+  $('#props').innerHTML = photo ? '' : propsSvg(sc.cups || ['kopi', 'kopi']);
 }
 
 async function wipe(label, swap) {
