@@ -1,5 +1,7 @@
 name: Buat video kartun AI (Veo)
 on:
+  push:
+    paths: ['kartun-ai/permintaan.json']
   workflow_dispatch:
     inputs:
       ep:
@@ -20,7 +22,16 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: '3.11' }
       - run: pip install pillow
-      - run: python kartun-ai/buat_video.py --ep "${{ inputs.ep }}" --shots "${{ inputs.shots }}"
+      - name: Baca permintaan
+        id: req
+        run: |
+          EP="${{ inputs.ep }}"; SHOTS="${{ inputs.shots }}"
+          if [ -z "$EP" ] && [ -f kartun-ai/permintaan.json ]; then
+            EP=$(python -c "import json;print(json.load(open('kartun-ai/permintaan.json'))['ep'])")
+            SHOTS=$(python -c "import json;print(json.load(open('kartun-ai/permintaan.json')).get('shots',''))")
+          fi
+          echo "ep=${EP:-1}" >> "$GITHUB_OUTPUT"; echo "shots=$SHOTS" >> "$GITHUB_OUTPUT"
+      - run: python kartun-ai/buat_video.py --ep "${{ steps.req.outputs.ep }}" --shots "${{ steps.req.outputs.shots }}"
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       - name: Simpan klip
@@ -29,4 +40,4 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add kartun-ai/klip kartun-ai/gambar
-          git diff --cached --quiet || (git commit -m "Klip kartun AI ep${{ inputs.ep }} ${{ inputs.shots }} [skip ci]" && git pull --rebase origin "${GITHUB_REF_NAME}" && git push)
+          git diff --cached --quiet || (git commit -m "Klip kartun AI ep${{ steps.req.outputs.ep }} ${{ steps.req.outputs.shots }} [skip ci]" && git pull --rebase origin "${GITHUB_REF_NAME}" && git push)
