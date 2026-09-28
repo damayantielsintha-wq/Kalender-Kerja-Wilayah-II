@@ -45,17 +45,18 @@ Pengganti alur AutoCrat di spreadsheet *Dokumen Otomatis (Penetapan Baru)*. Berj
 - **Login per admin** dengan username & password aplikasi. **Admin Utama** (Shela Natasha) punya akses penuh: riwayat seluruh perubahan, kelola pengguna (tambah, nonaktifkan, reset password), pengaturan kop/pejabat/lafaz, koneksi SPS, serta hapus/pulihkan berkas. **Admin** bisa membuat & mengubah berkas, upload penetapan, unduh dokumen, dan ambil nomor SPS.
 - **Riwayat permanen** (sheet `Riwayat`): setiap buat/ubah berkas (per kolom: nilai lama → baru), hapus, pulihkan, unduh DOCX, ambil nomor, baca penetapan, login/logout/login gagal, ganti/reset password, perubahan pengaturan dan pengguna — lengkap dengan nama admin dan waktunya. Admin melihat riwayat per berkas; Admin Utama melihat semuanya dengan filter per admin/aksi.
 - **Anti-bentrok**: jika dua admin mengubah berkas yang sama, perubahan yang kalah cepat tidak menimpa, dan admin diberi tahu siapa yang mengubah.
-- **Output .docx** (Word asli): Surat ke Pengampu/Wali, Surat ke Lurah, BA Penyumpahan, BA Inventarisasi Harta, Lafaz Sumpah — kop dengan logo Pengayoman, Arial, A4, sesuai template BHP.
+- **Output Google Docs** (bisa langsung diedit): Surat ke Pengampu/Wali, Surat ke Lurah, BA Penyumpahan, BA Inventarisasi Harta, Lafaz Sumpah — kop dengan logo Pengayoman, Arial, A4, sesuai template BHP. Pejabat bawaan: SYUHADA, Kurator Keperdataan Ahli Madya.
+- **Folder Drive rapi**: `Dokumen Penyumpahan BHP Medan / <Tahun> / <Pengampuan|Perwalian> / <NAMA> - <Nomor Penetapan>/`. Dokumen yang dibuat ulang tidak dihapus — versi lama dipindah ke subfolder `Arsip`. Folder otomatis dibagikan (Editor) ke email Google semua admin aktif; admin nonaktif dicabut aksesnya.
 - **Nomor surat dari SPS**: tombol *Ambil nomor SPS* hanya aktif bila semua isian dokumen lengkap. Kredensial SPS disimpan di Properti Skrip server (tidak terlihat admin lain).
-- **Upload penetapan** (PDF/scan) → isian terisi otomatis; opsional AI Gemini (kunci di server).
+- **Upload penetapan** (PDF/scan) → isian terisi otomatis. Dengan **AI Gemini** (kunci dari aistudio.google.com/apikey, disimpan di server) hasilnya lebih akurat; hasil AI digabung dengan pembaca teks sebagai cadangan.
 - Impor CSV dari spreadsheet lama.
 
 ## Pasang (dilakukan oleh Shela, ±10 menit)
 1. Buka <https://script.google.com> → **Proyek baru**, beri nama *Dokumen Penyumpahan BHP*.
 2. Salin `penyumpahan/Code.gs` ke `Code.gs`; buat file HTML **`Index`** dan salin `penyumpahan/Index.html`; tampilkan manifes lalu salin `penyumpahan/appsscript.json`.
-3. Pilih fungsi **`setup`** → **Jalankan** → izinkan akses. Buka **Log eksekusi**: berisi link database dan **password sementara** 8 akun (username: `shela`, `annisa`, `elsintha`, `yusril`, `andre`, `fairuz`, `nanang`, `taufik`). Bagikan secara pribadi; semua wajib ganti password saat login pertama.
+3. Di **Layanan (+)** tambahkan **Drive API** (v3) — sudah tercantum di manifes. Pilih fungsi **`setup`** → **Jalankan** → izinkan akses. Buka **Log eksekusi**: berisi link database dan **password sementara** 8 akun (username: `shela`, `annisa`, `elsintha`, `yusril`, `andre`, `fairuz`, `nanang`, `taufik`). Bagikan secara pribadi; semua wajib ganti password saat login pertama.
 4. **Terapkan → Deployment baru → Aplikasi web**: *Jalankan sebagai: Saya*, *Akses: Siapa saja*. Bagikan URL `/exec` ke tim.
-5. Login sebagai `shela` → **⚙ Pengaturan**: isi nama & NIP pejabat, lalu username/password **SPS** dan klik **Tes koneksi**.
+5. Login sebagai `shela` → **👥 Pengguna**: isi email Google tiap admin (akses folder Drive). **⚙ Pengaturan**: cek pejabat, tempel **Gemini API key** lalu *Tes Gemini*, isi username/password **SPS** lalu *Tes koneksi*.
 
 Database (Spreadsheet) hanya dimiliki akun Shela; admin lain mengakses lewat aplikasi, sehingga riwayat tidak bisa diubah dari luar aplikasi.
 

@@ -12,15 +12,15 @@ const SESSION_JAM = 8;
 const COLS = {
   Berkas: ['id', 'jenis', 'nama', 'objek', 'data', 'versi', 'dibuatOleh', 'dibuatPada', 'diubahOleh', 'diubahPada', 'dihapus'],
   Riwayat: ['waktu', 'username', 'nama', 'aksi', 'berkasId', 'berkas', 'detail'],
-  Pengguna: ['username', 'nama', 'role', 'hash', 'salt', 'aktif', 'wajibGanti', 'dibuatPada', 'loginTerakhir'],
+  Pengguna: ['username', 'nama', 'role', 'hash', 'salt', 'aktif', 'wajibGanti', 'dibuatPada', 'loginTerakhir', 'email'],
   Pengaturan: ['kunci', 'nilai'],
 };
 
 /** Pengguna awal. superadmin = akses menyeluruh; admin = akses sederhana. */
 const PENGGUNA_AWAL = [
   ['shela', 'Shela Natasha', 'superadmin'],
-  ['annisa', 'Annisa Dwi Marina', 'admin'],
-  ['elsintha', 'Elsintha Damayanti', 'admin'],
+  ['annisa', 'Annisa Dwi Marina', 'admin', 'annisadwimarina@gmail.com'],
+  ['elsintha', 'Elsintha Damayanti', 'admin', 'damayantielsintha@gmail.com'],
   ['yusril', 'Yusril Ihza Mahendra', 'admin'],
   ['andre', 'Andre Yosua Surbakti', 'admin'],
   ['fairuz', 'Nur Fairuz Diba Nasution', 'admin'],
@@ -51,17 +51,22 @@ function setup() {
     if (ada.indexOf(p[0]) >= 0) return;
     const pwd = passwordAcak_();
     const salt = Utilities.getUuid();
-    sh.appendRow([p[0], p[1], p[2], hash_(pwd, salt), salt, true, true, new Date(), '']);
+    sh.appendRow([p[0], p[1], p[2], hash_(pwd, salt), salt, true, true, new Date(), '', p[3] || '']);
     out.push(p[1] + ' (' + p[2] + ')  username: ' + p[0] + '  password sementara: ' + pwd);
   });
   log_({ username: 'system', nama: 'Setup' }, 'SETUP', '', '', 'Database dibuat / pengguna awal ditambahkan: ' + out.length);
+  const root = folderRoot_();
+  sinkronAkses_();
   Logger.log('Database: ' + ss.getUrl());
+  Logger.log('Folder dokumen: ' + root.getUrl());
   Logger.log(out.length ? out.join('\n') : 'Semua pengguna sudah ada.');
 }
 
 /* ------------------------------------------------------------ storage */
 
+let SS_ = null;
 function db_() {
+  if (SS_) return SS_;
   let id = PROPS.getProperty('DB_ID');
   let ss;
   if (id) ss = SpreadsheetApp.openById(id);
@@ -72,10 +77,14 @@ function db_() {
   }
   Object.keys(COLS).forEach(function (n) {
     const s = ss.getSheetByName(n) || ss.insertSheet(n);
-    if (s.getLastRow() > 0) return;
+    if (s.getLastRow() > 0) {
+      if (s.getLastColumn() < COLS[n].length) s.getRange(1, 1, 1, COLS[n].length).setValues([COLS[n]]); // migrasi kolom baru
+      return;
+    }
     s.getRange(1, 1, 1, COLS[n].length).setValues([COLS[n]]).setFontWeight('bold').setBackground('#4f46e5').setFontColor('#fff');
     s.setFrozenRows(1);
   });
+  SS_ = ss;
   return ss;
 }
 function sheet_(n) { return db_().getSheetByName(n); }
@@ -149,7 +158,7 @@ function apiGantiPassword(token, lama, baru) {
 
 function apiInit(token) {
   const u = user_(token);
-  const out = { user: u, settings: settings_(), berkas: berkas_(u.role === 'superadmin'), sps: spsInfo_() };
+  const out = { user: u, settings: settings_(), berkas: berkas_(u.role === 'superadmin'), sps: spsInfo_(), folderUrl: folderRoot_().getUrl() };
   if (u.role === 'superadmin') out.users = daftarPengguna_();
   return out;
 }
@@ -299,7 +308,7 @@ function apiSimpanPengaturan(token, set) {
 
 function daftarPengguna_() {
   return rows_('Pengguna').map(function (r) {
-    return { username: r.username, nama: r.nama, role: r.role, aktif: r.aktif === true, wajibGanti: r.wajibGanti === true, loginTerakhir: iso_(r.loginTerakhir) };
+    return { username: r.username, nama: r.nama, role: r.role, aktif: r.aktif === true, wajibGanti: r.wajibGanti === true, loginTerakhir: iso_(r.loginTerakhir), email: r.email || '' };
   });
 }
 function apiPengguna(token) { super_(token); return daftarPengguna_(); }
@@ -322,12 +331,15 @@ function apiSimpanPengguna(token, data) {
     if (p.username === u.username && (data.role !== 'superadmin' || data.aktif === false)) throw new Error('Tidak bisa menurunkan/menonaktifkan akun sendiri.');
     sh.getRange(p._row, 2, 1, 2).setValues([[data.nama, data.role === 'superadmin' ? 'superadmin' : 'admin']]);
     sh.getRange(p._row, 6).setValue(data.aktif !== false);
-    log_(u, 'UBAH_PENGGUNA', '', '', p.nama + ' → ' + data.nama + ', ' + data.role + ', ' + (data.aktif !== false ? 'aktif' : 'nonaktif'));
+    sh.getRange(p._row, 10).setValue(email_(data.email));
+    log_(u, 'UBAH_PENGGUNA', '', '', p.nama + ' → ' + data.nama + ', ' + data.role + ', ' + (data.aktif !== false ? 'aktif' : 'nonaktif') + (data.email ? ', ' + data.email : ''));
+    sinkronAkses_();
     return null;
   }
   const pwd = passwordAcak_(), salt = Utilities.getUuid();
-  sh.appendRow([username, data.nama, data.role || 'admin', hash_(pwd, salt), salt, true, true, new Date(), '']);
+  sh.appendRow([username, data.nama, data.role || 'admin', hash_(pwd, salt), salt, true, true, new Date(), '', email_(data.email)]);
   log_(u, 'TAMBAH_PENGGUNA', '', '', data.nama + ' (' + (data.role || 'admin') + ')');
+  sinkronAkses_();
   return pwd;
 }
 
@@ -456,11 +468,102 @@ function apiBacaPenetapanAI(token, b64, mime, prompt) {
   user_(token);
   const key = PROPS.getProperty('GEMINI_KEY');
   if (!key) return null;
-  const res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(key), {
+  const model = PROPS.getProperty('GEMINI_MODEL') || 'gemini-2.5-flash';
+  const res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(key), {
     method: 'post', contentType: 'application/json', muteHttpExceptions: true,
     payload: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: mime || 'application/pdf', data: b64 } }, { text: prompt }] }],
       generationConfig: { responseMimeType: 'application/json', temperature: 0 } }),
   });
-  if (res.getResponseCode() !== 200) throw new Error('Gemini HTTP ' + res.getResponseCode());
+  if (res.getResponseCode() !== 200) throw new Error('Gemini HTTP ' + res.getResponseCode() + ': ' + res.getContentText().slice(0, 200));
   return JSON.parse(JSON.parse(res.getContentText()).candidates[0].content.parts[0].text);
+}
+
+/* ------------------------------------------------------------ Google Drive: folder & Google Docs */
+
+function email_(e) {
+  e = String(e || '').trim().toLowerCase();
+  if (e && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) throw new Error('Format email tidak valid: ' + e);
+  return e;
+}
+/** Folder utama: "Dokumen Penyumpahan BHP Medan" (milik pemilik skrip). */
+function folderRoot_() {
+  const id = PROPS.getProperty('FOLDER_ID');
+  if (id) { try { return DriveApp.getFolderById(id); } catch (e) {} }
+  const f = DriveApp.createFolder('Dokumen Penyumpahan BHP Medan');
+  f.setDescription('Dibuat otomatis oleh aplikasi Dokumen Penyumpahan. Struktur: Tahun / Pengampuan|Perwalian / Nama - Nomor Penetapan.');
+  try { DriveApp.getFileById(db_().getId()).moveTo(f); } catch (e) {}
+  PROPS.setProperty('FOLDER_ID', f.getId());
+  return f;
+}
+function sub_(parent, name) {
+  const it = parent.getFoldersByName(name);
+  return it.hasNext() ? it.next() : parent.createFolder(name);
+}
+/** Folder berkas: <root>/<tahun sumpah>/<Pengampuan|Perwalian>/<NAMA> - <nomor penetapan> */
+function folderBerkas_(d) {
+  const th = String(d.tglSumpah || d.tanggalSurat || new Date().toISOString()).slice(0, 4);
+  const nama = (String(d.nama || 'TANPA NAMA') + (d.nomorPenetapan ? ' - ' + d.nomorPenetapan : '')).replace(/[\/\\:*?"<>|]/g, '_');
+  return sub_(sub_(sub_(folderRoot_(), th), d.jenis || 'Pengampuan'), nama);
+}
+/** Semua admin aktif yang punya email mendapat akses Editor ke folder utama; admin nonaktif dicabut. */
+function sinkronAkses_() {
+  const f = folderRoot_();
+  const editors = f.getEditors().map(function (x) { return x.getEmail().toLowerCase(); });
+  const owner = Session.getEffectiveUser().getEmail().toLowerCase();
+  rows_('Pengguna').forEach(function (r) {
+    const e = String(r.email || '').toLowerCase();
+    if (!e || e === owner) return;
+    try {
+      if (r.aktif === true && editors.indexOf(e) < 0) f.addEditor(e);
+      if (r.aktif !== true && editors.indexOf(e) >= 0) f.removeEditor(e);
+    } catch (err) { Logger.log('Gagal atur akses ' + e + ': ' + err); }
+  });
+}
+
+/**
+ * Simpan dokumen sebagai Google Docs (bisa diedit) di folder berkas.
+ * b64 = file .docx yang dirakit di browser (kop, logo, tabel) — dikonversi Drive menjadi Google Docs.
+ * Jika dokumen yang sama sudah ada, versi lama dipindah ke subfolder "Arsip" (tidak dihapus).
+ */
+function apiBuatDokumen(token, id, key, judul, b64) {
+  const u = user_(token);
+  const r = rows_('Berkas').filter(function (x) { return x.id === id; })[0];
+  if (!r) throw new Error('Simpan berkas dulu.');
+  if (r.dihapus === true) throw new Error('Berkas sudah dihapus.');
+  const d = JSON.parse(r.data);
+  const folder = folderBerkas_(d);
+  const nama = (judul + ' - ' + (d.nama || '')).replace(/[\/\\]/g, '_');
+  d.dokumen = d.dokumen || {};
+  const lama = d.dokumen[key];
+  if (lama && lama.id) { try { DriveApp.getFileById(lama.id).setName(nama + ' (versi ' + String(lama.waktu).slice(0, 10) + ')').moveTo(sub_(folder, 'Arsip')); } catch (e) {} }
+  const blob = Utilities.newBlob(Utilities.base64Decode(b64), 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', nama + '.docx');
+  const file = Drive.Files.create({ name: nama, mimeType: MimeType.GOOGLE_DOCS, parents: [folder.getId()] }, blob, { fields: 'id,webViewLink' });
+  const now = new Date();
+  d.dokumen[key] = { id: file.id, url: file.webViewLink || ('https://docs.google.com/document/d/' + file.id + '/edit'), waktu: now.toISOString(), oleh: u.nama };
+  d.folderUrl = folder.getUrl();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const now2 = rows_('Berkas').filter(function (x) { return x.id === id; })[0];
+    const d2 = JSON.parse(now2.data);
+    d2.dokumen = d.dokumen; d2.folderUrl = d.folderUrl;
+    const versi = Number(now2.versi) + 1;
+    sheet_('Berkas').getRange(now2._row, 5, 1, 6).setValues([[JSON.stringify(d2), versi, now2.dibuatOleh, now2.dibuatPada, u.nama, now]]);
+    log_(u, 'BUAT_DOKUMEN', id, d.nama, judul + (lama ? ' (dibuat ulang; versi lama di folder Arsip)' : '') + ' | ' + d.dokumen[key].url);
+    return { dok: d.dokumen[key], folderUrl: d.folderUrl, versi: versi };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function apiTesGemini(token) {
+  super_(token);
+  const key = PROPS.getProperty('GEMINI_KEY');
+  if (!key) throw new Error('Kunci Gemini belum diisi.');
+  const model = PROPS.getProperty('GEMINI_MODEL') || 'gemini-2.5-flash';
+  const res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(key), {
+    method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+    payload: JSON.stringify({ contents: [{ parts: [{ text: 'Balas satu kata: siap' }] }] }) });
+  if (res.getResponseCode() !== 200) throw new Error('Gemini HTTP ' + res.getResponseCode() + ': ' + res.getContentText().slice(0, 200));
+  return 'Gemini (' + model + ') terhubung.';
 }

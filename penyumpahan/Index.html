@@ -111,7 +111,7 @@ const DEF_SET={
   web:'Laman: www.bhpmedan.kemenkum.go.id, Pos-el: bhp.medan@kemenkum.go.id',
   kepala:'Syafriadi Lubis',wa:'0851-2156-2136',
   kanwilTembusan:'Kepala Kantor Wilayah Kementerian Hukum Riau',
-  pejabat:[{nama:'',nip:'',jabatan:'Ahli Madya'},{nama:'',nip:'',jabatan:'Ahli Muda'}],
+  pejabat:[{nama:'SYUHADA',nip:'196706121989031001',jabatan:'Kurator Keperdataan Ahli Madya'},{nama:'',nip:'',jabatan:'Kurator Keperdataan Ahli Muda'}],
   lafaz:{
     Islam:'WALLAHI (Demi Allah) saya bersumpah, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya.',
     Kristen:'Demi Tuhan saya berjanji, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya. Semoga Tuhan menolong saya.',
@@ -226,7 +226,7 @@ const DOCS={
 const $=s=>document.querySelector(s);
 /* ---------------- server & sesi ---------------- */
 const GAS=typeof google!=='undefined'&&google.script&&google.script.run;
-let TOKEN=null,ME=null,USERS=[],SPS={terhubung:false},ADA_AI=false,DB=[],SET=JSON.parse(JSON.stringify(DEF_SET));
+let FOLDER='',TOKEN=null,ME=null,USERS=[],SPS={terhubung:false},ADA_AI=false,DB=[],SET=JSON.parse(JSON.stringify(DEF_SET));
 const ss=(k,v)=>{try{if(v===undefined)return sessionStorage.getItem(k);if(v===null)sessionStorage.removeItem(k);else sessionStorage.setItem(k,v)}catch(e){}};
 function api(fn,...a){
   if(!GAS)return new Promise((ok,no)=>setTimeout(()=>{try{ok(DEMO[fn](TOKEN,...a))}catch(e){no(e)}},60));
@@ -250,14 +250,14 @@ async function doLogin(f){const b=f.querySelector('button');b.disabled=true;b.te
   catch(e){showLogin(e.message||String(e))}}
 async function boot(){
   if(!TOKEN){showLogin();return}
-  try{const r=await api('apiInit');ME=r.user;USERS=r.users||[];SPS=r.sps||SPS;SET=Object.assign(JSON.parse(JSON.stringify(DEF_SET)),r.settings||{});DB=r.berkas||[];
+  try{const r=await api('apiInit');ME=r.user;USERS=r.users||[];SPS=r.sps||SPS;SET=Object.assign(JSON.parse(JSON.stringify(DEF_SET)),r.settings||{});DB=r.berkas||[];FOLDER=r.folderUrl||'';
     DB.sort((a,b)=>String(b._meta?.diubahPada||'').localeCompare(String(a._meta?.diubahPada||'')));
     api('apiAdaGemini').then(v=>ADA_AI=v).catch(()=>{});
   }catch(e){if(!TOKEN)return;showLogin(e.message);return}
   $('#login').hidden=true;document.body.classList.remove('locked');renderHeader();cur=null;renderList();renderMain();
   if(ME.wajibGanti)gantiPassword(true)}
 async function logout(){await api('apiLogout').catch(()=>{});TOKEN=null;ss('bhpTok',null);ME=null;DB=[];cur=null;showLogin('Anda sudah keluar.')}
-function renderHeader(){$('#who').innerHTML=`<button onclick="menuUser()" title="Akun">👤 ${esc(ME.nama)} <span class="tag">${isSuper()?'Admin Utama':'Admin'}</span></button>`;
+function renderHeader(){$('#who').innerHTML=`${FOLDER?`<a class="btn" href="${FOLDER}" target="_blank" rel="noopener">📁 Folder Drive</a> `:''}<button onclick="menuUser()" title="Akun">👤 ${esc(ME.nama)} <span class="tag">${isSuper()?'Admin Utama':'Admin'}</span></button>`;
   document.querySelectorAll('.superOnly').forEach(e=>e.hidden=!isSuper())}
 function menuUser(){dlg(`<h3>👤 ${esc(ME.nama)}</h3><p class="hint">Username: <b>${esc(ME.username)}</b> · ${isSuper()?'Admin Utama (akses penuh)':'Admin'}</p>
   <p style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="gantiPassword()">🔑 Ganti password</button><button onclick="logout()" style="color:var(--warn)">⎋ Keluar</button><button onclick="dlgClose()">Tutup</button></p>`)}
@@ -289,7 +289,7 @@ const LBL={jenis:'Jenis perkara',tanggalSurat:'Tanggal surat',nomorSurat:'Nomor 
   nama:'Nama pengampu/wali',nik:'NIK',jk:'Jenis kelamin',tglLahir:'Tanggal lahir',agama:'Agama',pekerjaan:'Pekerjaan',alamat:'Alamat',kelurahan:'Kelurahan/Kec/Kota',status:'Hubungan',
   'terampu.nama':'Nama terampu','terampu.jk':'JK terampu','terampu.tglLahir':'Tgl lahir terampu','terampu.kondisi':'Kondisi medis',pengadilan:'Pengadilan',nomorPenetapan:'Nomor penetapan',tglPenetapan:'Tanggal penetapan',
   tglSumpah:'Tanggal sumpah',waktu:'Waktu',tempat:'Tempat',madya:'Pejabat penyumpah',muda:'Pejabat inventarisasi',harta:'Harta lainnya',tanah:'Tanah/bangunan',rekening:'Rekening',saksi1:'Saksi 1',saksi2:'Saksi 2'};
-const AKSI={BUAT:['➕','Membuat berkas'],UBAH:['✏️','Mengubah'],HAPUS:['🗑','Menghapus berkas'],PULIHKAN:['♻️','Memulihkan berkas'],UNDUH_DOCX:['⬇','Mengunduh DOCX'],AMBIL_NOMOR:['🔢','Mengambil nomor SPS'],
+const AKSI={BUAT:['➕','Membuat berkas'],UBAH:['✏️','Mengubah'],HAPUS:['🗑','Menghapus berkas'],PULIHKAN:['♻️','Memulihkan berkas'],UNDUH_DOCX:['⬇','Mengunduh DOCX'],BUAT_DOKUMEN:['📄','Membuat Google Doc'],AMBIL_NOMOR:['🔢','Mengambil nomor SPS'],
   LOGIN:['🔓','Login'],LOGOUT:['🔒','Logout'],LOGIN_GAGAL:['⛔','Login gagal'],GANTI_PASSWORD:['🔑','Ganti password'],RESET_PASSWORD:['🔑','Reset password'],PENGATURAN:['⚙','Pengaturan'],
   TAMBAH_PENGGUNA:['👤','Tambah pengguna'],UBAH_PENGGUNA:['👤','Ubah pengguna'],BACA_PENETAPAN:['📑','Baca penetapan'],IMPOR_CSV:['⬆','Impor CSV'],SETUP:['🛠','Setup']};
 const fLbl=f=>{const m=f.match(/^anak\.(\d+)\.(\w+)$/);if(m)return`Anak ${+m[1]+1} – ${{nama:'nama',jk:'JK',tglLahir:'tgl lahir'}[m[2]]||m[2]}`;return LBL[f]||f};
@@ -312,17 +312,18 @@ async function riwayatSemua(f={}){if(!isSuper())return;
 
 /* ---------------- pengguna (admin utama) ---------------- */
 async function kelolaPengguna(){if(!isSuper())return;USERS=await api('apiPengguna');
-  dlg(`<h3>👥 Kelola Pengguna</h3><div class="log">${USERS.map(u=>`<div class="logi"><div class="grid" style="align-items:end">
+  dlg(`<h3>👥 Kelola Pengguna</h3><p class="hint">Isi email Google tiap admin agar otomatis mendapat akses Editor ke folder Drive dokumen. Admin nonaktif otomatis dicabut aksesnya.</p><div class="log">${USERS.map(u=>`<div class="logi"><div class="grid" style="align-items:end">
     <div><label>Nama</label><input id="n_${u.username}" value="${esc(u.nama)}"></div><div><label>Username</label><input disabled value="${u.username}"></div>
+    <div><label>Email Google (akses folder Drive)</label><input id="e_${u.username}" value="${esc(u.email||'')}" placeholder="nama@gmail.com"></div>
     <div><label>Peran</label><select id="r_${u.username}"><option value="admin">Admin</option><option value="superadmin" ${u.role==='superadmin'?'selected':''}>Admin Utama</option></select></div>
     <div><label><input type="checkbox" id="a_${u.username}" ${u.aktif?'checked':''} style="width:auto"> Aktif</label><span class="hint">Login terakhir: ${u.loginTerakhir?wkt(u.loginTerakhir):'-'}</span></div></div>
     <p style="display:flex;gap:6px;margin:8px 0 0"><button onclick="simpanUser('${u.username}')">Simpan</button><button onclick="resetPwd('${u.username}','${esc(u.nama)}')">🔑 Reset password</button><button onclick="dlgClose();riwayatSemua({username:'${u.username}'})">🕘 Riwayat</button></p></div>`).join('')}</div>
-    <h3 style="margin-top:16px">+ Tambah pengguna</h3><div class="grid"><div><label>Nama</label><input id="nu_n"></div><div><label>Username</label><input id="nu_u"></div>
+    <h3 style="margin-top:16px">+ Tambah pengguna</h3><div class="grid"><div><label>Nama</label><input id="nu_n"></div><div><label>Username</label><input id="nu_u"></div><div><label>Email Google</label><input id="nu_e"></div>
     <div><label>Peran</label><select id="nu_r"><option value="admin">Admin</option><option value="superadmin">Admin Utama</option></select></div><div><label>&nbsp;</label><button class="pri" onclick="tambahUser()">Tambah</button></div></div>
     <p style="text-align:right"><button onclick="dlgClose()">Tutup</button></p>`)}
-async function simpanUser(u){try{await api('apiSimpanPengguna',{username:u,nama:$('#n_'+u).value,role:$('#r_'+u).value,aktif:$('#a_'+u).checked});toast('Disimpan')}catch(e){alert(e.message)}}
+async function simpanUser(u){try{await api('apiSimpanPengguna',{username:u,nama:$('#n_'+u).value,email:$('#e_'+u).value,role:$('#r_'+u).value,aktif:$('#a_'+u).checked});toast('Disimpan; akses folder Drive diperbarui')}catch(e){alert(e.message)}}
 async function resetPwd(u,n){if(!confirm('Reset password '+n+'?'))return;try{const p=await api('apiResetPassword',u);prompt(`Password sementara ${n} (sampaikan secara pribadi; wajib diganti saat login):`,p)}catch(e){alert(e.message)}}
-async function tambahUser(){try{const p=await api('apiSimpanPengguna',{username:$('#nu_u').value,nama:$('#nu_n').value,role:$('#nu_r').value});prompt('Pengguna ditambahkan. Password sementara:',p);kelolaPengguna()}catch(e){alert(e.message)}}
+async function tambahUser(){try{const p=await api('apiSimpanPengguna',{username:$('#nu_u').value,nama:$('#nu_n').value,email:$('#nu_e').value,role:$('#nu_r').value});prompt('Pengguna ditambahkan. Password sementara:',p);kelolaPengguna()}catch(e){alert(e.message)}}
 
 /* ---------------- kelengkapan & nomor SPS ---------------- */
 const NOMOR={surat:'nomorSurat',lurah:'nomorLurah',ba:'nomorBA',harta:'nomorBAHarta'};
@@ -415,9 +416,9 @@ function renderMain(){
   if(tab==='harta')h+=F('tanah','Daftar tanah/bangunan (satu per baris)','area')+F('rekening','Daftar rekening (satu per baris)','area')+F('harta','Harta lainnya (satu per baris)','area');
   if(tab==='dok')h+=`<div class="full"><div class="docs">${Object.entries(DOCS).map(([k,o])=>{const nf=NOMOR[k],ku=nf?kurang(k,cur):[];
     return`<div class="doc"><b>${o.nama(cur)}</b>${nf?(cur[nf]?`<span class="nomor">No. ${esc(cur[nf])}</span>`:ku.length?`<span class="kurang">Belum bisa ambil nomor. Kurang: ${esc(ku.join(', '))}</span>`:`<button class="pri" onclick="ambilNomor('${k}',this)">🔢 Ambil nomor SPS</button>`):''}
-    <div><button onclick="preview('${k}')">👁 Lihat</button><button onclick="dl(['${k}'])">⬇ DOCX</button></div></div>`}).join('')}
-    <div class="doc" style="border-color:var(--pri)"><b>📦 Seluruh Dokumen</b><span class="hint">Satu file .docx berisi semua dokumen</span><div><button class="pri" onclick="dl(Object.keys(DOCS))">⬇ DOCX</button></div></div></div>
-    <p class="hint">Kolom kuning = belum diisi. Semua unduhan berformat .docx (Word) dan tercatat di riwayat. Nomor surat diambil dari SPS setelah isian lengkap.</p><div id="prev"></div></div>`;
+    ${gdocBtn(k,[k],o.nama(cur))}<div><button onclick="preview('${k}')">👁 Pratinjau</button></div></div>`}).join('')}
+    <div class="doc" style="border-color:var(--pri)"><b>📦 Seluruh Dokumen</b><span class="hint">Satu Google Doc berisi semua dokumen</span>${gdocBtn('semua',Object.keys(DOCS),'Dokumen Lengkap')}</div></div>
+    <p class="hint">Kolom kuning = belum diisi. Dokumen dibuat sebagai <b>Google Docs</b> (bisa langsung diedit) di folder Drive berkas ini${cur.folderUrl?` — <a href="${cur.folderUrl}" target="_blank" rel="noopener">📁 buka folder</a>`:''}. Nomor surat diambil dari SPS setelah isian lengkap. Semua tercatat di riwayat.</p><div id="prev"></div></div>`;
   if(tab==='riw')h+=`<div class="full"><div id="riw"></div></div>`;
   $('#main').innerHTML=h+'</div>';
   if(tab==='jadwal'){const s=$('#main').querySelectorAll('select');s[0].value=cur.madya;s[1].value=cur.muda}
@@ -509,7 +510,18 @@ async function dl(keys){
     toast('Diunduh: '+n);api('apiCatat','UNDUH_DOCX',cur.id,cur.nama,keys.map(k=>DOCS[k].nama(cur)).join(', ')).catch(()=>{})}
   catch(e){alert('Gagal membuat DOCX: '+e.message)}}
 
-function dupRec(){const r=JSON.parse(JSON.stringify(cur));['id','_versi','_meta','_dihapus'].forEach(k=>delete r[k]);Object.values(NOMOR).forEach(k=>r[k]='');r.nama+=' (salinan)';cur=addRec(r,'Duplikat dari '+r.nama.replace(/ \(salinan\)$/,''));renderMain();renderList();flush()}
+function gdocBtn(key,keys,judul){const d=(cur.dokumen||{})[key];const ks=JSON.stringify(keys).replace(/"/g,"'");
+  return d?`<span class="nomor">📄 <a href="${d.url}" target="_blank" rel="noopener">Buka Google Doc</a><br><small>${esc(d.oleh)} · ${wkt(d.waktu)}</small></span><div><button onclick="buatGDoc('${key}',${ks},'${esc(judul)}',this,1)">↻ Buat ulang</button></div>`
+    :`<div><button class="pri" onclick="buatGDoc('${key}',${ks},'${esc(judul)}',this)">📄 Buat Google Doc</button></div>`}
+async function buatGDoc(key,keys,judul,btn,ulang){
+  if(ulang&&!confirm('Buat ulang "'+judul+'" dari data terbaru?\nVersi lama (termasuk editan manual di Google Docs) dipindah ke subfolder Arsip, tidak dihapus.'))return;
+  if(!GAS){toast('Mode demo: dokumen diunduh sebagai .docx (Google Doc dibuat setelah di-deploy)');return dl(keys)}
+  const w=window.open('about:blank','_blank');btn.disabled=true;btn.textContent='Membuat…';clearTimeout(saveT);await flush();
+  try{const blob=await buatDocx(keys);const b64=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(blob)});
+    const r=await api('apiBuatDokumen',cur.id,key,judul,b64);cur.dokumen=cur.dokumen||{};cur.dokumen[key]=r.dok;cur.folderUrl=r.folderUrl;cur._versi=r.versi;
+    if(w)w.location=r.dok.url;toast('Google Doc dibuat');renderMain()}
+  catch(e){if(w)w.close();alert('Gagal membuat dokumen: '+(e.message||e));btn.disabled=false;btn.textContent='📄 Buat Google Doc'}}
+function dupRec(){const r=JSON.parse(JSON.stringify(cur));['id','_versi','_meta','_dihapus','dokumen','folderUrl'].forEach(k=>delete r[k]);Object.values(NOMOR).forEach(k=>r[k]='');r.nama+=' (salinan)';cur=addRec(r,'Duplikat dari '+r.nama.replace(/ \(salinan\)$/,''));renderMain();renderList();flush()}
 async function delRec(){if(!confirm('Hapus berkas '+(cur.nama||'')+'? (bisa dipulihkan oleh admin utama)'))return;clearTimeout(saveT);
   try{await api('apiHapus',cur.id);cur._dihapus=true;toast('Berkas dihapus');renderMain();renderList()}catch(e){alert(e.message)}}
 async function restoreRec(){try{await api('apiPulihkan',cur.id);cur._dihapus=false;toast('Dipulihkan');renderMain();renderList()}catch(e){alert(e.message)}}
@@ -552,7 +564,8 @@ async function handlePenetapan(file){
   try{
     let data;
     if(ADA_AI){stat('Menganalisis dengan AI Gemini…');try{data=await geminiExtract(file)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}}
-    if(!data){const text=await fileText(file);if(text.replace(/\s/g,'').length<80)throw new Error('Teks tidak terbaca dari file.');data=parsePenetapan(text);data._text=text}
+    let rx=null;try{const text=await fileText(file);if(text.replace(/\s/g,'').length>=80){rx=parsePenetapan(text);rx._text=text}}catch(e){if(!data)throw e}
+    if(data&&rx)data=gabung(data,rx);else data=data||rx;if(!data)throw new Error('Teks tidak terbaca dari file.');
     reviewPenetapan(data,file.name);
   }catch(e){$('#penBody').innerHTML=`<h3>Gagal membaca penetapan</h3><p>${esc(e.message)}</p><p class="hint">Coba file PDF asli (bukan foto miring/buram), atau isi Gemini API key di Pengaturan.</p><p style="text-align:right"><button onclick="penDlg.close()">Tutup</button></p>`}
 }
@@ -626,11 +639,21 @@ function parsePenetapan(raw){
   }
   return R}
 
+function gabung(ai,rx){const o={...rx,...ai};for(const k in rx)if(typeof rx[k]!=='object'&&!ai[k])o[k]=rx[k];
+  if(ai.terampu||rx.terampu){o.terampu={...(rx.terampu||{})};for(const k in (ai.terampu||{}))if(ai.terampu[k])o.terampu[k]=ai.terampu[k]}
+  o.anak=(ai.anak&&ai.anak.filter(a=>a&&a.nama).length)?ai.anak:rx.anak;o._text=rx._text;o._ai=true;return o}
 async function geminiExtract(file){
   const b64=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(file)});
-  const prompt=`Ekstrak data dari Penetapan Pengadilan (perwalian/pengampuan) ini. Balas JSON saja dengan kunci:
-{"jenis":"Pengampuan|Perwalian","pengadilan":"","nomorPenetapan":"","tglPenetapan":"YYYY-MM-DD","nama":"nama pemohon yg diangkat wali/pengampu","nik":"","jk":"Laki-laki|Perempuan","tglLahir":"YYYY-MM-DD","agama":"Islam|Kristen|Katholik|Hindu|Buddha|Khonghucu","pekerjaan":"","alamat":"alamat lengkap","kelurahan":"Kelurahan X, Kecamatan Y, Kota Z, Provinsi","status":"hubungan pemohon dgn terampu/anak mis. Ibu Kandung","terampu":{"nama":"","jk":"","tglLahir":"YYYY-MM-DD","kondisi":"kondisi medis + dasar surat dokter"},"anak":[{"nama":"","jk":"","tglLahir":"YYYY-MM-DD"}]}
-Kosongkan yang tidak ada. Nama dalam HURUF KAPITAL.`;
+  const prompt=`Anda asisten Balai Harta Peninggalan (BHP) Medan. Baca PENETAPAN PENGADILAN terlampir (perwalian anak atau pengampuan orang dewasa) dan ekstrak data untuk Berita Acara Penyumpahan.
+Balas HANYA JSON dengan kunci berikut (string kosong bila tidak ada di dokumen, jangan mengarang):
+{"jenis":"Pengampuan|Perwalian","pengadilan":"mis. Pengadilan Negeri Pekanbaru","nomorPenetapan":"mis. 48/Pdt.P/2025/PN Pbr","tglPenetapan":"YYYY-MM-DD",
+"nama":"pemohon yang DITETAPKAN sebagai wali/pengampu, HURUF KAPITAL tanpa gelar sapaan","nik":"16 digit","jk":"Laki-laki|Perempuan","tglLahir":"YYYY-MM-DD","agama":"Islam|Kristen|Katholik|Hindu|Buddha|Khonghucu",
+"pekerjaan":"","alamat":"alamat lengkap pemohon seperti tertulis (RT/RW, kelurahan, kecamatan, kota, provinsi)","kelurahan":"format: Kelurahan X, Kecamatan Y, Kota/Kabupaten Z, Provinsi",
+"status":"hubungan TERAMPU/ANAK terhadap pemohon, Title Case, mis. Ibu Kandung, Istri, Saudara Kandung, Anak Kandung",
+"terampu":{"nama":"KAPITAL","jk":"Laki-laki|Perempuan","tglLahir":"YYYY-MM-DD","kondisi":"diagnosis medis + dasar surat keterangan dokter (nama RS & nomor surat) bila ada"},
+"anak":[{"nama":"KAPITAL","jk":"Laki-laki|Perempuan","tglLahir":"YYYY-MM-DD"}]}
+Aturan: ambil nomor & tanggal dari bagian kepala dan penutup penetapan (bukan footer halaman). Tanggal penetapan = tanggal "Demikianlah ditetapkan". Tanggal format 26-06-1982 berarti 26 Juni 1982.
+Untuk Pengampuan isi "terampu" dan kosongkan "anak"; untuk Perwalian isi semua anak yang disebut di amar dan kosongkan "terampu". Jenis kelamin boleh disimpulkan dari hubungan (Ibu/Istri = Perempuan).`;
   const d=await api('apiBacaPenetapanAI',b64,file.type||'application/pdf',prompt);if(!d)throw new Error('AI tidak aktif');d._ai=true;return d}
 
 const PEN_LBL={jenis:'Jenis',pengadilan:'Pengadilan',nomorPenetapan:'Nomor Penetapan',tglPenetapan:'Tanggal Penetapan',nama:'Nama Pemohon (Wali/Pengampu)',nik:'NIK',jk:'Jenis Kelamin',tglLahir:'Tanggal Lahir',agama:'Agama',pekerjaan:'Pekerjaan',alamat:'Alamat',kelurahan:'Kelurahan/Kec/Kota',status:'Hubungan'};
@@ -670,12 +693,13 @@ function openSet(){if(!isSuper())return;const s=SET;s.sps=s.sps||{};const L={ins
     <div class="grid"><div><label>Username SPS</label><input id="spsU" autocomplete="off"></div><div><label>Password SPS</label><input id="spsP" type="password" autocomplete="new-password"></div>
     <div><label>&nbsp;</label><button onclick="simpanSps()">Simpan kredensial</button></div><div><label>&nbsp;</label><button onclick="tesSps(this)">🔌 Tes koneksi</button></div></div>
     <details style="margin-top:8px"><summary class="hint">Konfigurasi teknis API SPS</summary><div class="grid">${SPS_KEYS.map(([k,l])=>`<div class="${k==='body'?'full':''}"><label>${l}</label><input value="${esc(s.sps[k]??'')}" placeholder="bawaan" oninput="SET.sps['${k}']=this.value"></div>`).join('')}</div></details></div>
-  <div class="full card" style="padding:12px"><h3>✨ AI baca penetapan (opsional)</h3><p class="hint">Status: ${ADA_AI?'aktif':'tidak aktif'}. Kunci disimpan di server.</p><div class="grid"><div><label>Gemini API key</label><input id="gk" type="password" autocomplete="new-password"></div><div><label>&nbsp;</label><button onclick="simpanGemini()">Simpan kunci</button></div></div></div>
+  <div class="full card" style="padding:12px"><h3>✨ AI Gemini untuk membaca penetapan</h3><p class="hint">Status: ${ADA_AI?'<b style="color:var(--ok)">terhubung</b>':'<b style="color:var(--warn)">belum terhubung</b>'}. Buat kunci gratis di <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> (login dengan akun Google Anda), lalu tempel di sini. Kunci disimpan di server, tidak terlihat admin lain.</p><div class="grid"><div><label>Gemini API key</label><input id="gk" type="password" autocomplete="new-password"></div><div><label>&nbsp;</label><button onclick="simpanGemini()">Simpan kunci</button></div><div><label>&nbsp;</label><button onclick="tesGemini(this)">🔌 Tes Gemini</button></div></div></div>
   </div><p style="text-align:right;margin-top:12px"><button onclick="dlgClose();boot()">Batal</button> <button class="pri" onclick="simpanSet()">Simpan pengaturan</button></p>`)}
 function gantiLogo(inp){const f=inp.files[0];if(!f)return;const img=new Image();img.onload=()=>{const c=document.createElement('canvas'),k=Math.min(1,300/img.height);c.width=img.width*k;c.height=img.height*k;c.getContext('2d').drawImage(img,0,0,c.width,c.height);SET.logo=c.toDataURL('image/png');openSet()};img.src=URL.createObjectURL(f)}
 async function simpanSet(){try{await api('apiSimpanPengaturan',JSON.parse(JSON.stringify(SET)));dlgClose();toast('Pengaturan disimpan');renderMain()}catch(e){alert(e.message)}}
 async function simpanSps(){try{SPS=await api('apiSimpanKredensialSps',$('#spsU').value.trim(),$('#spsP').value);toast('Kredensial SPS disimpan');await api('apiSimpanPengaturan',JSON.parse(JSON.stringify(SET)));openSet()}catch(e){alert(e.message)}}
 async function tesSps(b){b.disabled=true;try{await api('apiSimpanPengaturan',JSON.parse(JSON.stringify(SET)));alert(await api('apiTesSps'))}catch(e){alert('Gagal: '+(e.message||e))}b.disabled=false}
+async function tesGemini(b){b.disabled=true;try{alert(await api('apiTesGemini'))}catch(e){alert('Gagal: '+(e.message||e))}b.disabled=false}
 async function simpanGemini(){try{ADA_AI=await api('apiSimpanKunciGemini',$('#gk').value.trim());toast('Disimpan');openSet()}catch(e){alert(e.message)}}
 
 function toggleTheme(){const r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem('bhpTheme',r.dataset.theme)}catch(e){}}
