@@ -123,6 +123,39 @@ body{padding-left:250px}
 #login form{border:0;box-shadow:0 30px 60px #0005}
 @media(max-width:900px){body{padding-left:0}.side{position:static;width:auto;flex-direction:row;flex-wrap:wrap;align-items:center}.side .sec,.side .foot{display:none}.side .brand{border:0;padding:12px}.side .nav{margin:4px;padding:8px 10px;font-size:13px}.top{flex-wrap:wrap;padding:12px 16px}.top #q{width:100%}.wrap{padding:14px}.opts,.dash{grid-template-columns:1fr}.wz{padding:20px}}
 [hidden]{display:none!important}
+/* pengecekan */
+.bad input,.bad select,.bad textarea{border-color:#e5484d!important;background:#fff5f5!important}
+.bad label:after{content:" ⚠";color:#e5484d}
+.warnf input,.warnf select,.warnf textarea{border-color:#f5a524!important;background:#fffaf0!important}
+.warnf label:after{content:" ⚠";color:#d98a00}
+.fmsg{display:block;font-size:11.5px;margin-top:3px;color:#c2272d}.warnf .fmsg{color:#a86a00}
+.steps button{position:relative}.steps .dot{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;border-radius:9px;font-size:10.5px;line-height:18px;padding:0 5px;color:#fff;background:#e5484d;font-weight:700}
+.steps .dot.w{background:#f5a524}
+.cekbar{display:flex;gap:10px;align-items:center;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:13.5px;cursor:pointer}
+.cekbar.e{background:#fdecec;color:#9b1c1f;border:1px solid #f3b4b4}.cekbar.w{background:#fff6e0;color:#7a5200;border:1px solid #f2d38a}.cekbar.ok{background:#e9f8f1;color:#0b6b48;border:1px solid #b5e5cf;cursor:default}
+.ceklist{margin:0;padding:0;list-style:none}.ceklist li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line)}
+.ceklist .ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;flex:none;color:#fff}.ceklist .ic.e{background:#e5484d}.ceklist .ic.w{background:#f5a524}
+.ceklist a{margin-left:auto;font-size:12px;color:var(--navy);cursor:pointer;white-space:nowrap;text-decoration:underline}
+/* kalender */
+.cal{user-select:none}.cal-h{display:flex;align-items:center;gap:8px;margin-bottom:12px}.cal-h b{font-size:17px;margin-right:auto}
+.cal-h button{border-radius:10px;padding:7px 12px}
+.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-g .hd{font-size:11px;font-weight:700;color:var(--mut);text-align:center;letter-spacing:.5px;padding:4px 0}
+.cal-g .d{border:1px solid var(--line);border-radius:12px;min-height:78px;padding:8px;cursor:pointer;position:relative;background:var(--card);transition:.12s}
+.cal-g .d:hover{border-color:var(--navy);box-shadow:0 4px 14px #1b234514}
+.cal-g .d.x{opacity:.35}.cal-g .d.we{background:var(--bg)}.cal-g .d.td{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.cal-g .d.sel{background:var(--navy);color:#fff;border-color:var(--navy)}
+.cal-g .n{font-weight:700;font-size:13px}
+.cal-g .c{position:absolute;right:8px;top:8px;background:var(--gold);color:var(--navy);font-weight:800;font-size:11.5px;border-radius:99px;padding:1px 8px}
+.cal-g .nm{font-size:11px;color:var(--mut);margin-top:6px;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.cal-g .d.sel .nm{color:#dfe3f3}
+.cal.mini .cal-g{gap:4px}.cal.mini .cal-g .d{min-height:40px;padding:5px 6px;border-radius:9px}.cal.mini .cal-g .n{font-size:12px}
+.cal.mini .cal-g .c{right:4px;top:4px;font-size:10px;padding:0 6px}.cal.mini .cal-h b{font-size:14px}
+.cal-wrap{display:grid;grid-template-columns:1fr 320px;gap:20px}
+.cal-side h4{margin:0 0 10px}.cal-side .ev{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.cal-side .ev:hover{border-color:var(--navy)}.cal-side .ev small{color:var(--mut)}
+.cal-stat{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}.cal-stat div{background:var(--bg);border-radius:12px;padding:8px 14px}.cal-stat b{font-size:18px;margin-right:6px}
+@media(max-width:900px){.cal-wrap{grid-template-columns:1fr}.cal-g .nm{display:none}.cal-g .d{min-height:52px}}
 html,body{max-width:100%;overflow-x:hidden}
 #login{display:flex;align-items:center;justify-content:center;padding:16px}
 #login form{width:100%;max-width:380px;margin:0!important}
@@ -138,6 +171,7 @@ html,body{max-width:100%;overflow-x:hidden}
   <a class="nav on" data-v="berkas" onclick="goBerkas()">🏠 Daftar Berkas</a>
   <div class="sec">PENYUMPAHAN</div>
   <a class="nav" data-v="baru" onclick="wizard(1)">📑 Berkas Baru</a>
+  <a class="nav" data-v="kalender" onclick="bukaKalender()">📅 Jadwal Sumpah</a>
   <a class="nav superOnly" onclick="imporSheetDlg()">📥 Impor dari Spreadsheet</a>
   <label class="nav" data-v="csv">⬆ Impor CSV<input type="file" accept=".csv" hidden onchange="importCsv(this)"></label>
   <div class="sec superOnly">ADMIN UTAMA</div>
@@ -560,6 +594,63 @@ function cekData(r){const w=[],t=today(),ref=r.tglSumpah||t;
   else{const u=umurPada(r.terampu&&r.terampu.tglLahir,ref);if(u!==null&&u<18)w.push('Terampu berumur '+u+' tahun — pengampuan untuk orang dewasa');if(r.terampu&&r.nama&&r.terampu.nama===r.nama)w.push('Nama pengampu sama dengan terampu — periksa')}
   if(!r.kelurahan)w.push('Kelurahan kosong — Surat ke Lurah tidak lengkap');
   return w}
+/* ---- pengecekan otomatis sebelum cetak: {lvl:'e'|'w', msg, tab, f} ---- */
+const HARI_KERJA=d=>{const x=pd(d);return x&&x.getDay()!==0&&x.getDay()!==6};
+function nikLahir(nik){nik=String(nik||'').replace(/\D/g,'');if(nik.length!==16)return null;let dd=+nik.slice(6,8);const mm=+nik.slice(8,10),yy=+nik.slice(10,12),perem=dd>40;if(perem)dd-=40;
+  if(!dd||dd>31||!mm||mm>12)return null;const th=yy+(yy>+String(new Date().getFullYear()).slice(2)?1900:2000);return{tgl:`${th}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`,perem}}
+function cekCetak(r){const L=[],E=(tab,f,msg)=>L.push({lvl:'e',tab,f,msg}),W=(tab,f,msg)=>L.push({lvl:'w',tab,f,msg});if(!r)return L;
+  const w=r.jenis==='Perwalian',t=today(),ref=r.tglSumpah||t,J=w?'wali':'pengampu';
+  // 1. perkara
+  if(!r.pengadilan)E('umum','pengadilan','Nama pengadilan kosong');
+  if(!r.nomorPenetapan)E('umum','nomorPenetapan','Nomor penetapan kosong');
+  else if(!/^\d+\s*\/\s*Pdt\.?\s*P\s*\/\s*\d{4}\s*\/\s*(PN|PA|MS)/i.test(r.nomorPenetapan))W('umum','nomorPenetapan','Format nomor penetapan tidak lazim (contoh: 12/Pdt.P/2026/PN Pbr)');
+  if(!r.tglPenetapan)E('umum','tglPenetapan','Tanggal penetapan kosong');else if(r.tglPenetapan>t)E('umum','tglPenetapan','Tanggal penetapan di masa depan');
+  if(r.nomorPenetapan&&r.tglPenetapan){const th=(r.nomorPenetapan.match(/\/(\d{4})\//)||[])[1];if(th&&+th>+r.tglPenetapan.slice(0,4))E('umum','tglPenetapan',`Tahun penetapan (${r.tglPenetapan.slice(0,4)}) lebih awal dari tahun register perkara (${th})`)}
+  // 2. pihak
+  if(!r.nama)E('pihak','nama','Nama '+J+' kosong');
+  if(!r.nik)W('pihak','nik','NIK '+J+' kosong');
+  else if(!/^\d{16}$/.test(String(r.nik).replace(/\s/g,'')))E('pihak','nik','NIK harus 16 digit angka (sekarang '+String(r.nik).replace(/\D/g,'').length+' digit)');
+  else{const n=nikLahir(r.nik);if(n){if(r.tglLahir&&n.tgl!==r.tglLahir)W('pihak','tglLahir',`Tanggal lahir (${tgl(r.tglLahir)}) tidak sama dengan yang tersandi di NIK (${tgl(n.tgl)})`);
+    if((r.jk==='Perempuan')!==n.perem)W('pihak','jk',`Jenis kelamin tidak cocok dengan NIK (NIK menunjukkan ${n.perem?'perempuan':'laki-laki'})`)}}
+  if(!r.tglLahir)E('pihak','tglLahir','Tanggal lahir '+J+' kosong');else{const u=umurPada(r.tglLahir,ref);if(u!==null&&(u<18||u>100))E('pihak','tglLahir','Umur '+J+' '+u+' tahun — periksa tanggal lahir')}
+  if(!r.alamat)E('pihak','alamat','Alamat '+J+' kosong');
+  if(!r.kelurahan)W('pihak','kelurahan','Kelurahan kosong — Surat ke Lurah tidak lengkap');
+  if(!r.pekerjaan)W('pihak','pekerjaan','Pekerjaan '+J+' kosong');
+  // 3. objek
+  if(w){const A=(r.anak||[]).filter(a=>a.nama);if(!A.length)E('objek','anak.0.nama','Belum ada data anak');
+    (r.anak||[]).forEach((a,i)=>{if(!a.nama)return;if(!a.tglLahir){E('objek',`anak.${i}.tglLahir`,`Tanggal lahir anak ${a.nama} kosong`);return}
+      if(a.tglLahir>t)E('objek',`anak.${i}.tglLahir`,`Tanggal lahir anak ${a.nama} di masa depan`);
+      if(r.tglPenetapan&&a.tglLahir>r.tglPenetapan)E('objek',`anak.${i}.tglLahir`,`Anak ${a.nama} lahir setelah tanggal penetapan`);
+      const ua=umurPada(a.tglLahir,r.tglLahir?a.tglLahir:null),uw=r.tglLahir?umurPada(r.tglLahir,a.tglLahir):null;if(uw!==null&&uw<12)W('objek',`anak.${i}.tglLahir`,`Selisih umur ${J} dan anak ${a.nama} hanya ${uw} tahun — periksa`);
+      if(r.tglMeninggalPasangan){const bts=new Date(pd(r.tglMeninggalPasangan).getTime()+300*864e5).toISOString().slice(0,10);if(a.tglLahir>bts)W('objek',`anak.${i}.tglLahir`,`Anak ${a.nama} lahir lebih dari 300 hari setelah ${r.pasangan||'pasangan'} meninggal — periksa`)}
+      if(r.nama&&a.nama===r.nama)E('objek',`anak.${i}.nama`,'Nama anak sama dengan nama '+J)});
+    const aw=anakWali(r);if(A.length&&!aw.length)E('objek','anak.0.wali','Tidak ada anak yang ditandai diwalikan')}
+  else{const tp=r.terampu||{};if(!tp.nama)E('objek','terampu.nama','Nama terampu kosong');if(!tp.tglLahir)W('objek','terampu.tglLahir','Tanggal lahir terampu kosong');
+    else{const u=umurPada(tp.tglLahir,ref);if(u!==null&&u<18)E('objek','terampu.tglLahir','Terampu baru '+u+' tahun — pengampuan untuk orang dewasa')}
+    if(!tp.kondisi)W('objek','terampu.kondisi','Kondisi medis terampu kosong');if(tp.nama&&tp.nama===r.nama)E('objek','terampu.nama','Nama terampu sama dengan pengampu')}
+  // 4. jadwal
+  if(!r.tglSumpah)E('jadwal','tglSumpah','Tanggal sumpah belum diisi');else{
+    if(!HARI_KERJA(r.tglSumpah))E('jadwal','tglSumpah','Tanggal sumpah jatuh pada hari '+hari(r.tglSumpah)+' (bukan hari kerja)');
+    if(r.tglPenetapan&&r.tglSumpah<r.tglPenetapan)E('jadwal','tglSumpah','Tanggal sumpah lebih awal dari tanggal penetapan');
+    if(r.tglSumpah<t)W('jadwal','tglSumpah','Tanggal sumpah sudah lewat');
+    const n=jumlahSumpah(r.tglSumpah,r.id);if(n>=(SET.kuotaHarian||8))W('jadwal','tglSumpah',`Sudah ada ${n} penyumpahan lain di tanggal ini`)}
+  if(!r.waktu)W('jadwal','waktu','Waktu sumpah kosong');
+  if(!r.madya)E('jadwal','madya','Pejabat penyumpah belum dipilih');
+  // 5. BAP & harta
+  if(!String(r.isiBap||'').trim())W('harta','isiBap','Isi BAP masih kosong (akan memakai susunan otomatis)');
+  if(!r.saksi1||!r.saksi2)W('harta','saksi1','Nama saksi penyumpahan belum lengkap');
+  // kelayakan
+  cekKelayakan(r).tolak.forEach(x=>E('umum','',x.split('. Alasan')[0]+' (ditolak)'));
+  return L}
+function jumlahSumpah(d,kecuali){return DB.filter(x=>!x._dihapus&&x.tglSumpah===d&&x.id!==kecuali).length}
+let CEK={};
+function cekBar(L){const e=L.filter(x=>x.lvl==='e').length,w=L.length-e;
+  if(!L.length)return`<div class="cekbar ok">✅ <b>Semua data lolos pengecekan</b> — siap dicetak.</div>`;
+  return`<div class="cekbar ${e?'e':'w'}" onclick="dlgCek()">${e?'⛔':'⚠️'} <span><b>${e?e+' kesalahan':''}${e&&w?' · ':''}${w?w+' peringatan':''}</b> — kolom yang perlu dicek ditandai ${e?'merah':'oranye'}.</span><span style="margin-left:auto;text-decoration:underline">Lihat semua →</span></div>`}
+function dlgCek(then){const L=cekCetak(cur),TN={umum:'Perkara',pihak:derive(cur).J,objek:cur.jenis==='Perwalian'?'Anak':'Terampu',jadwal:'Jadwal',harta:'BAP & Harta'};
+  dlg(`<h3>🔎 Pengecekan sebelum cetak</h3>${L.length?`<ul class="ceklist">${L.map(x=>`<li><span class="ic ${x.lvl}">${x.lvl==='e'?'✕':'!'}</span><span>${esc(x.msg)}<br><small class="hint">${x.lvl==='e'?'Kesalahan':'Peringatan'} · ${TN[x.tab]||''}</small></span>${x.tab?`<a onclick="dlgClose();tab='${x.tab}';renderMain();fokusField('${x.f}')">Perbaiki</a>`:''}</li>`).join('')}</ul>`:'<p>✅ Tidak ada masalah.</p>'}
+  <p style="text-align:right;display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="dlgClose()">Tutup</button>${then?`<button class="pri" onclick="dlgClose();(${then})()">Tetap lanjut cetak</button>`:''}</p>`)}
+function fokusField(f){setTimeout(()=>{const e=document.querySelector(`[data-f="${f}"] input,[data-f="${f}"] select,[data-f="${f}"] textarea`);if(e){e.scrollIntoView({block:'center',behavior:'smooth'});e.focus()}},60)}
 const boxCek=w=>w.length?`<div style="border:1.5px solid #f6c343;background:#fff6db;color:#6b4e00;border-radius:12px;padding:10px 14px;margin:10px 0"><b>⚠ Periksa sebelum lanjut</b><ul style="margin:6px 0 0;padding-left:18px">${w.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
 
 /* ---------------- proses otomatis: simpan → nomor SPS → Google Doc ---------------- */
@@ -568,7 +659,7 @@ async function gdocCore(key,keys,judul){const blob=await buatDocx(keys);const b6
 async function prosesOtomatis(){if(!cur)return;clearTimeout(saveT);await flush();
   const perlu=Object.keys(GRUP).map(g=>[g,kurangGrup(g,cur)]).filter(x=>x[1].length);
   if(perlu.length){dlg(`<h3>⚡ Proses Otomatis</h3><p>Isian belum lengkap, lengkapi dulu agar nomor & dokumen tidak salah:</p><ul>${perlu.map(([g,m])=>`<li><b>${GRUP[g].nama(cur)}</b>: ${esc(m.join(', '))}</li>`).join('')}</ul><p style="text-align:right"><button class="pri" onclick="dlgClose()">Mengerti</button></p>`);return}
-  const w=cekData(cur);const tanpa=Object.entries(NOMOR).filter(([k,f])=>!cur[f]);
+  const w=cekCetak(cur).map(x=>(x.lvl==='e'?'⛔ ':'⚠ ')+x.msg);const tanpa=Object.entries(NOMOR).filter(([k,f])=>!cur[f]);
   dlg(`<h3>⚡ Proses Otomatis</h3>${boxCek(w)}<p>Langkah yang akan dijalankan:</p><ol><li>Simpan berkas</li>${tanpa.length?`<li>Ambil <b>${tanpa.length} nomor</b> dari SPS (tanggal hari ini, ${cur.jenis==='Perwalian'?'AH.06.02':'AH.06.03'}): ${tanpa.map(([k])=>DOCS[k].nama(cur)).join(', ')}</li>`:'<li>Semua dokumen sudah bernomor</li>'}<li>Buat <b>3 Google Doc</b> di folder Drive berkas: Surat Antar ke ${derive(cur).J}, Surat Antar ke Lurah, dan Dokumen Penyumpahan (Permohonan, BAP, BA Sumpah, BA Inventarisasi — nomor BA diisi manual di hari H)</li></ol>
     <p class="hint">Nomor SPS yang sudah diambil tidak bisa dibatalkan dari aplikasi. Pastikan data sudah benar.</p>
     <p style="text-align:right;display:flex;gap:8px;justify-content:flex-end"><button onclick="dlgClose()">Batal</button><button class="pri" onclick="jalankanOtomatis()">${w.length?'Tetap lanjutkan':'Ya, proses sekarang'} →</button></p>`)}
@@ -638,13 +729,15 @@ const DEMO=(()=>{const K='bhpDemo.v2',st=(()=>{try{return JSON.parse(localStorag
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1800)}
 function renderList(){const q=($('#q').value||'').toLowerCase();
   $('#list').innerHTML=DB.filter(r=>(r.nama+' '+derive(r).objek).toLowerCase().includes(q)).map(r=>`<div class="item ${cur&&cur.id===r.id?'on':''}" style="${r._dihapus?'opacity:.5':''}" onclick="pick('${r.id}')">${r._dihapus?'<span class="tag" style="color:var(--warn)">Terhapus</span>':''}
-  <b>${esc(r.nama||'(tanpa nama)')}</b><small>${esc(derive(r).objek||'-')}</small><br><span class="tag">${r.jenis}</span>${(t=>t.length?` <span class="tag" style="color:#c0392b" title="${esc(t.join(' | '))}">⛔ Ditolak</span><br><small style="color:#c0392b">${esc(t.map(x=>x.split('. Alasan')[0]).join('; '))}</small>`:'')(cekKelayakan(r).tolak)} <small>${r.tglSumpah?tgl(r.tglSumpah):''}</small></div>`).join('')||'<p class="hint">Belum ada berkas. Klik “📑 Berkas Baru” di menu kiri untuk memulai.</p>'}
+  <b>${esc(r.nama||'(tanpa nama)')}</b>${(q=>q.some(x=>x.lvl==='e')?' <span title="Ada kesalahan data" style="color:#e5484d">●</span>':'')(cekCetak(r))}<small>${esc(derive(r).objek||'-')}</small><br><span class="tag">${r.jenis}</span>${(t=>t.length?` <span class="tag" style="color:#c0392b" title="${esc(t.join(' | '))}">⛔ Ditolak</span><br><small style="color:#c0392b">${esc(t.map(x=>x.split('. Alasan')[0]).join('; '))}</small>`:'')(cekKelayakan(r).tolak)} <small>${r.tglSumpah?tgl(r.tglSumpah):''}</small></div>`).join('')||'<p class="hint">Belum ada berkas. Klik “📑 Berkas Baru” di menu kiri untuk memulai.</p>'}
 function pick(id){WZ.on=false;setNav('berkas','Daftar Berkas');clearTimeout(saveT);if(cur)flush();cur=DB.find(r=>r.id===id);if(tab==='riw'&&!cur)tab='umum';renderMain();renderList()}
 function newRec(){if(cur){clearTimeout(saveT);flush()}cur=addRec(blank(),'Berkas baru (manual)');tab='umum';renderMain();renderList();flush()}
-function F(path,lbl,type='text',opt){const v=get(path);
-  if(type==='select')return`<div><label>${lbl}</label><select onchange="setv('${path}',this.value)">${opt.map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select></div>`;
-  if(type==='area')return`<div class="full"><label>${lbl}</label><textarea oninput="setv('${path}',this.value)">${esc(v)}</textarea></div>`;
-  return`<div><label>${lbl}</label><input type="${type}" value="${esc(v)}" oninput="setv('${path}',this.value)"></div>`}
+function F(path,lbl,type='text',opt){const v=get(path),c=CEK[path],a=` data-f="${path}"${c?` class="${c.lvl==='e'?'bad':'warnf'}"`:''}`,m=c?`<small class="fmsg">${esc(c.msg)}</small>`:'';
+  return FX(path,lbl,type,opt,v,a).replace(/<\/div>$/,m+'</div>')}
+function FX(path,lbl,type,opt,v,a){
+  if(type==='select')return`<div${a}><label>${lbl}</label><select onchange="setv('${path}',this.value)">${opt.map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select></div>`;
+  if(type==='area')return`<div class="full"${a}><label>${lbl}</label><textarea oninput="setv('${path}',this.value)">${esc(v)}</textarea></div>`;
+  return`<div${a}><label>${lbl}</label><input type="${type}" value="${esc(v)}" oninput="setv('${path}',this.value)"${type==='date'?` onchange="renderMain()"`:''}></div>`}
 function get(p){return p.split('.').reduce((o,k)=>o?.[k],cur)??''}
 function setv(p,v){if(cur._dihapus){toast('Berkas terhapus tidak bisa diubah');return}const ks=p.split('.');let o=cur;ks.slice(0,-1).forEach(k=>o=o[k]);o[ks.at(-1)]=v;
   if(p==='alamat'&&!cur._kelManual){const m=v.match(/Kelurahan[^,]*,\s*Kecamatan[^,]*(,[^,]*){0,2}/i);if(m){cur.kelurahan=m[0];const i=document.querySelector('[data-kel]');if(i)i.value=cur.kelurahan}}
@@ -657,12 +750,12 @@ function renderMain(){
     <button class="pri" style="padding:12px 20px;border-radius:12px" onclick="wizard(1)">📑 Buat Berkas Baru →</button>
     <div class="dash"><div class="card"><b>${n.length}</b><span>Total berkas</span></div><div class="card"><b>${pg}</b><span>Pengampuan</span></div><div class="card"><b>${n.length-pg}</b><span>Perwalian</span></div></div>
     <p class="hint" style="margin-top:18px">Pilih berkas di daftar sebelah kiri untuk melanjutkan pengisian.</p></div>`;return}
-  const d=derive(cur),w=d.w;
+  const d=derive(cur),w=d.w;const CL=cekCetak(cur);CEK={};CL.forEach(x=>{if(x.f&&(!CEK[x.f]||x.lvl==='e'))CEK[x.f]=x});
   const TABS={umum:'1. Perkara',pihak:`2. ${d.J}`,objek:`3. ${w?'Anak':'Terampu'}`,jadwal:'4. Jadwal & Pejabat',harta:'5. BAP & Harta',dok:'📄 Dokumen',riw:'🕘 Riwayat'};
   let h=`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><div class="seg">${['Pengampuan','Perwalian'].map(j=>`<button class="${cur.jenis===j?'on':''}" onclick="setv('jenis','${j}')">${j}</button>`).join('')}</div>
   <span style="margin-right:auto"><span class="hint" id="stat">✓ Tersimpan</span><br><span class="meta">${cur._meta?`Dibuat ${esc(cur._meta.dibuatOleh||'')} · diubah terakhir oleh <b>${esc(cur._meta.diubahOleh||'')}</b>, ${wkt(cur._meta.diubahPada)}`:''}</span></span>
   <button onclick="screenshot('#main',cur.nama)" title="Simpan tampilan ini sebagai gambar PNG">📸 Screenshot</button><button onclick="dupRec()">⧉ Duplikat</button>${isSuper()?(cur._dihapus?'<button onclick="restoreRec()">♻️ Pulihkan</button>':'<button onclick="delRec()" style="color:var(--warn)">🗑 Hapus</button>'):''}</div>
-  ${bannerKelayakan(cur)}<div class="steps">${Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';renderMain()">${v}</button>`).join('')}</div><div class="grid">`;
+  ${bannerKelayakan(cur)}${cekBar(CL)}<div class="steps">${Object.entries(TABS).map(([k,v])=>{const q=CL.filter(x=>x.tab===k),e=q.some(x=>x.lvl==='e');return`<button class="${tab===k?'on':''}" onclick="tab='${k}';renderMain()">${v}${q.length?`<span class="dot ${e?'':'w'}">${q.length}</span>`:''}</button>`}).join('')}</div><div class="grid">`;
   const pjOpt=v=>{const c=pjCari(v).nama;return SET.pejabat.map(p=>`<option ${p.nama===c?'selected':''} value="${esc(p.nama)}">${esc(p.nama||'(isi di Pengaturan)')} — ${esc(p.jabatan||'')}</option>`).join('')};
   if(tab==='umum')h+=`<div class="full"><label class="btn" style="display:inline-block;margin:0;color:var(--ink)">📑 Isi otomatis dari PDF Penetapan<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this,true)"></label></div>`+F('pengadilan','Pengadilan')+F('nomorPenetapan','Nomor Penetapan')+F('tglPenetapan','Tanggal Penetapan','date')+F('tanggalSurat','Tanggal Surat','date')+
     F('nomorSurat',`Nomor Surat ke ${d.J} (otomatis dari SPS)`)+F('nomorLurah','Nomor Surat ke Lurah (otomatis dari SPS)')+F('nomorBAP','Nomor BAP (diisi petugas di hari H; kosong = awalan saja)')+F('nomorBA','Nomor BA Sumpah (diisi petugas di hari H)')+F('nomorBAHarta','Nomor BA Inventarisasi (diisi petugas di hari H)');
@@ -674,7 +767,7 @@ function renderMain(){
     <button onclick="cur.anak.push({nama:'',jk:'Laki-laki',tglLahir:''});save();renderMain()">+ Tambah anak</button></div>`}
     else h+=F('terampu.nama','Nama Terampu')+F('terampu.jk','Jenis Kelamin','select',['Laki-laki','Perempuan'])+F('terampu.tglLahir','Tanggal Lahir','date')+
     `<div><label>Usia (otomatis)</label><input disabled value="${usia(cur.terampu.tglLahir,cur.tglSumpah)}"></div>`+F('terampu.kondisi','Kondisi medis + surat dokter','area')}
-  if(tab==='jadwal')h+=F('tglSumpah','Tanggal Sumpah','date')+F('waktu','Waktu')+F('tempat','Tempat (kosong = kediaman)')+
+  if(tab==='jadwal')h+=`<div class="full" style="max-width:460px"><label>Pilih tanggal sumpah — angka kuning = jumlah penyumpahan yang sudah terjadwal di hari itu</label><div id="miniCal" class="cal mini">${kalHtml(KAL.ymMini||(cur.tglSumpah||today()).slice(0,7),true)}</div></div>`+F('tglSumpah','Tanggal Sumpah','date')+F('waktu','Waktu')+F('tempat','Tempat (kosong = kediaman)')+
     `<div><label>Hari/tanggal di BA (otomatis)</label><input disabled value="${tglBA(cur.tglSumpah)}"></div>
     <div><label>Pejabat penyumpah (Madya)</label><select onchange="setv('madya',this.value)">${pjOpt(cur.madya)}</select></div>
     <div><label>Pejabat inventarisasi harta (Muda)</label><select onchange="setv('muda',this.value)">${pjOpt(cur.muda)}</select></div>
@@ -875,6 +968,29 @@ async function screenshot(sel,nama){const el=document.querySelector(sel);if(!el)
     const a=document.createElement('a');a.href=url;a.download=fn;document.body.appendChild(a);a.click();a.remove();
     const w=window.open();if(w)w.document.write('<title>'+fn+'</title><p style="font:14px sans-serif">Tekan lama / klik kanan gambar → Simpan gambar.</p><img src="'+url+'" style="max-width:100%">');
     toast('📸 Screenshot tersimpan')}catch(e){toast('Gagal screenshot: '+(e.message||e))}}
+/* ---------------- kalender jadwal sumpah ---------------- */
+const KAL={ym:null,ymMini:null,sel:null};const HR=['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
+function geserYm(ym,n){const[y,m]=ym.split('-').map(Number);const d=new Date(y,m-1+n,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+function kalHtml(ym,mini){const[y,m]=ym.split('-').map(Number),first=new Date(y,m-1,1),off=(first.getDay()+6)%7,start=new Date(y,m-1,1-off),t=today();
+  const per={};DB.filter(r=>!r._dihapus&&r.tglSumpah).forEach(r=>(per[r.tglSumpah]=per[r.tglSumpah]||[]).push(r));
+  const sel=mini?(cur&&cur.tglSumpah):KAL.sel;let g='';
+  for(let i=0;i<42;i++){const d=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),L=per[iso]||[];
+    if(i>=35&&d.getMonth()!==m-1)break;
+    g+=`<div class="d${d.getMonth()!==m-1?' x':''}${d.getDay()%6===0?' we':''}${iso===t?' td':''}${iso===sel?' sel':''}" onclick="${mini?`pilihTglSumpah('${iso}')`:`KAL.sel='${iso}';renderKalender()`}" title="${L.length?L.length+' penyumpahan':'Belum ada jadwal'}"><span class="n">${d.getDate()}</span>${L.length?`<span class="c">${L.length}</span>`:''}${!mini&&L.length?`<div class="nm">${L.map(r=>esc(r.nama)).join('<br>')}</div>`:''}</div>`}
+  const nav=n=>mini?`KAL.ymMini='${geserYm(ym,n)}';$('#miniCal').innerHTML=kalHtml(KAL.ymMini,true)`:`KAL.ym='${geserYm(ym,n)}';renderKalender()`;
+  return`<div class="cal-h"><b>${BLN[m-1]} ${y}</b><button onclick="${nav(-1)}">‹</button><button onclick="${mini?`KAL.ymMini='${t.slice(0,7)}';$('#miniCal').innerHTML=kalHtml(KAL.ymMini,true)`:`KAL.ym='${t.slice(0,7)}';KAL.sel='${t}';renderKalender()`}">Hari ini</button><button onclick="${nav(1)}">›</button></div>
+    <div class="cal-g">${HR.map(x=>`<div class="hd">${x}</div>`).join('')}${g}</div>`}
+function pilihTglSumpah(iso){if(!cur||cur._dihapus)return;if(!HARI_KERJA(iso))toast('⚠ '+hari(iso)+' bukan hari kerja');cur.tglSumpah=iso;KAL.ymMini=iso.slice(0,7);save();renderList();renderMain()}
+function bukaKalender(){WZ.on=false;if(cur){clearTimeout(saveT);flush()}setNav('kalender','Jadwal Sumpah');$('.wrap').classList.add('wzmode');KAL.ym=KAL.ym||today().slice(0,7);KAL.sel=KAL.sel||today();renderKalender()}
+function renderKalender(){const aktif=DB.filter(r=>!r._dihapus&&r.tglSumpah),ym=KAL.ym,bln=aktif.filter(r=>r.tglSumpah.startsWith(ym)),t=today();
+  const hariIni=aktif.filter(r=>r.tglSumpah===t).length,depan=aktif.filter(r=>r.tglSumpah>t).length,belum=DB.filter(r=>!r._dihapus&&!r.tglSumpah).length;
+  const L=aktif.filter(r=>r.tglSumpah===KAL.sel).sort((a,b)=>(a.waktu||'').localeCompare(b.waktu||''));
+  $('#main').innerHTML=`<div style="padding:6px 4px"><div class="cal-stat"><div><b>${hariIni}</b>hari ini</div><div><b>${bln.length}</b>bulan ${BLN[+ym.slice(5)-1]}</div><div><b>${depan}</b>akan datang</div><div><b>${belum}</b>belum dijadwalkan</div></div>
+  <div class="cal-wrap"><div class="cal">${kalHtml(ym,false)}</div>
+  <div class="cal-side"><h4>${hari(KAL.sel)}, ${tgl(KAL.sel)}</h4>${L.length?L.map(r=>`<div class="ev" onclick="pick('${r.id}')"><b>${esc(r.nama)}</b><br><small>${esc(r.jenis)} · ${esc(r.waktu||'')} · ${esc(derive(r).objek||'-')}</small></div>`).join(''):'<p class="hint">Belum ada penyumpahan di tanggal ini.</p>'}
+  ${belum?`<h4 style="margin-top:18px">Belum dijadwalkan (${belum})</h4>${DB.filter(r=>!r._dihapus&&!r.tglSumpah).slice(0,30).map(r=>`<div class="ev" onclick="jadwalkan('${r.id}')"><b>${esc(r.nama)}</b><br><small>Klik untuk jadwalkan di ${tgl(KAL.sel)}</small></div>`).join('')}`:''}</div></div></div>`}
+function jadwalkan(id){const r=DB.find(x=>x.id===id);if(!r)return;if(!HARI_KERJA(KAL.sel)){toast('⚠ '+hari(KAL.sel)+' bukan hari kerja — pilih tanggal lain');return}
+  cur=r;r.tglSumpah=KAL.sel;save();api('apiCatat','JADWAL',r.id,r.nama,'Dijadwalkan sumpah '+tgl(KAL.sel)).catch(()=>{});renderList();renderKalender();toast('📅 '+r.nama+' dijadwalkan '+tgl(KAL.sel))}
 function exportCsv(){const H=['Jenis','Nama','NIK','Jenis_Kelamin','Tanggal_Lahir','Agama','Pekerjaan','Alamat','Kel_Kec_Kota','Status','Objek','Nomor_Penetapan','Tanggal_Penetapan','Tanggal_Sumpah','Nomor_Surat','Nomor_Surat_Lurah','Nomor_BA'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   const t=[H.join(',')].concat(DB.map(r=>[r.jenis,r.nama,r.nik,r.jk,tgl(r.tglLahir),r.agama,r.pekerjaan,r.alamat,r.kelurahan,r.status,derive(r).objek,r.nomorPenetapan,tgl(r.tglPenetapan),tgl(r.tglSumpah),r.nomorSurat,r.nomorLurah,r.nomorBA].map(q).join(','))).join('\n');
