@@ -407,8 +407,11 @@
   .kepala.pray .khead { animation: bow 1.4s ease-in-out .3s; transform-box: fill-box; transform-origin: 50% 100%; }
   @keyframes bow { 0%, 100% { transform: none; } 40%, 60% { transform: translateY(14px) rotate(0deg) scaleY(.96); } }
   .kepala .kcap { transform-box: fill-box; transform-origin: 20% 100%; }
+  .kepala .kmo { opacity: 0; }
+  .kepala.speaking .kmo { animation: yap .26s steps(1) infinite; }
+  .kepala.speaking .kmc { animation: yap .26s steps(1) infinite reverse; }
   .kepala.captip .kcap { animation: captip .9s cubic-bezier(.3,1.5,.5,1); }
-  @keyframes captip { 0%, 100% { transform: none; } 35% { transform: translateY(-40px) rotate(-12deg); } 60% { transform: translateY(-40px) rotate(-12deg); } }
+  @keyframes captip { 0%, 100% { transform: none; } 40%, 60% { transform: translateY(-6px) skewX(-6deg); } }
   .kepala.speaking .khead { animation: kbob .5s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 90%; }
   @keyframes kbob { 0%, 100% { transform: none; } 50% { transform: rotate(1.5deg) translateY(-3px); } }
   /* Aura wibawa di belakang Pak Kepala */
@@ -837,29 +840,43 @@ const KEPALA_SVG = `
   <!-- leher -->
   <rect x="180" y="286" width="60" height="64" rx="22" fill="#A8744C"/>
   <g class="khead">
-    <ellipse cx="124" cy="204" rx="15" ry="24" fill="#BB8962"/><ellipse cx="296" cy="204" rx="15" ry="24" fill="#BB8962"/>
-    <path d="M124 170 C124 104 164 90 210 90 C256 90 296 104 296 170 C296 250 262 304 210 306 C158 304 124 250 124 170 Z" fill="#C99A72"/>
-    <path d="M122 218 C130 270 168 300 210 300 C252 300 290 270 298 218 C292 264 256 292 210 292 C164 292 128 264 122 218 Z" fill="#3A2416" opacity=".18"/>
-    <!-- rambut samping (cepak) -->
-    <path d="M122 150 h14 v50 h-10 z M284 150 h14 v50 h-10 z" fill="#15110E"/>
-    <!-- alis tebal -->
-    <path class="kbrow" d="M146 170 Q170 156 198 166 M222 166 Q250 156 274 170" fill="none" stroke="#15110E" stroke-width="11" stroke-linecap="round"/>
-    <!-- mata ramah (sedikit menyipit senyum) -->
+    <!-- telinga -->
+    <path d="M130 186 C112 176 108 212 118 226 C124 236 134 234 136 226 Z" fill="#BB8962"/><path d="M290 186 C308 176 312 212 302 226 C296 236 286 234 284 226 Z" fill="#BB8962"/>
+    <!-- wajah tirus, tulang pipi tegas -->
+    <path d="M130 176 C128 112 166 92 210 92 C254 92 292 112 290 176 C290 214 283 246 268 272 C252 298 232 313 210 315 C188 313 168 298 152 272 C137 246 130 214 130 176 Z" fill="#C99A72"/>
+    <path d="M146 222 Q160 250 178 258 M274 222 Q260 250 242 258" fill="none" stroke="#9E6E4C" stroke-width="4" stroke-linecap="round" opacity=".22"/>
+    <path d="M152 272 C168 298 188 313 210 315 C232 313 252 298 268 272 C256 300 234 318 210 320 C186 318 164 300 152 272 Z" fill="#3A2416" opacity=".2"/>
+    <!-- bayangan jenggot tipis di rahang -->
+    <path d="M140 230 C146 270 176 306 210 312 C244 306 274 270 280 230 C276 272 246 312 210 318 C174 312 144 272 140 230 Z" fill="#2A1E17" opacity=".22"/>
+    <!-- alis tebal, lurus tegas -->
+    <path class="kbrow" d="M150 168 Q172 156 200 162 M220 162 Q248 156 270 168" fill="none" stroke="#15110E" stroke-width="12" stroke-linecap="round"/>
+    <!-- mata agak dalam, tatapan kalem -->
     <g class="keyes">
-      <ellipse cx="174" cy="196" rx="12" ry="12" fill="#1E1B2E"/><ellipse cx="246" cy="196" rx="12" ry="12" fill="#1E1B2E"/>
-      <circle cx="178" cy="191" r="4" fill="#fff"/><circle cx="250" cy="191" r="4" fill="#fff"/>
-      <path d="M160 212 Q174 204 188 212 M232 212 Q246 204 260 212" fill="none" stroke="#8A5A3A" stroke-width="4" stroke-linecap="round"/>
+      <path d="M156 190 Q176 178 196 190 Q176 200 156 190 Z" fill="#fff"/><path d="M224 190 Q244 178 264 190 Q244 200 224 190 Z" fill="#fff"/>
+      <circle cx="177" cy="189" r="8" fill="#231A15"/><circle cx="245" cy="189" r="8" fill="#231A15"/>
+      <circle cx="180" cy="186" r="2.6" fill="#fff"/><circle cx="248" cy="186" r="2.6" fill="#fff"/>
+      <path d="M154 189 Q176 174 198 188 M222 188 Q244 174 266 189" fill="none" stroke="#15110E" stroke-width="5" stroke-linecap="round"/>
+      <path d="M162 204 Q177 209 192 203 M228 203 Q243 209 258 204" fill="none" stroke="#8A5A3A" stroke-width="3" stroke-linecap="round" opacity=".6"/>
     </g>
-    <path d="M210 204 q13 28 -6 34" fill="none" stroke="#8E5B3A" stroke-width="5" stroke-linecap="round"/>
-    <!-- senyum + gigi -->
-    <path d="M178 262 Q210 296 242 262 Z" fill="#6E1E2C"/><path d="M184 264 H236 L230 273 H190 Z" fill="#fff"/>
+    <!-- hidung mancung sedang -->
+    <path d="M212 196 C214 214 222 228 224 236 C220 244 210 246 200 242" fill="none" stroke="#8E5B3A" stroke-width="5" stroke-linecap="round"/>
+    <path d="M194 240 q6 6 14 4 M226 238 q-4 6 -12 6" fill="none" stroke="#8E5B3A" stroke-width="3" opacity=".6"/>
+    <!-- garis senyum -->
+    <path d="M186 242 Q172 258 176 276 M236 242 Q250 258 246 276" fill="none" stroke="#8E5B3A" stroke-width="3" stroke-linecap="round" opacity=".3"/>
     <!-- kumis tipis -->
-    <path d="M172 254 Q192 240 210 248 Q228 240 248 254 Q228 257 210 252 Q192 257 172 254 Z" fill="#15110E"/>
-    <!-- janggut dagu tipis -->
-    <path d="M192 290 Q210 298 228 290 Q226 312 210 318 Q194 312 192 290 Z" fill="#15110E"/>
-    <path d="M150 262 Q160 292 192 300 M270 262 Q260 292 228 300" fill="none" stroke="#15110E" stroke-width="3" opacity=".55"/>
-    <!-- rambut hitam pendek, disisir ke samping -->
-    <g class="kcap"><path d="M122 176 C112 110 150 72 212 70 C268 70 304 104 298 176 C292 146 276 128 250 122 C228 136 176 136 150 124 C136 136 126 154 122 176 Z" fill="#15110E"/><path d="M150 124 C180 96 236 92 262 112" fill="none" stroke="#3A302A" stroke-width="5" stroke-linecap="round" opacity=".7"/></g>
+    <path d="M182 258 Q196 250 210 254 Q224 250 238 258 Q224 259 210 257 Q196 259 182 258 Z" fill="#15110E"/>
+    <!-- mulut: senyum kalem (tutup) & bicara (buka) -->
+    <path class="kmc" d="M188 268 Q210 282 234 268" fill="none" stroke="#7A3A36" stroke-width="5" stroke-linecap="round"/>
+    <g class="kmo"><path d="M188 266 Q210 296 234 266 Z" fill="#6E1E2C"/><path d="M192 267 H230 L226 274 H196 Z" fill="#fff"/></g>
+    <!-- jenggot dagu tipis + soul patch -->
+    <path d="M204 284 h12 v8 h-12 z" fill="#15110E"/>
+    <path d="M196 298 Q210 304 224 298 Q222 314 210 318 Q198 314 196 298 Z" fill="#15110E"/>
+    <!-- rambut hitam pendek: samping tipis, atas disisir naik -->
+    <g class="kcap">
+      <path d="M130 186 C124 150 128 128 138 116 L144 170 Z M290 186 C296 150 292 128 282 116 L276 170 Z" fill="#2A2320"/>
+      <path d="M134 150 C126 96 158 58 208 56 C250 54 288 74 292 120 C294 136 290 150 286 158 C278 132 262 120 244 118 C222 116 196 124 176 120 C160 118 146 128 134 150 Z" fill="#111"/>
+      <path d="M160 96 C178 70 214 64 244 72 M150 116 C170 92 204 86 238 92" fill="none" stroke="#3A322D" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+    </g>
     <!-- kacamata hitam "deal with it" (turun di akhir) -->
     <g class="shades"><path d="M146 184 H274 V194 L262 222 Q246 232 228 222 L218 198 H202 L192 222 Q174 232 158 222 L146 194 Z" fill="#0B0D11"/><path d="M160 192 L176 192 M232 192 L248 192" stroke="#fff" stroke-width="5" opacity=".7"/></g>
     <!-- kilau gigi -->
