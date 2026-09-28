@@ -7,7 +7,8 @@
 
 const APP = 'Dokumen Penyumpahan BHP';
 const PROPS = PropertiesService.getScriptProperties();
-const SESSION_JAM = 8;
+const SESSION_JAM = 6; // batas CacheService
+const INGAT_HARI = 30; // opsi "Tetap masuk"
 
 const COLS = {
   Berkas: ['id', 'jenis', 'nama', 'objek', 'data', 'versi', 'dibuatOleh', 'dibuatPada', 'diubahOleh', 'diubahPada', 'dihapus'],
@@ -119,8 +120,13 @@ function passwordAcak_() {
 function user_(token) {
   if (!token) throw new Error('SESI_HABIS');
   const cache = CacheService.getScriptCache();
-  const u = cache.get('sess_' + token);
-  if (!u) throw new Error('SESI_HABIS');
+  let u = cache.get('sess_' + token);
+  if (!u) {
+    /* sesi "Tetap masuk": disimpan di Script Properties selama INGAT_HARI */
+    const ing = PROPS.getProperty('ing_' + token);
+    if (ing) { try { const o = JSON.parse(ing); if (o.exp > Date.now()) u = o.u; else PROPS.deleteProperty('ing_' + token); } catch (e) {} }
+    if (!u) throw new Error('SESI_HABIS');
+  }
   const p = rows_('Pengguna').filter(function (r) { return r.username === u; })[0];
   if (!p || p.aktif !== true) throw new Error('SESI_HABIS');
   cache.put('sess_' + token, u, SESSION_JAM * 3600);
@@ -132,7 +138,7 @@ function super_(token) {
   return u;
 }
 
-function apiLogin(username, password) {
+function apiLogin(username, password, ingat) {
   username = String(username || '').trim().toLowerCase();
   const p = rows_('Pengguna').filter(function (r) { return r.username === username; })[0];
   if (!p || p.aktif !== true || hash_(password, p.salt) !== p.hash) {
@@ -142,6 +148,11 @@ function apiLogin(username, password) {
   }
   const token = Utilities.getUuid() + Utilities.getUuid();
   CacheService.getScriptCache().put('sess_' + token, username, SESSION_JAM * 3600);
+  if (ingat) {
+    const now = Date.now(), semua = PROPS.getProperties();
+    Object.keys(semua).forEach(function (k) { if (k.indexOf('ing_') === 0) { try { if (JSON.parse(semua[k]).exp < now) PROPS.deleteProperty(k); } catch (e) {} } });
+    PROPS.setProperty('ing_' + token, JSON.stringify({ u: username, exp: now + INGAT_HARI * 864e5 }));
+  }
   sheet_('Pengguna').getRange(p._row, 9).setValue(new Date());
   log_(p, 'LOGIN', '', '', '');
   return { token: token, user: { username: p.username, nama: p.nama, role: p.role, wajibGanti: p.wajibGanti === true }, init: apiInit(token) };
@@ -149,6 +160,7 @@ function apiLogin(username, password) {
 function apiLogout(token) {
   try { const u = user_(token); log_(u, 'LOGOUT', '', '', ''); } catch (e) {}
   CacheService.getScriptCache().remove('sess_' + token);
+  PROPS.deleteProperty('ing_' + token);
   return true;
 }
 function apiGantiPassword(token, lama, baru) {

@@ -398,9 +398,11 @@ const ss=(k,v)=>{let r=null;for(const n of ['localStorage','sessionStorage']){tr
 function api(fn,...a){
   if(!GAS)return new Promise((ok,no)=>setTimeout(()=>{try{ok(DEMO[fn](TOKEN,...a))}catch(e){no(e)}},60));
   return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(e=>{if(/SESI_HABIS/.test(e.message||e)){sesiHabis();no(new Error('Sesi berakhir, silakan login lagi.'))}else no(e)})[fn](TOKEN,...a))}
-function apiLoginCall(u,p){if(!GAS)return new Promise((ok,no)=>{try{ok(DEMO.apiLogin(u,p))}catch(e){no(e)}});
-  return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(no).apiLogin(u,p))}
+function apiLoginCall(u,p,ing){if(!GAS)return new Promise((ok,no)=>{try{ok(DEMO.apiLogin(u,p))}catch(e){no(e)}});
+  return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(no).apiLogin(u,p,!!ing))}
 const isSuper=()=>ME&&ME.role==='superadmin';
+/* token: 'Tetap masuk' = localStorage (bertahan), selain itu sessionStorage (hilang saat tab ditutup) */
+function simpanTok(t,ing){ss('bhpTok',null);try{(ing?localStorage:sessionStorage).setItem('bhpTok',t)}catch(e){try{sessionStorage.setItem('bhpTok',t)}catch(e2){}}}
 function sesiHabis(){TOKEN=null;ss('bhpTok',null);showLogin('Sesi berakhir, silakan login lagi.')}
 function showLogin(msg){
   document.body.classList.add('locked');
@@ -409,11 +411,12 @@ function showLogin(msg){
     ${msg?`<p style="color:var(--warn);font-size:13px">${esc(msg)}</p>`:''}
     <label>Username</label><input name="u" autocomplete="username" required autofocus>
     <label style="margin-top:10px">Password</label><input name="p" type="password" autocomplete="current-password" required>
-    <button class="pri" style="width:100%;margin-top:16px">Masuk</button>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-weight:500;cursor:pointer"><input type="checkbox" name="ing" checked style="width:auto;margin:0"> Tetap masuk di perangkat ini (30 hari)</label>
+    <button class="pri" style="width:100%;margin-top:14px">Masuk</button>
     ${GAS?'':'<p class="hint" style="margin-top:12px">Mode demo (belum di-deploy): username <b>shela</b> atau <b>annisa</b>, password <b>demo</b>.</p>'}</form>`;
   $('#login').hidden=false}
 async function doLogin(f){const b=f.querySelector('button');b.disabled=true;b.textContent='Memeriksa…';
-  try{const r=await apiLoginCall(f.u.value,f.p.value);TOKEN=r.token;ss('bhpTok',TOKEN);INIT=r.init||null;await boot()}
+  try{const ing=f.ing&&f.ing.checked;const r=await apiLoginCall(f.u.value,f.p.value,ing);TOKEN=r.token;simpanTok(TOKEN,ing);INIT=r.init||null;await boot()}
   catch(e){showLogin(e.message||String(e))}}
 async function boot(){
   if(!TOKEN){showLogin();return}
