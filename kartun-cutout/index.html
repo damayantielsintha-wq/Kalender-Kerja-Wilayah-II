@@ -11,7 +11,7 @@
   #stage { position: absolute; left: 50%; top: 50%; width: 1080px; height: 1920px; transform: translate(-50%, -50%) scale(var(--s, .4)); overflow: hidden; background: #dfe7f2; }
   body.render #stage { left: 0; top: 0; transform: none; }
   canvas { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
-  .ov { position: absolute; pointer-events: none; visibility: hidden; }
+  .ov { position: absolute; pointer-events: none; visibility: hidden; z-index: 2; }
   #chip { top: 60px; left: 50px; display: flex; align-items: center; gap: 16px; background: #fff; color: var(--navy); visibility: visible;
     font-weight: 800; font-size: 36px; padding: 14px 32px 14px 16px; border-radius: 60px; box-shadow: 0 10px 28px rgba(11,42,91,.22); }
   #chip b { background: var(--navy); color: var(--gold); border-radius: 40px; padding: 6px 18px; font-size: 30px; }
@@ -28,7 +28,7 @@
   #card .t { font-size: 70px; line-height: 1.08; font-weight: 800; color: var(--navy); margin-top: 10px; }
   #card .s { font-size: 44px; font-weight: 700; color: var(--ink); margin-top: 12px; }
   #stamp { right: 90px; bottom: 530px; background: #fff; color: #15803D; border: 8px solid #15803D; font-weight: 800; font-size: 46px; padding: 10px 28px; border-radius: 18px; }
-  #tag { left: 30px; right: 30px; top: 300px; text-align: center; }
+  #tag { left: 30px; right: 30px; top: 150px; text-align: center; }
   #tag .a { display: block; font-size: 110px; font-weight: 800; color: #fff; line-height: 1; text-shadow: 0 9px 0 var(--navy), 0 22px 44px rgba(0,0,0,.45); }
   #tag .b { display: block; font-size: 158px; font-weight: 800; color: var(--gold); line-height: 1.05; margin-top: 10px; text-shadow: 0 11px 0 var(--navy), 0 24px 50px rgba(0,0,0,.45); }
   #fx { left: 0; right: 0; top: 0; bottom: 0; background: #fff; }
@@ -77,7 +77,7 @@ const load = (src) => new Promise((res, rej) => { const i = new Image(); i.onloa
 const RIGS = {
   tasya:  { src: 'tasya-3d.png',  cut: 330, pivot: [250, 330], eyes: [[200, 180, 50, 36], [305, 192, 50, 36]], mouth: [245, 262, 74], h: 1330, lid: -.9 },
   dinda:  { src: 'dinda-3d.png',  cut: 300, pivot: [250, 292], eyes: [[207, 156, 48, 32], [296, 160, 48, 32]], mouth: [250, 232, 66], h: 1300, lid: -.9 },
-  kepala: { src: 'kepala-3d.png', cut: 338, pivot: [282, 345], eyes: [[240, 174, 38, 19], [322, 172, 38, 19]], mouth: [282, 264, 84], h: 1300, lid: -1.1 },
+  kepala: { src: 'kepala-3d.png', cut: 338, pivot: [282, 345], eyes: [[240, 174, 38, 19], [322, 172, 38, 19]], mouth: [282, 264, 84], h: 1470, lid: -.75 },
 };
 const bg = await load(IMG + 'bg-pelayanan.jpg');
 for (const [k, r] of Object.entries(RIGS)) {
@@ -189,10 +189,11 @@ function shotAt(t) {
     if (l.who === 'narator') list.push({ t: l.start, s: 'wide' });
   }
   const c = beat('card'); if (c) list.push({ t: c.start, s: 'two' });
+  list.sort((a, b) => a.t - b.t);
   let cur = list[0]; for (const x of list) if (t >= x.t) cur = x; return cur;
 }
 function camFor(name) {
-  if (name === 'wide') return { x: 540, y: 1180, z: 1 };
+  if (name === 'wide') return { x: 540, y: 1010, z: 1 };
   if (name === 'two') return { x: 545, y: 1100, z: 1.12 };
   const f = faceOf(name, POS[name]); return { x: f.x, y: f.y - 20, z: 1.6 };  // wajah tampil di bawah balon teks
 }
@@ -224,6 +225,7 @@ function renderAt(t) {
   let cam = camFor(sh.s);
   const push = 1 + Math.min(k, 6) * .012; cam = { ...cam, z: cam.z * push };
   if (t < 2.4) { const w = smooth(t / 2.4); cam = { x: lerp(540, cam.x, w), y: lerp(1050, cam.y, w), z: lerp(1.35, cam.z, w) }; }
+  if (tagLine && t >= tagLine.start - .1) { const w = ease(t, tagLine.start - .1, tagLine.start + .4); cam = { x: cam.x, y: lerp(cam.y, 900, w), z: lerp(cam.z, .9, w) }; }
   cam.x += Math.sin(t * .5) * 6; cam.y += Math.sin(t * .7) * 5;
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, 1080, 1920);
   // latar (bergerak lebih sedikit → paralaks)
@@ -238,13 +240,13 @@ function renderAt(t) {
   const cheer = tagLine && t >= tagLine.start ? t - tagLine.start : -1;
   const S = { tasya: stateOf('tasya', t, 0), dinda: stateOf('dinda', t, 1.7), kepala: stateOf('kepala', t, 3.1) };
   S.tasya.jump += tStep;
-  if (cheer >= 0) Object.values(S).forEach((s, i) => { s.jump += Math.max(0, Math.sin((cheer * 1.7 + i * .25) * Math.PI)) * 60; s.squint = Math.max(s.squint, .8); });
+  if (cheer >= 0) Object.values(S).forEach((s, i) => { s.jump += Math.max(0, Math.sin((cheer * 1.7 + i * .25) * Math.PI)) * 60; });
   drawChar('dinda', POS.dinda, FEET - 20, S.dinda);
   drawChar('tasya', tx, FEET, S.tasya);
   if (up > 0) { // Pak Kepala muncul dari bawah (memantul)
     const bounce = Math.sin(clamp((t - bossLine.start + .7) / .6, 0, 1) * Math.PI) * 40;
     S.kepala.jump += (1 - up) * -900 + bounce * (up < 1 ? 1 : 0);
-    drawChar('kepala', POS.kepala, FEET + 40, S.kepala);
+    drawChar('kepala', POS.kepala, FEET + 12, S.kepala);
   }
   ctx.restore();
   updateOverlay(t);
