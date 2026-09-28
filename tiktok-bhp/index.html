@@ -394,6 +394,58 @@
   #closing.show > *:nth-child(6) { animation-delay: 0s; }
   @keyframes rise { from { opacity: 0; transform: translateY(60px); } to { opacity: 1; transform: none; } }
 
+  /* ====== Pak Kepala: aksesori lucu tapi tetap berwibawa ====== */
+  .kepala .shades, .kepala .ting, .kepala .namaste { transform-box: fill-box; transform-origin: 50% 50%; }
+  .kepala .shades { opacity: 0; transform: translateY(-260px); }
+  .kepala.shades .shades { opacity: 1; transform: none; transition: transform .7s cubic-bezier(.5,0,.6,1.4), opacity .1s; }
+  .kepala .ting { opacity: 0; }
+  .kepala.ting .ting { animation: ting .7s ease-out; }
+  @keyframes ting { 0% { opacity: 0; transform: scale(0) rotate(0); } 40% { opacity: 1; transform: scale(1.6) rotate(45deg); } 100% { opacity: 0; transform: scale(.6) rotate(90deg); } }
+  .kepala .namaste { opacity: 0; transform: translateY(120px); transition: transform .45s cubic-bezier(.2,1.5,.4,1), opacity .2s; }
+  .kepala.pray .namaste { opacity: 1; transform: none; }
+  .kepala.pray .thumb { opacity: 0 !important; }
+  .kepala.pray .khead { animation: bow 1.4s ease-in-out .3s; transform-box: fill-box; transform-origin: 50% 100%; }
+  @keyframes bow { 0%, 100% { transform: none; } 40%, 60% { transform: translateY(14px) rotate(0deg) scaleY(.96); } }
+  .kepala .kcap { transform-box: fill-box; transform-origin: 20% 100%; }
+  .kepala.captip .kcap { animation: captip .9s cubic-bezier(.3,1.5,.5,1); }
+  @keyframes captip { 0%, 100% { transform: none; } 35% { transform: translateY(-40px) rotate(-12deg); } 60% { transform: translateY(-40px) rotate(-12deg); } }
+  .kepala.speaking .khead { animation: kbob .5s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 90%; }
+  @keyframes kbob { 0%, 100% { transform: none; } 50% { transform: rotate(1.5deg) translateY(-3px); } }
+  /* Aura wibawa di belakang Pak Kepala */
+  .kepala::before { content: ""; position: absolute; left: 50%; top: 42%; width: 760px; height: 760px; transform: translate(-50%,-50%) scale(0); border-radius: 50%; z-index: -1;
+    background: repeating-conic-gradient(from 0deg, rgba(242,183,5,.35) 0 8deg, transparent 8deg 22deg);
+    -webkit-mask-image: radial-gradient(circle, #000 20%, transparent 65%); mask-image: radial-gradient(circle, #000 20%, transparent 65%); transition: transform .6s cubic-bezier(.2,1.3,.4,1); }
+  .kepala.final::before { transform: translate(-50%,-50%) scale(1); animation: raySpin 8s linear infinite; }
+  @keyframes raySpin { to { transform: translate(-50%,-50%) scale(1) rotate(360deg); } }
+  /* ====== Kamera dinamis (fokus ke yang bicara) ====== */
+  #world { transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+  #world.cam-tasya { transform: scale(1.1) translate(70px, -40px); }
+  #world.cam-dinda { transform: scale(1.1) translate(-70px, -40px); }
+  #world.cam-drama { transform: scale(1.32) translate(150px, -170px); transition-duration: .35s; }
+  #vignette { position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity .3s;
+    background: radial-gradient(ellipse at 30% 55%, transparent 35%, rgba(6,21,46,.75) 80%); }
+  #app.drama #vignette { opacity: 1; }
+  /* ====== Burst komik saat kaget ====== */
+  #burst { position: absolute; z-index: 8; width: 620px; height: 620px; left: 0; top: 760px; pointer-events: none; display: grid; place-items: center; opacity: 0; }
+  #burst.dinda { left: auto; right: 0; }
+  #burst::before { content: ""; position: absolute; inset: 0; background: repeating-conic-gradient(from 0deg, #fff 0 5deg, transparent 5deg 15deg);
+    -webkit-mask-image: radial-gradient(circle, transparent 18%, #000 30%, transparent 70%); mask-image: radial-gradient(circle, transparent 18%, #000 30%, transparent 70%); opacity: .9; }
+  #burst b { position: relative; font-size: 120px; font-weight: 800; color: var(--gold); letter-spacing: -.02em; transform: rotate(-8deg);
+    -webkit-text-stroke: 10px var(--navy); paint-order: stroke fill; text-shadow: 0 12px 0 var(--navy); }
+  #burst.go { animation: burst .9s cubic-bezier(.2,1.5,.4,1) forwards; }
+  @keyframes burst { 0% { opacity: 0; transform: scale(.2) rotate(-20deg); } 25% { opacity: 1; transform: scale(1.08) rotate(3deg); } 75% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.15); } }
+  /* ====== Emoji hujan ====== */
+  #rain { position: absolute; inset: 0; z-index: 8; pointer-events: none; overflow: hidden; }
+  #rain i { position: absolute; top: -140px; font-style: normal; font-size: 90px; animation: rain 1.8s cubic-bezier(.4,0,.8,1) forwards; }
+  @keyframes rain { to { transform: translateY(2200px) rotate(540deg); } }
+  /* ====== Mode rekam Reels: aman dari tombol & caption Instagram ====== */
+  .rekam #overlay { bottom: 380px; }
+  .rekam .endbtns, .rekam #freezetag { display: none !important; }
+  .rekam body, body.rekam { cursor: none; }
+  #closing .closek { position: relative; left: auto; top: auto; width: 420px; height: 520px; margin-top: 40px; opacity: 1; flex: none; }
+  #closing .closek::before { transform: translate(-50%,-50%) scale(.8); }
+  #closing .closek .khead { animation: bow 2.2s ease-in-out 1s infinite; }
+  #closing .closek .kb { display: none; }
   /* ====== Hormati prefers-reduced-motion ====== */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -421,6 +473,7 @@
       <div class="plate">KEPALA BHP MEDAN</div>
       <div class="kb"></div>
     </div>
+    <div id="vignette"></div>
     <div id="talk" role="log" aria-live="polite"></div>
 
     <div id="progress" aria-hidden="true"></div>
@@ -434,6 +487,8 @@
     </div>
 
     <div class="sparkles" id="sparkles"></div>
+    <div id="burst"><b></b></div>
+    <div id="rain"></div>
     <div id="tagline" aria-live="polite"><div class="rays"></div><span class="t1"></span><span class="t2"></span></div>
     <div id="flash"></div>
     <div id="freezetag">⏸ FREEZE</div>
@@ -458,6 +513,7 @@
     <div class="l2">Kementerian Hukum RI</div>
     <div class="l3">#PastiSelaluAdaSolusinya</div>
     <div class="teaser" id="teaser"></div>
+    <div class="closek kepala in final pray" id="closeK"><div class="kfig"></div></div>
     <div class="endbtns" id="endBtns" hidden>
       <button class="btn" id="replayBtn" type="button"><svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a6 6 0 11-6 6H4a8 8 0 108-8z"/></svg>Ulang</button>
       <button class="btn next" id="nextBtn" type="button">Tusi berikutnya 👉</button>
@@ -718,37 +774,85 @@ const DINDA_SVG = `
   </g>
 </svg>`;
 
-/* Pak Kepala: karikatur (rambut pendek, kumis & janggut tipis) berseragam dinas */
+/* Pak Kepala BHP Medan: karikatur berwibawa — topi pet dinas (lambang Kemenkum emas),
+   seragam PDH hitam dengan pangkat bahu emas, kumis tipis + janggut dagu tipis, senyum ramah.
+   Bagian yang dianimasikan: .khead, .thumb (jempol), .namaste (tangan salam), .shades (kacamata), .ting (kilau gigi) */
 const KEPALA_SVG = `
 <svg viewBox="0 0 420 520" aria-hidden="true">
-  <path d="M20 520 C20 400 90 336 210 336 C330 336 400 400 400 520 Z" fill="#1F3F73" stroke="#fff" stroke-width="6"/>
-  <g transform="rotate(-16 100 386)"><rect x="56" y="372" width="92" height="28" rx="8" fill="#0B2A5B"/><path d="M70 380 V394 M84 380 V394 M98 380 V394" stroke="#F2B705" stroke-width="5"/></g>
-  <g transform="rotate(16 320 386)"><rect x="272" y="372" width="92" height="28" rx="8" fill="#0B2A5B"/><path d="M322 380 V394 M336 380 V394 M350 380 V394" stroke="#F2B705" stroke-width="5"/></g>
-  <path d="M156 342 L210 404 L264 342 L244 332 L210 372 L176 332 Z" fill="#16325E"/>
-  <path d="M210 404 V520" stroke="#16325E" stroke-width="6"/>
-  <circle cx="210" cy="430" r="6" fill="#F2B705"/><circle cx="210" cy="470" r="6" fill="#F2B705"/><circle cx="210" cy="508" r="6" fill="#F2B705"/>
-  <rect x="96" y="424" width="92" height="26" rx="5" fill="#fff"/><path d="M106 437 H176" stroke="#0B2A5B" stroke-width="5"/>
-  <rect x="244" y="440" width="84" height="62" rx="8" fill="none" stroke="#16325E" stroke-width="5"/>
-  <circle cx="286" cy="416" r="20" fill="#F2B705"/><path d="M286 402 l4 9 10 1 -8 6 3 10 -9 -5 -9 5 3 -10 -8 -6 10 -1z" fill="#0B2A5B"/>
-  <rect x="180" y="284" width="60" height="66" rx="22" fill="#B37650"/>
+  <defs>
+    <linearGradient id="kUni" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A2E37"/><stop offset="1" stop-color="#15181E"/></linearGradient>
+    <linearGradient id="kCap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B2F38"/><stop offset="1" stop-color="#101217"/></linearGradient>
+    <linearGradient id="kGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE27A"/><stop offset=".5" stop-color="#E0A800"/><stop offset="1" stop-color="#9A6A00"/></linearGradient>
+  </defs>
+  <!-- badan: PDH hitam -->
+  <path d="M18 520 C18 402 88 338 210 338 C332 338 402 402 402 520 Z" fill="url(#kUni)" stroke="#fff" stroke-width="6"/>
+  <!-- pangkat bahu -->
+  <g transform="rotate(-15 102 384)"><rect x="52" y="368" width="100" height="32" rx="9" fill="#0B0D11" stroke="url(#kGold)" stroke-width="4"/><path d="M68 376 V392 M82 376 V392 M96 376 V392" stroke="url(#kGold)" stroke-width="6"/><circle cx="134" cy="384" r="7" fill="url(#kGold)"/></g>
+  <g transform="rotate(15 318 384)"><rect x="268" y="368" width="100" height="32" rx="9" fill="#0B0D11" stroke="url(#kGold)" stroke-width="4"/><path d="M324 376 V392 M338 376 V392 M352 376 V392" stroke="url(#kGold)" stroke-width="6"/><circle cx="286" cy="384" r="7" fill="url(#kGold)"/></g>
+  <!-- kerah + lencana kerah -->
+  <path d="M150 344 L210 410 L270 344 L248 334 L210 378 L172 334 Z" fill="#0B0D11"/>
+  <circle cx="168" cy="362" r="9" fill="#C8102E" stroke="url(#kGold)" stroke-width="3"/><circle cx="252" cy="362" r="9" fill="#C8102E" stroke="url(#kGold)" stroke-width="3"/>
+  <path d="M210 410 V520" stroke="#0B0D11" stroke-width="5"/>
+  <circle cx="210" cy="436" r="6" fill="url(#kGold)"/><circle cx="210" cy="474" r="6" fill="url(#kGold)"/><circle cx="210" cy="510" r="6" fill="url(#kGold)"/>
+  <!-- dada kiri: lencana merah + pin merah putih; dada kanan: papan nama -->
+  <circle cx="146" cy="452" r="17" fill="#C8102E" stroke="url(#kGold)" stroke-width="4"/><path d="M146 442 l3 7 8 1 -6 5 2 8 -7 -4 -7 4 2 -8 -6 -5 8 -1z" fill="#FFE27A"/>
+  <rect x="104" y="424" width="30" height="10" fill="#C8102E"/><rect x="104" y="434" width="30" height="10" fill="#fff"/>
+  <rect x="240" y="436" width="96" height="26" rx="4" fill="#0B0D11" stroke="#9CA3AF" stroke-width="2"/><path d="M252 449 H324" stroke="#E5E7EB" stroke-width="5" stroke-dasharray="10 4"/>
+  <!-- leher -->
+  <rect x="180" y="286" width="60" height="64" rx="22" fill="#A8744C"/>
   <g class="khead">
-    <ellipse cx="118" cy="200" rx="16" ry="25" fill="#C68B5E"/><ellipse cx="302" cy="200" rx="16" ry="25" fill="#C68B5E"/>
-    <ellipse cx="210" cy="190" rx="94" ry="108" fill="#C68B5E"/>
-    <path d="M122 214 C130 268 168 300 210 300 C252 300 290 268 298 214 C292 262 256 290 210 290 C164 290 128 262 122 214 Z" fill="#151010" opacity=".14"/>
-    <path d="M116 182 C106 104 158 70 212 70 C270 70 316 104 304 182 C298 150 280 132 250 126 C224 120 190 122 168 128 C140 136 122 156 116 182 Z" fill="#151010"/>
-    <path d="M114 168 h14 v44 h-10 z M292 168 h14 v44 h-10 z" fill="#151010"/>
-    <path d="M150 160 Q172 148 198 157 M222 157 Q248 148 270 160" fill="none" stroke="#151010" stroke-width="10" stroke-linecap="round"/>
-    <ellipse cx="174" cy="188" rx="11" ry="13" fill="#1E1B2E"/><ellipse cx="246" cy="188" rx="11" ry="13" fill="#1E1B2E"/>
-    <circle cx="178" cy="183" r="4" fill="#fff"/><circle cx="250" cy="183" r="4" fill="#fff"/>
-    <path d="M210 198 q12 28 -6 34" fill="none" stroke="#9C6440" stroke-width="5" stroke-linecap="round"/>
-    <path d="M184 262 Q210 294 236 262 Z" fill="#7A2233"/><path d="M190 264 H230 L226 272 H194 Z" fill="#fff"/>
-    <path d="M168 254 Q190 236 210 246 Q230 236 252 254 Q230 258 210 251 Q190 258 168 254 Z" fill="#151010"/>
-    <path d="M186 288 Q210 300 234 288 Q232 314 210 322 Q188 314 186 288 Z" fill="#151010"/>
+    <ellipse cx="124" cy="204" rx="15" ry="24" fill="#BB8962"/><ellipse cx="296" cy="204" rx="15" ry="24" fill="#BB8962"/>
+    <path d="M124 170 C124 104 164 90 210 90 C256 90 296 104 296 170 C296 250 262 304 210 306 C158 304 124 250 124 170 Z" fill="#C99A72"/>
+    <path d="M122 218 C130 270 168 300 210 300 C252 300 290 270 298 218 C292 264 256 292 210 292 C164 292 128 264 122 218 Z" fill="#3A2416" opacity=".18"/>
+    <!-- rambut samping (cepak) -->
+    <path d="M122 150 h14 v50 h-10 z M284 150 h14 v50 h-10 z" fill="#15110E"/>
+    <!-- alis tebal -->
+    <path class="kbrow" d="M146 170 Q170 156 198 166 M222 166 Q250 156 274 170" fill="none" stroke="#15110E" stroke-width="11" stroke-linecap="round"/>
+    <!-- mata ramah (sedikit menyipit senyum) -->
+    <g class="keyes">
+      <ellipse cx="174" cy="196" rx="12" ry="12" fill="#1E1B2E"/><ellipse cx="246" cy="196" rx="12" ry="12" fill="#1E1B2E"/>
+      <circle cx="178" cy="191" r="4" fill="#fff"/><circle cx="250" cy="191" r="4" fill="#fff"/>
+      <path d="M160 212 Q174 204 188 212 M232 212 Q246 204 260 212" fill="none" stroke="#8A5A3A" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <path d="M210 204 q13 28 -6 34" fill="none" stroke="#8E5B3A" stroke-width="5" stroke-linecap="round"/>
+    <!-- senyum + gigi -->
+    <path d="M178 262 Q210 296 242 262 Z" fill="#6E1E2C"/><path d="M184 264 H236 L230 273 H190 Z" fill="#fff"/>
+    <!-- kumis tipis -->
+    <path d="M172 254 Q192 240 210 248 Q228 240 248 254 Q228 257 210 252 Q192 257 172 254 Z" fill="#15110E"/>
+    <!-- janggut dagu tipis -->
+    <path d="M192 290 Q210 298 228 290 Q226 312 210 318 Q194 312 192 290 Z" fill="#15110E"/>
+    <path d="M150 262 Q160 292 192 300 M270 262 Q260 292 228 300" fill="none" stroke="#15110E" stroke-width="3" opacity=".55"/>
+    <!-- topi pet dinas -->
+    <g class="kcap">
+      <path d="M92 104 C92 48 328 48 328 104 L308 150 L112 150 Z" fill="url(#kCap)"/>
+      <ellipse cx="210" cy="78" rx="134" ry="40" fill="#2E323C"/>
+      <path d="M100 86 Q210 52 320 86" fill="none" stroke="#fff" stroke-width="4" opacity=".12"/>
+      <rect x="110" y="128" width="200" height="26" rx="6" fill="#0B0D11"/>
+      <path d="M114 134 H306 M114 148 H306" stroke="url(#kGold)" stroke-width="4"/>
+      <!-- lambang Kemenkum (perisai emas + pohon pengayoman) -->
+      <path d="M210 70 l32 12 v26 c0 18 -14 30 -32 36 c-18 -6 -32 -18 -32 -36 v-26 z" fill="url(#kGold)" stroke="#7A5200" stroke-width="3"/>
+      <path d="M210 88 v40 M198 100 q12 -14 24 0 M194 112 q16 -16 32 0 M200 128 h20" fill="none" stroke="#0B2A5B" stroke-width="5" stroke-linecap="round"/>
+      <path d="M170 136 q-20 -6 -34 6 M250 136 q20 -6 34 6" fill="none" stroke="url(#kGold)" stroke-width="5" stroke-linecap="round"/>
+      <!-- lidah topi mengkilap -->
+      <path d="M110 152 Q210 196 310 152 L304 166 Q210 214 116 166 Z" fill="#050608"/>
+      <path d="M140 162 Q180 178 214 178" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".35"/>
+    </g>
+    <!-- kacamata hitam "deal with it" (turun di akhir) -->
+    <g class="shades"><path d="M146 184 H274 V194 L262 222 Q246 232 228 222 L218 198 H202 L192 222 Q174 232 158 222 L146 194 Z" fill="#0B0D11"/><path d="M160 192 L176 192 M232 192 L248 192" stroke="#fff" stroke-width="5" opacity=".7"/></g>
+    <!-- kilau gigi -->
+    <g class="ting"><path d="M236 250 l5 13 13 5 -13 5 -5 13 -5 -13 -13 -5 13 -5z" fill="#fff"/></g>
   </g>
+  <!-- jempol -->
   <g class="thumb">
-    <path d="M356 520 L370 390" stroke="#1F3F73" stroke-width="62" stroke-linecap="round"/>
-    <rect x="352" y="292" width="26" height="62" rx="13" fill="#C68B5E"/>
-    <rect x="340" y="336" width="66" height="60" rx="20" fill="#C68B5E"/>
+    <path d="M356 520 L370 390" stroke="#1C2027" stroke-width="62" stroke-linecap="round"/>
+    <rect x="352" y="292" width="26" height="62" rx="13" fill="#C99A72"/>
+    <rect x="340" y="336" width="66" height="60" rx="20" fill="#C99A72"/>
+  </g>
+  <!-- tangan salam namaste -->
+  <g class="namaste">
+    <path d="M110 520 L178 420 M310 520 L242 420" stroke="#1C2027" stroke-width="56" stroke-linecap="round"/>
+    <path d="M178 452 C170 410 184 350 208 338 L212 452 Z" fill="#C99A72" stroke="#8E5B3A" stroke-width="3"/>
+    <path d="M242 452 C250 410 236 350 212 338 L208 452 Z" fill="#B9825A" stroke="#8E5B3A" stroke-width="3"/>
   </g>
 </svg>`;
 
@@ -921,6 +1025,7 @@ function speakRaw(text, who, audioSrc) {
   if (audioSrc) {
     return new Promise((res) => {
       const a = new Audio(audioSrc); currentAudio = a;
+      if (REKAM) Music.route(a);
       a.onended = a.onerror = () => res();
       a.play().catch(() => res());
     });
@@ -953,7 +1058,7 @@ function speakRaw(text, who, audioSrc) {
    SFX meme: pop, whoosh, vine boom, ding, stempel, riser, drop, record scratch. */
 let musicOn = true;
 const Music = (() => {
-  let ctx, master, bus, duckG, sfx, noiseBuf, timer = null, stopTimer = null, step = 0, next = 0;
+  let ctx, comp, master, bus, duckG, sfx, noiseBuf, timer = null, stopTimer = null, step = 0, next = 0;
   const BPM = 92, SPB = 60 / BPM / 4;
   const CHORDS = [[53, 57, 60, 64], [52, 55, 59, 62], [50, 53, 57, 60], [48, 52, 55, 59]]; // Fmaj7 Em7 Dm7 Cmaj7
   const ROOTS = [41, 40, 38, 36];
@@ -964,7 +1069,7 @@ const Music = (() => {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return false;
     ctx = new AC();
-    const comp = ctx.createDynamicsCompressor(); comp.connect(ctx.destination);
+    comp = ctx.createDynamicsCompressor(); comp.connect(ctx.destination);
     master = ctx.createGain(); master.gain.value = .9; master.connect(comp);
     bus = ctx.createGain(); bus.gain.value = 0;
     duckG = ctx.createGain(); bus.connect(duckG); duckG.connect(master);
@@ -1045,6 +1150,9 @@ const Music = (() => {
       noise(t, .4, { type: 'bandpass', freq: 2000, to: 500, gain: .2, dest: sfx });
     },
     get ready() { return !!ctx; },
+    /* Mode rekam: suara narasi ikut lewat mixer yang sama, lalu semua disadap ke MediaRecorder */
+    route(el) { if (!init()) return; const g = ctx.createGain(); g.gain.value = 1.15; ctx.createMediaElementSource(el).connect(g); g.connect(comp); },
+    tap() { init(); const d = ctx.createMediaStreamDestination(); comp.connect(d); return d.stream; },
   };
 })();
 
@@ -1084,11 +1192,36 @@ const app = $('#app'), world = $('#world'), talk = $('#talk');
 const overlay = $('#overlay'), kepala = $('#kepala'), tagline = $('#tagline'), flash = $('#flash');
 const wipeEl = $('#wipe'), startEl = $('#start'), closingEl = $('#closing'), endBtns = $('#endBtns');
 kepala.querySelector('.kfig').innerHTML = KEPALA_SVG;
+$('#closeK .kfig').innerHTML = KEPALA_SVG.replace(/id="k(Uni|Cap|Gold)"/g, 'id="c$1"').replace(/url\(#k(Uni|Cap|Gold)\)/g, 'url(#c$1)');
 const cast = { tasya: $('#tasya'), dinda: $('#dinda') };
 cast.tasya.innerHTML = TASYA_SVG;
 cast.dinda.innerHTML = DINDA_SVG;
 document.querySelector('.duo .tasya').innerHTML = TASYA_SVG;
 document.querySelector('.duo .dinda').innerHTML = DINDA_SVG;
+
+const REKAM = params.has('rekam');
+if (REKAM) document.body.classList.add('rekam');
+const BURST_WORDS = ['HAH?!', 'WADUH!', 'SERIUS?!', 'WHAT?!', 'OMG!'];
+let burstN = 0;
+function comicBurst(side, word) {
+  if (reduced()) return;
+  const el = $('#burst');
+  el.className = side; el.querySelector('b').textContent = word || BURST_WORDS[burstN++ % BURST_WORDS.length];
+  void el.offsetWidth; el.classList.add('go');
+}
+function emojiRain(list, n = 14) {
+  if (reduced()) return;
+  const box = $('#rain'); box.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const e = document.createElement('i');
+    e.textContent = list[i % list.length];
+    e.style.left = (i / n) * 1000 + Math.random() * 60 + 'px';
+    e.style.animationDelay = Math.random() * 500 + 'ms';
+    e.style.fontSize = 70 + Math.random() * 50 + 'px';
+    box.appendChild(e);
+  }
+}
+function cam(who) { world.classList.remove('cam-tasya', 'cam-dinda', 'cam-drama'); if (who && !reduced()) world.classList.add('cam-' + who); }
 
 function clearChar(ch) {
   ch.className = ch.className.split(' ').filter((c) => !/^act-|^talking$|^thinking$/.test(c)).join(' ');
@@ -1101,7 +1234,9 @@ function resetStage() {
   talk.innerHTML = '';
   overlay.classList.remove('show');
   app.classList.remove('dim', 'shake', 'frozen');
-  world.classList.remove('zoom');
+  world.classList.remove('zoom', 'cam-tasya', 'cam-dinda', 'cam-drama');
+  app.classList.remove('drama');
+  $('#rain').innerHTML = ''; $('#burst').className = '';
   kepala.className = 'kepala';
   kepala.removeAttribute('style');
   $('#sparkles').innerHTML = '';
@@ -1169,7 +1304,9 @@ async function sendMessage(m) {
   }
   typing.replaceWith(b);
   Music.pop();
-  if (m.act === 'shock') Music.vine();
+  if (!world.classList.contains('cam-drama')) cam(m.from);
+  if (m.act === 'shock') { Music.vine(); comicBurst(m.from); }
+  if (m.rain) emojiRain(m.rain);
   ch.classList.remove('thinking');
   if (m.act) ch.classList.add(`act-${m.act}`);
   if (m.emote) { const e = document.createElement('div'); e.className = 'emote'; e.textContent = m.emote; ch.appendChild(e); }
@@ -1200,6 +1337,7 @@ async function sendMessage(m) {
 }
 
 async function showOverlay(o, num) {
+  cam(null);
   overlay.querySelector('.oi').innerHTML = svg(o.icon, 1.8);
   overlay.querySelector('.onum b').textContent = num;
   overlay.querySelector('.otitle').textContent = o.title;
@@ -1266,18 +1404,27 @@ async function finale(ep) {
     cast.tasya.classList.add(i === 0 ? 'act-shock' : 'act-tilt');
     cast.dinda.classList.add(`act-${reacts[i % reacts.length]}`);
     await sleep(T.popIn);
+    kepala.classList.add('speaking');
+    if (i === 1) { kepala.classList.add('captip'); }
     await Promise.all([sleep(T.popHold), speak(p.text, 'boss')]);
+    kepala.classList.remove('speaking', 'captip');
     await hideKepala(s);
   }
   Object.values(cast).forEach(clearChar);
 
   // Pak Kepala tampil utuh di tengah + jempol
   const line = FINALE.line(ep);
+  cam(null);
   placeKepala('final', line);
   Music.boing(); sparkle();
   cast.tasya.classList.add('act-shock'); cast.dinda.classList.add('act-nod');
   await sleep(T.popIn);
+  // Kacamata "deal with it" turun pelan... lalu gigi berkilau ✨ — wibawa level maksimal
+  kepala.classList.add('shades');
+  sleep(750).then(() => { kepala.classList.add('ting'); Music.ding(); }, () => {});
+  kepala.classList.add('speaking');
   await Promise.all([sleep(T.finaleHold + 800), speak(line, 'boss')]);
+  kepala.classList.remove('speaking');
 
   // Tagline besar + flash + shake, semua melonjak
   const c = FINALE;
@@ -1289,6 +1436,8 @@ async function finale(ep) {
     app.classList.remove('shake'); void app.offsetWidth; app.classList.add('shake');
   }
   tagline.classList.add('show');
+  kepala.classList.remove('shades', 'ting'); kepala.classList.add('pray'); // salam hormat ala Pak Kepala 🙏
+  emojiRain(['🎉', '✨', '🙏', '⭐', '💙', '💛'], 18);
   Music.boom(); Music.start(.9); // drop!
   await Promise.all([sleep(T.taglineHold), speak(c.tagline.join(' '), 'narator')]);
 
@@ -1336,7 +1485,11 @@ async function play(epIndex = currentEp) {
     await sleep(T.sceneIntro);
     for (const m of ep.messages) await sendMessage(m);
     await showOverlay(ep.overlay, ep.no);
-    await sendMessage(ep.punch);
+    world.classList.remove('cam-tasya', 'cam-dinda');
+    overlay.classList.remove('show'); talk.innerHTML = '';
+    if (!reduced()) { world.classList.add('cam-drama'); app.classList.add('drama'); }
+    await sendMessage({ ...ep.punch, rain: ep.punch.rain || [ep.punch.emote, '😱', '🤯'] });
+    world.classList.remove('cam-drama'); app.classList.remove('drama');
     setSegment(1);
     await finale(ep);
     await showClosing(ep);
@@ -1379,6 +1532,23 @@ $('#playBtn').addEventListener('click', () => play(currentEp));
 $('#replayBtn').addEventListener('click', () => play(currentEp));
 $('#nextBtn').addEventListener('click', () => play((currentEp + 1) % EPISODES.length));
 setScene(EPISODES[currentEp]);
+
+/* ===== Mode rekam video Reels (?rekam&ep=N) — dipakai render_reels.js ===== */
+if (REKAM) {
+  window.__rekam = { done: false, audioStart: 0 };
+  window.__mulai = async () => {
+    await voReady;
+    const rec = new MediaRecorder(Music.tap(), { mimeType: 'audio/webm;codecs=opus', audioBitsPerSecond: 192000 });
+    const chunks = []; rec.ondataavailable = (e) => chunks.push(e.data);
+    rec.start(); window.__rekam.audioStart = Date.now() / 1000;
+    await play(currentEp);
+    await sleep(1800);
+    rec.stop(); await new Promise((r) => (rec.onstop = r));
+    const buf = new Uint8Array(await new Blob(chunks).arrayBuffer());
+    let bin = ''; for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
+    window.__rekam.audio = btoa(bin); window.__rekam.done = true;
+  };
+}
 </script>
 </body>
 </html>
