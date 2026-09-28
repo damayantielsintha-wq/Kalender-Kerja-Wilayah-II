@@ -69,21 +69,78 @@ del{color:#b91c1c;text-decoration:line-through}ins{color:#047857;text-decoration
 .meta{font-size:12px;color:var(--mut)}
 .nomor{font-size:12px;padding:6px 8px;border-radius:8px;background:var(--pri2)}
 .kurang{font-size:11px;color:var(--warn)}
+/* ===== tema e-Office BHP Medan ===== */
+:root{--navy:#1b2345;--navy2:#252f5c;--gold:#f6c343;--gold2:#fff6db;--pri:#1b2345;--pri2:#eef1f9;--bg:#f3f4f8;--line:#e4e7ef;--rad:16px}
+:root[data-theme=dark]{--navy:#0f1430;--navy2:#1a2147;--pri:#c9d1ff;--pri2:#20264a}
+body{padding-left:250px}
+.side{position:fixed;left:0;top:0;bottom:0;width:250px;background:var(--navy);color:#cfd5ea;display:flex;flex-direction:column;z-index:10;overflow:auto}
+.side .brand{display:flex;gap:10px;align-items:center;padding:20px 18px 18px;border-bottom:1px solid #ffffff14}
+.side .brand img{width:38px;height:42px;object-fit:contain}.side .brand b{display:block;color:#fff;font-size:16px;letter-spacing:.3px}.side .brand small{font-size:11.5px;opacity:.75}
+.side .sec{font-size:10.5px;font-weight:700;letter-spacing:1.2px;opacity:.55;padding:18px 20px 6px}
+.side .nav{display:flex;gap:10px;align-items:center;margin:2px 12px;padding:11px 14px;border-radius:12px;color:#e8ebf7;font-weight:600;cursor:pointer;text-decoration:none;font-size:14px}
+.side .nav:hover{background:#ffffff12}.side .nav.on{background:var(--gold);color:var(--navy);box-shadow:0 6px 18px #f6c34355}
+.side .foot{margin-top:auto;padding:16px 20px;font-size:11px;opacity:.6;border-top:1px solid #ffffff14;display:flex;justify-content:space-between;align-items:center}
+.side .foot button{background:none;border:0;color:inherit;padding:0;font-size:14px}
+.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:14px 26px;display:flex;gap:14px;align-items:center}
+.top h2{margin:0;font-size:20px}.top small{color:var(--mut)}.top .grow{margin-right:auto}
+.top #q{width:220px;border-radius:99px;padding:9px 16px}
+#who{display:flex;gap:10px;align-items:center}
+.uname{text-align:right;line-height:1.2}.uname b{display:block;font-size:13px;text-transform:uppercase}.uname small{font-size:10.5px;letter-spacing:.8px;text-transform:uppercase}
+.menubtn{background:var(--navy)!important;color:#fff!important;border:0!important;border-radius:99px!important;padding:9px 16px!important}
+.pri,button.pri,label.pri{background:var(--gold)!important;color:var(--navy)!important;border-color:var(--gold)!important;font-weight:700}
+.pri:hover{filter:brightness(.97);box-shadow:0 6px 16px #f6c34366}
+.steps button.on{background:var(--navy);border-color:var(--navy)}
+.seg button.on{background:var(--navy)}
+.item.on{border-color:var(--navy);background:var(--pri2)}
+.tag{background:var(--gold2);color:#8a6200}
+.wrap{padding:22px 26px;max-width:1500px;margin:0}
+.card{border-radius:var(--rad);box-shadow:0 1px 3px #1b234510}
+/* wizard */
+.wz{max-width:880px;margin:0 auto;padding:30px 34px}
+.wz-h{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:22px}
+.wz-h h2{margin:0 0 4px;font-size:22px}.wz-h p{margin:0;color:var(--mut)}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700;background:var(--pri2);color:var(--mut);font-size:14px}
+.stepper i.on{background:var(--navy);color:#fff}.stepper i.done{background:var(--gold);color:var(--navy)}
+.stepper s{width:22px;height:2px;background:var(--line);text-decoration:none}
+.wz h4{font-size:15px;margin:0 0 14px;display:flex;gap:8px;align-items:center}
+.wz .lbl{font-weight:700;font-size:13px;margin:18px 0 10px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.opt{border:1.5px solid var(--line);border-radius:14px;padding:16px 18px;cursor:pointer;position:relative;transition:.15s}
+.opt:hover{border-color:#c5cbe0}.opt.on{border-color:var(--navy);background:var(--pri2)}
+.opt b{display:block;margin-bottom:4px}.opt span{font-size:12.5px;color:var(--mut)}
+.opt:after{content:"";position:absolute;right:16px;top:16px;width:16px;height:16px;border-radius:50%;border:2px solid #b8bfd4}
+.opt.on:after{border:5px solid var(--navy)}
+.drop{margin-top:6px;border:2px dashed #c5cbe0;border-radius:16px;padding:38px 20px;text-align:center;cursor:pointer;background:var(--bg);transition:.15s;display:block}
+.drop:hover,.drop.over{border-color:var(--navy);background:var(--pri2)}
+.drop .ic{font-size:40px}.drop b{display:block;font-size:16px;margin:8px 0 4px}.drop small{color:var(--mut)}
+.wz-f{display:flex;justify-content:space-between;align-items:center;margin-top:26px;padding-top:18px;border-top:1px solid var(--line)}
+.wz-f .pri{padding:11px 20px;border-radius:12px}
+.link{background:none!important;border:0!important;color:var(--mut)!important;text-decoration:underline;padding:0!important}
+.spin{width:38px;height:38px;border:4px solid var(--pri2);border-top-color:var(--navy);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 10px}@keyframes sp{to{transform:rotate(360deg)}}
+.dash{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.dash .card b{font-size:26px;display:block}.dash .card span{color:var(--mut);font-size:12.5px}
+#login{background:radial-gradient(circle at 20% 10%,#2c3972,var(--navy) 70%)}
+#login form{border:0;box-shadow:0 30px 60px #0005}
+@media(max-width:900px){body{padding-left:0}.side{position:static;width:auto;flex-direction:row;flex-wrap:wrap;align-items:center}.side .sec,.side .foot{display:none}.side .brand{border:0;padding:12px}.side .nav{margin:4px;padding:8px 10px;font-size:13px}.top{flex-wrap:wrap;padding:12px 16px}.top #q{width:100%}.wrap{padding:14px}.opts,.dash{grid-template-columns:1fr}.wz{padding:20px}}
+.wrap.wzmode{grid-template-columns:1fr}.wrap.wzmode>aside{display:none}
+.docs button.pri{background:var(--navy)!important;color:#fff!important;border-color:var(--navy)!important}
 </style>
 </head>
 <body>
-<header>
-  <h1>⚖️ Dokumen Penyumpahan <span>BHP Medan</span></h1>
-  <input id="q" placeholder="Cari nama…" style="width:170px">
-  <button onclick="newRec()" class="pri">+ Data baru</button>
-  <label class="btn pri" style="margin:0">📑 Upload Penetapan<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)"></label>
-  <label class="btn" style="margin:0;color:var(--ink)">⬆ Impor CSV<input type="file" accept=".csv" hidden onchange="importCsv(this)"></label>
-  <button class="superOnly" onclick="riwayatSemua()">🕘 Riwayat</button>
-  <button class="superOnly" onclick="kelolaPengguna()">👥 Pengguna</button>
-  <button class="superOnly" onclick="openSet()">⚙ Pengaturan</button>
-  <button onclick="toggleTheme()" title="Tema">🌓</button>
-  <span id="who"></span>
-</header>
+<nav class="side">
+  <div class="brand"><img id="brandLogo" alt=""><div><b>BHP MEDAN</b><small>Dokumen Penyumpahan</small></div></div>
+  <div class="sec">DASHBOARD</div>
+  <a class="nav on" data-v="berkas" onclick="goBerkas()">🏠 Daftar Berkas</a>
+  <div class="sec">PENYUMPAHAN</div>
+  <a class="nav" data-v="baru" onclick="wizard(1)">📑 Berkas Baru</a>
+  <label class="nav" data-v="csv">⬆ Impor CSV<input type="file" accept=".csv" hidden onchange="importCsv(this)"></label>
+  <div class="sec superOnly">ADMIN UTAMA</div>
+  <a class="nav superOnly" onclick="riwayatSemua()">🕘 Riwayat</a>
+  <a class="nav superOnly" onclick="kelolaPengguna()">👥 Pengguna</a>
+  <a class="nav superOnly" onclick="openSet()">⚙ Pengaturan</a>
+  <div class="foot"><span>© 2026 BHP Medan</span><button onclick="toggleTheme()" title="Tema">🌓</button></div>
+</nav>
+<div class="top"><div class="grow"><h2 id="pgTitle">Daftar Berkas</h2><small id="pgDate"></small></div><input id="q" placeholder="🔍 Cari nama…"><span id="who"></span></div>
 
 <div class="wrap">
   <aside class="card">
@@ -317,8 +374,11 @@ async function boot(){
   $('#login').hidden=true;document.body.classList.remove('locked');renderHeader();cur=null;renderList();renderMain();
   if(ME.wajibGanti)gantiPassword(true)}
 async function logout(){await api('apiLogout').catch(()=>{});TOKEN=null;ss('bhpTok',null);ME=null;DB=[];cur=null;showLogin('Anda sudah keluar.')}
-function renderHeader(){$('#who').innerHTML=`${FOLDER?`<a class="btn" href="${FOLDER}" target="_blank" rel="noopener">📁 Folder Drive</a> `:''}<button onclick="menuUser()" title="Akun">👤 ${esc(ME.nama)} <span class="tag">${isSuper()?'Admin Utama':'Admin'}</span></button>`;
-  document.querySelectorAll('.superOnly').forEach(e=>e.hidden=!isSuper())}
+function renderHeader(){$('#who').innerHTML=`${FOLDER?`<a class="btn" href="${FOLDER}" target="_blank" rel="noopener" title="Folder Drive">📁</a>`:''}<div class="uname"><b>${esc(ME.nama)}</b><small>${isSuper()?'Admin Utama':'Admin'}</small></div><button class="menubtn" onclick="menuUser()">👤 Menu ▾</button>`;
+  document.querySelectorAll('.superOnly').forEach(e=>e.hidden=!isSuper());const lg=$('#brandLogo');if(lg)lg.src=SET.logo||LOGO_DEF;
+  $('#pgDate').textContent=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+function setNav(v,t){if(v!=='baru')$('.wrap').classList.remove('wzmode');document.querySelectorAll('.side .nav').forEach(n=>n.classList.toggle('on',n.dataset.v===v));$('#pgTitle').textContent=t}
+function goBerkas(){WZ.on=false;setNav('berkas','Daftar Berkas');renderMain();renderList()}
 function menuUser(){dlg(`<h3>👤 ${esc(ME.nama)}</h3><p class="hint">Username: <b>${esc(ME.username)}</b> · ${isSuper()?'Admin Utama (akses penuh)':'Admin'}</p>
   <p style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="gantiPassword()">🔑 Ganti password</button><button onclick="logout()" style="color:var(--warn)">⎋ Keluar</button><button onclick="dlgClose()">Tutup</button></p>`)}
 function gantiPassword(wajib){dlg(`<form onsubmit="event.preventDefault();simpanPwd(this)"><h3>🔑 ${wajib?'Buat password baru (wajib saat login pertama)':'Ganti password'}</h3>
@@ -435,8 +495,8 @@ const DEMO=(()=>{const K='bhpDemo.v2',st=(()=>{try{return JSON.parse(localStorag
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1800)}
 function renderList(){const q=($('#q').value||'').toLowerCase();
   $('#list').innerHTML=DB.filter(r=>(r.nama+' '+derive(r).objek).toLowerCase().includes(q)).map(r=>`<div class="item ${cur&&cur.id===r.id?'on':''}" style="${r._dihapus?'opacity:.5':''}" onclick="pick('${r.id}')">${r._dihapus?'<span class="tag" style="color:var(--warn)">Terhapus</span>':''}
-  <b>${esc(r.nama||'(tanpa nama)')}</b><small>${esc(derive(r).objek||'-')}</small><br><span class="tag">${r.jenis}</span> <small>${r.tglSumpah?tgl(r.tglSumpah):''}</small></div>`).join('')||'<p class="hint">Belum ada data. Klik “+ Data baru” atau impor CSV dari spreadsheet.</p>'}
-function pick(id){clearTimeout(saveT);if(cur)flush();cur=DB.find(r=>r.id===id);if(tab==='riw'&&!cur)tab='umum';renderMain();renderList()}
+  <b>${esc(r.nama||'(tanpa nama)')}</b><small>${esc(derive(r).objek||'-')}</small><br><span class="tag">${r.jenis}</span> <small>${r.tglSumpah?tgl(r.tglSumpah):''}</small></div>`).join('')||'<p class="hint">Belum ada berkas. Klik “📑 Berkas Baru” di menu kiri untuk memulai.</p>'}
+function pick(id){WZ.on=false;setNav('berkas','Daftar Berkas');clearTimeout(saveT);if(cur)flush();cur=DB.find(r=>r.id===id);if(tab==='riw'&&!cur)tab='umum';renderMain();renderList()}
 function newRec(){if(cur){clearTimeout(saveT);flush()}cur=addRec(blank(),'Berkas baru (manual)');tab='umum';renderMain();renderList();flush()}
 function F(path,lbl,type='text',opt){const v=get(path);
   if(type==='select')return`<div><label>${lbl}</label><select onchange="setv('${path}',this.value)">${opt.map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select></div>`;
@@ -448,10 +508,12 @@ function setv(p,v){if(cur._dihapus){toast('Berkas terhapus tidak bisa diubah');r
   if(p==='kelurahan')cur._kelManual=true;
   save();renderList();if(p==='jenis')renderMain()}
 function renderMain(){
-  if(!cur){$('#main').innerHTML=`<div style="text-align:center;padding:60px 10px"><div style="font-size:48px">📄</div><h3>Pilih berkas di kiri atau buat data baru</h3><p class="hint">Isi sekali → semua surat & berita acara terbuat otomatis sesuai format BHP.</p><button class="pri" onclick="newRec()">+ Data baru</button>
-<label id="drop" class="card" style="display:block;margin:24px auto 0;max-width:460px;border:2px dashed var(--pri);cursor:pointer" ondragover="event.preventDefault()" ondrop="event.preventDefault();handlePenetapan(event.dataTransfer.files[0])">
-<div style="font-size:32px">📑</div><b>Upload / seret PDF Penetapan Pengadilan di sini</b><br><span class="hint">Nama, NIK, TTL, agama, pekerjaan, alamat, nomor & tanggal penetapan, terampu/anak akan terisi otomatis</span>
-<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)"></label></div>`;return}
+  if(WZ.on)return wizard(WZ.step);
+  if(!cur){const n=DB.filter(r=>!r._dihapus),pg=n.filter(r=>r.jenis!=='Perwalian').length;
+    $('#main').innerHTML=`<div style="padding:10px 6px"><h2 style="margin:0 0 4px">Selamat datang, ${esc((ME&&ME.nama)||'')} 👋</h2><p class="hint" style="margin:0 0 18px">Buat berkas dari penetapan pengadilan; data terisi otomatis, dokumen tinggal diunduh ke Google Docs.</p>
+    <button class="pri" style="padding:12px 20px;border-radius:12px" onclick="wizard(1)">📑 Buat Berkas Baru →</button>
+    <div class="dash"><div class="card"><b>${n.length}</b><span>Total berkas</span></div><div class="card"><b>${pg}</b><span>Pengampuan</span></div><div class="card"><b>${n.length-pg}</b><span>Perwalian</span></div></div>
+    <p class="hint" style="margin-top:18px">Pilih berkas di daftar sebelah kiri untuk melanjutkan pengisian.</p></div>`;return}
   const d=derive(cur),w=d.w;
   const TABS={umum:'1. Perkara',pihak:`2. ${d.J}`,objek:`3. ${w?'Anak':'Terampu'}`,jadwal:'4. Jadwal & Pejabat',harta:'5. BAP & Harta',dok:'📄 Dokumen',riw:'🕘 Riwayat'};
   let h=`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><div class="seg">${['Pengampuan','Perwalian'].map(j=>`<button class="${cur.jenis===j?'on':''}" onclick="setv('jenis','${j}')">${j}</button>`).join('')}</div>
@@ -619,7 +681,7 @@ const PDFJS='https:\/\/cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js
 const TESS='https:\/\/cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
 let penFill=false;
 function uploadPenetapan(inp,fill){penFill=!!fill;const f=inp.files[0];inp.value='';if(f)handlePenetapan(f)}
-function busy(t){$('#penBody').innerHTML=`<div style="text-align:center;padding:30px"><div style="font-size:32px">⏳</div><b id="penStat">${t}</b><p class="hint">Dokumen diproses di browser Anda.</p></div>`;if(!$('#penDlg').open)$('#penDlg').showModal()}
+function busy(t){if(WZ.on){const d=$('#wzDrop');if(d)d.innerHTML=`<div class="spin"></div><b id="penStat">${t}</b><small>Mohon tunggu, dokumen sedang dibaca…</small>`;return}$('#penBody').innerHTML=`<div style="text-align:center;padding:30px"><div style="font-size:32px">⏳</div><b id="penStat">${t}</b><p class="hint">Dokumen diproses di browser Anda.</p></div>`;if(!$('#penDlg').open)$('#penDlg').showModal()}
 const stat=t=>{const e=$('#penStat');if(e)e.textContent=t};
 async function handlePenetapan(file){
   if(!file)return;busy('Membaca '+file.name+'…');
@@ -628,8 +690,9 @@ async function handlePenetapan(file){
     if(ADA_AI){stat('Menganalisis dengan AI Gemini…');try{data=await geminiExtract(file)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}}
     let rx=null;try{const text=await fileText(file);if(text.replace(/\s/g,'').length>=80){rx=parsePenetapan(text);rx._text=text}}catch(e){if(!data)throw e}
     if(data&&rx)data=gabung(data,rx);else data=data||rx;if(!data)throw new Error('Teks tidak terbaca dari file.');
+    if(WZ.on){if(!WZ.pilih||!data.jenis)data.jenis=data.jenis||WZ.jenis;if(WZ.pilih)data.jenis=WZ.jenis;WZ.data=data;wizard(2);return}
     reviewPenetapan(data,file.name);
-  }catch(e){$('#penBody').innerHTML=`<h3>Gagal membaca penetapan</h3><p>${esc(e.message)}</p><p class="hint">Coba file PDF asli (bukan foto miring/buram), atau isi Gemini API key di Pengaturan.</p><p style="text-align:right"><button onclick="penDlg.close()">Tutup</button></p>`}
+  }catch(e){if(WZ.on){const d=$('#wzDrop');if(d)d.innerHTML=`<div class="ic">⚠️</div><b>Gagal membaca: ${esc(e.message)}</b><small>Klik untuk mencoba file lain, atau isi manual.</small><input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)">`;return}$('#penBody').innerHTML=`<h3>Gagal membaca penetapan</h3><p>${esc(e.message)}</p><p class="hint">Coba file PDF asli (bukan foto miring/buram), atau isi Gemini API key di Pengaturan.</p><p style="text-align:right"><button onclick="penDlg.close()">Tutup</button></p>`}
 }
 async function fileText(file){
   if(file.type.startsWith('image/'))return ocr([file]);
@@ -725,26 +788,50 @@ Untuk Pengampuan isi "terampu" dan kosongkan "anak"; untuk Perwalian isi semua a
 
 const PEN_LBL={jenis:'Jenis',pengadilan:'Pengadilan',nomorPenetapan:'Nomor Penetapan',tglPenetapan:'Tanggal Penetapan',nama:'Nama Pemohon (Wali/Pengampu)',nik:'NIK',jk:'Jenis Kelamin',tglLahir:'Tanggal Lahir',agama:'Agama',pekerjaan:'Pekerjaan',alamat:'Alamat',kelurahan:'Kelurahan/Kec/Kota',status:'Hubungan'};
 let PEN=null;
-function reviewPenetapan(d,fname){PEN=d;const w=d.jenis==='Perwalian';
-  const row=(k,lbl,v,type='text')=>`<div><label>${lbl}</label><input type="${type}" value="${esc(v||'')}" data-pk="${k}" style="${v?'':'background:#fde68a33;border-color:#f59e0b'}"></div>`;
-  let h=`<h3>📑 Hasil baca: ${esc(fname)} ${d._ai?'<span class="tag">AI</span>':''}</h3><p class="hint">Periksa & koreksi dulu. Kolom oranye = tidak ditemukan di dokumen.</p><div class="grid">`;
+function reviewHtml(d){PEN=d;const w=d.jenis==='Perwalian';
+  const row=(k,lbl,v,type='text')=>`<div><label>${lbl}</label><input type="${type}" value="${esc(v||'')}" data-pk="${k}" style="${v?'':'background:#fff6db;border-color:#f6c343'}"></div>`;
+  let h=`<div class="grid">`;
   h+=`<div><label>Jenis</label><select data-pk="jenis">${['Pengampuan','Perwalian'].map(j=>`<option ${j===d.jenis?'selected':''}>${j}</option>`).join('')}</select></div>`;
   ['pengadilan','nomorPenetapan','tglPenetapan','nama','nik','jk','tglLahir','agama','pekerjaan','status'].forEach(k=>h+=row(k,PEN_LBL[k],d[k],/^tgl/.test(k)?'date':'text'));
   h+=`<div class="full">${row('alamat','Alamat',d.alamat)}</div><div class="full">${row('kelurahan','Kelurahan, Kecamatan, Kota',d.kelurahan)}</div>`;
   if(w)(d.anak||[]).forEach((a,i)=>h+=row(`anak.${i}.nama`,`Anak ${i+1}`,a.nama)+row(`anak.${i}.tglLahir`,'Tgl lahir',a.tglLahir,'date')+row(`anak.${i}.jk`,'JK',a.jk));
   else{const t=d.terampu||{};h+=row('terampu.nama','Nama Terampu',t.nama)+row('terampu.tglLahir','Tgl Lahir Terampu',t.tglLahir,'date')+row('terampu.jk','JK Terampu',t.jk)+`<div class="full">${row('terampu.kondisi','Kondisi medis',t.kondisi)}</div>`}
-  h+=`</div>${d._text?`<details style="margin-top:10px"><summary class="hint">Lihat teks hasil baca</summary><pre style="white-space:pre-wrap;max-height:200px;overflow:auto;font-size:11px">${esc(d._text)}</pre></details>`:''}
-  <p style="text-align:right;display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button onclick="penDlg.close()">Batal</button><button class="pri" onclick="applyPenetapan()">✔ Terapkan ke berkas</button></p>`;
-  $('#penBody').innerHTML=h;if(!$('#penDlg').open)$('#penDlg').showModal()}
-function applyPenetapan(){
-  $('#penBody').querySelectorAll('[data-pk]').forEach(e=>{const ks=e.dataset.pk.split('.');let o=PEN;ks.slice(0,-1).forEach((k,i)=>{o[k]=o[k]??(/^\d+$/.test(ks[i+1])?[]:{});o=o[k]});o[ks.at(-1)]=e.value.trim()});
+  return h+`</div>${d._text?`<details style="margin-top:10px"><summary class="hint">Lihat teks hasil baca</summary><pre style="white-space:pre-wrap;max-height:200px;overflow:auto;font-size:11px">${esc(d._text)}</pre></details>`:''}`}
+function reviewPenetapan(d,fname){$('#penBody').innerHTML=`<h3>📑 Hasil baca: ${esc(fname)} ${d._ai?'<span class="tag">AI</span>':''}</h3><p class="hint">Periksa & koreksi dulu. Kolom kuning = tidak ditemukan di dokumen.</p>`+reviewHtml(d)+
+  `<p style="text-align:right;display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button onclick="penDlg.close()">Batal</button><button class="pri" onclick="applyPenetapan()">✔ Terapkan ke berkas</button></p>`;if(!$('#penDlg').open)$('#penDlg').showModal()}
+function applyPenetapan(root,next){
+  (root||$('#penBody')).querySelectorAll('[data-pk]').forEach(e=>{const ks=e.dataset.pk.split('.');let o=PEN;ks.slice(0,-1).forEach((k,i)=>{o[k]=o[k]??(/^\d+$/.test(ks[i+1])?[]:{});o=o[k]});o[ks.at(-1)]=e.value.trim()});
   let r=(penFill&&cur&&!cur._dihapus)?cur:null;const baru=!r;if(!r)r=addRec(blank(),'Dibuat dari upload penetapan '+(PEN.nomorPenetapan||''));
   ['jenis','pengadilan','nomorPenetapan','tglPenetapan','nama','nik','jk','tglLahir','agama','pekerjaan','alamat','kelurahan','status','isiBap'].forEach(k=>{if(PEN[k])r[k]=PEN[k]});
   if(PEN.kelurahan)r._kelManual=true;
   if(PEN.jenis==='Perwalian'){const a=(PEN.anak||[]).filter(x=>x&&x.nama).map(x=>({nama:x.nama,jk:/perem/i.test(x.jk)?'Perempuan':'Laki-laki',tglLahir:x.tglLahir||''}));if(a.length)r.anak=a}
   else if(PEN.terampu){const t=PEN.terampu;r.terampu={nama:t.nama||'',jk:/perem/i.test(t.jk)?'Perempuan':'Laki-laki',tglLahir:t.tglLahir||'',kondisi:t.kondisi||''}}
-  cur=r;tab='jadwal';penDlg.close();renderList();renderMain();if(baru)flush();else save();api('apiCatat','BACA_PENETAPAN',r.id,r.nama,'Isian diambil dari penetapan '+(PEN.nomorPenetapan||'')+(PEN._ai?' (AI)':'')).catch(()=>{});toast('Data penetapan diterapkan — lanjut isi jadwal sumpah')}
+  cur=r;tab='jadwal';if($('#penDlg').open)penDlg.close();renderList();if(next)next();else renderMain();if(baru)flush();else save();api('apiCatat','BACA_PENETAPAN',r.id,r.nama,'Isian diambil dari penetapan '+(PEN.nomorPenetapan||'')+(PEN._ai?' (AI)':'')).catch(()=>{});toast('Data penetapan diterapkan — lanjut isi jadwal sumpah')}
 
+
+/* ---------------- wizard Berkas Baru (3 bagian) ---------------- */
+const WZ={on:false,step:1,jenis:'Pengampuan',pilih:false};
+const stepper=n=>`<div class="stepper">${[1,2,3].map(i=>`<i class="${i===n?'on':i<n?'done':''}">${i<n?'✓':i}</i>`).join('<s></s>')}</div>`;
+const wzHead=n=>`<div class="wz-h"><div><h2>Berkas Penyumpahan Baru</h2><p>Lengkapi berkas dalam 3 tahap.</p></div>${stepper(n)}</div>`;
+function wizard(step){WZ.on=true;$('.wrap').classList.add('wzmode');WZ.step=step;if(step===1){cur=null;renderList()}setNav('baru','Berkas Baru');const m=$('#main');
+  if(step===1){m.innerHTML=`<div class="wz">${wzHead(1)}<h4>📂 Bagian 1: Jenis & Penetapan Pengadilan</h4>
+    <div class="lbl">Pilih Jenis Penyumpahan</div><div class="opts">
+    ${[['Pengampuan','Pengampu atas orang dewasa yang berada di bawah pengampuan (terampu).'],['Perwalian','Wali atas anak yang masih di bawah umur.']].map(([j,d])=>`<div class="opt ${WZ.jenis===j?'on':''}" onclick="WZ.jenis='${j}';WZ.pilih=true;wizard(1)"><b>${j}</b><span>${d}</span></div>`).join('')}</div>
+    <div class="lbl">Upload Penetapan Pengadilan</div>
+    <label class="drop" id="wzDrop" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="event.preventDefault();this.classList.remove('over');handlePenetapan(event.dataTransfer.files[0])">
+      <div class="ic">📄</div><b>Klik atau seret file PDF penetapan ke sini</b><small>PDF asli atau hasil scan · data dibaca otomatis${ADA_AI?' dengan AI Gemini':''}</small>
+      <input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)"></label>
+    <div class="wz-f"><button class="link" onclick="WZ.on=false;newRec();cur.jenis=WZ.jenis;save();renderMain()">Isi manual tanpa penetapan</button><span class="hint">Setelah upload, lanjut ke Bagian 2 otomatis</span></div></div>`}
+  if(step===2){const d=WZ.data;m.innerHTML=`<div class="wz">${wzHead(2)}<h4>🔎 Bagian 2: Periksa Data dari Penetapan ${d._ai?'<span class="tag">AI</span>':''}</h4>
+    <p class="hint" style="margin-top:-6px">Kolom kuning belum ditemukan di dokumen — lengkapi bila perlu.</p><div id="wzBody">${reviewHtml(d)}</div>
+    <div class="wz-f"><button onclick="wizard(1)">← Kembali</button><button class="pri" onclick="applyPenetapan($('#wzBody'),()=>wizard(3))">Lanjut ke Bagian 3 →</button></div></div>`}
+  if(step===3){const pjOpt=v=>{const c=pjCari(v).nama;return SET.pejabat.map(p=>`<option ${p.nama===c?'selected':''} value="${esc(p.nama)}">${esc(p.nama)} — ${esc(p.jabatan||'')}</option>`).join('')};
+    m.innerHTML=`<div class="wz">${wzHead(3)}<h4>📅 Bagian 3: Jadwal Sumpah & Pejabat</h4><div class="grid">
+    ${F('tglSumpah','Tanggal Sumpah','date')}${F('waktu','Waktu')}${F('tempat','Tempat (kosong = kediaman)')}${F('hp','No. HP pemohon')}
+    <div><label>Pejabat penyumpah (Madya)</label><select onchange="setv('madya',this.value)">${pjOpt(cur.madya)}</select></div>
+    <div><label>Pejabat BAP & inventarisasi (Muda)</label><select onchange="setv('muda',this.value);setv('bapOleh',this.value)">${pjOpt(cur.muda)}</select></div></div>
+    <div class="wz-f"><button onclick="WZ.on=false;tab='umum';setNav('berkas','Daftar Berkas');renderMain()">Lengkapi detail lain</button><button class="pri" onclick="WZ.on=false;tab='dok';setNav('berkas','Daftar Berkas');renderMain();toast('Berkas tersimpan')">Simpan & Lihat Dokumen →</button></div></div>`}
+}
 
 /* ---------------- pengaturan (admin utama) ---------------- */
 function openSet(){if(!isSuper())return;const s=SET;const L={instansi:'Instansi',kanwil:'Kantor wilayah',balai:'Nama balai',alamat:'Alamat',telp:'Telepon',web:'Laman & pos-el',kepala:'Nama Kepala',wa:'Nomor WA layanan',kanwilTembusan:'Tembusan kanwil'};
