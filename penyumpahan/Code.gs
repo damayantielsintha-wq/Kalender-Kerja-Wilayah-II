@@ -490,7 +490,7 @@ function spsAmbil_(jenis, perihal, pegawai) {
  */
 function apiAmbilNomor(token, id, dok, info) {
   const u = user_(token);
-  if (['nomorSurat', 'nomorLurah', 'nomorBAP', 'nomorBA', 'nomorBAHarta'].indexOf(dok) < 0) throw new Error('Jenis dokumen tidak dikenal.');
+  if (['nomorSurat', 'nomorLurah', 'nomorUndangan', 'nomorUndDesa', 'nomorBAP', 'nomorBA', 'nomorBAHarta'].indexOf(dok) < 0) throw new Error('Jenis dokumen tidak dikenal.');
   if (info.kurang && info.kurang.length) throw new Error('Isian belum lengkap: ' + info.kurang.join(', '));
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
@@ -774,4 +774,42 @@ function terapkanBapSiap_(u) {
     });
   } finally { lock.releaseLock(); }
   return n;
+}
+
+
+/* ------------------------------------------------------------ kegiatan kalender (Wilayah II) */
+function setSetting_(k, v) {
+  const sh = sheet_('Pengaturan'), r = rows_('Pengaturan').filter(function (x) { return x.kunci === k; })[0];
+  if (r) sh.getRange(r._row, 2).setValue(JSON.stringify(v)); else sh.appendRow([k, JSON.stringify(v)]);
+}
+function apiKegiatanSimpan(token, ev) {
+  const u = user_(token);
+  if (!ev || !ev.tgl || !ev.judul) throw new Error('Tanggal dan judul kegiatan wajib diisi.');
+  const lock = LockService.getScriptLock(); lock.waitLock(20000);
+  try {
+    const L = settings_().kegiatan || [];
+    const o = { id: ev.id || Utilities.getUuid(), tgl: String(ev.tgl), sampai: String(ev.sampai || ''), jam: String(ev.jam || ''), judul: String(ev.judul).slice(0, 200),
+      jenis: String(ev.jenis || 'Lainnya'), tempat: String(ev.tempat || '').slice(0, 300), ket: String(ev.ket || '').slice(0, 1000), oleh: u.nama, pada: new Date().toISOString() };
+    const i = L.findIndex(function (x) { return x.id === o.id; });
+    if (i >= 0) L[i] = o; else L.push(o);
+    setSetting_('kegiatan', L);
+    log_(u, 'KEGIATAN', o.id, o.judul, (i >= 0 ? 'Ubah ' : 'Tambah ') + o.jenis + ' ' + o.tgl);
+    return L;
+  } finally { lock.releaseLock(); }
+}
+function apiKegiatanHapus(token, id) {
+  const u = user_(token);
+  const lock = LockService.getScriptLock(); lock.waitLock(20000);
+  try {
+    const L = (settings_().kegiatan || []).filter(function (x) { return x.id !== id; });
+    setSetting_('kegiatan', L);
+    log_(u, 'KEGIATAN', id, '', 'Hapus kegiatan');
+    return L;
+  } finally { lock.releaseLock(); }
+}
+function apiLiburSimpan(token, libur) {
+  const u = super_(token);
+  setSetting_('libur', (libur || []).filter(function (x) { return x && x.tgl; }).map(function (x) { return { tgl: String(x.tgl), nama: String(x.nama || 'Libur').slice(0, 100) }; }));
+  log_(u, 'PENGATURAN', '', '', 'Ubah daftar tanggal merah');
+  return settings_().libur;
 }
