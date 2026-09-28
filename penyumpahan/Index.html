@@ -111,7 +111,7 @@ const DEF_SET={
   web:'Laman: www.bhpmedan.kemenkum.go.id, Pos-el: bhp.medan@kemenkum.go.id',
   kepala:'Syafriadi Lubis',wa:'0851-2156-2136',
   kanwilTembusan:'Kepala Kantor Wilayah Kementerian Hukum Riau',
-  pejabat:[{nama:'SYUHADA',nip:'196706121989031001',jabatan:'Kurator Keperdataan Ahli Madya'},{nama:'',nip:'',jabatan:'Kurator Keperdataan Ahli Muda'}],
+  pejabat:[{nama:'SYUHADA',nip:'196706121989031001',jabatan:'Kurator Keperdataan Ahli Madya'},{nama:'MARIANI MARBUN',nip:'',jabatan:'Kurator Keperdataan Ahli Madya'},{nama:'DARTIMNOV MT HARAHAP',nip:'',jabatan:'Kurator Keperdataan Ahli Madya'},{nama:'NANANG SURYA PURNAMA',nip:'',jabatan:'Kurator Keperdataan Ahli Muda'}],
   lafaz:{
     Islam:'WALLAHI (Demi Allah) saya bersumpah, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya.',
     Kristen:'Demi Tuhan saya berjanji, bahwa saya akan melakukan dengan sejujur-jujurnya dan dengan tulus ikhlas {JENIS} terhadap {STATUS} saya yang telah diperintahkan dan dipercayakan {PENGADILAN} kepada saya. Semoga Tuhan menolong saya.',
@@ -128,12 +128,12 @@ const blank=()=>({id:newId(),jenis:'Pengampuan',tanggalSurat:today(),
   nama:'',nik:'',jk:'Perempuan',tglLahir:'',agama:'Islam',pekerjaan:'',alamat:'',kelurahan:'',status:'',
   terampu:{nama:'',jk:'Laki-laki',tglLahir:'',kondisi:''},anak:[{nama:'',jk:'Laki-laki',tglLahir:''}],
   pengadilan:'Pengadilan Negeri Pekanbaru',nomorPenetapan:'',tglPenetapan:'',
-  tglSumpah:'',waktu:'10:00 - 16:00 WIB',tempat:'',madya:0,muda:1,harta:'',tanah:'',rekening:'',saksi1:'',saksi2:''});
+  tglSumpah:'',waktu:'10:00 - 16:00 WIB',tempat:'',madya:0,muda:3,harta:'',tanah:'',rekening:'',saksi1:'',saksi2:''});
 
 /* ---------------- util tanggal & terbilang ---------------- */
 const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-function today(){const d=new Date();return d.toISOString().slice(0,10)}
+function today(){const d=new Date(Date.now()+7*3600e3);return d.toISOString().slice(0,10)}
 function pd(s){if(!s)return null;const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)}
 function tgl(s){const d=pd(s);return d?`${String(d.getDate()).padStart(2,'0')} ${BLN[d.getMonth()]} ${d.getFullYear()}`:'…'}
 function hari(s){const d=pd(s);return d?HARI[d.getDay()]:'…'}
@@ -339,9 +339,9 @@ function infoNomor(k,r){const d=derive(r);return{kurang:kurang(k,r),
   perihal:{surat:`Pengambilan Sumpah ${d.J} dan Inventarisasi Harta`,lurah:'Koordinasi Terkait Pengambilan Sumpah dan Inventarisasi Harta',ba:`Berita Acara Penyumpahan ${d.jenisTxt} an. ${r.nama}`,harta:`Berita Acara Inventarisasi Harta ${d.jenisTxt} an. ${r.nama}`}[k],
   tujuan:k==='lurah'?'Lurah '+r.kelurahan:r.nama,tanggal:k==='surat'||k==='lurah'?r.tanggalSurat:r.tglSumpah}}
 async function ambilNomor(k,btn){const inf=infoNomor(k,cur);if(inf.kurang.length){alert('Lengkapi dulu: '+inf.kurang.join(', '));return}
-  if(!confirm(`Ambil nomor SPS untuk "${DOCS[k].nama(cur)}"?\nPerihal: ${inf.perihal}\n\nNomor yang sudah diambil tidak bisa dibatalkan dari aplikasi ini.`))return;
+  if(!confirm(`Ambil nomor SPS (${cur.jenis==='Perwalian'?'AH.06.02':'AH.06.03'}, tanggal hari ini ${tgl(today())}${k==='surat'||k==='lurah'?' — tanggal surat ikut disesuaikan':''}) untuk "${DOCS[k].nama(cur)}"?\nPerihal: ${inf.perihal}\n\nNomor yang sudah diambil tidak bisa dibatalkan dari aplikasi ini.`))return;
   btn.disabled=true;btn.textContent='Menghubungi SPS…';clearTimeout(saveT);await flush();
-  try{const r=await api('apiAmbilNomor',cur.id,NOMOR[k],inf);cur[NOMOR[k]]=r.nomor;cur._versi=r.versi;toast('Nomor: '+r.nomor);renderMain()}
+  try{const r=await api('apiAmbilNomor',cur.id,NOMOR[k],inf);cur[NOMOR[k]]=r.nomor;cur._versi=r.versi;if(r.tanggalSurat)cur.tanggalSurat=r.tanggalSurat;toast('Nomor: '+r.nomor);renderMain()}
   catch(e){alert('Gagal mengambil nomor: '+(e.message||e));btn.disabled=false;btn.textContent='🔢 Ambil nomor SPS'}}
 
 /* ---------------- mode demo (tanpa server, untuk mencoba) ---------------- */
@@ -680,25 +680,24 @@ function applyPenetapan(){
 
 
 /* ---------------- pengaturan (admin utama) ---------------- */
-const SPS_KEYS=[['url','Alamat SPS'],['loginPath','Path login'],['loginFormat','Format login (json/form)'],['userField','Nama field username'],['passField','Nama field password'],['tokenPath','Lokasi token di balasan login (JSON path)'],
-  ['nomorPath','Path ambil nomor'],['method','Metode (post/get)'],['bodyFormat','Format isi (json/form)'],['body','Isi permintaan ({klasifikasi},{perihal},{tujuan},{tanggal},{nama},{jenis})'],['nomorJson','Lokasi nomor di balasan (JSON path)'],['nomorRegex','Regex nomor (cadangan)'],['klasifikasi','Kode klasifikasi']];
-function openSet(){if(!isSuper())return;const s=SET;s.sps=s.sps||{};const L={instansi:'Instansi',kanwil:'Kantor wilayah',balai:'Nama balai',alamat:'Alamat',telp:'Telepon',web:'Laman & pos-el',kepala:'Nama Kepala',wa:'Nomor WA layanan',kanwilTembusan:'Tembusan kanwil'};
+function openSet(){if(!isSuper())return;const s=SET;const L={instansi:'Instansi',kanwil:'Kantor wilayah',balai:'Nama balai',alamat:'Alamat',telp:'Telepon',web:'Laman & pos-el',kepala:'Nama Kepala',wa:'Nomor WA layanan',kanwilTembusan:'Tembusan kanwil'};
   dlg(`<h3>⚙ Pengaturan <span class="tag">Admin Utama</span></h3><div class="grid">
   ${Object.keys(L).map(k=>`<div><label>${L[k]}</label><input value="${esc(s[k])}" oninput="SET['${k}']=this.value"></div>`).join('')}
   <div class="full"><label>Logo kop</label><div style="display:flex;gap:10px;align-items:center"><img src="${s.logo||LOGO_DEF}" style="height:48px"><label class="btn" style="margin:0;color:var(--ink)">Ganti logo<input type="file" accept="image/*" hidden onchange="gantiLogo(this)"></label>${s.logo?'<button onclick="delete SET.logo;openSet()">Pakai logo bawaan</button>':''}</div></div>
   <div class="full"><label>Pejabat BHP</label>${s.pejabat.map((p,i)=>`<div class="grid child"><input placeholder="Nama" value="${esc(p.nama)}" oninput="SET.pejabat[${i}].nama=this.value"><input placeholder="NIP" value="${esc(p.nip)}" oninput="SET.pejabat[${i}].nip=this.value"><input placeholder="Jabatan" value="${esc(p.jabatan)}" oninput="SET.pejabat[${i}].jabatan=this.value"></div>`).join('')}
   <button onclick="SET.pejabat.push({nama:'',nip:'',jabatan:''});openSet()">+ Pejabat</button></div>
   <div class="full"><label>Lafaz sumpah per agama ({JENIS}, {STATUS}, {PENGADILAN} diganti otomatis)</label>${Object.keys(s.lafaz).map(a=>`<label>${a}</label><textarea oninput="SET.lafaz['${a}']=this.value">${esc(s.lafaz[a])}</textarea>`).join('')}</div>
-  <div class="full card" style="padding:12px"><h3>🔢 Koneksi SPS (nomor surat)</h3><p class="hint">Status: ${SPS.terhubung?'<b style="color:var(--ok)">kredensial tersimpan</b>':'<b style="color:var(--warn)">kredensial belum diisi</b>'}. Username & password disimpan di server (Properti Skrip), tidak pernah dikirim ke browser atau terlihat admin lain.</p>
+  <div class="full card" style="padding:12px"><h3>🔢 Koneksi SPS (sps.batamen.com)</h3>
+    <p class="hint">Status: ${SPS.terhubung?'<b style="color:var(--ok)">tersimpan</b>':'<b style="color:var(--warn)">belum diisi</b>'}${SPS.cookie?' · cookie':''}${SPS.akun?' · akun':''}. Nomor diambil dengan kode <b>AH.06.03</b> (pengampuan) / <b>AH.06.02</b> (perwalian), nama pegawai = admin yang login. Kredensial disimpan di server, tidak terlihat admin lain.</p>
     <div class="grid"><div><label>Username SPS</label><input id="spsU" autocomplete="off"></div><div><label>Password SPS</label><input id="spsP" type="password" autocomplete="new-password"></div>
-    <div><label>&nbsp;</label><button onclick="simpanSps()">Simpan kredensial</button></div><div><label>&nbsp;</label><button onclick="tesSps(this)">🔌 Tes koneksi</button></div></div>
-    <details style="margin-top:8px"><summary class="hint">Konfigurasi teknis API SPS</summary><div class="grid">${SPS_KEYS.map(([k,l])=>`<div class="${k==='body'?'full':''}"><label>${l}</label><input value="${esc(s.sps[k]??'')}" placeholder="bawaan" oninput="SET.sps['${k}']=this.value"></div>`).join('')}</div></details></div>
+    <div class="full"><label>atau Cookie SPS (sama seperti SPS_COOKIE di skrip SAPA WALI)</label><input id="spsC" type="password" autocomplete="off" placeholder="XSRF-TOKEN=…; sps_session=…"></div>
+    <div><button onclick="simpanSps()">Simpan kredensial</button></div><div><button onclick="tesSps(this)">🔌 Tes koneksi</button></div></div></div>
   <div class="full card" style="padding:12px"><h3>✨ AI Gemini untuk membaca penetapan</h3><p class="hint">Status: ${ADA_AI?'<b style="color:var(--ok)">terhubung</b>':'<b style="color:var(--warn)">belum terhubung</b>'}. Buat kunci gratis di <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> (login dengan akun Google Anda), lalu tempel di sini. Kunci disimpan di server, tidak terlihat admin lain.</p><div class="grid"><div><label>Gemini API key</label><input id="gk" type="password" autocomplete="new-password"></div><div><label>&nbsp;</label><button onclick="simpanGemini()">Simpan kunci</button></div><div><label>&nbsp;</label><button onclick="tesGemini(this)">🔌 Tes Gemini</button></div></div></div>
   </div><p style="text-align:right;margin-top:12px"><button onclick="dlgClose();boot()">Batal</button> <button class="pri" onclick="simpanSet()">Simpan pengaturan</button></p>`)}
 function gantiLogo(inp){const f=inp.files[0];if(!f)return;const img=new Image();img.onload=()=>{const c=document.createElement('canvas'),k=Math.min(1,300/img.height);c.width=img.width*k;c.height=img.height*k;c.getContext('2d').drawImage(img,0,0,c.width,c.height);SET.logo=c.toDataURL('image/png');openSet()};img.src=URL.createObjectURL(f)}
 async function simpanSet(){try{await api('apiSimpanPengaturan',JSON.parse(JSON.stringify(SET)));dlgClose();toast('Pengaturan disimpan');renderMain()}catch(e){alert(e.message)}}
-async function simpanSps(){try{SPS=await api('apiSimpanKredensialSps',$('#spsU').value.trim(),$('#spsP').value);toast('Kredensial SPS disimpan');await api('apiSimpanPengaturan',JSON.parse(JSON.stringify(SET)));openSet()}catch(e){alert(e.message)}}
-async function tesSps(b){b.disabled=true;try{await api('apiSimpanPengaturan',JSON.parse(JSON.stringify(SET)));alert(await api('apiTesSps'))}catch(e){alert('Gagal: '+(e.message||e))}b.disabled=false}
+async function simpanSps(){try{SPS=await api('apiSimpanKredensialSps',$('#spsU').value.trim(),$('#spsP').value,$('#spsC').value.trim());toast('Kredensial SPS disimpan');openSet()}catch(e){alert(e.message)}}
+async function tesSps(b){b.disabled=true;try{alert(await api('apiTesSps'))}catch(e){alert('Gagal: '+(e.message||e))}b.disabled=false}
 async function tesGemini(b){b.disabled=true;try{alert(await api('apiTesGemini'))}catch(e){alert('Gagal: '+(e.message||e))}b.disabled=false}
 async function simpanGemini(){try{ADA_AI=await api('apiSimpanKunciGemini',$('#gk').value.trim());toast('Disimpan');openSet()}catch(e){alert(e.message)}}
 

@@ -344,138 +344,130 @@ function apiSimpanPengguna(token, data) {
 }
 
 /* ------------------------------------------------------------ SPS (nomor surat) */
+/*
+ * Protokol sama dengan skrip SAPA WALI BHP Medan:
+ *  - autentikasi: cookie sesi Laravel (termasuk XSRF-TOKEN) → header Cookie + X-XSRF-TOKEN
+ *  - ambil nomor    : POST /surat/store {nama_pegawai, kode_belakang, perihal, tanggal_surat[, nomor_surat]} → nomor_lengkap
+ *  - nomor selalu diambil dengan tanggal hari ini (tanpa tanggal mundur)
+ * Cookie bisa ditempel manual (SPS_COOKIE) atau didapat otomatis lewat login username/password (SPS_USER/SPS_PASS).
+ */
+const SPS_BASE = 'https://sps.batamen.com';
+const SPS_KODE = { Pengampuan: 'AH.06.03', Perwalian: 'AH.06.02' };
 
-const SPS_DEF = {
-  url: 'https://sps.batamen.com',
-  loginPath: '/api/login', userField: 'username', passField: 'password', loginFormat: 'json',
-  tokenPath: 'token',
-  nomorPath: '/api/nomor', method: 'post', bodyFormat: 'json',
-  body: '{"klasifikasi":"{klasifikasi}","perihal":"{perihal}","tujuan":"{tujuan}","tanggal":"{tanggal}","sifat":"Segera"}',
-  nomorJson: 'nomor', nomorRegex: 'W\\.2\\.AHU\\.[A-Z0-9.\\-]+',
-  klasifikasi: 'AH.06.03',
-};
-function spsCfg_() { const s = settings_().sps || {}; const o = {}; Object.keys(SPS_DEF).forEach(function (k) { o[k] = s[k] !== undefined && s[k] !== '' ? s[k] : SPS_DEF[k]; }); return o; }
-function spsInfo_() { return { terhubung: !!(PROPS.getProperty('SPS_USER') && PROPS.getProperty('SPS_PASS')), url: spsCfg_().url }; }
-
-/** Admin utama menyimpan username & password SPS. Disimpan di Properti Skrip, tidak pernah dikirim ke browser. */
-function apiSimpanKredensialSps(token, username, password) {
+function spsInfo_() {
+  return { terhubung: !!(PROPS.getProperty('SPS_COOKIE') || (PROPS.getProperty('SPS_USER') && PROPS.getProperty('SPS_PASS'))),
+    cookie: !!PROPS.getProperty('SPS_COOKIE'), akun: !!(PROPS.getProperty('SPS_USER') && PROPS.getProperty('SPS_PASS')), url: SPS_BASE };
+}
+/** Admin utama menyimpan cookie SPS dan/atau username+password. Disimpan di Properti Skrip, tidak pernah dikirim ke browser. */
+function apiSimpanKredensialSps(token, username, password, cookie) {
   const u = super_(token);
   if (username) PROPS.setProperty('SPS_USER', username);
   if (password) PROPS.setProperty('SPS_PASS', password);
-  CacheService.getScriptCache().remove('sps_auth');
-  log_(u, 'PENGATURAN', '', '', 'Kredensial SPS diperbarui');
+  if (cookie) PROPS.setProperty('SPS_COOKIE', String(cookie).trim());
+  CacheService.getScriptCache().remove('sps_cookie');
+  log_(u, 'PENGATURAN', '', '', 'Kredensial SPS diperbarui' + (cookie ? ' (cookie)' : '') + (username ? ' (akun)' : ''));
   return spsInfo_();
 }
-
-function ambilJson_(o, path) {
-  return String(path || '').split('.').reduce(function (a, k) { return a == null ? a : a[k]; }, o);
-}
-function spsAuth_(cfg, paksa) {
-  const cache = CacheService.getScriptCache();
-  const c = !paksa && cache.get('sps_auth');
-  if (c) return JSON.parse(c);
-  const user = PROPS.getProperty('SPS_USER'), pass = PROPS.getProperty('SPS_PASS');
-  if (!user || !pass) throw new Error('Kredensial SPS belum diisi oleh admin utama.');
-  const payload = {}; payload[cfg.userField] = user; payload[cfg.passField] = pass;
-  const res = UrlFetchApp.fetch(cfg.url.replace(/\/$/, '') + cfg.loginPath, {
-    method: 'post', followRedirects: false, muteHttpExceptions: true,
-    contentType: cfg.loginFormat === 'json' ? 'application/json' : 'application/x-www-form-urlencoded',
-    payload: cfg.loginFormat === 'json' ? JSON.stringify(payload) : payload,
-  });
-  const code = res.getResponseCode();
-  if (code >= 400) throw new Error('Login SPS gagal (HTTP ' + code + ').');
+function gabungCookie_(lama, res) {
+  const jar = {};
+  String(lama || '').split(/;\s*/).forEach(function (c) { const i = c.indexOf('='); if (i > 0) jar[c.slice(0, i)] = c.slice(i + 1); });
   const h = res.getAllHeaders();
-  let cookies = h['Set-Cookie'] || h['set-cookie'] || [];
-  if (!Array.isArray(cookies)) cookies = [cookies];
-  const auth = { cookie: cookies.map(function (s) { return String(s).split(';')[0]; }).join('; '), token: '' };
-  try { auth.token = ambilJson_(JSON.parse(res.getContentText()), cfg.tokenPath) || ''; } catch (e) {}
-  if (!auth.cookie && !auth.token) throw new Error('Login SPS tidak mengembalikan sesi/token.');
-  cache.put('sps_auth', JSON.stringify(auth), 1800);
-  return auth;
+  let sc = h['Set-Cookie'] || h['set-cookie'] || [];
+  if (!Array.isArray(sc)) sc = [sc];
+  sc.forEach(function (c) { const kv = String(c).split(';')[0]; const i = kv.indexOf('='); if (i > 0) jar[kv.slice(0, i)] = kv.slice(i + 1); });
+  return Object.keys(jar).map(function (k) { return k + '=' + jar[k]; }).join('; ');
+}
+/** Login otomatis ke SPS (form login Laravel) memakai SPS_USER/SPS_PASS. */
+function spsLogin_() {
+  const user = PROPS.getProperty('SPS_USER'), pass = PROPS.getProperty('SPS_PASS');
+  if (!user || !pass) return '';
+  const r1 = UrlFetchApp.fetch(SPS_BASE + '/login', { muteHttpExceptions: true, followRedirects: false });
+  let cookie = gabungCookie_('', r1);
+  const m = r1.getContentText().match(/name="_token"\s+value="([^"]+)"/) || r1.getContentText().match(/<meta name="csrf-token" content="([^"]+)"/);
+  const field = (settings_().spsField || (/name="email"/.test(r1.getContentText()) ? 'email' : 'username'));
+  const payload = { _token: m ? m[1] : '', password: pass }; payload[field] = user;
+  const r2 = UrlFetchApp.fetch(SPS_BASE + '/login', { method: 'post', payload: payload, muteHttpExceptions: true, followRedirects: false, headers: { Cookie: cookie, Referer: SPS_BASE + '/login' } });
+  cookie = gabungCookie_(cookie, r2);
+  const loc = String((r2.getAllHeaders().Location || r2.getAllHeaders().location || ''));
+  if (r2.getResponseCode() >= 400 || /\/login/.test(loc)) throw new Error('Login SPS gagal: username/password ditolak (HTTP ' + r2.getResponseCode() + ').');
+  return cookie;
+}
+function spsCookie_(baru) {
+  const cache = CacheService.getScriptCache();
+  if (!baru) { const c = cache.get('sps_cookie'); if (c) return c; }
+  let c = '';
+  if (baru || !PROPS.getProperty('SPS_COOKIE')) c = spsLogin_();
+  if (!c) c = (PROPS.getProperty('SPS_COOKIE') || '').trim();
+  if (!c) throw new Error('SPS belum terhubung: admin utama perlu mengisi cookie atau akun SPS di Pengaturan.');
+  cache.put('sps_cookie', c, 3600);
+  return c;
+}
+function spsHeaders_(c) {
+  const m = c.match(/XSRF-TOKEN=([^;]+)/);
+  const h = { Cookie: c, 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json', Referer: SPS_BASE + '/surat/tanggal-mundur' };
+  if (m) h['X-XSRF-TOKEN'] = decodeURIComponent(m[1]);
+  return h;
+}
+/** Panggil SPS; jika sesi habis (401/419/302) coba login ulang sekali. */
+function spsFetch_(path, opt) {
+  let c = spsCookie_();
+  let res = UrlFetchApp.fetch(SPS_BASE + path, Object.assign({ headers: spsHeaders_(c), muteHttpExceptions: true, followRedirects: false }, opt));
+  if ([401, 419, 302].indexOf(res.getResponseCode()) >= 0 && PROPS.getProperty('SPS_USER')) {
+    c = spsCookie_(true);
+    res = UrlFetchApp.fetch(SPS_BASE + path, Object.assign({ headers: spsHeaders_(c), muteHttpExceptions: true, followRedirects: false }, opt));
+  }
+  if ([401, 419, 302].indexOf(res.getResponseCode()) >= 0) throw new Error('Sesi SPS kedaluwarsa. Admin utama perlu memperbarui cookie/akun SPS di Pengaturan.');
+  return res;
+}
+function hariIni_() { return Utilities.formatDate(new Date(), 'Asia/Jakarta', 'yyyy-MM-dd'); }
+/** Ambil nomor SPS bertanggal HARI INI (tidak memakai tanggal mundur). */
+function spsAmbil_(jenis, perihal, pegawai) {
+  const body = { nama_pegawai: pegawai, kode_belakang: SPS_KODE[jenis] || SPS_KODE.Pengampuan, perihal: perihal, tanggal_surat: hariIni_() };
+  const r = spsFetch_('/surat/store', { method: 'post', contentType: 'application/json', payload: JSON.stringify(body) });
+  if (r.getResponseCode() !== 200) throw new Error('SPS ambil nomor gagal (' + r.getResponseCode() + '): ' + r.getContentText().slice(0, 300));
+  const j = JSON.parse(r.getContentText());
+  if (!j.success || !j.nomor_lengkap) throw new Error('SPS menolak: ' + (j.message || r.getContentText().slice(0, 200)));
+  return String(j.nomor_lengkap);
 }
 
 /**
  * Ambil nomor surat dari SPS untuk satu dokumen berkas.
  * dok: 'nomorSurat' | 'nomorLurah' | 'nomorBA' | 'nomorBAHarta'
- * info: { perihal, tujuan, tanggal, kurang: [] } disusun di browser; server menolak bila masih ada isian kurang.
+ * info.kurang: daftar isian yang belum lengkap (dicek di browser; server menolak bila tidak kosong).
  */
 function apiAmbilNomor(token, id, dok, info) {
   const u = user_(token);
   if (['nomorSurat', 'nomorLurah', 'nomorBA', 'nomorBAHarta'].indexOf(dok) < 0) throw new Error('Jenis dokumen tidak dikenal.');
   if (info.kurang && info.kurang.length) throw new Error('Isian belum lengkap: ' + info.kurang.join(', '));
-  const r = rows_('Berkas').filter(function (x) { return x.id === id; })[0];
-  if (!r) throw new Error('Simpan berkas dulu sebelum mengambil nomor.');
-  const data = JSON.parse(r.data);
-  if (data[dok]) throw new Error('Dokumen ini sudah punya nomor: ' + data[dok]);
-  const cfg = spsCfg_();
-  const isi = { klasifikasi: cfg.klasifikasi, perihal: info.perihal || '', tujuan: info.tujuan || '', tanggal: info.tanggal || '', nama: r.nama, jenis: r.jenis };
-  const body = cfg.body.replace(/\{(\w+)\}/g, function (m, k) { return String(isi[k] == null ? '' : isi[k]).replace(/["\\]/g, '\\$&'); });
-
-  function minta(auth) {
-    const headers = {};
-    if (auth.cookie) headers.Cookie = auth.cookie;
-    if (auth.token) headers.Authorization = 'Bearer ' + auth.token;
-    const opt = { method: cfg.method, headers: headers, muteHttpExceptions: true, followRedirects: false };
-    if (cfg.method !== 'get') {
-      if (cfg.bodyFormat === 'json') { opt.contentType = 'application/json'; opt.payload = body; }
-      else opt.payload = JSON.parse(body);
-    }
-    return UrlFetchApp.fetch(cfg.url.replace(/\/$/, '') + cfg.nomorPath, opt);
-  }
-  let res = minta(spsAuth_(cfg));
-  if ([401, 403, 302].indexOf(res.getResponseCode()) >= 0) res = minta(spsAuth_(cfg, true));
-  const code = res.getResponseCode(), txt = res.getContentText();
-  if (code >= 300) throw new Error('SPS menolak permintaan (HTTP ' + code + '): ' + txt.slice(0, 200));
-  let nomor = '';
-  try { nomor = ambilJson_(JSON.parse(txt), cfg.nomorJson) || ''; } catch (e) {}
-  if (!nomor && cfg.nomorRegex) { const m = txt.match(new RegExp(cfg.nomorRegex)); if (m) nomor = m[0]; }
-  if (!nomor) throw new Error('Nomor tidak ditemukan pada balasan SPS: ' + txt.slice(0, 200));
-
   const lock = LockService.getScriptLock();
-  lock.waitLock(20000);
+  lock.waitLock(30000);
   try {
-    const now = rows_('Berkas').filter(function (x) { return x.id === id; })[0];
-    const d = JSON.parse(now.data);
-    d[dok] = String(nomor);
-    const versi = Number(now.versi) + 1;
-    sheet_('Berkas').getRange(now._row, 5, 1, 6).setValues([[JSON.stringify(d), versi, now.dibuatOleh, now.dibuatPada, u.nama, new Date()]]);
-    log_(u, 'AMBIL_NOMOR', id, r.nama, JSON.stringify([{ f: dok, dari: '', ke: String(nomor) }]) + ' | ' + info.perihal);
-    return { nomor: String(nomor), versi: versi };
+    const r = rows_('Berkas').filter(function (x) { return x.id === id; })[0];
+    if (!r) throw new Error('Simpan berkas dulu sebelum mengambil nomor.');
+    const d = JSON.parse(r.data);
+    if (d[dok]) throw new Error('Dokumen ini sudah punya nomor: ' + d[dok]);
+    const tgl = hariIni_();
+    const nomor = spsAmbil_(d.jenis, String(info.perihal || '').slice(0, 250), u.nama);
+    d[dok] = nomor;
+    if (dok === 'nomorSurat' || dok === 'nomorLurah') d.tanggalSurat = tgl; // tanggal surat = tanggal nomor
+    const versi = Number(r.versi) + 1;
+    sheet_('Berkas').getRange(r._row, 5, 1, 6).setValues([[JSON.stringify(d), versi, r.dibuatOleh, r.dibuatPada, u.nama, new Date()]]);
+    log_(u, 'AMBIL_NOMOR', id, r.nama, JSON.stringify([{ f: dok, dari: '', ke: nomor }]) + ' | ' + SPS_KODE[d.jenis] + ' · ' + tgl + ' · ' + info.perihal);
+    return { nomor: nomor, versi: versi, tanggalSurat: d.tanggalSurat };
   } finally {
     lock.releaseLock();
   }
 }
 
-/** Uji koneksi SPS (login saja). */
+/** Uji koneksi SPS: cek ketersediaan nomor 7 hari lalu (tidak mengambil nomor). */
 function apiTesSps(token) {
   super_(token);
-  const a = spsAuth_(spsCfg_(), true);
-  return 'Login SPS berhasil (' + (a.token ? 'token' : 'cookie') + ').';
-}
-
-/* ------------------------------------------------------------ AI Gemini (opsional) */
-
-function apiSimpanKunciGemini(token, key) {
-  const u = super_(token);
-  if (key) PROPS.setProperty('GEMINI_KEY', key); else PROPS.deleteProperty('GEMINI_KEY');
-  log_(u, 'PENGATURAN', '', '', 'Kunci Gemini ' + (key ? 'diperbarui' : 'dihapus'));
-  return !!key;
-}
-function apiAdaGemini(token) { user_(token); return !!PROPS.getProperty('GEMINI_KEY'); }
-
-/** Baca PDF penetapan dengan Gemini. Kunci API tetap di server. */
-function apiBacaPenetapanAI(token, b64, mime, prompt) {
-  user_(token);
-  const key = PROPS.getProperty('GEMINI_KEY');
-  if (!key) return null;
-  const model = PROPS.getProperty('GEMINI_MODEL') || 'gemini-2.5-flash';
-  const res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(key), {
-    method: 'post', contentType: 'application/json', muteHttpExceptions: true,
-    payload: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: mime || 'application/pdf', data: b64 } }, { text: prompt }] }],
-      generationConfig: { responseMimeType: 'application/json', temperature: 0 } }),
-  });
-  if (res.getResponseCode() !== 200) throw new Error('Gemini HTTP ' + res.getResponseCode() + ': ' + res.getContentText().slice(0, 200));
-  return JSON.parse(JSON.parse(res.getContentText()).candidates[0].content.parts[0].text);
+  const d = new Date(); d.setDate(d.getDate() - 7);
+  const t = Utilities.formatDate(d, 'Asia/Jakarta', 'yyyy-MM-dd');
+  const r = spsFetch_('/surat/available-nomor/' + t, { method: 'get' });
+  if (r.getResponseCode() !== 200) throw new Error('Gagal, kode ' + r.getResponseCode() + ': ' + r.getContentText().slice(0, 300));
+  const j = JSON.parse(r.getContentText());
+  return 'SPS terhubung. Tanggal ' + t + ': nomor terakhir ' + (j.info && j.info.nomor_terakhir_hari_ini) + ', tersedia ' + j.available_count + ' nomor cadangan.';
 }
 
 /* ------------------------------------------------------------ Google Drive: folder & Google Docs */
