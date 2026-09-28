@@ -215,6 +215,32 @@ function apiSimpan(token, rec, versiDasar) {
     lock.releaseLock();
   }
 }
+/** Simpan banyak berkas baru sekaligus (impor spreadsheet) — satu kali tulis, jauh lebih cepat. */
+function apiSimpanBanyak(token, recs) {
+  const u = super_(token);
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    const ada = {};
+    rows_('Berkas').forEach(function (r) { ada[r.id] = 1; });
+    const now = new Date(), baris = [], log = [];
+    (recs || []).forEach(function (rec) {
+      if (!rec || !rec.id || ada[rec.id]) return;
+      ada[rec.id] = 1;
+      baris.push([rec.id, rec.jenis, rec.nama || '', objek_(rec), JSON.stringify(bersihkan_(rec)), 1, u.nama, now, u.nama, now, false]);
+      log.push([now, u.username, u.nama, 'BUAT', rec.id, rec.nama || '', rec.asal || 'Impor spreadsheet']);
+    });
+    if (baris.length) {
+      const sh = sheet_('Berkas');
+      sh.getRange(sh.getLastRow() + 1, 1, baris.length, 11).setValues(baris);
+      const lg = sheet_('Riwayat');
+      lg.getRange(lg.getLastRow() + 1, 1, log.length, 7).setValues(log);
+    }
+    return { jumlah: baris.length };
+  } finally {
+    lock.releaseLock();
+  }
+}
 function apiHapus(token, id) {
   const u = super_(token);
   const r = rows_('Berkas').filter(function (x) { return x.id === id; })[0];
