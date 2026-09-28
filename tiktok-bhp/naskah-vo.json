@@ -1,18 +1,23 @@
 [
  {
   "who": "tasya",
-  "text": "Din, sumpah gue pusing deh. Tanah Papa kan mau gue balik nama, tapi Papa udah nggak ada… terus gue harus ke mana dulu sih?",
-  "key": "tasya-085494d1"
+  "text": "Din, tolongin dong. Tanah almarhum Papa mau gue balik nama, tapi bingung mulai dari mana. Udah googling, malah makin pusing.",
+  "key": "tasya-e3ec56d3"
  },
  {
   "who": "dinda",
-  "text": "Oh, itu lo butuh Surat Keterangan Hak Waris dulu, Sya. Urusnya di BHP aja, bisa online kok.",
-  "key": "dinda-c5a963f0"
+  "text": "Hehe, googling mulu sih. Langkah pertama, urus Surat Keterangan Hak Waris dulu. Di BHP aja, bisa online kok.",
+  "key": "dinda-eab3880c"
  },
  {
   "who": "tasya",
-  "text": "Hah, serius? Segampang itu doang?",
-  "key": "tasya-8ae9668f"
+  "text": "Hah, online? Jadi nggak perlu antre sambil bawa bekal?",
+  "key": "tasya-c6c7d433"
+ },
+ {
+  "who": "dinda",
+  "text": "Nggak perlu. Bekalnya dimakan di rumah aja, Sya.",
+  "key": "dinda-f50b605c"
  },
  {
   "who": "tasya",
@@ -61,23 +66,23 @@
  },
  {
   "who": "tasya",
-  "text": "Din, eh, tetangga gue kan anaknya masih kecil-kecil, terus ibunya mau jual rumah. Emang boleh ya?",
-  "key": "tasya-9ec5dc81"
+  "text": "Din, tetangga gue mau jual rumah peninggalan suaminya. Tapi anaknya masih kecil-kecil. Boleh nggak sih?",
+  "key": "tasya-20766fb0"
  },
  {
   "who": "dinda",
-  "text": "Nah, itu namanya perwalian. Karena ada anak di bawah umur, walinya didampingi BHP. Jadi harta anaknya aman, ibunya juga nggak bakal dicurigain sama keluarga yang lain.",
-  "key": "dinda-30ab048d"
+  "text": "Karena ada anak di bawah umur, ibunya jadi wali, dan BHP jadi wali pengawasnya. Biar hak si anak tetap aman.",
+  "key": "dinda-b1075388"
  },
  {
   "who": "tasya",
-  "text": "Oh… jadi BHP tuh kayak bodyguard-nya wali sama harta si anak gitu?",
-  "key": "tasya-06c26c7a"
+  "text": "Oh, jadi BHP tuh kayak bodyguard-nya harta si anak gitu?",
+  "key": "tasya-4c49384d"
  },
  {
   "who": "dinda",
-  "text": "Yap, persis.",
-  "key": "dinda-4eba70b1"
+  "text": "Iya, tapi bodyguard yang nggak pakai kacamata hitam.",
+  "key": "dinda-2c32564e"
  },
  {
   "who": "tasya",
@@ -111,23 +116,23 @@
  },
  {
   "who": "tasya",
-  "text": "Din, kasian deh, tetangga gue usahanya bangkrut. Utangnya di mana-mana.",
-  "key": "tasya-ad0645c5"
+  "text": "Din, kasian, usaha om gue bangkrut. Utangnya numpuk kayak cucian gue.",
+  "key": "tasya-67b3930c"
  },
  {
   "who": "dinda",
-  "text": "Itu namanya pailit. Nah, BHP bisa lho jadi kuratornya.",
-  "key": "dinda-bcd041e6"
+  "text": "Kalau sudah diputus pailit sama pengadilan, BHP bisa ditunjuk jadi kuratornya. Yang ngurus dan membereskan hartanya.",
+  "key": "dinda-1800ca65"
  },
  {
   "who": "tasya",
-  "text": "Wah, mahal dong?",
-  "key": "tasya-d23bbaf7"
+  "text": "Waduh, kurator gitu pasti mahal dong?",
+  "key": "tasya-ec307e3a"
  },
  {
   "who": "dinda",
-  "text": "Justru lebih hemat, Sya. Nggak ada fee macem-macem, soalnya kita kan mewakili negara.",
-  "key": "dinda-9c7bedc6"
+  "text": "Justru lebih hemat, Sya. Kita kan mewakili negara, nggak ada fee macem-macem.",
+  "key": "dinda-0630b9f7"
  },
  {
   "who": "tasya",
@@ -161,18 +166,18 @@
  },
  {
   "who": "tasya",
-  "text": "Din, kalau ada orang ilang, nggak ada kabar, kayak mantan gue yang ghosting itu… hartanya nggak ada yang ngurus. Itu ke BHP juga?",
-  "key": "tasya-62f39baf"
+  "text": "Din, kalau ada orang ngilang tanpa kabar, kayak mantan gue, terus hartanya nggak ada yang ngurus, itu gimana?",
+  "key": "tasya-98e005dd"
  },
  {
   "who": "dinda",
-  "text": "Hahaha, mantan lo mah nggak masuk, Sya. Kan nggak punya harta.",
-  "key": "dinda-b5be4f97"
+  "text": "Hahaha, mantan lo mah beda kasus, Sya. Yang dia tinggalin cuma kenangan.",
+  "key": "dinda-5b0c8533"
  },
  {
   "who": "tasya",
-  "text": "Eh, jahat banget!",
-  "key": "tasya-f1add6d6"
+  "text": "Ih, jahat banget!",
+  "key": "tasya-ba84af6a"
  },
  {
   "who": "dinda",
@@ -211,23 +216,23 @@
  },
  {
   "who": "tasya",
-  "text": "Din, almarhumah nenek gue ninggalin surat wasiat tertutup di notaris. Nah, bukanya tuh gimana ya?",
-  "key": "tasya-5a8cd7ee"
+  "text": "Din, almarhumah nenek ninggalin surat wasiat tertutup di notaris. Keluarga udah penasaran banget. Boleh langsung dibuka?",
+  "key": "tasya-06262f44"
  },
  {
   "who": "dinda",
-  "text": "Wasiat tertutup gitu dibukanya di BHP, terus dibikinin berita acaranya. Jadi resmi, dan nggak ada yang bisa asal buka sendiri.",
-  "key": "dinda-c7a7c1e9"
+  "text": "Eits, jangan dibuka sendiri. Wasiat tertutup dibukanya di BHP, terus dibikinin berita acaranya. Biar resmi dan adil buat semua.",
+  "key": "dinda-d5f56d1d"
  },
  {
   "who": "tasya",
-  "text": "Wih, kayak unboxing gitu ya, tapi versi resmi negara!",
-  "key": "tasya-883bdf0d"
+  "text": "Wih, kayak unboxing, tapi versi resmi negara!",
+  "key": "tasya-89f2d45e"
  },
  {
   "who": "dinda",
-  "text": "Hehe, unboxing paling sah se-Indonesia pokoknya.",
-  "key": "dinda-d20d5945"
+  "text": "Unboxing paling sah se-Indonesia. Nggak pakai teriak spill dong.",
+  "key": "dinda-eee6e21f"
  },
  {
   "who": "tasya",
@@ -261,13 +266,13 @@
  },
  {
   "who": "tasya",
-  "text": "Din, misal warisan udah dibagi nih, tapi ada satu ahli waris yang nggak ketemu-ketemu. Bagiannya terus ke mana?",
-  "key": "tasya-5a4be9be"
+  "text": "Din, warisan keluarga gue udah dibagi. Tapi ada satu sepupu yang udah lama nggak ketemu. Bagiannya gimana dong?",
+  "key": "tasya-98ce57da"
  },
  {
   "who": "dinda",
-  "text": "Tenang, bagiannya dikelola BHP sebagai uang pihak ketiga. Aman kok, sampai orangnya dateng dan ngurus sendiri.",
-  "key": "dinda-c5129758"
+  "text": "Tenang, bagiannya dikelola BHP sebagai uang pihak ketiga. Aman, sampai orangnya datang dan mengurus haknya.",
+  "key": "dinda-3fef7c77"
  },
  {
   "who": "tasya",
@@ -276,8 +281,8 @@
  },
  {
   "who": "dinda",
-  "text": "Iya, celengan paling amanah deh pokoknya.",
-  "key": "dinda-bd726f9b"
+  "text": "Iya, celengan paling amanah. Nggak bakal dibobol buat beli kopi.",
+  "key": "dinda-084674fb"
  },
  {
   "who": "tasya",
