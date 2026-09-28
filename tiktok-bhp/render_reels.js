@@ -34,7 +34,7 @@ async function renderEp(browser, port, ep) {
   await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 94, maxWidth: 1080, maxHeight: 1920, everyNthFrame: 1 });
   await page.waitForTimeout(300);
   page.evaluate(() => window.__mulai());
-  await page.waitForFunction(() => window.__rekam && window.__rekam.done, null, { timeout: 180000, polling: 500 });
+  await page.waitForFunction(() => window.__rekam && window.__rekam.done, null, { timeout: 400000, polling: 500 });
   await cdp.send('Page.stopScreencast');
   const { audio, audioStart } = await page.evaluate(() => window.__rekam);
   await page.close();
