@@ -59,7 +59,7 @@ window.renderAt = (t) => {
   const seg = D.seg;
   const j = seg.find((s) => s.judul); setOv($('#title'), j ? pulse(t, j.start, j.start + j.dur, .35) : 0, .85 + .15 * smooth(t / .4));
   // subtitle: kalimat yang sedang diucapkan (kecuali narator tagline)
-  const s = seg.find((x) => x.vo && x.who !== 'narator' && t >= x.vo_start - .05 && t < x.vo_start + x.vo_dur + .3);
+  const s = seg.find((x) => x.text && x.who !== 'narator' && t >= x.vo_start - .05 && t < x.vo_start + x.vo_dur + .3);
   const b = $('#sub');
   if (s) {
     if (last !== s) { last = s; b.className = 'ov ' + s.who; b.querySelector('.who').textContent = NAMES[s.who];
