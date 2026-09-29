@@ -1,0 +1,32 @@
+{
+  "gaya": "Pixar-style 3D animated cartoon, soft cinematic lighting, smooth natural character animation, expressive faces, vertical 9:16 video. Keep every character's face, hair, hijab and clothes exactly as in the first frame. The office background stays the same. No text, no subtitles, no captions, no watermark.",
+  "negatif": "text, subtitles, captions, watermark, extra people, extra fingers, deformed face, face change, flicker, blurry",
+  "tokoh": {
+    "tasya": "Tasya, a cheerful young Indonesian woman with long brown hair, pink sweater and blue jeans",
+    "dinda": "Dinda, a friendly Indonesian government officer wearing a navy hijab, grey uniform and ID lanyard",
+    "kepala": "Pak Kepala, the head of office, an Indonesian man with a mustache in a grey uniform"
+  },
+  "episode": {
+    "1": {
+      "latar": "bg-pelayanan.jpg",
+      "shots": [
+        { "id": "s1", "dur": 8, "susun": [["tasya", 0.28, 0.66], ["dinda", 0.73, 0.64]],
+          "prompt": "Wide shot inside a bright government service office. {tasya} walks in from the left, looks around, then waves hello. {dinda} stands near the service counter, smiles warmly and waves back. Slow camera push-in." },
+        { "id": "s2", "dur": 8, "susun": [["tasya", 0.5, 1.28, 0.1]], "vo": ["tasya-c82707b1"],
+          "prompt": "Medium close-up of {tasya}. She looks worried and confused, talks to the person off-screen with her mouth moving naturally as if speaking, glances at her phone, sighs and touches her forehead. Subtle camera movement." },
+        { "id": "s3", "dur": 8, "susun": [["dinda", 0.5, 1.28, 0.1]], "vo": ["dinda-eab3880c"],
+          "prompt": "Medium close-up of {dinda}. She smiles kindly and explains something while talking, mouth moving naturally, raises her index finger like giving a helpful tip, then nods reassuringly. Subtle camera movement." },
+        { "id": "s4", "dur": 4, "susun": [["tasya", 0.3, 0.92, 0.02], ["dinda", 0.74, 0.9, 0.02]], "vo": ["tasya-c6c7d433"],
+          "prompt": "Two-shot. {tasya} is surprised and excited, eyes wide, talking with her mouth moving, hands raised in happy surprise. {dinda} smiles." },
+        { "id": "s5", "dur": 4, "susun": [["dinda", 0.5, 1.28, 0.1]], "vo": ["dinda-f50b605c"],
+          "prompt": "Medium close-up of {dinda}. She laughs cheerfully while talking, covering her mouth for a moment, then smiles." },
+        { "id": "s6", "dur": 6, "susun": [["tasya", 0.5, 1.28, 0.1]], "vo": ["tasya-112268d5"],
+          "prompt": "Medium close-up of {tasya}. She is amazed and happy, talking excitedly with mouth moving, claps her hands and gives a thumbs up." },
+        { "id": "s7", "dur": 8, "susun": [["kepala", 0.5, 1.2, 0.08]], "vo": ["boss-57ae112b", "boss-fe79ad37"],
+          "prompt": "Medium shot of {kepala}. He appears proudly, smiles confidently, gives a thumbs up to the camera and talks warmly with mouth moving naturally, a friendly nod." },
+        { "id": "s8", "dur": 4, "susun": [["tasya", 0.2, 0.74], ["kepala", 0.5, 0.8], ["dinda", 0.8, 0.73]], "vo": ["narator-6661fbd7"],
+          "prompt": "Wide shot. {tasya}, {kepala} and {dinda} stand together, cheer happily, raise their hands and give thumbs up to the camera. Celebratory mood." }
+      ]
+    }
+  }
+}

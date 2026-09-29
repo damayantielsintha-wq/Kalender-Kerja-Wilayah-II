@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kartun Cutout · Tusi BHP Medan</title>
+<style>
+  :root { --navy: #0B2A5B; --gold: #F2B705; --ink: #0F172A; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #06152E; overflow: hidden; font-family: "Plus Jakarta Sans", "Poppins", "DejaVu Sans", system-ui, sans-serif; }
+  #stage { position: absolute; left: 50%; top: 50%; width: 1080px; height: 1920px; transform: translate(-50%, -50%) scale(var(--s, .4)); overflow: hidden; background: #dfe7f2; }
+  body.render #stage { left: 0; top: 0; transform: none; }
+  canvas { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+  .ov { position: absolute; pointer-events: none; visibility: hidden; z-index: 2; }
+  #chip { top: 60px; left: 50px; display: flex; align-items: center; gap: 16px; background: #fff; color: var(--navy); visibility: visible;
+    font-weight: 800; font-size: 36px; padding: 14px 32px 14px 16px; border-radius: 60px; box-shadow: 0 10px 28px rgba(11,42,91,.22); }
+  #chip b { background: var(--navy); color: var(--gold); border-radius: 40px; padding: 6px 18px; font-size: 30px; }
+  #bubble { left: 60px; right: 60px; top: 170px; background: #fff; color: var(--ink); border-radius: 44px; padding: 30px 40px 34px;
+    font-size: 46px; line-height: 1.32; font-weight: 700; border: 6px solid var(--navy); box-shadow: 0 14px 0 rgba(11,42,91,.18); }
+  #bubble .who { display: inline-block; font-size: 30px; font-weight: 800; letter-spacing: .04em; color: #fff; background: var(--navy); border-radius: 30px; padding: 6px 20px; margin-bottom: 10px; }
+  #bubble.tasya .who { background: #E2557A; } #bubble.boss .who { background: #4B5563; } #bubble.narator .who { background: var(--gold); color: var(--navy); }
+  #bubble .w { opacity: .25; } #bubble .w.on { opacity: 1; }
+  #title { left: 0; right: 0; top: 640px; text-align: center; }
+  #title .k { display: inline-block; background: var(--gold); color: var(--navy); font-weight: 800; font-size: 40px; padding: 12px 34px; border-radius: 40px; }
+  #title h1 { margin-top: 26px; font-size: 118px; line-height: 1; color: #fff; font-weight: 800; text-shadow: 0 10px 0 var(--navy), 0 20px 40px rgba(0,0,0,.4); }
+  #card { left: 70px; right: 70px; bottom: 230px; background: #fff; border-radius: 44px; padding: 40px 44px; border: 6px solid var(--navy); box-shadow: 16px 16px 0 var(--gold); }
+  #card .k { font-size: 34px; font-weight: 800; color: #15803D; letter-spacing: .06em; }
+  #card .t { font-size: 70px; line-height: 1.08; font-weight: 800; color: var(--navy); margin-top: 10px; }
+  #card .s { font-size: 44px; font-weight: 700; color: var(--ink); margin-top: 12px; }
+  #stamp { right: 90px; bottom: 530px; background: #fff; color: #15803D; border: 8px solid #15803D; font-weight: 800; font-size: 46px; padding: 10px 28px; border-radius: 18px; }
+  #tag { left: 30px; right: 30px; top: 150px; text-align: center; }
+  #tag .a { display: block; font-size: 110px; font-weight: 800; color: #fff; line-height: 1; text-shadow: 0 9px 0 var(--navy), 0 22px 44px rgba(0,0,0,.45); }
+  #tag .b { display: block; font-size: 158px; font-weight: 800; color: var(--gold); line-height: 1.05; margin-top: 10px; text-shadow: 0 11px 0 var(--navy), 0 24px 50px rgba(0,0,0,.45); }
+  #fx { left: 0; right: 0; top: 0; bottom: 0; background: #fff; }
+  #start { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(6,21,46,.55); z-index: 5; }
+  #start button { font: 800 60px/1 inherit; background: var(--gold); color: var(--navy); border: 0; border-radius: 80px; padding: 34px 70px; cursor: pointer; }
+  body.render #start { display: none; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="c" width="1080" height="1920"></canvas>
+  <div id="chip" class="ov"><b>TUSI #1</b><span id="chipT">Hak Waris</span></div>
+  <div id="bubble" class="ov"><span class="who"></span><div class="tx"></div></div>
+  <div id="title" class="ov"><span class="k">🎬 Serial Kartun BHP Medan</span><h1 id="titleT"></h1></div>
+  <div id="card" class="ov"><div class="k">✅ ADA DI BHP</div><div class="t" id="cardT"></div><div class="s" id="cardS"></div></div>
+  <div id="stamp" class="ov">✔ BISA DI BHP</div>
+  <div id="tag" class="ov"><span class="a">Pasti Selalu Ada</span><span class="b">Solusinya!</span></div>
+  <div id="fx" class="ov"></div>
+  <div id="start"><button id="play" type="button">▶ Putar</button></div>
+</div>
+<script>
+(async () => {
+const params = new URLSearchParams(location.search);
+const RENDER = params.has('render');
+if (RENDER) document.body.classList.add('render');
+const EP = params.get('ep') || '1';
+const data = await (await fetch(`../kartun-3d/data/ep${EP}.json`)).json();
+const $ = (s) => document.querySelector(s);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const smooth = (x) => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
+const ease = (t, a, b) => smooth((t - a) / (b - a));
+const pulse = (t, a, b, f = .25) => Math.min(ease(t, a, a + f), 1 - ease(t, b - f, b));
+const hash = (n) => { const x = Math.sin(n * 127.1) * 43758.5453; return x - Math.floor(x); };
+function fit() { if (!RENDER) $('#stage').style.setProperty('--s', Math.min(innerWidth / 1080, innerHeight / 1920)); }
+addEventListener('resize', fit); fit();
+$('#chip b').textContent = `TUSI #${data.no}`; $('#chipT').textContent = data.title; $('#titleT').textContent = data.title;
+$('#cardT').textContent = data.tusi; $('#cardS').textContent = data.sub;
+
+const IMG = '../tiktok-bhp/img/';
+const load = (src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+
+/* ===================== Rig tiap tokoh (koordinat dalam piksel gambar asli) =====================
+   cut   : garis potong kepala (y); pivot: titik putar kepala (leher)
+   eyes  : [x, y, lebar, tinggi] tiap mata; mouth: [x, y, lebar]; h: tinggi tokoh di layar (px)        */
+const RIGS = {
+  tasya:  { src: 'tasya-3d.png',  cut: 330, pivot: [250, 330], eyes: [[200, 180, 50, 36], [305, 192, 50, 36]], mouth: [245, 262, 74], h: 1330, lid: -.9 },
+  dinda:  { src: 'dinda-3d.png',  cut: 300, pivot: [250, 292], eyes: [[207, 156, 48, 32], [296, 160, 48, 32]], mouth: [250, 232, 66], h: 1300, lid: -.9 },
+  kepala: { src: 'kepala-3d.png', cut: 338, pivot: [282, 345], eyes: [[240, 174, 38, 19], [322, 172, 38, 19]], mouth: [282, 264, 84], h: 1470, lid: -.75 },
+};
+const bg = await load(IMG + 'bg-pelayanan.jpg');
+for (const [k, r] of Object.entries(RIGS)) {
+  const im = await load(IMG + r.src); r.img = im; r.w = im.width; r.hImg = im.height;
+  // badan: gambar tanpa kepala (tepi potong dilunakkan)
+  const F = 36;
+  const body = document.createElement('canvas'); body.width = im.width; body.height = im.height;
+  let g = body.getContext('2d'); g.drawImage(im, 0, 0);
+  g.globalCompositeOperation = 'destination-out';
+  g.fillRect(0, 0, im.width, r.cut - F);
+  const gr = g.createLinearGradient(0, r.cut - F, 0, r.cut + 4); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = gr; g.fillRect(0, r.cut - F, im.width, F + 4);
+  r.body = body;
+  // kepala: bagian atas + sedikit tumpang-tindih yang memudar
+  const head = document.createElement('canvas'); head.width = im.width; head.height = r.cut + F;
+  g = head.getContext('2d'); g.drawImage(im, 0, 0);
+  g.globalCompositeOperation = 'destination-in';
+  const gh = g.createLinearGradient(0, r.cut - F * .4, 0, r.cut + F); gh.addColorStop(0, 'rgba(0,0,0,1)'); gh.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = gh; g.fillRect(0, 0, im.width, r.cut + F);
+  r.head = head;
+  // rahang: potongan bibir bawah + dagu asli (tepi dilunakkan) yang digeser turun saat bicara
+  { const [mx, my, mw] = r.mouth, jw = Math.round(mw * 1.7), jh = Math.round(mw * 1.15), jx = Math.round(mx - jw / 2);
+    const jaw = document.createElement('canvas'); jaw.width = jw; jaw.height = jh;
+    const gj = jaw.getContext('2d'); gj.drawImage(head, jx, my, jw, jh, 0, 0, jw, jh);
+    gj.globalCompositeOperation = 'destination-in';
+    const rg = gj.createRadialGradient(jw / 2, jh * .28, 1, jw / 2, jh * .28, jw * .5);
+    rg.addColorStop(0, 'rgba(0,0,0,1)'); rg.addColorStop(.62, 'rgba(0,0,0,1)'); rg.addColorStop(1, 'rgba(0,0,0,0)');
+    gj.fillStyle = rg; gj.fillRect(0, 0, jw, jh);
+    r.jaw = { c: jaw, x: jx, y: my }; }
+  // warna kulit untuk kelopak mata: diambil dari atas tiap mata
+  const px = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+  px.canvas.width = im.width; px.canvas.height = im.height; px.drawImage(im, 0, 0);
+  r.lidC = r.eyes.map(([x, y, w, h]) => { const d = px.getImageData(x + (r.eyes[1][0] - r.eyes[0][0]) * (x === r.eyes[0][0] ? .28 : -.28) - 4, Math.round(y - h * 1.9) - 3, 8, 6).data; let R = 0, G = 0, B = 0, n = d.length / 4; for (let i = 0; i < d.length; i += 4) { R += d[i]; G += d[i + 1]; B += d[i + 2]; } return `rgb(${R / n | 0},${G / n | 0},${B / n | 0})`; });
+}
+
+/* ===================== Timeline ===================== */
+const lines = data.beats.filter((b) => b.type === 'line');
+const beat = (type) => data.beats.find((b) => b.type === type);
+const WHO = { tasya: 'tasya', dinda: 'dinda', boss: 'kepala' };
+const speakingLine = (who, t) => lines.find((l) => WHO[l.who] === who && t >= l.start && t < l.start + l.dur);
+const amp = (l, t) => (l ? l.env[Math.floor((t - l.start) * data.fps)] || 0 : 0);
+const actOf = (who, t) => { const l = lines.find((x) => WHO[x.who] === who && t >= x.start && t < x.start + x.dur + .6); return l ? { act: l.act, k: t - l.start, end: l.start + l.dur } : null; };
+const BLINK = Array.from({ length: 80 }, (_, i) => i * 2.7 + hash(i) * 1.9);
+const blinkAmt = (t, off) => { for (const b of BLINK) { const d = Math.abs(t - b - off); if (d < .09) return 1 - d / .09; } return 0; };
+const bossLine = lines.find((l) => l.who === 'boss');
+const tagLine = lines.find((l) => l.act === 'tagline');
+
+/* ===================== Gambar satu tokoh ===================== */
+const cv = $('#c'), ctx = cv.getContext('2d');
+function drawChar(key, x, feetY, st) {
+  const r = RIGS[key], s = r.h / r.hImg;
+  ctx.save();
+  // posisi di dunia: x = tengah gambar, feetY = alas kaki
+  ctx.translate(x, feetY - st.jump);
+  ctx.rotate(st.sway);
+  ctx.scale(s * st.sx, s * st.sy);
+  ctx.translate(-r.w / 2, -r.hImg);
+  // bayangan kaki
+  ctx.save(); ctx.globalAlpha = .18 * (1 - clamp(st.jump / 150, 0, .7)); ctx.fillStyle = '#0b1b33';
+  ctx.beginPath(); ctx.ellipse(r.w / 2, r.hImg - 8 + st.jump / s, r.w * .42, 26, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  ctx.drawImage(r.body, 0, 0);
+  // kepala berputar di leher
+  const [px, py] = r.pivot;
+  ctx.translate(px, py + st.headDY); ctx.rotate(st.headRot); ctx.translate(-px, -py);
+  ctx.drawImage(r.head, 0, 0);
+  // kedip: kelopak menutup dari atas
+  r.eyes.forEach(([ex, ey, ew, eh], i) => {
+    const c = clamp(Math.max(st.blink, st.squint), 0, 1);
+    if (c <= .02) return;
+    ctx.save();
+    // kelopak bertepi lembut: memudar masuk (kedipan hanya ±0,15 detik)
+    ctx.globalAlpha = clamp(c * 1.25, 0, 1); ctx.filter = 'blur(2.2px)'; ctx.fillStyle = r.lidC[i];
+    ctx.beginPath(); ctx.ellipse(ex, ey + eh * .02, ew * .55, eh * .66, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.filter = 'none'; ctx.globalAlpha = 1;
+    ctx.restore();
+    if (c > .55) { ctx.strokeStyle = '#2a1712'; ctx.lineWidth = Math.max(2.5, eh * .13); ctx.lineCap = 'round';
+      const k = st.squint > .5 ? -.28 : .3;
+      ctx.beginPath(); ctx.moveTo(ex - ew * .52, ey + eh * .08); ctx.quadraticCurveTo(ex, ey + eh * (.08 + k), ex + ew * .52, ey + eh * .08); ctx.stroke(); }
+  });
+  // mulut bicara: rahang (bibir bawah + dagu asli) turun sedikit mengikuti volume suara,
+  // celah di antaranya diisi warna rongga mulut yang lembut
+  const a = st.mouth;
+  if (a > .05) {
+    const [mx, my, mw] = r.mouth, d = mw * .17 * a;
+    ctx.save();
+    const gr = ctx.createRadialGradient(mx, my + d * .5, 1, mx, my + d * .5, mw * .3);
+    gr.addColorStop(0, '#3a0d14'); gr.addColorStop(.7, '#6e2330'); gr.addColorStop(1, 'rgba(120,45,55,0)');
+    ctx.fillStyle = gr;
+    ctx.beginPath(); ctx.ellipse(mx, my + d * .5, mw * .3, d * .62 + 1.5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.drawImage(r.jaw.c, r.jaw.x, r.jaw.y + d);
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+function stateOf(key, t, ph) {
+  const l = speakingLine(key, t), a = l ? amp(l, t) : 0, act = actOf(key, t);
+  const st = { jump: 0, sway: Math.sin(t * 1.1 + ph) * .006, sx: 1, sy: 1 + Math.sin(t * 2.1 + ph) * .006,
+    headRot: Math.sin(t * 1.4 + ph) * .025, headDY: 0, blink: blinkAmt(t, ph), squint: 0, mouth: a };
+  if (l) { st.headRot += Math.sin(t * 7.5) * .03 * a + Math.sin(t * 2.3) * .02; st.headDY = -a * 4; st.jump += a * 6; }
+  if (act) {
+    const e = Math.min(smooth(act.k / .35), 1 - smooth((t - act.end) / .6));
+    if (act.act === 'sad') { st.headRot += .09 * e; st.headDY += 8 * e; }
+    if (act.act === 'explain') { st.headRot += -.06 * e + Math.sin(t * 4) * .02 * e; st.sway += -.015 * e; }
+    if (act.act === 'shock') { st.jump += Math.max(0, Math.sin(clamp(act.k / .55, 0, 1) * Math.PI)) * 90; st.headRot -= .05 * e; st.sy += .02 * e; }
+    if (act.act === 'laugh') { st.jump += Math.abs(Math.sin(t * 16)) * 10 * e; st.headRot += -.08 * e; st.squint = .9 * e; }
+    if (act.act === 'wow') { st.jump += Math.max(0, Math.sin(clamp(act.k / .5, 0, 1) * Math.PI)) * 70; st.squint = .5 * e; }
+  }
+  return st;
+}
+
+/* ===================== Kamera 2D (zoom & geser, latar paralaks) ===================== */
+const POS = { tasya: 300, dinda: 790, kepala: 545 };
+const FEET = 1880;
+const faceOf = (key, x) => { const r = RIGS[key], s = r.h / r.hImg, fy = (r.eyes[0][1] + r.mouth[1]) / 2; return { x: x + (r.mouth[0] - r.w / 2) * s, y: FEET - r.h + fy * s }; };
+function shotAt(t) {
+  const list = [{ t: 0, s: 'wide' }];
+  for (const l of lines) {
+    if (l.who === 'tasya' || l.who === 'dinda') list.push({ t: l.start - .15, s: l.dur > 6 ? l.who : 'two' });
+    if (l.who === 'boss') list.push({ t: l.start - .7, s: 'kepala' });
+    if (l.who === 'narator') list.push({ t: l.start, s: 'wide' });
+  }
+  const c = beat('card'); if (c) list.push({ t: c.start, s: 'two' });
+  list.sort((a, b) => a.t - b.t);
+  let cur = list[0]; for (const x of list) if (t >= x.t) cur = x; return cur;
+}
+function camFor(name) {
+  if (name === 'wide') return { x: 540, y: 1010, z: 1 };
+  if (name === 'two') return { x: 545, y: 1100, z: 1.12 };
+  const f = faceOf(name, POS[name]); return { x: f.x, y: f.y - 20, z: 1.6 };  // wajah tampil di bawah balon teks
+}
+
+/* ===================== Susun satu frame ===================== */
+function setOv(el, vis, scale = 1, extra = '') { el.style.opacity = vis; el.style.transform = `scale(${scale}) ${extra}`; el.style.visibility = vis > .01 ? 'visible' : 'hidden'; }
+const NAMES = { tasya: 'TASYA · Gen Z', dinda: 'DINDA · Pegawai BHP', boss: 'PAK KEPALA BHP MEDAN', narator: 'NARATOR' };
+let lastLine = null;
+function updateOverlay(t) {
+  const intro = beat('intro'); setOv($('#title'), pulse(t, 0, intro.dur, .35), .8 + .2 * smooth(t / .4));
+  const l = lines.find((x) => t >= x.start - .05 && t < x.start + x.dur + .35 && x.act !== 'tagline');
+  const b = $('#bubble');
+  if (l) {
+    if (lastLine !== l) { lastLine = l; b.className = 'ov ' + l.who; b.querySelector('.who').textContent = NAMES[l.who];
+      b.querySelector('.tx').innerHTML = l.text.split(/\s+/).map((w) => `<span class="w">${w.replace(/</g, '&lt;')}</span>`).join(' '); }
+    const ws = b.querySelectorAll('.w'), prog = clamp((t - l.start) / (l.dur * .92), 0, 1);
+    ws.forEach((w, i) => w.classList.toggle('on', i < Math.ceil(prog * ws.length + .01)));
+    setOv(b, ease(t, l.start - .05, l.start + .12), .9 + .1 * ease(t, l.start - .05, l.start + .15));
+  } else setOv(b, 0);
+  const c = beat('card');
+  setOv($('#card'), c ? pulse(t, c.start, c.start + c.dur + 2.2, .3) : 0, 1, `translateX(${(1 - ease(t, c.start, c.start + .35)) * -110}%)`);
+  setOv($('#stamp'), c ? ease(t, c.start + .5, c.start + .7) * (1 - ease(t, c.start + c.dur + 1.9, c.start + c.dur + 2.2)) : 0, 1 + (1 - ease(t, c.start + .5, c.start + .7)) * 1.8, 'rotate(-8deg)');
+  setOv($('#tag'), tagLine ? ease(t, tagLine.start, tagLine.start + .25) : 0, 1 + (1 - ease(t, tagLine.start, tagLine.start + .35)) * 1.3);
+  setOv($('#fx'), tagLine && t >= tagLine.start ? .9 * (1 - ease(t, tagLine.start, tagLine.start + .45)) : 0);
+}
+
+function renderAt(t) {
+  const sh = shotAt(t), k = t - sh.t;
+  let cam = camFor(sh.s);
+  const push = 1 + Math.min(k, 6) * .012; cam = { ...cam, z: cam.z * push };
+  if (t < 2.4) { const w = smooth(t / 2.4); cam = { x: lerp(540, cam.x, w), y: lerp(1050, cam.y, w), z: lerp(1.35, cam.z, w) }; }
+  if (tagLine && t >= tagLine.start - .1) { const w = ease(t, tagLine.start - .1, tagLine.start + .4); cam = { x: cam.x, y: lerp(cam.y, 900, w), z: lerp(cam.z, .9, w) }; }
+  cam.x += Math.sin(t * .5) * 6; cam.y += Math.sin(t * .7) * 5;
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, 1080, 1920);
+  // latar (bergerak lebih sedikit → paralaks)
+  const bz = 1 + (cam.z - 1) * .55, bs = 1920 / bg.height * 1.06 * bz;
+  ctx.save(); ctx.translate(540 - (cam.x - 540) * .45 * bz, 960 - (cam.y - 1100) * .45 * bz); ctx.scale(bs, bs); ctx.drawImage(bg, -bg.width / 2, -bg.height / 2); ctx.restore();
+  // tokoh
+  ctx.save(); ctx.translate(540, 960); ctx.scale(cam.z, cam.z); ctx.translate(-cam.x, -cam.y);
+  const walk = ease(t, .2, 2.2);
+  const tx = lerp(-250, POS.tasya, walk);
+  const tStep = walk > 0 && walk < 1 ? Math.abs(Math.sin(t * 7)) * 14 : 0;
+  const up = bossLine ? ease(t, bossLine.start - .7, bossLine.start - .1) : 0;
+  const cheer = tagLine && t >= tagLine.start ? t - tagLine.start : -1;
+  const S = { tasya: stateOf('tasya', t, 0), dinda: stateOf('dinda', t, 1.7), kepala: stateOf('kepala', t, 3.1) };
+  S.tasya.jump += tStep;
+  if (cheer >= 0) Object.values(S).forEach((s, i) => { s.jump += Math.max(0, Math.sin((cheer * 1.7 + i * .25) * Math.PI)) * 60; });
+  drawChar('dinda', POS.dinda, FEET - 20, S.dinda);
+  drawChar('tasya', tx, FEET, S.tasya);
+  if (up > 0) { // Pak Kepala muncul dari bawah (memantul)
+    const bounce = Math.sin(clamp((t - bossLine.start + .7) / .6, 0, 1) * Math.PI) * 40;
+    S.kepala.jump += (1 - up) * -900 + bounce * (up < 1 ? 1 : 0);
+    drawChar('kepala', POS.kepala, FEET + 12, S.kepala);
+  }
+  ctx.restore();
+  updateOverlay(t);
+}
+window.renderAt = renderAt; window.EP_DATA = data; window.READY = true;
+
+if (!RENDER) {
+  renderAt(0);
+  $('#play').onclick = () => {
+    $('#start').style.display = 'none';
+    const t0 = performance.now() / 1000 + .1;
+    lines.forEach((l) => { const a = new Audio(`../tiktok-bhp/vo/${l.key}.mp3`); setTimeout(() => a.play().catch(() => {}), (l.start + .1) * 1000); });
+    const loop = () => { const t = performance.now() / 1000 - t0; renderAt(Math.max(0, t)); if (t < data.duration) requestAnimationFrame(loop); else $('#start').style.display = ''; };
+    loop();
+  };
+}
+})();
+</script>
+</body>
+</html>

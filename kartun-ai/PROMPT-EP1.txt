@@ -1,0 +1,36 @@
+PAKET VIDEO AI · EPISODE 1 (Hak Waris) — pakai Google Flow / Gemini (langganan Pro)
+=================================================================================
+
+CARA PAKAI (Google Flow: labs.google/flow — paling enak):
+1. New project → pilih mode 'Frames to Video' (atau 'Image to video').
+2. Upload gambar adegan (misal ep1-s2.jpg) sebagai frame pertama.
+3. Tempel PROMPT adegan itu. Rasio: 9:16 (portrait). Model: Veo 3 Fast (hemat kredit).
+4. Generate → pilih hasil terbaik → Download MP4.
+5. Kirim semua MP4 ke chat Claude (boleh dicicil). Nama file bebas, sebut nomor adegannya.
+
+Di aplikasi Gemini: klik tombol 'Video', upload gambar, tempel prompt yang sama.
+Catatan: suara dari Veo tidak dipakai — nanti diganti suara Gemini yang sudah jadi.
+
+--- ADEGAN S1  (gambar: ep1-s1.jpg, durasi 8 detik) ---
+Pixar-style 3D animated cartoon, soft cinematic lighting, smooth natural character animation, expressive faces, vertical 9:16 video. Keep every character's face, hair, hijab and clothes exactly as in the first frame. The office background stays the same. No text, no subtitles, no captions, no watermark. Wide shot inside a bright government service office. Tasya, a cheerful young Indonesian woman with long brown hair, pink sweater and blue jeans walks in from the left, looks around, then waves hello. Dinda, a friendly Indonesian government officer wearing a navy hijab, grey uniform and ID lanyard stands near the service counter, smiles warmly and waves back. Slow camera push-in. No dialogue audio, only soft office ambience.
+
+--- ADEGAN S2  (gambar: ep1-s2.jpg, durasi 8 detik) ---
+Pixar-style 3D animated cartoon, soft cinematic lighting, smooth natural character animation, expressive faces, vertical 9:16 video. Keep every character's face, hair, hijab and clothes exactly as in the first frame. The office background stays the same. No text, no subtitles, no captions, no watermark. Medium close-up of Tasya, a cheerful young Indonesian woman with long brown hair, pink sweater and blue jeans. She looks worried and confused, talks to the person off-screen with her mouth moving naturally as if speaking, glances at her phone, sighs and touches her forehead. Subtle camera movement. No dialogue audio, only soft office ambience.
+
+--- ADEGAN S3  (gambar: ep1-s3.jpg, durasi 8 detik) ---
+Pixar-style 3D animated cartoon, soft cinematic lighting, smooth natural character animation, expressive faces, vertical 9:16 video. Keep every character's face, hair, hijab and clothes exactly as in the first frame. The office background stays the same. No text, no subtitles, no captions, no watermark. Medium close-up of Dinda, a friendly Indonesian government officer wearing a navy hijab, grey uniform and ID lanyard. She smiles kindly and explains something while talking, mouth moving naturally, raises her index finger like giving a helpful tip, then nods reassuringly. Subtle camera movement. No dialogue audio, only soft office ambience.
+
+--- ADEGAN S4  (gambar: ep1-s4.jpg, durasi 4 detik) ---
+Pixar-style 3D animated cartoon, soft cinematic lighting, smooth natural character animation, expressive faces, vertical 9:16 video. Keep every character's face, hair, hijab and clothes exactly as in the first frame. The office background stays the same. No text, no subtitles, no captions, no watermark. Two-shot. Tasya, a cheerful young Indonesian woman with long brown hair, pink sweater and blue jeans is surprised and excited, eyes wide, talking with her mouth moving, hands raised in happy surprise. Dinda, a friendly Indonesian government officer wearing a navy hijab, grey uniform and ID lanyard smiles. No dialogue audio, only soft office ambience.
+
+--- ADEGAN S5  (gambar: ep1-s5.jpg, durasi 4 detik) ---
+Pixar-style 3D animated cartoon, soft cinematic lighting, smooth natural character animation, expressive faces, vertical 9:16 video. Keep every character's face, hair, hijab and clothes exactly as in the first frame. The office background stays the same. No text, no subtitles, no captions, no watermark. Medium close-up of Dinda, a friendly Indonesian government officer wearing a navy hijab, grey uniform and ID lanyard. She laughs cheerfully while talking, covering her mouth for a moment, then smiles. No dialogue audio, only soft office ambience.
+
+--- ADEGAN S6  (gambar: ep1-s6.jpg, durasi 6 detik) ---
+Pixar-style 3D animated cartoon, soft cinematic lighting, smooth natural character animation, expressive faces, vertical 9:16 video. Keep every character's face, hair, hijab and clothes exactly as in the first frame. The office background stays the same. No text, no subtitles, no captions, no watermark. Medium close-up of Tasya, a cheerful young Indonesian woman with long brown hair, pink sweater and blue jeans. She is amazed and happy, talking excitedly with mouth moving, claps her hands and gives a thumbs up. No dialogue audio, only soft office ambience.
+
+--- ADEGAN S7  (gambar: ep1-s7.jpg, durasi 8 detik) ---
+Pixar-style 3D animated cartoon, soft cinematic lighting, smooth natural character animation, expressive faces, vertical 9:16 video. Keep every character's face, hair, hijab and clothes exactly as in the first frame. The office background stays the same. No text, no subtitles, no captions, no watermark. Medium shot of Pak Kepala, the head of office, an Indonesian man with a mustache in a grey uniform. He appears proudly, smiles confidently, gives a thumbs up to the camera and talks warmly with mouth moving naturally, a friendly nod. No dialogue audio, only soft office ambience.
+
+--- ADEGAN S8  (gambar: ep1-s8.jpg, durasi 4 detik) ---
+Pixar-style 3D animated cartoon, soft cinematic lighting, smooth natural character animation, expressive faces, vertical 9:16 video. Keep every character's face, hair, hijab and clothes exactly as in the first frame. The office background stays the same. No text, no subtitles, no captions, no watermark. Wide shot. Tasya, a cheerful young Indonesian woman with long brown hair, pink sweater and blue jeans, Pak Kepala, the head of office, an Indonesian man with a mustache in a grey uniform and Dinda, a friendly Indonesian government officer wearing a navy hijab, grey uniform and ID lanyard stand together, cheer happily, raise their hands and give thumbs up to the camera. Celebratory mood. No dialogue audio, only soft office ambience.

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Lapisan teks · Kartun AI BHP</title>
+<style>
+  :root { --navy: #0B2A5B; --gold: #F2B705; --ink: #0F172A; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; background: transparent; overflow: hidden; font-family: "Plus Jakarta Sans", "Poppins", "DejaVu Sans", sans-serif; }
+  .ov { position: absolute; visibility: hidden; }
+  #chip { top: 56px; left: 48px; display: flex; align-items: center; gap: 16px; background: #fff; color: var(--navy); visibility: visible;
+    font-weight: 800; font-size: 36px; padding: 14px 32px 14px 16px; border-radius: 60px; box-shadow: 0 10px 28px rgba(11,42,91,.3); }
+  #chip b { background: var(--navy); color: var(--gold); border-radius: 40px; padding: 6px 18px; font-size: 30px; }
+  #sub { left: 56px; right: 56px; bottom: 250px; background: rgba(255,255,255,.96); color: var(--ink); border-radius: 40px; padding: 26px 38px 30px;
+    font-size: 44px; line-height: 1.3; font-weight: 700; border: 5px solid var(--navy); box-shadow: 0 12px 0 rgba(11,42,91,.25); }
+  #sub .who { display: inline-block; font-size: 28px; font-weight: 800; letter-spacing: .04em; color: #fff; background: var(--navy); border-radius: 30px; padding: 6px 20px; margin-bottom: 10px; }
+  #sub.tasya .who { background: #E2557A; } #sub.boss .who { background: #4B5563; }
+  #sub .w { opacity: .3; } #sub .w.on { opacity: 1; }
+  #title { left: 0; right: 0; top: 640px; text-align: center; }
+  #title .k { display: inline-block; background: var(--gold); color: var(--navy); font-weight: 800; font-size: 40px; padding: 12px 34px; border-radius: 40px; }
+  #title h1 { margin-top: 24px; font-size: 120px; line-height: 1; color: #fff; font-weight: 800; text-shadow: 0 10px 0 var(--navy), 0 20px 40px rgba(0,0,0,.45); }
+  #card { left: 60px; right: 60px; top: 150px; background: #fff; border-radius: 40px; padding: 32px 40px; border: 6px solid var(--navy); box-shadow: 14px 14px 0 var(--gold); }
+  #card .k { font-size: 32px; font-weight: 800; color: #15803D; letter-spacing: .06em; }
+  #card .t { font-size: 64px; line-height: 1.08; font-weight: 800; color: var(--navy); margin-top: 8px; }
+  #card .s { font-size: 40px; font-weight: 700; color: var(--ink); margin-top: 10px; }
+  #tag { left: 20px; right: 20px; top: 150px; text-align: center; }
+  #tag .a { display: block; font-size: 108px; font-weight: 800; color: #fff; line-height: 1; text-shadow: 0 9px 0 var(--navy), 0 22px 44px rgba(0,0,0,.5); }
+  #tag .b { display: block; font-size: 154px; font-weight: 800; color: var(--gold); line-height: 1.05; margin-top: 8px; text-shadow: 0 11px 0 var(--navy), 0 24px 50px rgba(0,0,0,.5); }
+  #end { left: 50px; right: 50px; bottom: 150px; background: var(--navy); color: #fff; border-radius: 40px; padding: 30px 40px; border: 5px solid var(--gold); text-align: center; }
+  #end .t { font-size: 50px; font-weight: 800; color: var(--gold); line-height: 1.1; }
+  #end .ok { display: inline-block; margin-top: 12px; font-size: 32px; font-weight: 800; background: #15803D; color: #fff; padding: 6px 22px; border-radius: 30px; }
+  #end .i { margin-top: 16px; font-size: 34px; font-weight: 700; }
+  #end .h { margin-top: 8px; font-size: 32px; font-weight: 800; color: var(--gold); }
+</style>
+</head>
+<body>
+  <div id="chip" class="ov"><b id="chipN"></b><span id="chipT"></span></div>
+  <div id="sub" class="ov"><span class="who"></span><div class="tx"></div></div>
+  <div id="title" class="ov"><span class="k">🎬 Serial Kartun BHP Medan</span><h1 id="titleT"></h1></div>
+  <div id="card" class="ov"><div class="k">✅ ADA DI BHP</div><div class="t" id="cardT"></div><div class="s" id="cardS"></div></div>
+  <div id="tag" class="ov"><span class="a">Pasti Selalu Ada</span><span class="b">Solusinya!</span></div>
+  <div id="end" class="ov"><div class="t" id="endT"></div><span class="ok">✔ ADA DI BHP</span>
+    <div class="i">Balai Harta Peninggalan Medan · Kementerian Hukum RI</div><div class="h">#PastiSelaluAdaSolusinya</div></div>
+<script>
+const $ = (s) => document.querySelector(s);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const smooth = (x) => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
+const ease = (t, a, b) => smooth((t - a) / (b - a));
+const pulse = (t, a, b, f = .25) => Math.min(ease(t, a, a + f), 1 - ease(t, b - f, b));
+function setOv(el, v, sc = 1, extra = '') { el.style.opacity = v; el.style.transform = `scale(${sc}) ${extra}`; el.style.visibility = v > .01 ? 'visible' : 'hidden'; }
+const NAMES = { tasya: 'TASYA · Gen Z', dinda: 'DINDA · Pegawai BHP', boss: 'PAK KEPALA BHP MEDAN' };
+let D, last = null;
+window.init = (data) => {
+  D = data;
+  $('#chipN').textContent = `TUSI #${D.no}`; $('#chipT').textContent = D.judul; $('#titleT').textContent = D.judul;
+  $('#cardT').textContent = D.tusi; $('#cardS').textContent = D.sub; $('#endT').textContent = D.tusi;
+};
+window.renderAt = (t) => {
+  const seg = D.seg;
+  const j = seg.find((s) => s.judul); setOv($('#title'), j ? pulse(t, j.start, j.start + j.dur, .35) : 0, .85 + .15 * smooth(t / .4));
+  // subtitle: kalimat yang sedang diucapkan (kecuali narator tagline)
+  const s = seg.find((x) => x.text && x.who !== 'narator' && t >= x.vo_start - .05 && t < x.vo_start + x.vo_dur + .3);
+  const b = $('#sub');
+  if (s) {
+    if (last !== s) { last = s; b.className = 'ov ' + s.who; b.querySelector('.who').textContent = NAMES[s.who];
+      b.querySelector('.tx').innerHTML = s.text.split(/\s+/).map((w) => `<span class="w">${w.replace(/</g, '&lt;')}</span>`).join(' '); }
+    const ws = b.querySelectorAll('.w'), pr = clamp((t - s.vo_start) / (s.vo_dur * .92), 0, 1);
+    ws.forEach((w, i) => w.classList.toggle('on', i < Math.ceil(pr * ws.length + .01)));
+    setOv(b, ease(t, s.vo_start - .05, s.vo_start + .12), .94 + .06 * ease(t, s.vo_start - .05, s.vo_start + .15));
+  } else setOv(b, 0);
+  const k = seg.find((x) => x.kartu);
+  setOv($('#card'), k ? pulse(t, k.start + .2, k.start + 3.6, .3) : 0, 1, k ? `translateX(${(1 - ease(t, k.start + .2, k.start + .55)) * -110}%)` : '');
+  const g = seg.find((x) => x.tagline);
+  setOv($('#tag'), g ? ease(t, g.vo_start, g.vo_start + .25) : 0, g ? 1 + (1 - ease(t, g.vo_start, g.vo_start + .35)) * 1.3 : 1);
+  const e = seg.find((x) => x.penutup);
+  setOv($('#end'), e ? ease(t, e.start + e.dur - 3.4, e.start + e.dur - 3.0) : 0, 1, e ? `translateY(${(1 - ease(t, e.start + e.dur - 3.4, e.start + e.dur - 3.0)) * 60}px)` : '');
+};
+window.READY = true;
+</script>
+</body>
+</html>
