@@ -1,0 +1,72 @@
+{
+ "no": 1,
+ "judul": "Hak Waris",
+ "tusi": "Surat Keterangan Hak Waris",
+ "sub": "bisa diurus online 📲",
+ "catatan": "Urutan potongan video. klip = kartun-ai/klip/<nama>.mp4, dari/sampai = detik di klip, vo = rekaman di tiktok-bhp/vo (durasi potongan menyesuaikan suara). Adegan s1/s3/s6 belum ada → sementara diganti potongan klip lain.",
+ "potongan": [
+  {
+   "klip": "ep1-s4",
+   "dari": 0.0,
+   "sampai": 2.2,
+   "dur": 2.2,
+   "judul": true
+  },
+  {
+   "klip": "ep1-s2",
+   "dari": 0.0,
+   "sampai": 8.0,
+   "vo": "tasya-c82707b1",
+   "who": "tasya"
+  },
+  {
+   "klip": "ep1-s5",
+   "dari": 0.0,
+   "sampai": 8.0,
+   "vo": "dinda-eab3880c",
+   "who": "dinda",
+   "ganti": "s3"
+  },
+  {
+   "klip": "ep1-s4",
+   "dari": 2.4,
+   "sampai": 6.3,
+   "vo": "tasya-c6c7d433",
+   "who": "tasya"
+  },
+  {
+   "klip": "ep1-s5",
+   "dari": 2.5,
+   "sampai": 5.6,
+   "vo": "dinda-f50b605c",
+   "who": "dinda"
+  },
+  {
+   "klip": "ep1-s4",
+   "dari": 3.0,
+   "sampai": 8.0,
+   "vo": "tasya-112268d5",
+   "who": "tasya",
+   "ganti": "s6"
+  },
+  {
+   "klip": "ep1-s7",
+   "dari": 0.0,
+   "sampai": 8.0,
+   "vo": "boss-fe79ad37",
+   "who": "boss",
+   "kartu": true
+  },
+  {
+   "klip": "ep1-s8",
+   "dari": 0.0,
+   "sampai": 8.0,
+   "dur": 8.0,
+   "vo": "narator-6661fbd7",
+   "who": "narator",
+   "vo_mulai": 2.8,
+   "tagline": true,
+   "penutup": true
+  }
+ ]
+}
