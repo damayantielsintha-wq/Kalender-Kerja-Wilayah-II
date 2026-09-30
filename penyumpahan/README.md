@@ -1,34 +1,33 @@
-# ⚖️ Dokumen Penyumpahan — Balai Harta Peninggalan Medan
-Pengganti alur AutoCrat di spreadsheet *Dokumen Otomatis (Penetapan Baru)*. Aplikasi **terpisah** dari Kalender Kerja Wilayah II: proyek Google Apps Script, database, folder Drive, dan URL sendiri. Folder ini (`penyumpahan/`) hanya berbagi repositori.
+# Dokumen Penyumpahan BHP Medan — tampilan (UI)
 
-## Dokumen yang dihasilkan (sesuai template *Format FULL Pengampu/Perwalian*)
-1. Surat Permohonan Penyumpahan (dari pemohon)
-2. Surat ke Pengampu / Wali
-3. Surat ke Lurah
-4. Berita Acara Penghadapan (BAP) + Pernyataan — Kurator Keperdataan Ahli Muda
-5. Berita Acara Penyumpahan — Kurator Keperdataan Ahli Madya
-6. Berita Acara Pencatatan/Pendaftaran Harta Kekayaan (Aktiva A–F, Passiva)
+Folder ini hanya berisi **tampilan** aplikasi Dokumen Penyumpahan. Backend (`Code.gs`, `BapSiap.gs`) tetap di proyek Apps Script dan tidak disimpan di repo publik ini karena memuat data pribadi dan kredensial.
 
-## Fitur
-- **Login per admin** dengan username & password aplikasi. **Admin Utama** (Shela Natasha) punya akses penuh: riwayat seluruh perubahan, kelola pengguna (tambah, nonaktifkan, reset password), pengaturan kop/pejabat/lafaz, koneksi SPS, serta hapus/pulihkan berkas. **Admin** bisa membuat & mengubah berkas, upload penetapan, unduh dokumen, dan ambil nomor SPS.
-- **Riwayat permanen** (sheet `Riwayat`): setiap buat/ubah berkas (per kolom: nilai lama → baru), hapus, pulihkan, unduh DOCX, ambil nomor, baca penetapan, login/logout/login gagal, ganti/reset password, perubahan pengaturan dan pengguna — lengkap dengan nama admin dan waktunya. Admin melihat riwayat per berkas; Admin Utama melihat semuanya dengan filter per admin/aksi.
-- **Anti-bentrok**: jika dua admin mengubah berkas yang sama, perubahan yang kalah cepat tidak menimpa, dan admin diberi tahu siapa yang mengubah.
-- **Output Google Docs** (bisa langsung diedit): keenam dokumen di atas — kop dengan logo Pengayoman, Arial, A4, sesuai template BHP. Daftar pejabat & NIP diambil dari sheet *Data Lengkap Pegawai* spreadsheet Dokumen Otomatis (tombol 🔄 di Pengaturan).
-- **Folder Drive rapi**: `Dokumen Penyumpahan BHP Medan / <Tahun> / <Pengampuan|Perwalian> / <NAMA> - <Nomor Penetapan>/`. Dokumen yang dibuat ulang tidak dihapus — versi lama dipindah ke subfolder `Arsip`. Folder otomatis dibagikan (Editor) ke email Google semua admin aktif; admin nonaktif dicabut aksesnya.
-- **Nomor surat dari SPS** (sps.batamen.com, protokol sama dengan skrip SAPA WALI): tombol *Ambil nomor SPS* hanya aktif bila semua isian dokumen lengkap. Nomor diambil **bertanggal hari ini** dengan kode AH.06.03 (pengampuan) / AH.06.02 (perwalian) dan nama admin yang login sebagai pegawai. Autentikasi memakai akun SPS (login otomatis) atau cookie `SPS_COOKIE`; disimpan di Properti Skrip server, tidak terlihat admin lain.
-- **Upload penetapan** (PDF/scan) → isian terisi otomatis. Dengan **AI Gemini** (kunci dari aistudio.google.com/apikey, disimpan di server) hasilnya lebih akurat; hasil AI digabung dengan pembaca teks sebagai cadangan.
-- Impor CSV dari spreadsheet lama.
+| File | Isi |
+|---|---|
+| `app.src.html` | Sumber tampilan (HTML + CSS + JavaScript) yang diedit |
+| `build.py` | Membuat `Index.html`: JavaScript diperkecil (terser), dikompres, lalu dibungkus base64url agar tidak dirusak HtmlService |
+| `Index.html` | Hasil build: **file ini yang ditempel ke proyek Apps Script** |
+| `vendor/inflate.min.js` | Pembuka kompresi (fflate, MIT) |
 
-## Pasang (dilakukan oleh Shela, ±10 menit)
-1. Buka <https://script.google.com> → **Proyek baru**, beri nama *Dokumen Penyumpahan BHP*.
-2. Salin `penyumpahan/Code.gs` ke `Code.gs`; buat file HTML **`Index`** dan salin `Index.html`; tampilkan manifes lalu salin `appsscript.json`.
-3. Di **Layanan (+)** tambahkan **Drive API** (v3) — sudah tercantum di manifes. Pilih fungsi **`setup`** → **Jalankan** → izinkan akses. Buka **Log eksekusi**: berisi link database dan **password sementara** 8 akun (username: `shela`, `annisa`, `elsintha`, `yusril`, `andre`, `fairuz`, `nanang`, `taufik`). Bagikan secara pribadi; semua wajib ganti password saat login pertama.
-4. **Terapkan → Deployment baru → Aplikasi web**: *Jalankan sebagai: Saya*, *Akses: Siapa saja*. Bagikan URL `/exec` ke tim.
-5. Login sebagai `shela` → **👥 Pengguna**: isi email Google tiap admin (akses folder Drive). **⚙ Pengaturan**: cek pejabat, tempel **Gemini API key** lalu *Tes Gemini*, isi username/password **SPS** (atau tempel cookie SPS yang sama dengan skrip SAPA WALI) lalu *Tes koneksi*.
+## Perubahan dibanding versi `damayantielsintha-wq/Kalender-Kerja-Wilayah-II` (ec4746f)
+- **Mode HP**: menu kiri menjadi navigasi bawah (Daftar Berkas, Berkas Baru, Jadwal Sumpah, ☰ Lainnya); menu lain muncul sebagai lembar dari bawah. Bar atas ringkas (judul + tombol 👤 + kotak cari). Saat berkas dibuka, daftar disembunyikan dan ada tombol **← Daftar Berkas**. Input 16px agar iPhone tidak zoom otomatis.
+- **Lebih ringan**: `Index.html` turun dari ±280 KB menjadi ±127 KB (JavaScript diperkecil dan dikompres). Font web tidak dimuat di HP dan tidak lagi menahan tampilan di desktop. Bayangan dimatikan di HP; animasi dimatikan bila HP meminta *reduced motion*.
+- **Dokumen A4 lebih rapi** (DOCX/Google Docs): kalimat penutup ("Demikian …"), tanda tangan Kepala, dan Tembusan selalu tampil bersama (tidak ada tanda tangan atau sebagian tembusan yang tertinggal sendirian di halaman baru); blok Pernyataan + tanda tangan + saksi di BA Penghadapan tidak terpisah; tabel Hari/Tanggal–Pukul–Tempat dan tabel identitas tidak terbelah; judul harta (A–F, AKTIVA, PASSIVA) dan kalimat yang berakhir titik dua selalu ikut isinya. Pratinjau di aplikasi kini memakai margin yang sama dengan dokumen (atas 1 cm, kanan 2 cm, bawah 2,5 cm, kiri 3 cm; kertas A4).
+- **Dokumen yang dibuat**: Surat Antar ke Wali/Pengampu, Surat Antar ke Lurah, Undangan Sumpah (bila sumpah di kantor/Kanwil/Zoom), dan Dokumen Penyumpahan (Permohonan, BAP, BA Sumpah, BA Inventarisasi). *Undangan ke Kepala Desa/Lurah (menyaksikan)* dan *Tanda Terima Berkas* dihapus dari aplikasi.
+- Tampilan desktop tidak berubah.
 
-Database (Spreadsheet) hanya dimiliki akun Shela; admin lain mengakses lewat aplikasi, sehingga riwayat tidak bisa diubah dari luar aplikasi.
+## Pasang sekali: tampilan otomatis dari GitHub (disarankan)
+Ganti `const UI_URL` dan `function doGet()` di `Code.gs` dengan isi `doGet-dari-GitHub.gs`, lalu deploy **Versi baru** sekali. Setelah itu setiap `Index.html` yang di-push ke branch ini aktif sendiri (maks. 10 menit; `…/exec?segar=1` untuk langsung). Bila GitHub tidak bisa dihubungi, aplikasi memakai file `Index` di proyek (`…/exec?ui=lokal` untuk memaksanya).
 
-**Coba tanpa deploy:** buka `Index.html` di browser → mode demo (username `shela`/`annisa`, password `demo`; data di browser saja, tanpa SPS).
+## Cara pasang manual (tanpa GitHub)
+1. Buka `Index.html` versi *raw* dari repo ini, **Ctrl+A → Ctrl+C**.
+2. Di proyek Apps Script *Dokumen Penyumpahan*, buka file **Index**, **Ctrl+A → Ctrl+V**, lalu simpan.
+3. **Terapkan → Kelola deployment → ✏️ Edit → Versi: Versi baru → Terapkan.** URL aplikasi tetap sama.
 
-## Pengembangan
-Sumber tampilan ada di `app.src.html`. Setelah mengubahnya, jalankan `python3 build.py` untuk membuat `Index.html`. Script dibungkus base64url karena Apps Script merusak JavaScript inline modern. `doGet` mengambil `Index.html` langsung dari GitHub, jadi perubahan tampilan tidak perlu deploy ulang.
+## Mengubah tampilan
+Edit `app.src.html`, lalu jalankan `python3 build.py` (butuh Node.js untuk `npx terser`; tanpa itu build tetap jalan, hanya tanpa pengecilan JavaScript). Uji tanpa deploy: buka `Index.html` di browser → mode demo (username `shela`, password `demo`).
+
+## Catatan penggabungan (30 Sep 2026)
+Perubahan dari `shelanatasha44-sudo/Konten-BHP` (branch `ccr-82a96c14-ey9957`) sudah digabung ke repo ini (`penyumpahan/`).
+Apps Script kembali menyajikan file `Index` **lokal** (tanpa mengambil dari GitHub tiap halaman dibuka) supaya aplikasi terbuka dan login lebih cepat.
+Untuk mengubah tampilan: edit `penyumpahan/app.src.html` di repo ini, `python3 build.py`, lalu salin `Index.html` ke proyek Apps Script dan deploy versi baru.

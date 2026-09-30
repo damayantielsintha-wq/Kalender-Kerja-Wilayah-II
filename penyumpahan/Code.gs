@@ -127,10 +127,17 @@ function user_(token) {
     if (ing) { try { const o = JSON.parse(ing); if (o.exp > Date.now()) u = o.u; else PROPS.deleteProperty('ing_' + token); } catch (e) {} }
     if (!u) throw new Error('SESI_HABIS');
   }
-  const p = rows_('Pengguna').filter(function (r) { return r.username === u; })[0];
-  if (!p || p.aktif !== true) throw new Error('SESI_HABIS');
+  /* profil pengguna di-cache 5 menit supaya tiap aksi tidak membaca sheet Pengguna (lebih cepat) */
+  let prof = null;
+  try { prof = JSON.parse(cache.get('usr_' + u) || 'null'); } catch (e) {}
+  if (!prof) {
+    const p = rows_('Pengguna').filter(function (r) { return r.username === u; })[0];
+    if (!p || p.aktif !== true) throw new Error('SESI_HABIS');
+    prof = { username: p.username, nama: p.nama, role: p.role, wajibGanti: p.wajibGanti === true, _row: p._row };
+    cache.put('usr_' + u, JSON.stringify(prof), 300);
+  }
   cache.put('sess_' + token, u, SESSION_JAM * 3600);
-  return { username: p.username, nama: p.nama, role: p.role, wajibGanti: p.wajibGanti === true, _row: p._row };
+  return prof;
 }
 function super_(token) {
   const u = user_(token);
@@ -148,6 +155,7 @@ function apiLogin(username, password, ingat) {
   }
   const token = Utilities.getUuid() + Utilities.getUuid();
   CacheService.getScriptCache().put('sess_' + token, username, SESSION_JAM * 3600);
+  CacheService.getScriptCache().put('usr_' + username, JSON.stringify({ username: p.username, nama: p.nama, role: p.role, wajibGanti: p.wajibGanti === true, _row: p._row }), 300);
   if (ingat) {
     const now = Date.now(), semua = PROPS.getProperties();
     Object.keys(semua).forEach(function (k) { if (k.indexOf('ing_') === 0) { try { if (JSON.parse(semua[k]).exp < now) PROPS.deleteProperty(k); } catch (e) {} } });
@@ -168,6 +176,7 @@ function apiGantiPassword(token, lama, baru) {
   const p = rows_('Pengguna').filter(function (r) { return r.username === u.username; })[0];
   if (hash_(lama, p.salt) !== p.hash) throw new Error('Password lama salah.');
   if (!baru || baru.length < 8) throw new Error('Password baru minimal 8 karakter.');
+  lupakanUser_(u.username);
   const salt = Utilities.getUuid();
   sheet_('Pengguna').getRange(p._row, 4, 1, 4).setValues([[hash_(baru, salt), salt, true, false]]);
   log_(u, 'GANTI_PASSWORD', '', '', '');
@@ -365,7 +374,9 @@ function daftarPengguna_() {
   });
 }
 function apiPengguna(token) { super_(token); return daftarPengguna_(); }
+function lupakanUser_(username) { try { CacheService.getScriptCache().remove('usr_' + username); } catch (e) {} }
 function apiResetPassword(token, username) {
+  lupakanUser_(username);
   const u = super_(token);
   const p = rows_('Pengguna').filter(function (r) { return r.username === username; })[0];
   if (!p) throw new Error('Pengguna tidak ditemukan.');
@@ -375,6 +386,7 @@ function apiResetPassword(token, username) {
   return pwd;
 }
 function apiSimpanPengguna(token, data) {
+  if (data && data.username) lupakanUser_(String(data.username).toLowerCase().trim());
   const u = super_(token);
   const sh = sheet_('Pengguna');
   const username = String(data.username || '').trim().toLowerCase();
@@ -623,7 +635,7 @@ function claude_(content, maxTokens) {
   const res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
     method: 'post', contentType: 'application/json', muteHttpExceptions: true,
     headers: { 'x-api-key': PROPS.getProperty('CLAUDE_KEY'), 'anthropic-version': '2023-06-01' },
-    payload: JSON.stringify({ model: PROPS.getProperty('CLAUDE_MODEL') || CLAUDE_MODEL, max_tokens: maxTokens || 4000, messages: [{ role: 'user', content: content }] }) });
+    payload: JSON.stringify({ model: PROPS.getProperty('CLAUDE_MODEL') || CLAUDE_MODEL, max_tokens: maxTokens || 4000, temperature: 0, messages: [{ role: 'user', content: content }] }) });
   if (res.getResponseCode() !== 200) throw new Error('Claude HTTP ' + res.getResponseCode() + ': ' + res.getContentText().slice(0, 300));
   const j = JSON.parse(res.getContentText());
   if (j.stop_reason === 'refusal') throw new Error('Claude menolak memproses dokumen ini.');
@@ -644,6 +656,13 @@ function apiBacaPenetapanAI(token, b64, mime, prompt) {
     ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } }
     : { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } };
   return jsonDari_(claude_([doc, { type: 'text', text: prompt + '\nBalas HANYA satu objek JSON, tanpa penjelasan.' }], 8000));
+}
+/** Versi cepat: kirim TEKS penetapan (hasil baca PDF di browser), bukan file PDF — jauh lebih cepat & hemat. */
+function apiAnalisaTeks(token, teks, prompt, maxTokens) {
+  user_(token);
+  if (!PROPS.getProperty('CLAUDE_KEY')) return null;
+  teks = String(teks || '').slice(0, 120000);
+  return jsonDari_(claude_([{ type: 'text', text: '<penetapan>\n' + teks + '\n</penetapan>\n\n' + prompt + '\nBalas HANYA satu objek JSON, tanpa penjelasan.' }], maxTokens || 6000));
 }
 function apiTesAI(token) {
   super_(token);
@@ -812,4 +831,74 @@ function apiLiburSimpan(token, libur) {
   setSetting_('libur', (libur || []).filter(function (x) { return x && x.tgl; }).map(function (x) { return { tgl: String(x.tgl), nama: String(x.nama || 'Libur').slice(0, 100) }; }));
   log_(u, 'PENGATURAN', '', '', 'Ubah daftar tanggal merah');
   return settings_().libur;
+}
+
+
+/* ------------------------------------------------------------ cek silang ke SIPP pengadilan */
+/** "Pengadilan Agama Pekanbaru" -> "pa-pekanbaru"; "PN Bangkinang" -> "pn-bangkinang" */
+function sippDomain_(pengadilan, nomor) {
+  let s = String(pengadilan || '').toLowerCase().replace(/kelas\s+\S+/g, '').trim();
+  let jenis = /agama|mahkamah syar/.test(s) ? 'pa' : /negeri/.test(s) ? 'pn' : '';
+  if (!jenis) jenis = /\bPA\b|PA\./.test(String(nomor || '')) ? 'pa' : 'pn';
+  const kota = s.replace(/pengadilan|agama|negeri|mahkamah|syar.iyah|kota|kabupaten|\b(pn|pa)\b/g, ' ').trim().split(/\s+/).join('');
+  return kota ? 'sipp.' + jenis + '-' + kota + '.go.id' : '';
+}
+function teksHtml_(h) { return String(h || '').replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' '); }
+function normNama_(s) { return String(s || '').toUpperCase().replace(/\b(BIN|BINTI|BR\.?|BORU)\b/g, ' ').replace(/[^A-Z ]/g, ' ').replace(/\s+/g, ' ').trim(); }
+/** nama dianggap ada bila semua kata (>=3 huruf) nama muncul di teks SIPP */
+function adaNama_(nama, teksNorm) {
+  const w = normNama_(nama).split(' ').filter(function (x) { return x.length >= 3; });
+  if (!w.length) return null;
+  return w.every(function (x) { return (' ' + teksNorm + ' ').indexOf(' ' + x + ' ') >= 0; });
+}
+function ambilSipp_(dom, nomor) {
+  const base = 'https://' + dom, opt = { muteHttpExceptions: true, followRedirects: true, validateHttpsCertificates: false, headers: { 'User-Agent': 'Mozilla/5.0 (BHP Medan cek perkara)' } };
+  let res = UrlFetchApp.fetch(base + '/list_perkara/search', Object.assign({ method: 'post', payload: { search_keyword: nomor } }, opt));
+  let html = res.getContentText();
+  if (res.getResponseCode() >= 400 || html.indexOf('detil') < 0) {
+    res = UrlFetchApp.fetch(base + '/list_perkara/search?search_keyword=' + encodeURIComponent(nomor), opt);
+    html = res.getContentText();
+  }
+  if (res.getResponseCode() >= 400) throw new Error('SIPP ' + dom + ' HTTP ' + res.getResponseCode());
+  const kunci = nomor.replace(/\s+/g, '').toUpperCase();
+  const links = [], re = /href="([^"]*detil\/[^"]+)"/gi; let m;
+  while ((m = re.exec(html))) links.push(m[1]);
+  if (!links.length) return { cari: teksHtml_(html), detail: '', url: base + '/list_perkara/search', ada: teksHtml_(html).replace(/\s+/g, '').toUpperCase().indexOf(kunci) >= 0 };
+  const u = /^https?:/.test(links[0]) ? links[0] : base + '/' + links[0].replace(/^\//, '');
+  const d = UrlFetchApp.fetch(u, opt);
+  return { cari: teksHtml_(html), detail: teksHtml_(d.getContentText()), url: u, ada: true };
+}
+/** Cek silang nama pemohon & anak/terampu satu berkas dengan data perkara di SIPP pengadilan terkait. */
+function cekSippRec_(d) {
+  const nomor = String(d.nomorPenetapan || '').trim();
+  if (!nomor) return { status: 'lewat', pesan: 'Nomor penetapan kosong' };
+  const dom = (d.sippDomain || '').trim() || sippDomain_(d.pengadilan, nomor);
+  if (!dom) return { status: 'lewat', pesan: 'Nama pengadilan tidak dikenali' };
+  const cache = CacheService.getScriptCache(), ck = 'sipp_' + Utilities.base64EncodeWebSafe(dom + nomor).slice(0, 200);
+  let s = null;
+  try { s = JSON.parse(cache.get(ck) || 'null'); } catch (e) {}
+  if (!s) { s = ambilSipp_(dom, nomor); try { cache.put(ck, JSON.stringify({ cari: s.cari.slice(0, 40000), detail: s.detail.slice(0, 50000), url: s.url, ada: s.ada }), 21600); } catch (e) {} }
+  if (!s.ada) return { status: 'tidak_ada', domain: dom, url: s.url, pesan: 'Nomor perkara tidak ditemukan di SIPP ' + dom };
+  const T = normNama_(s.cari + ' ' + s.detail);
+  const nama = [];
+  if (d.nama) nama.push({ peran: 'Pemohon', nama: d.nama });
+  if (d.jenis === 'Perwalian') (d.anak || []).forEach(function (a) { if (a && a.nama) nama.push({ peran: 'Anak', nama: a.nama }); });
+  else if (d.terampu && d.terampu.nama) nama.push({ peran: 'Terampu', nama: d.terampu.nama });
+  const hasil = nama.map(function (x) { return { peran: x.peran, nama: x.nama, ada: adaNama_(x.nama, T) }; });
+  const tidak = hasil.filter(function (x) { return x.ada === false; });
+  return { status: tidak.length ? 'beda' : 'cocok', domain: dom, url: s.url, hasil: hasil, disamarkan: /\bANAK\s*[0-9I]+\b|\bPEMOHON\b.*\bANAK\b/.test(T) && tidak.length > 0 };
+}
+function apiCekSipp(token, ids) {
+  const u = user_(token);
+  const semua = berkas_(false), pilih = ids && ids.length ? semua.filter(function (d) { return ids.indexOf(d.id) >= 0; }) : semua;
+  const mulai = Date.now(), out = [];
+  pilih.forEach(function (d) {
+    if (Date.now() - mulai > 240000) { out.push({ id: d.id, nama: d.nama, nomor: d.nomorPenetapan, status: 'lewat', pesan: 'Waktu habis — jalankan lagi' }); return; }
+    let r;
+    try { r = cekSippRec_(d); } catch (e) { r = { status: 'gagal', pesan: String(e.message || e).slice(0, 200) }; }
+    r.id = d.id; r.nama = d.nama; r.nomor = d.nomorPenetapan; r.pengadilan = d.pengadilan;
+    out.push(r);
+  });
+  log_(u, 'CEK_SIPP', '', '', pilih.length + ' berkas dicek ke SIPP');
+  return out;
 }

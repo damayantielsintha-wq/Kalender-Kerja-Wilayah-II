@@ -221,6 +221,7 @@ html,body{max-width:100%;overflow-x:hidden}
   <div class="sec">PENYUMPAHAN</div>
   <a class="nav" data-v="baru" onclick="wizard(1)"><i>📑</i> <span>Berkas Baru</span></a>
   <a class="nav" data-v="kalender" onclick="bukaKalender()"><i>📅</i> <span>Jadwal Sumpah</span></a>
+  <a class="nav" data-v="sipp" onclick="bukaSipp()"><i>🔎</i> <span>Cek SIPP</span></a>
   <a class="nav superOnly" onclick="imporSheetDlg()"><i>📥</i> <span>Impor dari Spreadsheet</span></a>
   <label class="nav" data-v="csv"><i>⬆</i> <span>Impor CSV</span><input type="file" accept=".csv" hidden onchange="importCsv(this)"></label>
   <div class="sec superOnly">ADMIN UTAMA</div>
@@ -529,12 +530,13 @@ FORMAT WAJIB:
 - Bahasa Indonesia baku gaya berita acara resmi; kalimat padat, jelas, tidak berulang.
 - HANYA fakta yang tertulis di penetapan. Jangan mengarang nomor, tanggal, nama, atau aset.
 Balas satu objek JSON: {"isiBap":["baris 1","baris 2", "..."]}`;
-async function bapDariPenetapan(file){const b64=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(file)});
-  const d=await api('apiBacaPenetapanAI',b64,file.type||'application/pdf',PROMPT_BAP);const l=d&&(Array.isArray(d.isiBap)?d.isiBap:String(d.isiBap||'').split('\n'));
+async function bapDariPenetapan(file,teks){const b64=teks?'':await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(file)});
+  const d=teks?await api('apiAnalisaTeks',teks,PROMPT_BAP,6000):await api('apiBacaPenetapanAI',b64,file.type||'application/pdf',PROMPT_BAP);const l=d&&(Array.isArray(d.isiBap)?d.isiBap:String(d.isiBap||'').split('\n'));
   const t=(l||[]).map(x=>String(x).trim()).filter(Boolean).map(x=>x.replace(/^(-{0,2})\s*(?:\d+[.)]|[a-z][.)])\s+/i,'$1 ').replace(/^ /,'')).join('\n');if(!t)throw new Error('AI tidak menghasilkan isi BAP');return t}
 async function susunBapAI(inp){const f=inp.files[0];inp.value='';if(!f)return;if(cur.isiBap&&!confirm('Ganti isi BAP sekarang dengan susunan AI dari penetapan?'))return;
   toast('Claude sedang membaca penetapan & menyusun BAP… (±30–60 detik)');const lb=inp.closest('label');if(lb)lb.style.opacity=.5;
-  try{cur.isiBap=await bapDariPenetapan(f);save();renderMain();toast('Isi BAP disusun dari penetapan — periksa sebelum mencetak');api('apiCatat','BACA_PENETAPAN',cur.id,cur.nama,'Isi BAP disusun AI dari '+f.name).catch(()=>{})}
+  try{let tk='';try{if(!f.type.startsWith('image/'))tk=bersihTeks(await fileText(f,true))}catch(e){}
+    cur.isiBap=await bapDariPenetapan(f,tk.replace(/\s/g,'').length>1500?tk:null);save();renderMain();toast('Isi BAP disusun dari penetapan — periksa sebelum mencetak');api('apiCatat','BACA_PENETAPAN',cur.id,cur.nama,'Isi BAP disusun AI dari '+f.name).catch(()=>{})}
   catch(e){alert('Gagal menyusun BAP: '+(e.message||e));if(lb)lb.style.opacity=1}}
 function susunBap(){if(cur.isiBap&&!confirm('Ganti isi BAP sekarang dengan susunan otomatis dari data berkas?'))return;cur.isiBap=buatBap(cur);save();renderMain();toast('Isi BAP disusun ulang')}
 function bapList(t,r){const c=[0,0,0];return baris(t).map(x=>{const m=x.match(/^(-{1,2})\s*(.*)$/),lv=m?m[1].length:0,tx=m?m[2]:x;c[lv]++;for(let i=lv+1;i<3;i++)c[i]=0;const tx2=lv?tx.charAt(0).toUpperCase()+tx.slice(1):tx;
@@ -849,10 +851,10 @@ function renderMain(){
   const TABS={umum:'1. Perkara',pihak:`2. ${d.J}`,objek:`3. ${w?'Anak':'Terampu'}`,jadwal:'4. Jadwal & Pejabat',harta:'5. BAP & Harta',dok:'📄 Dokumen',riw:'🕘 Riwayat'};
   let h=`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><div class="seg">${['Pengampuan','Perwalian'].map(j=>`<button class="${cur.jenis===j?'on':''}" onclick="setv('jenis','${j}')">${j}</button>`).join('')}</div>
   <span style="margin-right:auto"><span class="hint" id="stat">✓ Tersimpan</span><br><span class="meta">${cur._meta?`Dibuat ${esc(cur._meta.dibuatOleh||'')} · diubah terakhir oleh <b>${esc(cur._meta.diubahOleh||'')}</b>, ${wkt(cur._meta.diubahPada)}`:''}</span></span>
-  <button onclick="screenshot('#main',cur.nama)" title="Simpan tampilan ini sebagai gambar PNG">📸 Screenshot</button><button onclick="dupRec()">⧉ Duplikat</button>${isSuper()?(cur._dihapus?'<button onclick="restoreRec()">♻️ Pulihkan</button>':'<button onclick="delRec()" style="color:var(--warn)">🗑 Hapus</button>'):''}</div>
+  <button onclick="cekSippBerkas()" title="Cocokkan nama dengan SIPP pengadilan">🔎 SIPP</button><button onclick="screenshot('#main',cur.nama)" title="Simpan tampilan ini sebagai gambar PNG">📸 Screenshot</button><button onclick="dupRec()">⧉ Duplikat</button>${isSuper()?(cur._dihapus?'<button onclick="restoreRec()">♻️ Pulihkan</button>':'<button onclick="delRec()" style="color:var(--warn)">🗑 Hapus</button>'):''}</div>
   ${bannerKelayakan(cur)}${cekBar(CL)}<div class="steps">${Object.entries(TABS).map(([k,v])=>{const q=CL.filter(x=>x.tab===k),e=q.some(x=>x.lvl==='e');return`<button class="${tab===k?'on':''}" onclick="tab='${k}';renderMain()">${v}${q.length?`<span class="dot ${e?'':'w'}">${q.length}</span>`:''}</button>`}).join('')}</div><div class="grid">`;
   const pjOpt=v=>{const c=pjCari(v).nama;return SET.pejabat.map(p=>`<option ${p.nama===c?'selected':''} value="${esc(p.nama)}">${esc(p.nama||'(isi di Pengaturan)')} — ${esc(p.jabatan||'')}</option>`).join('')};
-  if(tab==='umum')h+=`<div class="full"><label class="btn" style="display:inline-block;margin:0;color:var(--ink)">📑 Isi otomatis dari PDF Penetapan<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this,true)"></label></div>`+F('pengadilan','Pengadilan')+F('nomorPenetapan','Nomor Penetapan')+F('tglPenetapan','Tanggal Penetapan','date')+F('tanggalSurat','Tanggal Surat','date')+
+  if(tab==='umum')h+=`<div class="full"><label class="btn" style="display:inline-block;margin:0;color:var(--ink)">📑 Isi otomatis dari PDF Penetapan<input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this,true)"></label></div>`+F('pengadilan','Pengadilan')+F('nomorPenetapan','Nomor Penetapan')+F('sippDomain',`Alamat SIPP (kosong = otomatis: ${esc(sippDom(cur)||'-')})`)+F('tglPenetapan','Tanggal Penetapan','date')+F('tanggalSurat','Tanggal Surat','date')+
     F('nomorSurat',`Nomor Surat ke ${d.J} (otomatis dari SPS)`)+F('nomorLurah','Nomor Surat ke Lurah (otomatis dari SPS)')+F('nomorBAP','Nomor BAP (diisi petugas di hari H; kosong = awalan saja)')+F('nomorBA','Nomor BA Sumpah (diisi petugas di hari H)')+F('nomorBAHarta','Nomor BA Inventarisasi (diisi petugas di hari H)');
   if(tab==='pihak')h+=F('nama',`Nama ${d.J}`)+F('nik','NIK')+F('jk','Jenis Kelamin','select',['Laki-laki','Perempuan'])+F('tglLahir','Tanggal Lahir','date')+
     `<div><label>Usia (otomatis)</label><input disabled value="${usia(cur.tglLahir,cur.tglSumpah)}"></div>`+F('agama','Agama','select',Object.keys(SET.lafaz))+F('pekerjaan','Pekerjaan')+
@@ -1120,6 +1122,33 @@ async function simpanLibur(b){const L=$('#lbTxt').value.split('\n').map(x=>x.tri
   b.disabled=true;try{SET.libur=GAS?await api('apiLiburSimpan',L):L;dlgClose();renderKalender();toast(L.length+' tanggal merah disimpan')}catch(e){b.disabled=false;toast(e.message||String(e))}}
 function jadwalkan(id){const r=DB.find(x=>x.id===id);if(!r)return;if(!HARI_KERJA(KAL.sel)){toast('⚠ '+(libur(KAL.sel)||hari(KAL.sel)+' bukan hari kerja')+' — pilih tanggal lain');return}
   cur=r;r.tglSumpah=KAL.sel;save();api('apiCatat','JADWAL',r.id,r.nama,'Dijadwalkan sumpah '+tgl(KAL.sel)).catch(()=>{});renderList();renderKalender();toast('📅 '+r.nama+' dijadwalkan '+tgl(KAL.sel))}
+/* ---------------- cek silang ke SIPP pengadilan ---------------- */
+const SIPP={hasil:{},jalan:false,filter:'masalah'};
+function sippDom(r){if(r.sippDomain)return r.sippDomain;let s=String(r.pengadilan||'').toLowerCase().replace(/kelas\s+\S+/g,'');const j=/agama|syar/.test(s)?'pa':/negeri/.test(s)?'pn':(/\bPA\b|PA\./.test(r.nomorPenetapan||'')?'pa':'pn');
+  const k=s.replace(/pengadilan|agama|negeri|mahkamah|syar.iyah|kota|kabupaten|\b(pn|pa)\b/g,' ').trim().split(/\s+/).join('');return k?`sipp.${j}-${k}.go.id`:''}
+const SIPP_LBL={cocok:['✅','Cocok','#0b6b48'],beda:['⚠️','Nama tidak ada di SIPP','#b45309'],tidak_ada:['❓','Perkara tidak ditemukan','#b91c1c'],gagal:['⛔','Gagal menghubungi SIPP','#b91c1c'],lewat:['➖','Dilewati','var(--mut)']};
+function sippBaris(x){const L=SIPP_LBL[x.status]||SIPP_LBL.lewat,tdk=(x.hasil||[]).filter(h=>h.ada===false);
+  return`<tr><td><a onclick="pick('${x.id}')" style="cursor:pointer;font-weight:700">${esc(x.nama||'')}</a><br><small class="hint">${esc(x.nomor||'')}</small></td><td><small>${esc(x.pengadilan||'')}</small></td>
+  <td style="color:${L[2]}">${L[0]} <b>${L[1]}</b>${tdk.length?`<br><small>Tidak ada di SIPP: ${tdk.map(h=>`<b>${esc(h.nama)}</b> (${esc(h.peran)})`).join(', ')}</small>`:''}${x.disamarkan?'<br><small class="hint">Nama di SIPP tampaknya disamarkan — cek manual</small>':''}${x.pesan?`<br><small class="hint">${esc(x.pesan)}</small>`:''}</td>
+  <td>${x.url?`<a href="${esc(x.url)}" target="_blank" rel="noopener">SIPP ↗</a>`:''}</td></tr>`}
+function bukaSipp(){WZ.on=false;if(cur){clearTimeout(saveT);flush()}setNav('sipp','Cek SIPP');$('.wrap').classList.add('wzmode');renderSipp()}
+function renderSipp(){const B=DB.filter(r=>!r._dihapus&&r.nomorPenetapan),H=Object.values(SIPP.hasil),F=SIPP.filter;
+  const tampil=H.filter(x=>F==='semua'||(F==='masalah'?x.status!=='cocok':x.status===F));const n=k=>H.filter(x=>x.status===k).length;
+  $('#main').innerHTML=`<div style="padding:6px 4px"><h3 style="margin:0 0 4px">🔎 Cek silang nama dengan SIPP pengadilan</h3>
+  <p class="hint" style="margin:0 0 12px">Aplikasi membuka SIPP pengadilan terkait (mis. <i>sipp.pa-pekanbaru.go.id</i>) berdasarkan nomor penetapan, lalu mencocokkan nama pemohon dan anak/terampu. Nama yang disamarkan di SIPP (mis. "ANAK 1") akan terlihat tidak cocok — cek manual lewat tautan SIPP.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px"><button class="pri" id="sippBtn" onclick="jalankanSipp()" ${SIPP.jalan?'disabled':''}>${SIPP.jalan?'Sedang memeriksa…':`▶ Periksa ${B.length} berkas`}</button>
+  <select onchange="SIPP.filter=this.value;renderSipp()" style="width:auto">${[['masalah','Hanya yang bermasalah'],['semua','Semua hasil'],['beda','Nama tidak ada di SIPP'],['tidak_ada','Perkara tidak ditemukan'],['gagal','Gagal'],['cocok','Cocok']].map(([v,l])=>`<option value="${v}" ${v===F?'selected':''}>${l}</option>`).join('')}</select>
+  <span class="hint" id="sippProg">${H.length?`✅ ${n('cocok')} cocok · ⚠️ ${n('beda')} nama beda · ❓ ${n('tidak_ada')} tidak ditemukan · ⛔ ${n('gagal')} gagal`:''}</span></div>
+  ${H.length?`<div style="overflow-x:auto"><table class="tbl" style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th align="left">Pemohon / Nomor</th><th align="left">Pengadilan</th><th align="left">Hasil</th><th></th></tr></thead><tbody>${tampil.map(sippBaris).join('')||'<tr><td colspan="4" class="hint">Tidak ada data untuk filter ini.</td></tr>'}</tbody></table></div>`:'<p class="hint">Belum diperiksa. Klik tombol di atas.</p>'}</div>`;
+  $('#main').querySelectorAll('.tbl td,.tbl th').forEach(e=>{e.style.padding='8px 6px';e.style.borderBottom='1px solid var(--line)';e.style.verticalAlign='top'})}
+async function jalankanSipp(ids){if(!GAS){toast('Cek SIPP hanya bisa di aplikasi online');return}if(SIPP.jalan)return;
+  const semua=ids||DB.filter(r=>!r._dihapus&&r.nomorPenetapan).map(r=>r.id);SIPP.jalan=true;if(!ids)renderSipp();let sel=0;
+  try{for(let i=0;i<semua.length;i+=4){const pk=semua.slice(i,i+4);const p=$('#sippProg');if(p&&!ids)p.textContent=`Memeriksa ${Math.min(i+4,semua.length)}/${semua.length}…`;
+      try{(await api('apiCekSipp',pk)).forEach(x=>{SIPP.hasil[x.id]=x})}catch(e){pk.forEach(id=>{const r=DB.find(x=>x.id===id)||{};SIPP.hasil[id]={id,nama:r.nama,nomor:r.nomorPenetapan,pengadilan:r.pengadilan,status:'gagal',pesan:e.message||String(e)}})}
+      sel+=pk.length;if(!ids&&$('#sippBtn'))renderSipp()}}
+  finally{SIPP.jalan=false}if(!ids)renderSipp();return semua.map(id=>SIPP.hasil[id])}
+async function cekSippBerkas(){if(!cur)return;clearTimeout(saveT);await flush();toast('Menghubungi SIPP '+(sippDom(cur)||'')+'…');
+  const x=(await jalankanSipp([cur.id]))[0];if(!x)return;dlg(`<h3>🔎 Hasil cek SIPP</h3><table style="width:100%">${sippBaris(x)}</table>${(x.hasil||[]).length?`<ul class="ceklist" style="margin-top:10px">${x.hasil.map(h=>`<li><span class="ic ${h.ada===false?'e':'w'}" style="${h.ada?'background:#0f9d6b':''}">${h.ada?'✓':h.ada===false?'✕':'?'}</span><span>${esc(h.nama)} <small class="hint">(${esc(h.peran)})</small></span></li>`).join('')}</ul>`:''}<p style="text-align:right;margin-top:12px"><button onclick="dlgClose()">Tutup</button></p>`)}
 function exportCsv(){const H=['Jenis','Nama','NIK','Jenis_Kelamin','Tanggal_Lahir','Agama','Pekerjaan','Alamat','Kel_Kec_Kota','Status','Objek','Nomor_Penetapan','Tanggal_Penetapan','Tanggal_Sumpah','Nomor_Surat','Nomor_Surat_Lurah','Nomor_BA'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   const t=[H.join(',')].concat(DB.map(r=>[r.jenis,r.nama,r.nik,r.jk,tgl(r.tglLahir),r.agama,r.pekerjaan,r.alamat,r.kelurahan,r.status,derive(r).objek,r.nomorPenetapan,tgl(r.tglPenetapan),tgl(r.tglSumpah),r.nomorSurat,r.nomorLurah,r.nomorBA].map(q).join(','))).join('\n');
@@ -1133,25 +1162,45 @@ let penFill=false;
 function uploadPenetapan(inp,fill){penFill=!!fill;const f=inp.files[0];inp.value='';if(f)handlePenetapan(f)}
 function busy(t){if(WZ.on){const d=$('#wzDrop');if(d)d.innerHTML=`<div class="spin"></div><b id="penStat">${t}</b><small>Mohon tunggu, dokumen sedang dibaca…</small>`;return}$('#penBody').innerHTML=`<div style="text-align:center;padding:30px"><div style="font-size:32px">⏳</div><b id="penStat">${t}</b><p class="hint">Dokumen diproses di browser Anda.</p></div>`;if(!$('#penDlg').open)$('#penDlg').showModal()}
 const stat=t=>{const e=$('#penStat');if(e)e.textContent=t};
+/* teks penetapan tanpa kop/disclaimer Direktori Putusan MA yang berulang tiap halaman (lebih cepat & fokus untuk AI) */
+function bersihTeks(t){return String(t||'').replace(/Mahkamah Agu[\s\S]{0,160}?epublik Indonesia/g,' ').replace(/Disclaimer Kepaniteraan[\s\S]*?Halaman \d+/g,' ')
+  .replace(/Direktori Putusan Mahkamah Agung Republik Indonesia\s*putusan\.mahkamahagung\.go\.id/g,' ').replace(/^\s*Hal(aman)?\.? *\d+ dari \d+.*$/gmi,' ').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim()}
+const normN=x=>' '+String(x||'').toUpperCase().replace(/\b(BIN|BINTI|BR)\b\.?/g,' ').replace(/[^A-Z0-9 ]/g,' ').replace(/\s+/g,' ').trim()+' ';
+/* cek silang hasil AI dengan teks asli penetapan: nama & tanggal harus benar-benar tertulis */
+function verifikasiTeks(d,t){const w=[];if(!t||t.replace(/\s/g,'').length<500)return w;const T=normN(t),TU=String(t).toUpperCase().replace(/\s+/g,' ');
+  const nm=(n,peran)=>{const ws=normN(n).trim().split(' ').filter(x=>x.length>=3);if(ws.length&&!ws.every(x=>T.includes(' '+x+' ')))w.push(`${peran} "${n}" tidak ditemukan persis di teks penetapan — periksa ejaan (di penetapan mungkin disamarkan)`)};
+  const tg=(v,lbl)=>{const d=pd(v);if(!d)return;const a=[`${d.getDate()} ${BLN[d.getMonth()]} ${d.getFullYear()}`,`${String(d.getDate()).padStart(2,'0')} ${BLN[d.getMonth()]} ${d.getFullYear()}`,`${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`,`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`].map(x=>x.toUpperCase());
+    if(!a.some(x=>TU.includes(x))&&!TU.includes(BLN[d.getMonth()].toUpperCase().slice(0,3)+' '+d.getFullYear()))w.push(`${lbl} ${tgl(v)} tidak ditemukan di teks penetapan — periksa`)};
+  if(d.nama)nm(d.nama,'Nama pemohon');(d.anak||[]).forEach(a=>{if(a&&a.nama){nm(a.nama,'Nama anak');tg(a.tglLahir,'Tanggal lahir '+a.nama)}});
+  if(d.terampu&&d.terampu.nama)nm(d.terampu.nama,'Nama terampu');tg(d.tglPenetapan,'Tanggal penetapan');
+  if(d.nomorPenetapan){const k=String(d.nomorPenetapan).replace(/\s/g,'').toUpperCase().split('/')[0];if(!TU.replace(/\s/g,'').includes(k+'/PDT'))w.push(`Nomor penetapan ${d.nomorPenetapan} tidak ditemukan di teks — periksa`)}
+  return w}
 async function handlePenetapan(file){
   if(!file)return;busy('Membaca '+file.name+'…');
   try{
-    let data;
-    if(ADA_AI){stat('Menganalisis dengan AI Claude (data + isi BAP)…');const pb=bapDariPenetapan(file).catch(e=>{console.warn(e);return ''});try{data=await aiExtract(file)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}stat('Menyusun isi BAP…');const bt=await pb;if(data&&bt)data.isiBap=bt}
-    let rx=null;const cukup=data&&data.nama&&(data.nomorPenetapan||data.tglPenetapan);
-    if(!cukup)try{const text=await fileText(file);if(text.replace(/\s/g,'').length>=80){rx=parsePenetapan(text);rx._text=text}}catch(e){if(!data)throw e}
+    let data,teks='';const t0=Date.now();
+    if(!file.type.startsWith('image/'))try{teks=await fileText(file,true)}catch(e){console.warn(e)}
+    const bersih=bersihTeks(teks),adaTeks=bersih.replace(/\s/g,'').length>1500;
+    if(ADA_AI){stat(adaTeks?'AI Claude membaca teks penetapan (cepat)…':'AI Claude membaca scan penetapan…');const kirim=adaTeks?bersih:null;
+      const pb=bapDariPenetapan(file,kirim).catch(e=>{console.warn(e);return ''});
+      try{data=await aiExtract(file,kirim)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}
+      stat('Menyusun isi BAP…');const bt=await pb;if(data&&bt)data.isiBap=bt}
+    let rx=null;
+    if(teks.replace(/\s/g,'').length>=80){rx=parsePenetapan(teks);rx._text=teks}
+    else if(!(data&&data.nama)){try{const t=await fileText(file);if(t.replace(/\s/g,'').length>=80){teks=t;rx=parsePenetapan(t);rx._text=t}}catch(e){if(!data)throw e}}
     if(data&&rx)data=gabung(data,rx);else data=data||rx;if(!data)throw new Error('Teks tidak terbaca dari file.');
+    data._cek=verifikasiTeks(data,teks);data._detik=Math.round((Date.now()-t0)/1000);
     if(WZ.on){if(!WZ.pilih||!data.jenis)data.jenis=data.jenis||WZ.jenis;if(WZ.pilih)data.jenis=WZ.jenis;WZ.data=data;wizard(2);return}
     reviewPenetapan(data,file.name);
   }catch(e){if(WZ.on){const d=$('#wzDrop');if(d)d.innerHTML=`<div class="ic">⚠️</div><b>Gagal membaca: ${esc(e.message)}</b><small>Klik untuk mencoba file lain, atau isi manual.</small><input type="file" accept=".pdf,image/*" hidden onchange="uploadPenetapan(this)">`;return}$('#penBody').innerHTML=`<h3>Gagal membaca penetapan</h3><p>${esc(e.message)}</p><p class="hint">Coba file PDF asli (bukan foto miring/buram), atau isi kunci AI di Pengaturan.</p><p style="text-align:right"><button onclick="penDlg.close()">Tutup</button></p>`}
 }
-async function fileText(file){
-  if(file.type.startsWith('image/'))return ocr([file]);
+async function fileText(file,tanpaOcr){
+  if(file.type.startsWith('image/'))return tanpaOcr?'':ocr([file]);
   await loadJs(PDFJS);pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS.replace('pdf.min.js','pdf.worker.min.js');
   const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;let out='';
   for(let i=1;i<=pdf.numPages;i++){stat(`Membaca halaman ${i}/${pdf.numPages}…`);const c=await(await pdf.getPage(i)).getTextContent();
     let y=null;c.items.forEach(it=>{const ny=it.transform[5];out+=(y!==null&&Math.abs(ny-y)>3?'\n':' ')+it.str;y=ny});out+='\n'}
-  if(out.replace(/\s/g,'').length>200){pdf.destroy();return out}
+  if(out.replace(/\s/g,'').length>200||tanpaOcr){pdf.destroy();return out}
   /* scan: OCR halaman demi halaman supaya hemat memori (HP) */
   const HP=matchMedia('(max-width:900px)').matches||/Android|iPhone|iPad/i.test(navigator.userAgent);
   const maks=Math.min(pdf.numPages,HP?8:20),skala=HP?1.4:2;
@@ -1235,8 +1284,8 @@ function normAI(d){if(Array.isArray(d))d=d[0]||{};d=d||{};
   for(const k of ['nama','nik','jk','tglLahir','agama','pekerjaan','alamat','kelurahan','status','pengadilan','nomorPenetapan','tglPenetapan'])if(d[k]!=null&&typeof d[k]!=='string')d[k]=String(d[k]);
   if(d.nama)d.nama=d.nama.toUpperCase();if(/^(laki|pria)/i.test(d.jk||''))d.jk='Laki-laki';else if(/^(perem|wanita)/i.test(d.jk||''))d.jk='Perempuan';
   if(d.jenis&&!/^(Pengampuan|Perwalian)$/.test(d.jenis))d.jenis=/wali/i.test(d.jenis)?'Perwalian':'Pengampuan';return d}
-async function aiExtract(file){
-  const b64=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(file)});
+async function aiExtract(file,teks){
+  const b64=teks?'':await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(file)});
   const prompt=`Anda asisten Balai Harta Peninggalan (BHP) Medan. Baca seluruh PENETAPAN PENGADILAN terlampir (perwalian anak atau pengampuan orang dewasa) dengan teliti, termasuk bagian duduk perkara, keterangan saksi, pertimbangan hukum, dan amar.
 Data WALI/PENGAMPU = PEMOHON (identitas di halaman pertama setelah "diajukan oleh"/"Pemohon:"). Jangan ambil kuasa hukum, hakim, panitera, atau saksi sebagai pemohon.
 ATURAN KETAT: hanya isi data yang benar-benar tertulis di dokumen; bila tidak ada, isi string kosong. Jangan mengarang atau menebak. Semua tanggal format YYYY-MM-DD. Nama orang HURUF KAPITAL tanpa gelar sapaan.
@@ -1254,13 +1303,13 @@ Balas satu objek JSON dengan kunci:
 "orangTuaHidup": true HANYA bila menurut penetapan ayah DAN ibu kandung anak keduanya masih hidup (tidak ada yang meninggal dunia); false bila salah satu/keduanya telah meninggal. "terkaitMiliter": isi singkat bila pemohon ATAU orang tua anak yang meninggal adalah anggota TNI/Polri atau permohonan terkait ASABRI/dinas militer/kepolisian (mis. "almarhum anggota TNI AD, untuk pencairan ASABRI"); kosongkan bila tidak. Jangan anggap SKCK (Surat Keterangan Catatan Kepolisian) sebagai keterkaitan kepolisian.
 Untuk Perwalian: "anak" berisi SEMUA anak pemohon yang disebut dalam penetapan beserta tanggal lahirnya; "diwalikan" true hanya untuk anak yang ditetapkan di bawah perwalian pemohon dalam amar (anak di bawah umur), false untuk anak yang sudah dewasa/tidak termasuk amar. Kosongkan "terampu".
 Untuk Pengampuan: isi "terampu", kosongkan "anak" dan data pasangan kecuali relevan.`;
-  const d=await api('apiBacaPenetapanAI',b64,file.type||'application/pdf',prompt);if(!d)throw new Error('AI Claude belum aktif');const n=normAI(d);n._ai=true;return n}
+  const d=teks?await api('apiAnalisaTeks',teks,prompt,4000):await api('apiBacaPenetapanAI',b64,file.type||'application/pdf',prompt);if(!d)throw new Error('AI Claude belum aktif');const n=normAI(d);n._ai=true;return n}
 
 const PEN_LBL={jenis:'Jenis',pengadilan:'Pengadilan',nomorPenetapan:'Nomor Penetapan',tglPenetapan:'Tanggal Penetapan',nama:'Nama Pemohon (Wali/Pengampu)',nik:'NIK',jk:'Jenis Kelamin',tglLahir:'Tanggal Lahir',agama:'Agama',pekerjaan:'Pekerjaan',alamat:'Alamat',kelurahan:'Kelurahan/Kec/Kota',status:'Hubungan'};
 let PEN=null;
-function reviewHtml(d){PEN=d;const w=d.jenis==='Perwalian';
+function reviewHtml(d){PEN=d;const w=d.jenis==='Perwalian';const cekT=(d._cek||[]).length?`<div style="border:1.5px solid #f6c343;background:#fff6db;color:#6b4e00;border-radius:12px;padding:10px 14px;margin:0 0 10px"><b>🔎 Cek silang dengan teks penetapan</b><ul style="margin:6px 0 0;padding-left:18px">${d._cek.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:(d._ai&&d._text?`<p class="hint" style="color:#0b6b48">✅ Nama & tanggal hasil AI cocok dengan teks penetapan${d._detik?` · selesai ${d._detik} detik`:''}</p>`:'');
   const row=(k,lbl,v,type='text')=>`<div><label>${lbl}</label><input type="${type}" value="${esc(v||'')}" data-pk="${k}" style="${v?'':'background:#fff6db;border-color:#f6c343'}"></div>`;
-  let h=`<div class="grid">`;
+  let h=cekT+`<div class="grid">`;
   h+=`<div><label>Jenis</label><select data-pk="jenis">${['Pengampuan','Perwalian'].map(j=>`<option ${j===d.jenis?'selected':''}>${j}</option>`).join('')}</select></div>`;
   ['pengadilan','nomorPenetapan','tglPenetapan','nama','nik','jk','tglLahir','agama','pekerjaan','status'].forEach(k=>h+=row(k,PEN_LBL[k],d[k],/^tgl/.test(k)?'date':'text'));
   h+=`<div class="full">${row('alamat','Alamat',d.alamat)}</div><div class="full">${row('kelurahan','Kelurahan, Kecamatan, Kota',d.kelurahan)}</div>`;
