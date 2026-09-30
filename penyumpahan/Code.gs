@@ -911,20 +911,40 @@ function adaNama_(nama, teksNorm) {
 }
 function ambilSipp_(dom, nomor) {
   const base = 'https://' + dom, opt = { muteHttpExceptions: true, followRedirects: true, validateHttpsCertificates: false, headers: { 'User-Agent': 'Mozilla/5.0 (BHP Medan cek perkara)' } };
-  let res = UrlFetchApp.fetch(base + '/list_perkara/search', Object.assign({ method: 'post', payload: { search_keyword: nomor } }, opt));
-  let html = res.getContentText();
-  if (res.getResponseCode() >= 400 || html.indexOf('detil') < 0) {
-    res = UrlFetchApp.fetch(base + '/list_perkara/search?search_keyword=' + encodeURIComponent(nomor), opt);
-    html = res.getContentText();
-  }
-  if (res.getResponseCode() >= 400) throw new Error('SIPP ' + dom + ' HTTP ' + res.getResponseCode());
   const kunci = nomor.replace(/\s+/g, '').toUpperCase();
-  const links = [], re = /href="([^"]*detil\/[^"]+)"/gi; let m;
-  while ((m = re.exec(html))) links.push(m[1]);
-  if (!links.length) return { cari: teksHtml_(html), detail: '', url: base + '/list_perkara/search', ada: teksHtml_(html).replace(/\s+/g, '').toUpperCase().indexOf(kunci) >= 0 };
-  const u = /^https?:/.test(links[0]) ? links[0] : base + '/' + links[0].replace(/^\//, '');
+  /* pencarian mengikuti menu SIPP: Perdata > Permohonan > kolom cari nomor perkara; beberapa varian URL dicoba berurutan */
+  const upaya = [
+    ['post', '/list_perkara/search', { search_keyword: nomor }],
+    ['get', '/list_perkara/search?search_keyword=' + encodeURIComponent(nomor)],
+    ['post', '/list_perkara/search', { search_keyword: nomor, jenis_perkara: 'permohonan' }],
+    ['get', '/list_perkara/type/permohonan?search_keyword=' + encodeURIComponent(nomor)],
+    ['get', '/list_perkara/page/1/search/' + encodeURIComponent(nomor)]
+  ];
+  let html = '', links = [], err = '';
+  for (let i = 0; i < upaya.length && !links.length; i++) {
+    try {
+      const u = upaya[i], o = Object.assign({ method: u[0] }, opt);
+      if (u[2]) o.payload = u[2];
+      const res = UrlFetchApp.fetch(base + u[1], o);
+      if (res.getResponseCode() >= 400) { err = 'HTTP ' + res.getResponseCode(); continue; }
+      html = res.getContentText();
+      const re = /href="([^"]*detil\/[^"]+)"/gi; let m;
+      while ((m = re.exec(html))) if (links.indexOf(m[1]) < 0) links.push(m[1]);
+    } catch (e) { err = String(e.message || e).slice(0, 120); }
+  }
+  if (!html) throw new Error('SIPP ' + dom + ' tidak bisa dibuka' + (err ? ' (' + err + ')' : ''));
+  const cari = teksHtml_(html);
+  if (!links.length) return { cari: cari, detail: '', url: base + '/list_perkara/search', ada: cari.replace(/\s+/g, '').toUpperCase().indexOf(kunci) >= 0 };
+  /* pilih baris hasil yang memuat nomor perkara persis; bila tak ada, ambil yang pertama */
+  let pilih = links[0];
+  const nomorPendek = (nomor.match(/^\s*(\d+)\/(Pdt\.[A-Za-z.]+)\/(\d{4})/i) || []);
+  for (let i = 0; i < links.length; i++) {
+    const i0 = html.indexOf(links[i]), potong = html.slice(Math.max(0, i0 - 600), i0 + 200).replace(/\s+/g, '').toUpperCase();
+    if (potong.indexOf(kunci) >= 0 || (nomorPendek[1] && potong.indexOf((nomorPendek[1] + '/' + nomorPendek[2] + '/' + nomorPendek[3]).toUpperCase()) >= 0)) { pilih = links[i]; break; }
+  }
+  const u = /^https?:/.test(pilih) ? pilih : base + '/' + pilih.replace(/^\//, '');
   const d = UrlFetchApp.fetch(u, opt);
-  return { cari: teksHtml_(html), detail: teksHtml_(d.getContentText()), url: u, ada: true };
+  return { cari: cari, detail: teksHtml_(d.getContentText()), url: u, ada: true };
 }
 /** Ambil nama-nama asli dari halaman detail SIPP: daftar Pemohon (Para Pihak) + nama dalam Petitum (biasanya memuat nama anak/terampu). */
 const SIPP_BUANG_ = /^(PEMOHON|TERMOHON|PENGADILAN|AGAMA|NEGERI|REPUBLIK|INDONESIA|KOTA|KABUPATEN|PROVINSI|KECAMATAN|KELURAHAN|DESA|WALI|ANAK|MENETAPKAN|MENGABULKAN|PERMOHONAN|BIAYA|PERKARA|HUKUM|UNDANG|PASAL|NOMOR|TAHUN|LAKI|PEREMPUAN|ISLAM|KRISTEN|JALAN|JL|RT|RW|KANDUNG|PERWALIAN|PENGAMPUAN|PENGAMPU|TERAMPU|DAN|ATAU|YANG|DARI|SEBAGAI|DENGAN|UNTUK|PADA|BERNAMA|LAHIR|TANGGAL|BIN|BINTI|ALM|ALMARHUM|ALMARHUMAH|DAN|SUBSIDAIR|PRIMAIR|MEMBEBANKAN|RUPIAH|SELURUHNYA)$/;
