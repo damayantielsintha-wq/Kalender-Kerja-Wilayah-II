@@ -31,18 +31,8 @@
  },
  {
   "who": "boss",
-  "text": "Pasti ada solusi!",
-  "key": "boss-57ae112b"
- },
- {
-  "who": "boss",
-  "text": "Pasti ada solusi!!",
-  "key": "boss-1104d2be"
- },
- {
-  "who": "boss",
-  "text": "Psst… pasti ada solusi",
-  "key": "boss-d449912a"
+  "text": "Betul sekali! Suratnya bisa diurus online, nggak pakai ribet.",
+  "key": "boss-2ad69039"
  },
  {
   "who": "boss",
@@ -96,8 +86,8 @@
  },
  {
   "who": "boss",
-  "text": "Hadir! Pasti ada solusi",
-  "key": "boss-3e26f43f"
+  "text": "Benar. Kami dampingi walinya, supaya hak anak terlindungi.",
+  "key": "boss-d3f57547"
  },
  {
   "who": "boss",
@@ -156,8 +146,8 @@
  },
  {
   "who": "boss",
-  "text": "Siap jadi kurator. Pasti ada solusi",
-  "key": "boss-f6634641"
+  "text": "Betul. Biayanya masuk kas negara, lalu kembali lagi untuk masyarakat.",
+  "key": "boss-d547a39b"
  },
  {
   "who": "boss",
@@ -206,8 +196,8 @@
  },
  {
   "who": "boss",
-  "text": "Bukan dukun. Pasti ada solusi",
-  "key": "boss-c839b160"
+  "text": "Betul. Harta yang ditinggal pemiliknya kami jaga baik-baik.",
+  "key": "boss-1a08c89b"
  },
  {
   "who": "boss",
@@ -256,8 +246,8 @@
  },
  {
   "who": "boss",
-  "text": "Segel aman. Pasti ada solusi",
-  "key": "boss-1a31a49f"
+  "text": "Benar. Surat wasiat dibuka resmi, disaksikan, dan tercatat.",
+  "key": "boss-081f05a5"
  },
  {
   "who": "boss",
@@ -276,13 +266,13 @@
  },
  {
   "who": "tasya",
-  "text": "Din, soal pailit kemarin aku jadi penasaran. Kalau harta pailit udah dibagi ke kreditor, terus masih ada sisa uangnya, larinya ke mana?",
-  "key": "tasya-9aee0062"
+  "text": "Din, soal pailit kemarin aku jadi penasaran. Kalau hartanya udah dibagi, tapi ada kreditor yang nggak ngambil bagiannya, atau malah nggak bisa ditemukan, uangnya ke mana?",
+  "key": "tasya-fd8ef0f8"
  },
  {
   "who": "dinda",
-  "text": "Nah, uang sisa pemberesan pailit itu dikelola BHP sebagai Uang Pihak Ketiga. Aman di BHP sampai yang berhak datang mengambilnya.",
-  "key": "dinda-c919b492"
+  "text": "Nah, bagian kreditor itu dikelola BHP sebagai Uang Pihak Ketiga. Aman di BHP sampai kreditornya datang mengambil.",
+  "key": "dinda-f280fab0"
  },
  {
   "who": "tasya",
@@ -296,18 +286,18 @@
  },
  {
   "who": "tasya",
-  "text": "Ternyata uang sisa pailit juga aman di BHP ya. Lega!",
-  "key": "tasya-148b4502"
+  "text": "Ternyata bagian kreditor yang belum diambil juga aman di BHP ya. Lega!",
+  "key": "tasya-191157ae"
  },
  {
   "who": "narator",
-  "text": "Nah, catet ya. Uang sisa pemberesan pailit dikelola BHP sebagai Uang Pihak Ketiga, sampai diambil oleh yang berhak.",
-  "key": "narator-64d195e5"
+  "text": "Nah, catet ya. Bagian kreditor pailit yang tidak diambil, atau kreditornya tidak ditemukan, dikelola BHP sebagai Uang Pihak Ketiga.",
+  "key": "narator-7028c697"
  },
  {
   "who": "boss",
-  "text": "Aman terkendali. Pasti ada solusi",
-  "key": "boss-75bae0ea"
+  "text": "Betul. Uangnya aman, tinggal diambil oleh kreditornya.",
+  "key": "boss-c0cc2ed8"
  },
  {
   "who": "boss",

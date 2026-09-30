@@ -607,6 +607,7 @@
   .kepala.final .kb { bottom: calc(100% + 290px); }
   .bubble .name .nemote { font-size: 34px; margin-left: auto; animation: emote .5s cubic-bezier(.2,1.6,.4,1) both; }
   .kepala.nokb .kb { opacity: 0 !important; }
+  .kepala:not(.final) .kb { white-space: normal; width: 560px; font-size: 38px; text-wrap: balance; }
   /* ====== Hormati prefers-reduced-motion ====== */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -743,9 +744,7 @@ const EPISODES = [
     overlay: { title: 'Surat Keterangan Hak Waris', sub: 'bisa online 📲', icon: 'doc' },
     punch: { from: 'tasya', act: 'wow', emote: '📝', text: 'Wah, ternyata di BHP bisa bikin Surat Keterangan Hak Waris juga toh! Catet, catet!' },
     pops: [
-      { spot: 'right', text: 'Pasti ada solusi!' },
-      { spot: 'top',   text: 'Pasti ada solusi!!' },
-      { spot: 'cup',   text: 'Psst… pasti ada solusi 🤫' },
+      { spot: 'right', text: 'Betul sekali! Suratnya bisa diurus online, nggak pakai ribet.' },
     ],
   },
   {
@@ -766,9 +765,7 @@ const EPISODES = [
       bubble: 'Perwalian? BHP siap mendampingi wali! 🐝',
     },
     pops: [
-      { spot: 'table', text: 'Pasti ada solusi!' },
-      { spot: 'left',  text: 'Pasti ada solusi!!' },
-      { spot: 'top',   text: 'Hadir! Pasti ada solusi 🫡' },
+      { spot: 'right', text: 'Benar. Kami dampingi walinya, supaya hak anak terlindungi.' },
     ],
   },
   {
@@ -790,9 +787,7 @@ const EPISODES = [
       bubble: 'Kepailitan? Pilih BHP: hemat & bermanfaat! 🐝',
     },
     pops: [
-      { spot: 'top',   text: 'Pasti ada solusi!' },
-      { spot: 'right', text: 'Pasti ada solusi!!' },
-      { spot: 'table', text: 'Siap jadi kurator. Pasti ada solusi ⚖️' },
+      { spot: 'right', text: 'Betul. Biayanya masuk kas negara, lalu kembali lagi untuk masyarakat.' },
     ],
   },
   {
@@ -807,9 +802,7 @@ const EPISODES = [
     overlay: { title: 'Harta orang tak hadir & harta tak terurus 🗂️', sub: '', icon: 'folder' },
     punch: { from: 'tasya', act: 'wow', emote: '✨', text: 'Ternyata harta yang nggak ada yang ngurus pun dijagain BHP ya. Keren juga!' },
     pops: [
-      { spot: 'left',  text: 'Pasti ada solusi!' },
-      { spot: 'table', text: 'Pasti ada solusi!!' },
-      { spot: 'right', text: 'Bukan dukun. Pasti ada solusi 😎' },
+      { spot: 'right', text: 'Betul. Harta yang ditinggal pemiliknya kami jaga baik-baik.' },
     ],
   },
   {
@@ -824,29 +817,25 @@ const EPISODES = [
     overlay: { title: 'Pembukaan Surat Wasiat', sub: 'resmi & tercatat 📜', icon: 'doc' },
     punch: { from: 'tasya', act: 'wow', emote: '😌', text: 'Wah, ternyata buka surat wasiat juga di BHP toh. Jadi tenang deh!' },
     pops: [
-      { spot: 'cup',   text: 'Pasti ada solusi!' },
-      { spot: 'top',   text: 'Pasti ada solusi!!' },
-      { spot: 'left',  text: 'Segel aman. Pasti ada solusi 🔏' },
+      { spot: 'right', text: 'Benar. Surat wasiat dibuka resmi, disaksikan, dan tercatat.' },
     ],
   },
   {
     // ⚠️ Naskah baru — mohon dicek kebenaran isinya sebelum tayang
     no: 6, short: 'Uang Pihak Ketiga', emoji: '💰', title: 'Uang Pihak Ketiga', icon: 'building', bg: 'pelayanan', cups: ['boba', 'esteh'],
     messages: [
-      { from: 'tasya', act: 'tilt',    emote: '🤔', text: 'Din, soal pailit kemarin aku jadi penasaran. Kalau harta pailit udah dibagi ke kreditor, terus masih ada sisa uangnya, larinya ke mana?' },
-      { from: 'dinda', act: 'explain', emote: '💰', text: 'Nah, uang sisa pemberesan pailit itu dikelola BHP sebagai Uang Pihak Ketiga. Aman di BHP sampai yang berhak datang mengambilnya.' },
+      { from: 'tasya', act: 'tilt',    emote: '🤔', text: 'Din, soal pailit kemarin aku jadi penasaran. Kalau hartanya udah dibagi, tapi ada kreditor yang nggak ngambil bagiannya, atau malah nggak bisa ditemukan, uangnya ke mana?' },
+      { from: 'dinda', act: 'explain', emote: '💰', text: 'Nah, bagian kreditor itu dikelola BHP sebagai Uang Pihak Ketiga. Aman di BHP sampai kreditornya datang mengambil.' },
       { from: 'tasya', act: 'bounce',  emote: '🐷', text: 'Oh, jadi kayak celengan, tapi yang jagain negara?' },
       { from: 'dinda', act: 'nod',     emote: '🔐', text: 'Iya, celengan paling amanah. Nggak bakal dibobol buat beli kopi.' },
     ],
-    overlay: { title: 'Uang Pihak Ketiga', sub: 'sisa pemberesan pailit dikelola aman 💰', icon: 'building' },
-    punch: { from: 'tasya', act: 'wow', emote: '😮‍💨', text: 'Ternyata uang sisa pailit juga aman di BHP ya. Lega!' },
+    overlay: { title: 'Uang Pihak Ketiga', sub: 'bagian kreditor yang belum diambil 💰', icon: 'building' },
+    punch: { from: 'tasya', act: 'wow', emote: '😮‍💨', text: 'Ternyata bagian kreditor yang belum diambil juga aman di BHP ya. Lega!' },
     say: {
-      overlay: 'Nah, catet ya. Uang sisa pemberesan pailit dikelola BHP sebagai Uang Pihak Ketiga, sampai diambil oleh yang berhak.',
+      overlay: 'Nah, catet ya. Bagian kreditor pailit yang tidak diambil, atau kreditornya tidak ditemukan, dikelola BHP sebagai Uang Pihak Ketiga.',
     },
     pops: [
-      { spot: 'right', text: 'Pasti ada solusi!' },
-      { spot: 'cup',   text: 'Pasti ada solusi!!' },
-      { spot: 'top',   text: 'Aman terkendali. Pasti ada solusi 🔐' },
+      { spot: 'right', text: 'Betul. Uangnya aman, tinggal diambil oleh kreditornya.' },
     ],
   },
 ];
@@ -869,7 +858,7 @@ const BOARD = [
   ['Biaya lebih ringan', 'Masuk kas negara', 'Tanpa usulan: ditunjuk hakim ⚖️'],
   ['Orang tak hadir', 'Harta tak terurus', 'Dijaga BHP 🗂️'],
   ['Wasiat tertutup', 'Dibuka resmi di BHP', 'Ada berita acaranya 📜'],
-  ['Sisa pemberesan pailit', 'Dikelola BHP sebagai UPK', 'Aman sampai diambil yang berhak 💰'],
+  ['Kreditor tak ambil bagiannya', 'Atau tak bisa ditemukan', 'Dikelola BHP sebagai UPK 💰'],
 ];
 const ANTICS = [
   ['pose-point fx-hop', 'pose-point fx-lean', 'pose-point', 'pose-namaste fx-wiggle', 'pose-namaste'],
