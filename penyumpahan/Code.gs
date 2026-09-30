@@ -706,7 +706,10 @@ function jsonDari_(t) {
   return JSON.parse(t.slice(i, j + 1));
 }
 /** Baca file penetapan (PDF/gambar, base64) dengan Claude dan kembalikan objek data. */
+/** Penetapan sering berwatermark (mis. "SALINAN", "COPY", logo/nama pengadilan miring, cap Direktori Putusan MA). */
+const WATERMARK_ = 'CATATAN WATERMARK: dokumen bisa memuat watermark/cap latar (tulisan miring atau samar seperti "SALINAN", "COPY", "DOKUMEN ELEKTRONIK", nama pengadilan, logo, cap "Direktori Putusan Mahkamah Agung", nomor halaman, atau potongan huruf tersisip di tengah kata). ABAIKAN semuanya; bila sebuah kata/angka terputus atau terselip huruf watermark, rekonstruksi dari konteks kalimat dan dokumen lain. Tetap baca SEMUA data (nama, NIK, tanggal, nomor, alamat, anak/terampu, harta, amar) seolah watermark tidak ada. Jangan mengarang: bila bagian tertentu benar-benar tertutup dan tidak bisa dipastikan, isi kosong.\n\n';
 function apiBacaPenetapanAI(token, b64, mime, prompt) {
+  prompt = WATERMARK_ + prompt;
   user_(token);
   if (!PROPS.getProperty('CLAUDE_KEY')) return null;
   mime = mime || 'application/pdf';
@@ -718,6 +721,7 @@ function apiBacaPenetapanAI(token, b64, mime, prompt) {
 /** Versi cepat: kirim TEKS penetapan (hasil baca PDF di browser), bukan file PDF — jauh lebih cepat & hemat. */
 function apiAnalisaTeks(token, teks, prompt, maxTokens) {
   user_(token);
+  prompt = WATERMARK_ + prompt;
   if (!PROPS.getProperty('CLAUDE_KEY')) return null;
   teks = String(teks || '').slice(0, 120000);
   return jsonDari_(claude_([{ type: 'text', text: '<penetapan>\n' + teks + '\n</penetapan>\n\n' + prompt + '\nBalas HANYA satu objek JSON, tanpa penjelasan.' }], maxTokens || 6000));

@@ -1240,8 +1240,11 @@ async function handlePenetapan(file){
     if(!file.type.startsWith('image/'))try{teks=await fileText(file,true)}catch(e){console.warn(e)}
     const bersih=bersihTeks(teks),adaTeks=bersih.replace(/\s/g,'').length>1500;
     if(ADA_AI){stat(adaTeks?'AI Claude membaca teks penetapan (cepat)…':'AI Claude membaca scan penetapan…');const kirim=adaTeks?bersih:null;
-      const pb=bapDariPenetapan(file,kirim).catch(e=>{console.warn(e);return ''});
+      let pb=bapDariPenetapan(file,kirim).catch(e=>{console.warn(e);return ''});
       try{data=await aiExtract(file,kirim)}catch(e){console.warn(e);toast('AI gagal, pakai pembaca biasa')}
+      /* teks berwatermark bisa rusak → bila data inti tak lengkap, baca ulang dari tampilan asli dokumen (Claude membaca visual & mengabaikan watermark) */
+      if(kirim&&(!data||!data.nama&&!fieldSamarPen(data)||!data.nomorPenetapan||!data.tglPenetapan||(data.jenis==='Perwalian'&&!(data.anak||[]).length)||(data.jenis==='Pengampuan'&&!(data.terampu&&(data.terampu.nama||data.terampu.tglLahir))))){
+        stat('Teks berwatermark kurang lengkap — AI membaca ulang dari tampilan asli dokumen…');try{const d2=await aiExtract(file,null);data=data?gabung(d2,data):d2;pb=bapDariPenetapan(file,null).catch(e=>{console.warn(e);return ''})}catch(e){console.warn(e)}}
       stat('Menyusun isi BAP…');const bt=await pb;if(data&&bt)data.isiBap=bt}
     let rx=null;
     if(teks.replace(/\s/g,'').length>=80){rx=parsePenetapan(teks);rx._text=teks}
@@ -1257,7 +1260,7 @@ async function fileText(file,tanpaOcr){
   await loadJs(PDFJS);pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS.replace('pdf.min.js','pdf.worker.min.js');
   const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;let out='';
   for(let i=1;i<=pdf.numPages;i++){stat(`Membaca halaman ${i}/${pdf.numPages}…`);const c=await(await pdf.getPage(i)).getTextContent();
-    let y=null;c.items.forEach(it=>{const ny=it.transform[5];out+=(y!==null&&Math.abs(ny-y)>3?'\n':' ')+it.str;y=ny});out+='\n'}
+    let y=null;c.items.filter(it=>{const t=it.transform||[1,0,0,1,0,0],a=Math.hypot(t[0],t[1])||1;return it.str&&!(Math.abs(t[1])>.15*a||Math.abs(t[2])>.15*a)&&!/^\s*(SALINAN|COPY|DRAFT|DOKUMEN ELEKTRONIK|SALINAN ELEKTRONIK)\s*$/i.test(it.str)}).forEach(it=>{const ny=it.transform[5];out+=(y!==null&&Math.abs(ny-y)>3?'\n':' ')+it.str;y=ny});out+='\n'}
   if(out.replace(/\s/g,'').length>200||tanpaOcr){pdf.destroy();return out}
   /* scan: OCR halaman demi halaman supaya hemat memori (HP) */
   const HP=matchMedia('(max-width:900px)').matches||/Android|iPhone|iPad/i.test(navigator.userAgent);
@@ -1265,12 +1268,16 @@ async function fileText(file,tanpaOcr){
   await loadJs(TESS);const wk=await Tesseract.createWorker('ind');let t='';
   try{for(let i=1;i<=maks;i++){stat(`Membaca scan halaman ${i}/${maks}…${HP?' (mode hemat memori)':''}`);
       const pg=await pdf.getPage(i),vp=pg.getViewport({scale:skala});const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;
-      await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;t+=(await wk.recognize(cv)).data.text+'\n';
+      await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;bersihWM(cv);t+=(await wk.recognize(cv)).data.text+'\n';
       cv.width=cv.height=0;pg.cleanup()}}
   finally{await wk.terminate();pdf.destroy()}
   return t}
+/* watermark umumnya abu-abu muda/transparan: piksel terang dijadikan putih, teks hitam dipertegas → OCR lebih akurat */
+function bersihWM(cv){try{const x=cv.getContext('2d'),im=x.getImageData(0,0,cv.width,cv.height),d=im.data;
+  for(let i=0;i<d.length;i+=4){const l=.299*d[i]+.587*d[i+1]+.114*d[i+2];const v=l>165?255:l<95?0:Math.round((l-95)*255/70);d[i]=d[i+1]=d[i+2]=v}x.putImageData(im,0,0)}catch(e){console.warn(e)}}
+function imgBersih(f){return new Promise(ok=>{const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const cv=document.createElement('canvas');cv.width=im.naturalWidth;cv.height=im.naturalHeight;cv.getContext('2d').drawImage(im,0,0);bersihWM(cv);URL.revokeObjectURL(u);cv.toBlob(b=>ok(b||f),'image/png')};im.onerror=()=>ok(f);im.src=u})}
 async function ocr(imgs){await loadJs(TESS);const w=await Tesseract.createWorker('ind');let t='';
-  for(let i=0;i<imgs.length;i++){stat(`OCR (scan) halaman ${i+1}/${imgs.length}… agak lama`);t+=(await w.recognize(imgs[i])).data.text+'\n'}await w.terminate();return t}
+  for(let i=0;i<imgs.length;i++){stat(`OCR (scan) halaman ${i+1}/${imgs.length}… agak lama`);t+=(await w.recognize(await imgBersih(imgs[i]))).data.text+'\n'}await w.terminate();return t}
 
 /* heuristik teks penetapan PN (format direktori putusan MA) */
 function parsePenetapan(raw){
@@ -1333,6 +1340,8 @@ function parsePenetapan(raw){
   }
   return R}
 
+/* nama sengaja kosong karena disamarkan (bukan karena gagal baca): ada anak/terampu/tanggal lahir terisi */
+const fieldSamarPen=d=>!!d&&((d.anak||[]).some(a=>a&&a.tglLahir)||(d.terampu&&d.terampu.tglLahir));
 function gabung(ai,rx){const o={...rx,...ai};for(const k in rx)if(typeof rx[k]!=='object'&&!ai[k])o[k]=rx[k];
   if(ai.terampu||rx.terampu){o.terampu={...(rx.terampu||{})};for(const k in (ai.terampu||{}))if(ai.terampu[k])o.terampu[k]=ai.terampu[k]}
   o.anak=(ai.anak&&ai.anak.filter(a=>a&&a.nama).length)?ai.anak:rx.anak;o._text=rx._text;o._ai=true;return o}
