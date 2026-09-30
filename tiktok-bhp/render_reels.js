@@ -38,7 +38,7 @@ async function renderEp(browser, port, ep) {
   await cdp.send('Page.stopScreencast');
   const { audio, audioStart } = await page.evaluate(() => window.__rekam);
   await page.close();
-  fs.writeFileSync(path.join(tmp, 'audio.webm'), Buffer.from(audio, 'base64'));
+  fs.writeFileSync(path.join(tmp, 'audio.wav'), Buffer.from(audio, 'base64'));
 
   // Video mulai tepat saat perekam audio mulai → buang frame sebelum itu, sisanya pakai durasi asli tiap frame
   let i0 = frames.findIndex((f) => f.t >= audioStart); if (i0 < 0) i0 = 0; if (i0 > 0) i0--;
@@ -51,7 +51,7 @@ async function renderEp(browser, port, ep) {
   lines.push(`file '${path.basename(fr[fr.length - 1].file)}'`);
   fs.writeFileSync(path.join(tmp, 'list.txt'), lines.join('\n'));
   const out = path.join(OUT, `${name}.mp4`);
-  execFileSync(FFMPEG, ['-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', path.join(tmp, 'list.txt'), '-i', path.join(tmp, 'audio.webm'),
+  execFileSync(FFMPEG, ['-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', path.join(tmp, 'list.txt'), '-i', path.join(tmp, 'audio.wav'),
     '-vf', `fps=${FPS},scale=1080:1920:flags=lanczos,format=yuv420p`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '18', '-profile:v', 'high', '-movflags', '+faststart',
     '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', '-shortest', out], { stdio: 'inherit' });
   fs.rmSync(tmp, { recursive: true, force: true });

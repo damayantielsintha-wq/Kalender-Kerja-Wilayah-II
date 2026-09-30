@@ -744,12 +744,19 @@ const EPISODES = [
     no: 2, short: 'Perwalian', emoji: '🛡️', title: 'Perwalian', icon: 'shield', bg: 'pelayanan', cups: ['esteh', 'esteh'],
     messages: [
       { from: 'tasya', act: 'tilt',    emote: '🤔', text: 'Din, tetanggaku mau jual rumah peninggalan suaminya. Tapi anaknya masih kecil-kecil. Boleh nggak sih?' },
-      { from: 'dinda', act: 'explain', emote: '🛡️', text: 'Karena ada anak di bawah umur, ibunya jadi wali, dan BHP jadi wali pengawasnya. Biar hak si anak tetap aman.' },
-      { from: 'tasya', act: 'bounce',  emote: '😎', text: 'Oh, jadi BHP tuh kayak bodyguard-nya harta si anak gitu?' },
-      { from: 'dinda', act: 'nod',     emote: '👍', text: 'Iya, tapi bodyguard yang nggak pakai kacamata hitam.' },
+      { from: 'dinda', act: 'explain', emote: '🛡️', text: 'Bisa, tapi ibunya sebagai wali didampingi BHP. Kami kasih konsultasi hukum, biar prosesnya sesuai aturan dan hak si anak tetap aman.' },
+      { from: 'tasya', act: 'bounce',  emote: '💍', text: 'Oh, jadi kayak pendamping pengantin, tapi versi hukum?' },
+      { from: 'dinda', act: 'laugh',   emote: '😄', text: 'Hahaha, iya! Plus mencegah prasangka negatif dari pihak lain. Jadi nggak ada yang bisa nuduh macam-macam.' },
     ],
-    overlay: { title: 'Perwalian', sub: 'BHP wali pengawas 🛡️', icon: 'shield' },
-    punch: { from: 'tasya', act: 'wow', emote: '🥹', text: 'Oh gitu… ternyata harta anak juga dijagain BHP ya. Adem dengernya!' },
+    overlay: { title: 'Pendampingan Wali', sub: 'konsultasi hukum & cegah prasangka 🛡️', icon: 'shield' },
+    punch: { from: 'tasya', act: 'wow', emote: '🥹', text: 'Oh gitu… ternyata BHP juga jadi pendamping wali ya. Tenang dengernya!' },
+    // Kalimat khusus: BHP BUKAN tempat mengurus perwalian, tapi pendamping wali
+    say: {
+      overlay: 'Nah, catet ya. Dalam perwalian, BHP mendampingi wali: kasih konsultasi hukum dan mencegah prasangka negatif.',
+      finale: 'Soal perwalian? BHP siap mendampingi wali! Kita kan UPT-nya Kementerian Hukum. Jadi…',
+      closing: 'Jadi inget ya, dalam perwalian, BHP hadir mendampingi wali. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!',
+      bubble: 'Perwalian? BHP siap mendampingi wali! 🐝',
+    },
     pops: [
       { spot: 'table', text: 'Pasti ada solusi!' },
       { spot: 'left',  text: 'Pasti ada solusi!!' },
@@ -828,7 +835,7 @@ const EPISODES = [
 /* Nama tusi yang disebut jelas di ending & closing card (urutan sama dengan EPISODES) */
 const TUSI = [
   'Surat Keterangan Hak Waris',
-  'Perwalian anak di bawah umur',
+  'Pendampingan wali (perwalian)',
   'Kurator kepailitan',
   'Harta orang tak hadir & harta tak terurus',
   'Pembukaan surat wasiat',
@@ -839,7 +846,7 @@ EPISODES.forEach((ep, i) => { ep.tusi = TUSI[i]; });
 /* Ending: poin di papan tulis & tingkah Batamen (beda tiap episode) */
 const BOARD = [
   ['Surat Keterangan Hak Waris', 'Diurus di BHP', 'Bisa online 📲'],
-  ['Anak di bawah umur', 'Wali didampingi BHP', 'Harta anak aman 🛡️'],
+  ['Wali didampingi BHP', 'Konsultasi hukum', 'Cegah prasangka negatif 🛡️'],
   ['Usaha pailit?', 'BHP jadi kurator', 'Tanpa fee macem-macem'],
   ['Orang tak hadir', 'Harta tak terurus', 'Dijaga BHP 🗂️'],
   ['Wasiat tertutup', 'Dibuka resmi di BHP', 'Ada berita acaranya 📜'],
@@ -863,14 +870,14 @@ function batamenAntics(ep) {
 
 /* Kalimat penutup Pak Kepala: menyebut tusinya dengan jelas, lalu tagline besar */
 const FINALE = {
-  line: (ep) => `Soal ${ep.tusi.toLowerCase()}? Tenang, ada di BHP kok! Kita kan UPT-nya Kementerian Hukum. Jadi…`,
+  line: (ep) => ep.say?.finale || `Soal ${ep.tusi.toLowerCase()}? Tenang, ada di BHP kok! Kita kan UPT-nya Kementerian Hukum. Jadi…`,
   tagline: ['Pasti Selalu Ada', 'Solusinya!'],
 };
 
 /* Kalimat narator lain (dipakai juga oleh daftar rekaman suara) */
 const LINES = {
-  overlay: (o) => `Nah, catet ya. ${o.title}, bisa kamu urus di BHP. ${o.sub || ''}`,
-  closing: (ep) => `Jadi inget ya, urusan ${ep.tusi.toLowerCase()}, langsung aja ke BHP. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!`,
+  overlay: (o, ep) => ep?.say?.overlay || `Nah, catet ya. ${o.title}, bisa kamu urus di BHP. ${o.sub || ''}`,
+  closing: (ep) => ep.say?.closing || `Jadi inget ya, urusan ${ep.tusi.toLowerCase()}, langsung aja ke BHP. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!`,
   next: (n) => `Eh, belum selesai lho. Masih ada tusi lainnya! Next, nomor ${n.no}, soal ${n.short.toLowerCase()}. Tungguin ya!`,
 };
 
@@ -1157,7 +1164,7 @@ function allVoLines() {
   const out = [], add = (who, text) => text && out.push({ who, text: cleanSpeech(text), key: voKey(who, text) });
   EPISODES.forEach((ep, i) => {
     for (const m of [...ep.messages, ep.punch]) { add(m.from, m.say || m.text); (m.list || []).forEach((x) => add(m.from, x.say || x.text)); }
-    add('narator', LINES.overlay(ep.overlay));
+    add('narator', LINES.overlay(ep.overlay, ep));
     ep.pops.forEach((p) => add('boss', p.text));
     add('boss', FINALE.line(ep));
     add('narator', FINALE.tagline.join(' '));
@@ -1184,7 +1191,7 @@ function speakRaw(text, who, audioSrc) {
   if (audioSrc) {
     return new Promise((res) => {
       const a = new Audio(audioSrc); currentAudio = a;
-      if (REKAM) Music.route(a);
+      if (REKAM) { Music.route(a); window.__logVoice?.(audioSrc); a.volume = 0; }
       a.onended = a.onerror = () => res();
       a.play().catch(() => res());
     });
@@ -1216,7 +1223,8 @@ function speakRaw(text, who, audioSrc) {
    Beat lo-fi/trap 92 BPM: kick, clap, hi-hat roll, 808, pad chord, arpeggio, kresek vinyl.
    SFX meme: pop, whoosh, vine boom, ding, stempel, riser, drop, record scratch. */
 let musicOn = true;
-const Music = (() => {
+const makeMusic = (offCtx) => {
+  let clock = 0;
   let ctx, comp, master, bus, duckG, sfx, noiseBuf, timer = null, stopTimer = null, step = 0, next = 0;
   const BPM = 92, SPB = 60 / BPM / 4;
   const CHORDS = [[53, 57, 60, 64], [52, 55, 59, 62], [50, 53, 57, 60], [48, 52, 55, 59]]; // Fmaj7 Em7 Dm7 Cmaj7
@@ -1226,10 +1234,12 @@ const Music = (() => {
   function init() {
     if (ctx) return true;
     const AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return false;
-    ctx = new AC();
-    comp = ctx.createDynamicsCompressor(); comp.connect(ctx.destination);
-    master = ctx.createGain(); master.gain.value = .9; master.connect(comp);
+    if (!offCtx && !AC) return false;
+    ctx = offCtx || new AC();
+    // limiter di ujung: cegah suara pecah (clipping)
+    comp = ctx.createDynamicsCompressor(); comp.threshold.value = -12; comp.knee.value = 6; comp.ratio.value = 12; comp.attack.value = .003; comp.release.value = .2;
+    const out = ctx.createGain(); out.gain.value = .85; comp.connect(out); out.connect(ctx.destination);
+    master = ctx.createGain(); master.gain.value = .75; master.connect(comp);
     bus = ctx.createGain(); bus.gain.value = 0;
     duckG = ctx.createGain(); bus.connect(duckG); duckG.connect(master);
     sfx = ctx.createGain(); sfx.gain.value = .7; sfx.connect(master);
@@ -1263,24 +1273,20 @@ const Music = (() => {
     if (i === 0) tone(t, hz(ROOTS[bar]), SPB * 6, { gain: .5, attack: .01 });                          // 808
     if (i === 10) tone(t, hz(ROOTS[bar]), SPB * 5, { gain: .45, attack: .01 });
     if (s >= 32 && i % 2 === 0) tone(t + (i % 4 === 2 ? SPB * .12 : 0), hz(ch[ARP[i / 2]] + 12), .28, { type: 'triangle', gain: .06, lp: 2800 }); // arpeggio
-    if (Math.random() < .3) noise(t, .012, { freq: 3000, gain: .03 });                                 // kresek vinyl
   }
   function tick() { while (next < ctx.currentTime + .12) { beat(step, next); step++; next += SPB; } }
-  const now = () => ctx.currentTime;
-  const ok = () => musicOn && init();
+  const now = () => (offCtx ? clock : ctx.currentTime);
+  const ok = () => (offCtx ? init() : musicOn && init());
   return {
     start(vol = .8) {
       if (!ok()) return;
-      ctx.resume();
-      clearTimeout(stopTimer);
-      if (!timer) { step = 0; next = now() + .05; timer = setInterval(tick, 25); }
+      if (!offCtx) { ctx.resume(); clearTimeout(stopTimer); if (!timer) { step = 0; next = now() + .05; timer = setInterval(tick, 25); } }
       bus.gain.cancelScheduledValues(now()); bus.gain.setTargetAtTime(vol, now(), .15);
     },
     stop(fade = .5) {
       if (!ctx) return;
       bus.gain.cancelScheduledValues(now()); bus.gain.setTargetAtTime(0, now(), Math.max(.01, fade / 3));
-      clearTimeout(stopTimer);
-      stopTimer = setTimeout(() => { clearInterval(timer); timer = null; }, fade * 1000 + 150);
+      if (!offCtx) { clearTimeout(stopTimer); stopTimer = setTimeout(() => { clearInterval(timer); timer = null; }, fade * 1000 + 150); }
     },
     duck(on) { if (ctx) duckG.gain.setTargetAtTime(on ? .35 : 1, now(), .08); },
     pop()   { if (ok()) tone(now(), 520, .09, { to: 1150, gain: .22, dest: sfx }); },
@@ -1310,10 +1316,15 @@ const Music = (() => {
     },
     get ready() { return !!ctx; },
     /* Mode rekam: suara narasi ikut lewat mixer yang sama, lalu semua disadap ke MediaRecorder */
-    route(el) { if (!init()) return; const g = ctx.createGain(); g.gain.value = 1.15; ctx.createMediaElementSource(el).connect(g); g.connect(comp); },
+    route(el) { if (!init()) return; const g = ctx.createGain(); g.gain.value = 1; ctx.createMediaElementSource(el).connect(g); g.connect(comp); },
+    /* ---- khusus render offline ---- */
+    setClock(t) { clock = t; },
+    beats(from, to) { init(); for (let k = 0, t = from + .05; t < to; k++, t += SPB) beat(k, t); },
+    voice(buf, t) { init(); const s2 = ctx.createBufferSource(); s2.buffer = buf; const g = ctx.createGain(); g.gain.value = .95; s2.connect(g); g.connect(comp); s2.start(t); },
     tap() { init(); const d = ctx.createMediaStreamDestination(); comp.connect(d); return d.stream; },
   };
-})();
+};
+const Music = makeMusic();
 
 function stopSpeech() {
   if (TTS) speechSynthesis.cancel();
@@ -1514,7 +1525,7 @@ async function showOverlay(o, num) {
   sleep(T.overlayIn + 150).then(() => Music.stamp(), () => {}); // saat stempel "BISA DI BHP" mendarat
   await Promise.all([
     sleep(T.overlayIn + T.overlayHold),
-    sleep(T.overlayIn).then(() => speak(LINES.overlay(o), 'narator')),
+    sleep(T.overlayIn).then(() => speak(LINES.overlay(o, EPISODES[currentEp]), 'narator')),
   ]);
 }
 
@@ -1632,7 +1643,7 @@ async function showClosing(ep) {
   batamenAntics(ep);
   board.querySelectorAll('li').forEach((li, k) => sleep(1300 + k * 900).then(() => { li.classList.add('in'); Music.ding(); }, () => {}));
   bub.classList.remove('show');
-  bub.innerHTML = `<small>BATAMEN · BHP MEDAN</small>Urusan ${ep.short.toLowerCase()}? Langsung aja ke BHP Medan! 🐝`;
+  bub.innerHTML = `<small>BATAMEN · BHP MEDAN</small>${ep.say?.bubble || `Urusan ${ep.short.toLowerCase()}? Langsung aja ke BHP Medan! 🐝`}`;
   await sleep(900);
   bub.classList.add('show'); bat.classList.add('talk');
   await Promise.all([sleep(T.replayAfter), speak(LINES.closing(ep), 'narator')]);
@@ -1714,15 +1725,40 @@ setScene(EPISODES[currentEp]);
 /* ===== Mode rekam video Reels (?rekam&ep=N) — dipakai render_reels.js ===== */
 if (REKAM) {
   window.__rekam = { done: false, audioStart: 0 };
+  /* Catat semua kejadian audio (musik, SFX, narasi) lalu susun ulang secara OFFLINE:
+     tidak ada lagi suara putus/pecah karena prosesor sibuk saat merekam layar. */
+  const LOG = []; let T0 = 0; window.__alog = LOG;
+  const stamp = () => (performance.now() - T0) / 1000;
+  for (const k of ['start', 'stop', 'duck', 'pop', 'whoosh', 'ding', 'stamp', 'boing', 'vine', 'boom', 'riser', 'scratch']) {
+    const f = Music[k].bind(Music); Music[k] = (...a) => { if (T0) LOG.push({ t: stamp(), k, a }); return f(...a); };
+  }
+  window.__logVoice = (src) => { if (T0) LOG.push({ t: stamp(), k: 'voice', src }); };
+  window.__mixOffline = async (dur) => {
+    const SR = 48000, oc = new OfflineAudioContext(1, Math.ceil(SR * dur), SR), M = makeMusic(oc);
+    let on = null;
+    for (const e of LOG) {
+      M.setClock(e.t);
+      if (e.k === 'voice') { const buf = await oc.decodeAudioData(await (await fetch(e.src)).arrayBuffer()); M.voice(buf, e.t); continue; }
+      if (e.k === 'start' && on === null) on = e.t;
+      if (e.k === 'stop' && on !== null) { M.beats(on, e.t + ((e.a[0] ?? .5) + .2)); on = null; }
+      M[e.k](...e.a);
+    }
+    if (on !== null) M.beats(on, dur);
+    const buf = await oc.startRendering(), d = buf.getChannelData(0);
+    const wav = new DataView(new ArrayBuffer(44 + d.length * 2));
+    const w = (o, str) => [...str].forEach((c, i) => wav.setUint8(o + i, c.charCodeAt(0)));
+    w(0, 'RIFF'); wav.setUint32(4, 36 + d.length * 2, true); w(8, 'WAVEfmt '); wav.setUint32(16, 16, true); wav.setUint16(20, 1, true); wav.setUint16(22, 1, true);
+    wav.setUint32(24, SR, true); wav.setUint32(28, SR * 2, true); wav.setUint16(32, 2, true); wav.setUint16(34, 16, true); w(36, 'data'); wav.setUint32(40, d.length * 2, true);
+    for (let i = 0; i < d.length; i++) wav.setInt16(44 + i * 2, Math.max(-1, Math.min(1, d[i])) * 32767, true);
+    return new Uint8Array(wav.buffer);
+  };
+  window.__T0 = () => { T0 = performance.now(); };
   window.__mulai = async () => {
     await voReady;
-    const rec = new MediaRecorder(Music.tap(), { mimeType: 'audio/webm;codecs=opus', audioBitsPerSecond: 192000 });
-    const chunks = []; rec.ondataavailable = (e) => chunks.push(e.data);
-    rec.start(); window.__rekam.audioStart = Date.now() / 1000;
+    window.__T0(); window.__rekam.audioStart = Date.now() / 1000;
     await play(currentEp);
     await sleep(1800);
-    rec.stop(); await new Promise((r) => (rec.onstop = r));
-    const buf = new Uint8Array(await new Blob(chunks).arrayBuffer());
+    const buf = await window.__mixOffline(Date.now() / 1000 - window.__rekam.audioStart + .5);
     let bin = ''; for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
     window.__rekam.audio = btoa(bin); window.__rekam.done = true;
   };
