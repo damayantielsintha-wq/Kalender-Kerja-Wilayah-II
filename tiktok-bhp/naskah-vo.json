@@ -126,23 +126,33 @@
  },
  {
   "who": "tasya",
-  "text": "Tapi kalau nggak ada yang ngusulin kurator, gimana dong?",
-  "key": "tasya-0e036161"
+  "text": "Emang apa bedanya kalau pilih BHP?",
+  "key": "tasya-36f6c6e2"
  },
  {
   "who": "dinda",
-  "text": "Tenang, hakim akan menunjuk BHP. Ibarat kiper cadangan, selalu siap turun ke lapangan!",
-  "key": "dinda-dd053f11"
+  "text": "Biaya kepailitannya jauh lebih ringan. Terus biayanya masuk ke kas negara, jadi balik lagi manfaatnya buat masyarakat.",
+  "key": "dinda-d63ee7b3"
  },
  {
   "who": "tasya",
-  "text": "Wih, ternyata BHP juga siap jadi kurator kepailitan. Mantap!",
-  "key": "tasya-77595733"
+  "text": "Terus kalau nggak ada yang ngusulin kurator?",
+  "key": "tasya-35559145"
+ },
+ {
+  "who": "dinda",
+  "text": "Hakim akan menunjuk BHP. Ibarat kiper cadangan, selalu siap turun ke lapangan!",
+  "key": "dinda-f43204dc"
+ },
+ {
+  "who": "tasya",
+  "text": "Wih, hemat, masuk kas negara, bermanfaat pula. BHP juaranya!",
+  "key": "tasya-fec8611f"
  },
  {
   "who": "narator",
-  "text": "Nah, catet ya. Dalam kepailitan, BHP bisa diusulkan jadi kurator oleh debitor atau kreditor. Kalau tidak ada usulan, hakim menunjuk BHP.",
-  "key": "narator-2000ddec"
+  "text": "Nah, catet ya. Pilih BHP jadi kurator: biayanya lebih ringan, dan masuk ke kas negara untuk kembali bermanfaat bagi masyarakat.",
+  "key": "narator-e19837ac"
  },
  {
   "who": "boss",
@@ -151,13 +161,13 @@
  },
  {
   "who": "boss",
-  "text": "Soal kepailitan? BHP siap jadi kurator! Kita kan UPT-nya Kementerian Hukum. Jadi…",
-  "key": "boss-02cd88f6"
+  "text": "Soal kepailitan? BHP siap jadi kurator, hemat dan bermanfaat! Kita kan UPT-nya Kementerian Hukum. Jadi…",
+  "key": "boss-a569da1f"
  },
  {
   "who": "narator",
-  "text": "Jadi inget ya, dalam kepailitan, BHP siap jadi kurator, baik diusulkan para pihak maupun ditunjuk hakim. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!",
-  "key": "narator-0d9c1111"
+  "text": "Jadi inget ya, dalam kepailitan, pilih BHP jadi kurator. Biayanya lebih ringan, dan masuk kas negara untuk masyarakat. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!",
+  "key": "narator-98153ce1"
  },
  {
   "who": "narator",
