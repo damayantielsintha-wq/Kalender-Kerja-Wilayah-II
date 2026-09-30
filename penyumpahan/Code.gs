@@ -709,14 +709,34 @@ function apiAdaAI(token) {
   return !!PROPS.getProperty('CLAUDE_KEY');
 }
 function claude_(content, maxTokens) {
-  const res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+  const opt = {
     method: 'post', contentType: 'application/json', muteHttpExceptions: true,
     headers: { 'x-api-key': PROPS.getProperty('CLAUDE_KEY'), 'anthropic-version': '2023-06-01' },
-    payload: JSON.stringify({ model: PROPS.getProperty('CLAUDE_MODEL') || CLAUDE_MODEL, max_tokens: maxTokens || 4000, temperature: 0, messages: [{ role: 'user', content: content }] }) });
-  if (res.getResponseCode() !== 200) throw new Error('Claude HTTP ' + res.getResponseCode() + ': ' + res.getContentText().slice(0, 300));
+    payload: JSON.stringify({ model: PROPS.getProperty('CLAUDE_MODEL') || CLAUDE_MODEL, max_tokens: maxTokens || 4000, temperature: 0, messages: [{ role: 'user', content: content }] }) };
+  /* gangguan sesaat (429 / 5xx / 529 overloaded / jaringan) → ulangi otomatis, tanpa membuat pengguna menunggu lama */
+  let res = null, galat = '';
+  for (let i = 0; i < 3; i++) {
+    try {
+      res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', opt);
+      const c = res.getResponseCode();
+      if (c === 200) break;
+      galat = 'Claude HTTP ' + c + ': ' + res.getContentText().slice(0, 300);
+      if (!(c === 429 || c >= 500)) break;
+    } catch (e) { galat = String(e.message || e).slice(0, 200); res = null; }
+    if (i < 2) Utilities.sleep(1000 * (i + 1));
+  }
+  if (!res || res.getResponseCode() !== 200) throw new Error(galat || 'Claude tidak bisa dihubungi');
   const j = JSON.parse(res.getContentText());
   if (j.stop_reason === 'refusal') throw new Error('Claude menolak memproses dokumen ini.');
   return j.content.map(function (c) { return c.text || ''; }).join('');
+}
+/** Panggil Claude lalu ubah ke JSON; bila jawaban terpotong/bukan JSON, ulangi sekali dengan batas token lebih besar. */
+function claudeJson_(content, maxTokens) {
+  try { return jsonDari_(claude_(content, maxTokens)); }
+  catch (e) {
+    if (!/JSON|Unexpected|position/.test(String(e.message || e))) throw e;
+    return jsonDari_(claude_(content, Math.min(16000, (maxTokens || 4000) * 2)));
+  }
 }
 function jsonDari_(t) {
   t = String(t || '').replace(/```(?:json)?/g, '');
@@ -735,7 +755,7 @@ function apiBacaPenetapanAI(token, b64, mime, prompt) {
   const doc = /pdf/.test(mime)
     ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } }
     : { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } };
-  return jsonDari_(claude_([doc, { type: 'text', text: prompt + '\nBalas HANYA satu objek JSON, tanpa penjelasan.' }], 8000));
+  return claudeJson_([doc, { type: 'text', text: prompt + '\nBalas HANYA satu objek JSON, tanpa penjelasan.' }], 8000);
 }
 /** Versi cepat: kirim TEKS penetapan (hasil baca PDF di browser), bukan file PDF — jauh lebih cepat & hemat. */
 function apiAnalisaTeks(token, teks, prompt, maxTokens) {
@@ -743,7 +763,7 @@ function apiAnalisaTeks(token, teks, prompt, maxTokens) {
   prompt = WATERMARK_ + prompt;
   if (!PROPS.getProperty('CLAUDE_KEY')) return null;
   teks = String(teks || '').slice(0, 120000);
-  return jsonDari_(claude_([{ type: 'text', text: '<penetapan>\n' + teks + '\n</penetapan>\n\n' + prompt + '\nBalas HANYA satu objek JSON, tanpa penjelasan.' }], maxTokens || 6000));
+  return claudeJson_([{ type: 'text', text: '<penetapan>\n' + teks + '\n</penetapan>\n\n' + prompt + '\nBalas HANYA satu objek JSON, tanpa penjelasan.' }], maxTokens || 6000);
 }
 function apiTesAI(token) {
   super_(token);

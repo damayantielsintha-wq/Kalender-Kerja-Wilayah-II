@@ -550,7 +550,11 @@ let INIT=null,FOLDER='',TOKEN=null,ME=null,USERS=[],SPS={terhubung:false},ADA_AI
 const ss=(k,v)=>{let r=null;for(const n of ['localStorage','sessionStorage']){try{const S=window[n];if(v===undefined){r=r||S.getItem(k)}else if(v===null)S.removeItem(k);else S.setItem(k,v)}catch(e){}}return r};
 function api(fn,...a){
   if(!GAS)return new Promise((ok,no)=>setTimeout(()=>{try{ok(DEMO[fn](TOKEN,...a))}catch(e){no(e)}},60));
-  return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(e=>{if(/SESI_HABIS/.test(e.message||e)){sesiHabis();no(new Error('Sesi berakhir, silakan login lagi.'))}else no(e)})[fn](TOKEN,...a))}
+  const panggil=()=>new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(e=>{if(/SESI_HABIS/.test(e.message||e)){sesiHabis();no(new Error('Sesi berakhir, silakan login lagi.'))}else no(e)})[fn](TOKEN,...a));
+  /* fungsi baca/analisis aman diulang otomatis bila gangguan sesaat (jaringan, server sibuk); fungsi yang mengubah data (nomor SPS, simpan) tidak diulang */
+  if(!AMAN_ULANG.test(fn))return panggil();
+  return (async()=>{let err;for(let i=0;i<3;i++){try{return await panggil()}catch(e){err=e;const m=String(e&&e.message||e);if(/Sesi berakhir|SESI|tidak berhak|izin/i.test(m)||!/(Server|server|sibuk|timeout|tidak bisa|unavailable|network|jaringan|HTTP 5|HTTP 429|Claude HTTP|too many|terlalu banyak|Exception|Service|dialihkan|memuat)/.test(m)&&i>0)break;await new Promise(k=>setTimeout(k,700*(i+1)))}}throw err})()}
+const AMAN_ULANG=/^(apiAnalisaTeks|apiBacaPenetapanAI|apiBacaSheet|apiCekSipp|apiSpsCekTanggal|apiInit|apiRiwayat|apiPengguna|apiAdaAI)$/;
 function apiLoginCall(u,p,ing){if(!GAS)return new Promise((ok,no)=>{try{ok(DEMO.apiLogin(u,p))}catch(e){no(e)}});
   return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(no).apiLogin(u,p,!!ing))}
 const isSuper=()=>ME&&ME.role==='superadmin';
