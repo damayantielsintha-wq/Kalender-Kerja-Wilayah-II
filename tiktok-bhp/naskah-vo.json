@@ -121,43 +121,43 @@
  },
  {
   "who": "dinda",
-  "text": "Kalau sudah diputus pailit sama pengadilan, BHP bisa ditunjuk jadi kuratornya. Yang ngurus dan membereskan hartanya.",
-  "key": "dinda-1800ca65"
+  "text": "Kalau sampai diputus pailit sama pengadilan, hartanya diurus kurator. Debitor atau kreditor bisa mengusulkan kurator, dan BHP bisa jadi pilihannya.",
+  "key": "dinda-547d0bd2"
  },
  {
   "who": "tasya",
-  "text": "Waduh, kurator gitu pasti mahal dong?",
-  "key": "tasya-ec307e3a"
+  "text": "Tapi kalau nggak ada yang ngusulin kurator, gimana dong?",
+  "key": "tasya-0e036161"
  },
  {
   "who": "dinda",
-  "text": "Justru lebih hemat, Sya. Kita kan mewakili negara, nggak ada fee macem-macem.",
-  "key": "dinda-0630b9f7"
+  "text": "Tenang, hakim akan menunjuk BHP. Ibarat kiper cadangan, selalu siap turun ke lapangan!",
+  "key": "dinda-dd053f11"
  },
  {
   "who": "tasya",
-  "text": "Wih, ternyata BHP bisa jadi kurator, hemat pula. Mantap!",
-  "key": "tasya-1cd8776f"
+  "text": "Wih, ternyata BHP juga siap jadi kurator kepailitan. Mantap!",
+  "key": "tasya-77595733"
  },
  {
   "who": "narator",
-  "text": "Nah, catet ya. Kepailitan, bisa kamu urus di BHP. BHP kurator negara",
-  "key": "narator-221f08b1"
+  "text": "Nah, catet ya. Dalam kepailitan, BHP bisa diusulkan jadi kurator oleh debitor atau kreditor. Kalau tidak ada usulan, hakim menunjuk BHP.",
+  "key": "narator-2000ddec"
  },
  {
   "who": "boss",
-  "text": "Tanpa fee ini itu. Pasti ada solusi",
-  "key": "boss-6adb16e4"
+  "text": "Siap jadi kurator. Pasti ada solusi",
+  "key": "boss-f6634641"
  },
  {
   "who": "boss",
-  "text": "Soal kurator kepailitan? Tenang, ada di BHP kok! Kita kan UPT-nya Kementerian Hukum. Jadi…",
-  "key": "boss-23e36a72"
+  "text": "Soal kepailitan? BHP siap jadi kurator! Kita kan UPT-nya Kementerian Hukum. Jadi…",
+  "key": "boss-02cd88f6"
  },
  {
   "who": "narator",
-  "text": "Jadi inget ya, urusan kurator kepailitan, langsung aja ke BHP. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!",
-  "key": "narator-a6380dd4"
+  "text": "Jadi inget ya, dalam kepailitan, BHP siap jadi kurator, baik diusulkan para pihak maupun ditunjuk hakim. Balai Harta Peninggalan Medan, dari Kementerian Hukum Republik Indonesia. Pokoknya, pasti selalu ada solusinya!",
+  "key": "narator-0d9c1111"
  },
  {
   "who": "narator",
