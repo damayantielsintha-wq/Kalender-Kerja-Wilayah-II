@@ -35,3 +35,5 @@ Buka `Index.html` langsung di browser. Aplikasi otomatis masuk **mode demo** (da
 
 ## ⌨️ Shortcut
 `N` baru · `T` hari ini · `M/W/A/O/B/S/L` ganti tampilan · `←/→` navigasi · `/` cari · `D` tema · `Ctrl+K` palette
+
+> Aplikasi **Dokumen Penyumpahan** BHP Medan ada di folder [`penyumpahan/`](penyumpahan/README.md) dan merupakan aplikasi terpisah (proyek Apps Script sendiri).
