@@ -493,6 +493,36 @@ function jsonSps_(r, apa) {
     throw new Error('Jawaban SPS tidak terbaca (' + apa + '): ' + t.slice(0, 150));
   }
 }
+/**
+ * Ambil daftar nomor cadangan yang masih TERSEDIA dari jawaban /surat/available-nomor/{tgl}
+ * (halaman SPS "Nomor Hari Mundur": Nomor tersedia 2719, 2720 … ; Sudah terpakai 2714 …).
+ * Bentuk JSON persisnya tidak didokumentasikan, jadi dicari array bernama available/tersedia,
+ * dan array bernama used/terpakai dipakai untuk menyaring.
+ */
+function nomorTersedia_(j) {
+  const ambil = function (v) { return (v && typeof v === 'object') ? (v.nomor || v.nomor_surat || v.number || v.value || v.no) : v; };
+  const angka = function (arr) { return (arr || []).map(ambil).filter(function (x) { return x !== undefined && x !== null && /^\d+[A-Za-z]?$/.test(String(x).trim()); }).map(function (x) { return String(x).trim(); }); };
+  const cariArr = function (o, pola, dalam) {
+    if (!o || typeof o !== 'object' || dalam > 4) return null;
+    for (const k in o) { if (pola.test(k) && Array.isArray(o[k])) return o[k]; }
+    for (const k in o) { if (o[k] && typeof o[k] === 'object' && !Array.isArray(o[k])) { const r = cariArr(o[k], pola, dalam + 1); if (r) return r; } }
+    return null;
+  };
+  const pakai = angka(cariArr(j, /used|terpakai|pakai|taken|booked/i, 0));
+  let ada = angka(cariArr(j, /avail|tersedia|kosong|free|sisa/i, 0));
+  if (!ada.length && Array.isArray(j)) ada = angka(j);
+  if (!ada.length && Array.isArray(j.data)) ada = angka(j.data);
+  return ada.filter(function (x) { return pakai.indexOf(x) < 0; });
+}
+/** Diagnosa: lihat jawaban mentah SPS untuk satu tanggal (tidak mengambil nomor). */
+function apiSpsCekTanggal(token, tanggal) {
+  super_(token);
+  tanggal = String(tanggal || hariIni_());
+  const a = spsFetch_('/surat/available-nomor/' + tanggal, { method: 'get' });
+  const t = a.getContentText();
+  let j = null; try { j = JSON.parse(t); } catch (e) {}
+  return { http: a.getResponseCode(), tersedia: j ? nomorTersedia_(j) : [], mentah: t.slice(0, 3000) };
+}
 /** Ambil nomor SPS pada tanggal pilihan pengguna (hari ini atau tanggal mundur; tanggal maju ditolak). */
 function spsAmbil_(jenis, perihal, pegawai, tanggal) {
   const hari = hariIni_();
@@ -505,9 +535,7 @@ function spsAmbil_(jenis, perihal, pegawai, tanggal) {
     const a = spsFetch_('/surat/available-nomor/' + tanggal, { method: 'get' });
     if (a.getResponseCode() !== 200) throw new Error('SPS: gagal cek nomor tersedia tanggal ' + tanggal + ' (HTTP ' + a.getResponseCode() + ').');
     const j = jsonSps_(a, 'nomor tersedia');
-    const L = j.available || j.available_nomor || j.nomor_tersedia || j.data || [];
-    const pertama = Array.isArray(L) && L.length ? L[0] : null;
-    const nomor = pertama && typeof pertama === 'object' ? (pertama.nomor || pertama.nomor_surat || pertama.value) : pertama;
+    const nomor = nomorTersedia_(j)[0];
     if (!nomor) throw new Error('Tidak ada nomor cadangan SPS yang tersedia pada tanggal ' + tanggal + '. Pilih tanggal lain atau gunakan tanggal hari ini.');
     body.nomor_surat = nomor;
   }
