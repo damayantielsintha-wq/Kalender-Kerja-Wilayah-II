@@ -276,18 +276,18 @@
  },
  {
   "who": "tasya",
-  "text": "Din, warisan keluargaku udah dibagi. Tapi ada satu sepupu yang udah lama nggak ketemu. Bagiannya gimana dong?",
-  "key": "tasya-338edbf9"
+  "text": "Din, soal pailit kemarin aku jadi penasaran. Kalau harta pailit udah dibagi ke kreditor, terus masih ada sisa uangnya, larinya ke mana?",
+  "key": "tasya-9aee0062"
  },
  {
   "who": "dinda",
-  "text": "Tenang, bagiannya dikelola BHP sebagai uang pihak ketiga. Aman, sampai orangnya datang dan mengurus haknya.",
-  "key": "dinda-3fef7c77"
+  "text": "Nah, uang sisa pemberesan pailit itu dikelola BHP sebagai Uang Pihak Ketiga. Aman di BHP sampai yang berhak datang mengambilnya.",
+  "key": "dinda-c919b492"
  },
  {
   "who": "tasya",
-  "text": "Oh, jadi kayak celengan gitu, tapi yang jagain negara?",
-  "key": "tasya-b3c0f03b"
+  "text": "Oh, jadi kayak celengan, tapi yang jagain negara?",
+  "key": "tasya-2c8dbadc"
  },
  {
   "who": "dinda",
@@ -296,13 +296,13 @@
  },
  {
   "who": "tasya",
-  "text": "Ternyata bagian ahli waris yang belum ketemu aman di BHP ya. Lega!",
-  "key": "tasya-ab04ad62"
+  "text": "Ternyata uang sisa pailit juga aman di BHP ya. Lega!",
+  "key": "tasya-148b4502"
  },
  {
   "who": "narator",
-  "text": "Nah, catet ya. Uang Pihak Ketiga, bisa kamu urus di BHP. dikelola aman oleh BHP",
-  "key": "narator-3e3f3bda"
+  "text": "Nah, catet ya. Uang sisa pemberesan pailit dikelola BHP sebagai Uang Pihak Ketiga, sampai diambil oleh yang berhak.",
+  "key": "narator-64d195e5"
  },
  {
   "who": "boss",

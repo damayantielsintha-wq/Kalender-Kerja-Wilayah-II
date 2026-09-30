@@ -833,13 +833,16 @@ const EPISODES = [
     // ⚠️ Naskah baru — mohon dicek kebenaran isinya sebelum tayang
     no: 6, short: 'Uang Pihak Ketiga', emoji: '💰', title: 'Uang Pihak Ketiga', icon: 'building', bg: 'pelayanan', cups: ['boba', 'esteh'],
     messages: [
-      { from: 'tasya', act: 'tilt',    emote: '🤔', text: 'Din, warisan keluargaku udah dibagi. Tapi ada satu sepupu yang udah lama nggak ketemu. Bagiannya gimana dong?' },
-      { from: 'dinda', act: 'explain', emote: '💰', text: 'Tenang, bagiannya dikelola BHP sebagai uang pihak ketiga. Aman, sampai orangnya datang dan mengurus haknya.' },
-      { from: 'tasya', act: 'bounce',  emote: '🐷', text: 'Oh, jadi kayak celengan gitu, tapi yang jagain negara?' },
+      { from: 'tasya', act: 'tilt',    emote: '🤔', text: 'Din, soal pailit kemarin aku jadi penasaran. Kalau harta pailit udah dibagi ke kreditor, terus masih ada sisa uangnya, larinya ke mana?' },
+      { from: 'dinda', act: 'explain', emote: '💰', text: 'Nah, uang sisa pemberesan pailit itu dikelola BHP sebagai Uang Pihak Ketiga. Aman di BHP sampai yang berhak datang mengambilnya.' },
+      { from: 'tasya', act: 'bounce',  emote: '🐷', text: 'Oh, jadi kayak celengan, tapi yang jagain negara?' },
       { from: 'dinda', act: 'nod',     emote: '🔐', text: 'Iya, celengan paling amanah. Nggak bakal dibobol buat beli kopi.' },
     ],
-    overlay: { title: 'Uang Pihak Ketiga', sub: 'dikelola aman oleh BHP 💰', icon: 'building' },
-    punch: { from: 'tasya', act: 'wow', emote: '😮‍💨', text: 'Ternyata bagian ahli waris yang belum ketemu aman di BHP ya. Lega!' },
+    overlay: { title: 'Uang Pihak Ketiga', sub: 'sisa pemberesan pailit dikelola aman 💰', icon: 'building' },
+    punch: { from: 'tasya', act: 'wow', emote: '😮‍💨', text: 'Ternyata uang sisa pailit juga aman di BHP ya. Lega!' },
+    say: {
+      overlay: 'Nah, catet ya. Uang sisa pemberesan pailit dikelola BHP sebagai Uang Pihak Ketiga, sampai diambil oleh yang berhak.',
+    },
     pops: [
       { spot: 'right', text: 'Pasti ada solusi!' },
       { spot: 'cup',   text: 'Pasti ada solusi!!' },
@@ -866,7 +869,7 @@ const BOARD = [
   ['Biaya lebih ringan', 'Masuk kas negara', 'Tanpa usulan: ditunjuk hakim ⚖️'],
   ['Orang tak hadir', 'Harta tak terurus', 'Dijaga BHP 🗂️'],
   ['Wasiat tertutup', 'Dibuka resmi di BHP', 'Ada berita acaranya 📜'],
-  ['Ahli waris belum ketemu', 'Bagiannya dikelola BHP', 'Aman sampai diambil 💰'],
+  ['Sisa pemberesan pailit', 'Dikelola BHP sebagai UPK', 'Aman sampai diambil yang berhak 💰'],
 ];
 const ANTICS = [
   ['pose-point fx-hop', 'pose-point fx-lean', 'pose-point', 'pose-namaste fx-wiggle', 'pose-namaste'],
