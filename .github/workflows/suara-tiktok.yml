@@ -1,0 +1,26 @@
+name: Buat suara AI TikTok BHP
+on:
+  push:
+    paths: ['tiktok-bhp/naskah-vo.json', 'tiktok-bhp/contoh_suara.py', 'tiktok-bhp/buat_suara.py', '.github/workflows/suara-tiktok.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  suara:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install edge-tts imageio-ffmpeg
+      - run: python tiktok-bhp/buat_suara.py
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      - run: python tiktok-bhp/contoh_suara.py
+      - name: Commit rekaman
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add tiktok-bhp/vo tiktok-bhp/contoh
+          git diff --cached --quiet || (git commit -m "Rekaman suara AI neural (otomatis)" && git pull --rebase origin "${GITHUB_REF_NAME}" && git push)

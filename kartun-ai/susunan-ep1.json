@@ -1,0 +1,67 @@
+{
+ "no": 1,
+ "judul": "Hak Waris",
+ "tusi": "Surat Keterangan Hak Waris",
+ "sub": "bisa diurus online 📲",
+ "catatan": "Versi dialog: klip Veo berdialog (suara_klip) tanpa slow-motion. d06–d11 belum ada → sementara pakai klip lama s7/s8 + suara Gemini.",
+ "potongan": [
+  {
+   "klip": "ep1-d01",
+   "dari": 0.0,
+   "sampai": 3.2,
+   "judul": true,
+   "suara_klip": true
+  },
+  {
+   "klip": "ep1-d02",
+   "dari": 0.0,
+   "sampai": 7.8,
+   "suara_klip": true,
+   "who": "tasya",
+   "teks": "Din, tolongin dong. Aku mau balik nama tanah almarhum Papa, tapi bingung mulai dari mana."
+  },
+  {
+   "klip": "ep1-d03",
+   "dari": 0.3,
+   "sampai": 8.0,
+   "suara_klip": true,
+   "who": "tasya",
+   "teks": "Udah googling, malah makin pusing."
+  },
+  {
+   "klip": "ep1-d04",
+   "dari": 0.0,
+   "sampai": 7.4,
+   "suara_klip": true,
+   "who": "dinda",
+   "teks": "Hehe, googling mulu sih. Langkah pertama, urus Surat Keterangan Hak Waris dulu."
+  },
+  {
+   "klip": "ep1-d05",
+   "dari": 0.0,
+   "sampai": 4.0,
+   "suara_klip": true,
+   "who": "dinda",
+   "teks": "Di BHP aja, bisa online kok."
+  },
+  {
+   "klip": "ep1-s7",
+   "dari": 0.0,
+   "sampai": 8.0,
+   "vo": "boss-fe79ad37",
+   "who": "boss",
+   "kartu": true
+  },
+  {
+   "klip": "ep1-s8",
+   "dari": 0.0,
+   "sampai": 8.0,
+   "dur": 8.0,
+   "vo": "narator-6661fbd7",
+   "who": "narator",
+   "vo_mulai": 2.8,
+   "tagline": true,
+   "penutup": true
+  }
+ ]
+}
