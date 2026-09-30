@@ -1013,16 +1013,19 @@ async function dl(keys,judul){
   catch(e){alert('Gagal membuat DOCX: '+e.message)}}
 
 function gdocBtn(key,keys,judul){const d=(cur.dokumen||{})[key];const ks=JSON.stringify(keys).replace(/"/g,"'");
-  return d?`<span class="nomor">📄 <a href="${d.url}" target="_blank" rel="noopener">Buka Google Doc</a><br><small>${esc(d.oleh)} · ${wkt(d.waktu)}</small></span><div><button onclick="buatGDoc('${key}',${ks},'${esc(judul)}',this,1)">↻ Buat ulang</button></div>`
+  return d?`<span class="nomor">📄 <a href="${d.url}" target="_blank" rel="noopener">${d.docx?'Buka file Word':'Buka Google Doc'}</a>${d.docx?' <small style="color:var(--warn)">(konversi Google Docs gagal — klik ↻ untuk coba lagi)</small>':''}<br><small>${esc(d.oleh)} · ${wkt(d.waktu)}</small></span><div><button onclick="buatGDoc('${key}',${ks},'${esc(judul)}',this,1)">↻ Buat ulang</button></div>`
     :`<div><button class="pri" onclick="buatGDoc('${key}',${ks},'${esc(judul)}',this)">📄 Buat Google Doc</button></div>`}
 async function buatGDoc(key,keys,judul,btn,ulang){
   if(ulang&&!confirm('Buat ulang "'+judul+'" dari data terbaru?\nVersi lama (termasuk editan manual di Google Docs) dipindah ke subfolder Arsip, tidak dihapus.'))return;
   if(!GAS){toast('Mode demo: dokumen diunduh sebagai .docx (Google Doc dibuat setelah di-deploy)');return dl(keys)}
   const w=window.open('about:blank','_blank');btn.disabled=true;btn.textContent='Membuat…';clearTimeout(saveT);await flush();
   try{const blob=await buatDocx(keys);const b64=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.readAsDataURL(blob)});
-    const r=await api('apiBuatDokumen',cur.id,key,judul,b64);cur.dokumen=cur.dokumen||{};cur.dokumen[key]=r.dok;cur.folderUrl=r.folderUrl;cur._versi=r.versi;
-    if(w)w.location=r.dok.url;toast('Google Doc dibuat');renderMain()}
-  catch(e){if(w)w.close();alert('Gagal membuat dokumen: '+(e.message||e));btn.disabled=false;btn.textContent='📄 Buat Google Doc'}}
+    let r,err;for(let i=0;i<3&&!r;i++){try{r=await api('apiBuatDokumen',cur.id,key,judul,b64)}catch(e){err=e;if(/SESI|Sesi berakhir/.test(e.message||''))break;btn.textContent='Mencoba lagi ('+(i+2)+'/3)…';await new Promise(k=>setTimeout(k,1500*(i+1)))}}
+    if(!r)throw err||new Error('tidak diketahui');
+    cur.dokumen=cur.dokumen||{};cur.dokumen[key]=r.dok;cur.folderUrl=r.folderUrl;cur._versi=r.versi;
+    if(w)w.location=r.dok.url;toast(r.cadangan?'Google Docs sedang bermasalah — dokumen disimpan sebagai file Word di folder Drive':'Google Doc dibuat');renderMain()}
+  catch(e){if(w)w.close();btn.disabled=false;btn.textContent='📄 Buat Google Doc';
+    if(confirm('Gagal membuat Google Doc: '+(e.message||e)+'\n\nUnduh sebagai file Word (.docx) saja supaya pekerjaan tidak tertunda?'))dl(keys,judul)}}
 function dupRec(){const r=JSON.parse(JSON.stringify(cur));['id','_versi','_meta','_dihapus','dokumen','folderUrl'].forEach(k=>delete r[k]);NOMOR_SEMUA.forEach(k=>r[k]='');r.nama+=' (salinan)';cur=addRec(r,'Duplikat dari '+r.nama.replace(/ \(salinan\)$/,''));renderMain();renderList();flush()}
 async function delRec(){if(!confirm('Hapus berkas '+(cur.nama||'')+'? (bisa dipulihkan oleh admin utama)'))return;clearTimeout(saveT);
   try{await api('apiHapus',cur.id);cur._dihapus=true;toast('Berkas dihapus');renderMain();renderList()}catch(e){alert(e.message)}}

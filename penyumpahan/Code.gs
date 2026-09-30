@@ -653,12 +653,31 @@ function apiBuatDokumen(token, id, key, judul, b64) {
   const lama = d.dokumen[key];
   if (lama && lama.id) { try { DriveApp.getFileById(lama.id).setName(nama + ' (versi ' + String(lama.waktu).slice(0, 10) + ')').moveTo(sub_(folder, 'Arsip')); } catch (e) {} }
   const blob = Utilities.newBlob(Utilities.base64Decode(b64), 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', nama + '.docx');
-  const file = Drive.Files.create({ name: nama, mimeType: MimeType.GOOGLE_DOCS, parents: [folder.getId()] }, blob, { fields: 'id,webViewLink' });
+  /* konversi DOCX → Google Docs kadang gagal sesaat (layanan Drive sibuk / kuota): coba ulang 3x, bila tetap gagal simpan sebagai file Word di folder yang sama */
+  let file = null, galat = '';
+  for (let i = 0; i < 3 && !file; i++) {
+    try {
+      file = Drive.Files.create({ name: nama, mimeType: MimeType.GOOGLE_DOCS, parents: [folder.getId()] }, blob, { fields: 'id,webViewLink' });
+    } catch (e) {
+      galat = String(e.message || e).slice(0, 200);
+      Logger.log('Buat GDoc gagal (percobaan ' + (i + 1) + '): ' + galat);
+      if (i < 2) Utilities.sleep(1200 * (i + 1));
+    }
+  }
   const now = new Date();
+  let cadangan = false;
+  if (!file) {
+    const f = folder.createFile(blob.setName(nama + '.docx'));
+    file = { id: f.getId(), webViewLink: f.getUrl() };
+    cadangan = true;
+  }
   d.dokumen[key] = { id: file.id, url: file.webViewLink || ('https://docs.google.com/document/d/' + file.id + '/edit'), waktu: now.toISOString(), oleh: u.nama };
+  if (cadangan) d.dokumen[key].docx = true;
   d.folderUrl = folder.getUrl();
   const lock = LockService.getScriptLock();
-  lock.waitLock(20000);
+  let dikunci = false;
+  for (let i = 0; i < 3 && !dikunci; i++) { try { lock.waitLock(15000); dikunci = true; } catch (e) { Utilities.sleep(800); } }
+  if (!dikunci) throw new Error('Server sedang sibuk menyimpan berkas lain. Dokumen sudah dibuat di Drive (' + d.dokumen[key].url + '); coba klik lagi dalam beberapa detik.');
   try {
     const now2 = rows_('Berkas').filter(function (x) { return x.id === id; })[0];
     const d2 = JSON.parse(now2.data);
@@ -666,7 +685,7 @@ function apiBuatDokumen(token, id, key, judul, b64) {
     const versi = Number(now2.versi) + 1;
     sheet_('Berkas').getRange(now2._row, 5, 1, 6).setValues([[JSON.stringify(d2), versi, now2.dibuatOleh, now2.dibuatPada, u.nama, now]]);
     log_(u, 'BUAT_DOKUMEN', id, d.nama, judul + (lama ? ' (dibuat ulang; versi lama di folder Arsip)' : '') + ' | ' + d.dokumen[key].url);
-    return { dok: d.dokumen[key], folderUrl: d.folderUrl, versi: versi };
+    return { dok: d.dokumen[key], folderUrl: d.folderUrl, versi: versi, cadangan: cadangan, galat: galat };
   } finally {
     lock.releaseLock();
   }
