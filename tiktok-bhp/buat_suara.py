@@ -118,5 +118,8 @@ async def main():
     keys = [ln["key"] for ln in lines if os.path.exists(os.path.join(out, ln["key"] + ".mp3"))]
     json.dump(keys, open(os.path.join(out, "manifest.json"), "w"), indent=1)
     print(f"Beres! {len(keys)} rekaman di folder vo/")
+    # rapikan otomatis: buang artifact ujung klip + tempo sedikit lebih cepat
+    import subprocess, sys
+    subprocess.run([sys.executable, os.path.join(here, "rapikan_suara.py")])
 
 asyncio.run(main())

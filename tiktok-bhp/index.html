@@ -897,14 +897,15 @@ const LINES = {
 
 /* Timing (ms). Durasi bubble dihitung dari panjang teks lalu dibatasi min/max. */
 const T = {
-  wipe: 450, wipeHold: 250, sceneIntro: 400,
-  typingBase: 400, typingPerChar: 7,  typingMin: 700,  typingMax: 1400,
-  readBase: 800,   readPerChar: 22,   readMin: 2000,   readMax: 4600,
-  talkPerChar: 45, // lama mulut bergerak per karakter
-  listItemGap: 900, listHold: 1800, // kartu daftar (opsional)
-  overlayIn: 600, overlayHold: 2400,
-  popIn: 400, popHold: 1500, popOut: 300, // tiap kemunculan Pak Kepala
-  finaleHold: 2600, taglineHold: 2800, freeze: 1600, closing: 5000, replayAfter: 2500,
+  /* tempo dipercepat supaya penonton tidak bosan */
+  wipe: 380, wipeHold: 150, sceneIntro: 250,
+  typingBase: 220, typingPerChar: 4,  typingMin: 350,  typingMax: 700,
+  readBase: 500,   readPerChar: 14,   readMin: 1300,   readMax: 3200,
+  talkPerChar: 40, // lama mulut bergerak per karakter
+  listItemGap: 700, listHold: 1200, // kartu daftar (opsional)
+  overlayIn: 450, overlayHold: 1500,
+  popIn: 320, popHold: 1000, popOut: 250, // tiap kemunculan Pak Kepala
+  finaleHold: 1600, taglineHold: 2000, freeze: 900, closing: 4000, replayAfter: 1800,
 };
 
 /* ===================== Ikon SVG inline ===================== */
@@ -1508,7 +1509,7 @@ async function sendMessage(m) {
   await Promise.all([sleep(talkMs), speak(m.say || m.text, m.from, m.audio)]);
   ch.classList.remove('talking');
   const spent = (performance.now() - t0) * SPEED;
-  await sleep(Math.max(500, hold - spent));
+  await sleep(Math.max(250, hold - spent));
   clearChar(ch);
 }
 
