@@ -43,7 +43,7 @@ h3{margin:4px 0 12px;font-size:15px}
 .doc button{flex:1;padding:6px;font-size:12px}
 #prev{background:#8a8fa3;padding:20px;border-radius:var(--rad);overflow:auto;max-height:80vh}
 .paper{background:#fff;color:#000;width:210mm;min-height:297mm;margin:0 auto 20px;padding:1cm 2cm 2.5cm 3cm;font:12pt/1.5 Arial,"Liberation Sans",Helvetica,sans-serif;box-shadow:0 4px 20px #0003}
-.paper p{margin:0;text-align:justify;text-indent:36pt}
+.paper p{margin:0;text-align:justify;text-indent:36pt}.paper p[data-line]{border-bottom:1px dotted #000;min-height:24pt;line-height:24pt;margin-right:0}
 .paper p.ni,.paper p.ctr{text-indent:0}.paper p.ctr,.paper .ctr{text-align:center}
 table.kop{width:100%;border-collapse:collapse;border-bottom:1.25pt solid #000;margin:0 0 12pt}
 .paper table.hd td:first-child{padding-left:0}.paper table.hd td:last-child{padding-right:0}
@@ -362,7 +362,9 @@ const HARTA=[['hartaTetap','BARANG-BARANG TETAP','tanah'],['hartaTunai','UANG TU
   ['hartaPerabot','PERABOT RUMAH TANGGA, BARANG DAGANG, TERNAK'],['hartaBergerak','BARANG BERGERAK','harta']];
 const hv=(r,k,old)=>r[k]??(old?r[old]:'')??'';
 const baris=t=>String(t||'').split('\n').map(s=>s.trim()).filter(Boolean);
-const daftarHarta=t=>{const b=baris(t);return b.length?b.map((x,i)=>NP((i+1)+'.',54,esc(x))).join(''):`<p class="ni" style="margin-left:72pt">-</p>`};
+/* kosong → baris titik-titik bernomor untuk diisi tangan oleh petugas di lapangan */
+const garis=(n,left,i)=>`<p class="ni" data-n="${i+1}." data-line="1" style="margin-left:${left}pt;margin-top:${i?0:2}pt;margin-bottom:0">&nbsp;</p>`;
+const daftarHarta=(t,n=3)=>{const b=baris(t);return b.length?b.map((x,i)=>NP((i+1)+'.',54,esc(x))).join(''):[...Array(n)].map((_,i)=>garis(n,54,i)).join('')};
 function head(no,hal,r){return `<table class="hd" style="width:100%;margin-bottom:12pt"><tr><td style="width:70pt">Nomor</td><td>:</td><td>${V(no)}</td><td style="text-align:right">${tgl(r.tanggalSurat)}</td></tr>
 <tr><td>Sifat</td><td>:</td><td>Segera</td><td></td></tr><tr><td>Lampiran</td><td>:</td><td>-</td><td></td></tr>
 <tr><td>Hal</td><td>:</td><td colspan=2>${hal}</td></tr></table>`}
@@ -947,7 +949,8 @@ function para(el,o={}){
   const tk=tokens(el,base,[]);if(jc==='both'&&tk.some(k=>k.br))jc='left';
   const r=(o.prefix?o.prefix.replace('<w:r><w:t>','<w:r>'+rPr(base)+'<w:t>'):'')+runs(tk);
   const ind=left||first||right||o.hang?`<w:ind w:left="${left}" w:right="${right}"${o.hang?` w:hanging="${o.hang}"`:` w:firstLine="${first}"`}/>`:'';
-  return `<w:p><w:pPr><w:widowControl/>${o.keep?'<w:keepNext/><w:keepLines/>':tk.some(k=>k.br)?'<w:keepLines/>':''}<w:spacing w:before="${tw(ptOf(s.marginTop))}" w:after="${o.after??tw(ptOf(s.marginBottom))}" w:line="${line}" w:lineRule="auto"/>${ind}<w:jc w:val="${jc}"/></w:pPr>${r}</w:p>`}
+  const ln=el.dataset&&el.dataset.line;
+  return `<w:p><w:pPr>${o.keep?'<w:keepNext/><w:keepLines/>':tk.some(k=>k.br)?'<w:keepLines/>':''}<w:widowControl/>${ln?'<w:pBdr><w:bottom w:val="dotted" w:sz="6" w:space="1" w:color="000000"/><w:between w:val="dotted" w:sz="6" w:space="1" w:color="000000"/></w:pBdr>':''}<w:spacing w:before="${tw(ptOf(s.marginTop))}" w:after="${o.after??tw(ptOf(s.marginBottom))}" ${ln?'w:line="480" w:lineRule="exact"':`w:line="${line}" w:lineRule="auto"`}/>${ind}<w:jc w:val="${jc}"/></w:pPr>${r}</w:p>`}
 const spacer=(pt,keep)=>`<w:p><w:pPr>${keep?'<w:keepNext/>':''}<w:spacing w:before="0" w:after="0" w:line="${Math.max(20,tw(pt))}" w:lineRule="exact"/></w:pPr><w:r><w:rPr><w:sz w:val="2"/></w:rPr><w:t></w:t></w:r></w:p>`;
 const noBorders='<w:tblBorders><w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="nil"/><w:right w:val="nil"/><w:insideH w:val="nil"/><w:insideV w:val="nil"/></w:tblBorders>';
 function kopXml(){
