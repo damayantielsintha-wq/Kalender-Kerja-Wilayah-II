@@ -413,7 +413,7 @@ function apiSimpanPengguna(token, data) {
  * Protokol sama dengan skrip SAPA WALI BHP Medan:
  *  - autentikasi: cookie sesi Laravel (termasuk XSRF-TOKEN) → header Cookie + X-XSRF-TOKEN
  *  - ambil nomor    : POST /surat/store {nama_pegawai, kode_belakang, perihal, tanggal_surat[, nomor_surat]} → nomor_lengkap
- *  - nomor selalu diambil dengan tanggal hari ini (tanpa tanggal mundur)
+ *  - tanggal nomor dipilih pengguna (hari ini / mundur memakai nomor cadangan); tanggal maju ditolak
  * Cookie bisa ditempel manual (SPS_COOKIE) atau didapat otomatis lewat login username/password (SPS_USER/SPS_PASS).
  */
 const SPS_BASE = 'https://sps.batamen.com';
@@ -485,13 +485,43 @@ function spsFetch_(path, opt) {
   return res;
 }
 function hariIni_() { return Utilities.formatDate(new Date(), 'Asia/Jakarta', 'yyyy-MM-dd'); }
-/** Ambil nomor SPS bertanggal HARI INI (tidak memakai tanggal mundur). */
-function spsAmbil_(jenis, perihal, pegawai) {
-  const body = { nama_pegawai: pegawai, kode_belakang: SPS_KODE[jenis] || SPS_KODE.Pengampuan, perihal: perihal, tanggal_surat: hariIni_() };
-  const r = spsFetch_('/surat/store', { method: 'post', contentType: 'application/json', payload: JSON.stringify(body) });
-  if (r.getResponseCode() !== 200) throw new Error('SPS ambil nomor gagal (' + r.getResponseCode() + '): ' + r.getContentText().slice(0, 300));
-  const j = JSON.parse(r.getContentText());
-  if (!j.success || !j.nomor_lengkap) throw new Error('SPS menolak: ' + (j.message || r.getContentText().slice(0, 200)));
+function jsonSps_(r, apa) {
+  const t = r.getContentText();
+  try { return JSON.parse(t); }
+  catch (e) {
+    if (/<html|<!doctype/i.test(t)) throw new Error('SPS mengembalikan halaman web, bukan data (' + apa + '). Sesi SPS kemungkinan habis — admin utama perlu memperbarui cookie/akun SPS di Pengaturan.');
+    throw new Error('Jawaban SPS tidak terbaca (' + apa + '): ' + t.slice(0, 150));
+  }
+}
+/** Ambil nomor SPS pada tanggal pilihan pengguna (hari ini atau tanggal mundur; tanggal maju ditolak). */
+function spsAmbil_(jenis, perihal, pegawai, tanggal) {
+  const hari = hariIni_();
+  tanggal = String(tanggal || hari);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(tanggal)) throw new Error('Format tanggal nomor tidak valid: ' + tanggal);
+  if (tanggal > hari) throw new Error('SPS tidak bisa mengambil nomor untuk tanggal yang akan datang (' + tanggal + ').');
+  const body = { nama_pegawai: pegawai, kode_belakang: SPS_KODE[jenis] || SPS_KODE.Pengampuan, perihal: perihal, tanggal_surat: tanggal };
+  if (tanggal < hari) {
+    /* tanggal mundur: pakai nomor cadangan yang tersedia di tanggal itu */
+    const a = spsFetch_('/surat/available-nomor/' + tanggal, { method: 'get' });
+    if (a.getResponseCode() !== 200) throw new Error('SPS: gagal cek nomor tersedia tanggal ' + tanggal + ' (HTTP ' + a.getResponseCode() + ').');
+    const j = jsonSps_(a, 'nomor tersedia');
+    const L = j.available || j.available_nomor || j.nomor_tersedia || j.data || [];
+    const pertama = Array.isArray(L) && L.length ? L[0] : null;
+    const nomor = pertama && typeof pertama === 'object' ? (pertama.nomor || pertama.nomor_surat || pertama.value) : pertama;
+    if (!nomor) throw new Error('Tidak ada nomor cadangan SPS yang tersedia pada tanggal ' + tanggal + '. Pilih tanggal lain atau gunakan tanggal hari ini.');
+    body.nomor_surat = nomor;
+  }
+  let r = null, err = null;
+  for (let k = 0; k < 2; k++) {
+    try { r = spsFetch_('/surat/store', { method: 'post', contentType: 'application/json', payload: JSON.stringify(body) }); err = null; }
+    catch (e) { err = e; if (/kedaluwarsa|belum terhubung/.test(e.message)) throw e; Utilities.sleep(1500); continue; }
+    if (r.getResponseCode() >= 500) { Utilities.sleep(1500); continue; }
+    break;
+  }
+  if (err) throw new Error('Gagal menghubungi SPS: ' + err.message);
+  if (r.getResponseCode() !== 200) throw new Error('SPS ambil nomor gagal (HTTP ' + r.getResponseCode() + '): ' + r.getContentText().slice(0, 300));
+  const j = jsonSps_(r, 'ambil nomor');
+  if (!j.success || !j.nomor_lengkap) throw new Error('SPS menolak: ' + (j.message || JSON.stringify(j).slice(0, 200)));
   return String(j.nomor_lengkap);
 }
 
@@ -511,10 +541,10 @@ function apiAmbilNomor(token, id, dok, info) {
     if (!r) throw new Error('Simpan berkas dulu sebelum mengambil nomor.');
     const d = JSON.parse(r.data);
     if (d[dok]) throw new Error('Dokumen ini sudah punya nomor: ' + d[dok]);
-    const tgl = hariIni_();
-    const nomor = spsAmbil_(d.jenis, String(info.perihal || '').slice(0, 250), u.nama);
+    const tgl = String(info.tanggalNomor || hariIni_());
+    const nomor = spsAmbil_(d.jenis, String(info.perihal || '').slice(0, 250), u.nama, tgl);
     d[dok] = nomor;
-    if (dok === 'nomorSurat' || dok === 'nomorLurah') d.tanggalSurat = tgl; // tanggal surat = tanggal nomor
+    if (['nomorSurat', 'nomorLurah', 'nomorUndangan', 'nomorUndDesa'].indexOf(dok) >= 0) d.tanggalSurat = tgl; // tanggal surat = tanggal nomor
     const versi = Number(r.versi) + 1;
     sheet_('Berkas').getRange(r._row, 5, 1, 6).setValues([[JSON.stringify(d), versi, r.dibuatOleh, r.dibuatPada, u.nama, new Date()]]);
     log_(u, 'AMBIL_NOMOR', id, r.nama, JSON.stringify([{ f: dok, dari: '', ke: nomor }]) + ' | ' + SPS_KODE[d.jenis] + ' · ' + tgl + ' · ' + info.perihal);
