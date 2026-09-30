@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dokumen Penyumpahan BHP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="if(matchMedia('(min-width:901px)').matches)this.media='all'">
 <style>
 :root{--bg:#f4f5fb;--card:#fff;--ink:#1c1f2e;--mut:#6b7087;--line:#e3e5ef;--pri:#4f46e5;--pri2:#eef0ff;--ok:#0f9d6b;--warn:#c2410c;--rad:14px}
 :root[data-theme=dark]{--bg:#10121a;--card:#1a1d29;--ink:#e8eaf3;--mut:#9398ae;--line:#2a2e3e;--pri:#8b83ff;--pri2:#24264a}
@@ -43,7 +43,7 @@ h3{margin:4px 0 12px;font-size:15px}
 .doc b{font-size:13px}.doc div{display:flex;gap:6px}
 .doc button{flex:1;padding:6px;font-size:12px}
 #prev{background:#8a8fa3;padding:20px;border-radius:var(--rad);overflow:auto;max-height:80vh}
-.paper{background:#fff;color:#000;width:210mm;min-height:297mm;margin:0 auto 20px;padding:48pt 48pt 48pt 71pt;font:12pt/1.5 Arial,"Liberation Sans",Helvetica,sans-serif;box-shadow:0 4px 20px #0003}
+.paper{background:#fff;color:#000;width:210mm;min-height:297mm;margin:0 auto 20px;padding:1cm 2cm 2.5cm 3cm;font:12pt/1.5 Arial,"Liberation Sans",Helvetica,sans-serif;box-shadow:0 4px 20px #0003}
 .paper p{margin:0;text-align:justify;text-indent:36pt}
 .paper p.ni,.paper p.ctr{text-indent:0}.paper p.ctr,.paper .ctr{text-align:center}
 table.kop{width:100%;border-collapse:collapse;border-bottom:1.25pt solid #000;margin:0 0 12pt}
@@ -140,7 +140,7 @@ body{padding-left:250px}
 .paket{border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;background:linear-gradient(180deg,var(--pri2),var(--card) 60%)}
 .paket-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}.paket-h>div:first-child{margin-right:auto}
 .prog{width:140px;height:8px;border-radius:9px;background:var(--line);overflow:hidden}.prog i{display:block;height:100%;background:var(--gold)}
-.paket-g{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.paket-c h5{margin:0 0 8px;font-size:11.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--mut)}
+.paket-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.paket-c h5{margin:0 0 8px;font-size:11.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--mut)}
 .pk{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer;font-weight:400}
 .pk:hover{border-color:var(--navy)}.pk input{width:auto;margin-top:3px}.pk b{display:block;font-size:13.5px}.pk small{color:var(--mut);font-size:11.5px}
 .pk.ok{border-color:#b5e5cf;background:#f1fbf6}
@@ -176,22 +176,58 @@ html,body{max-width:100%;overflow-x:hidden}
 @media(max-width:900px){.top .uname{display:none}.top{gap:8px}.side{gap:0}.card{min-width:0}.wrap>*{min-width:0}#prev{padding:8px}.paper{transform-origin:top left}.wz{padding:16px 6px}.wz-h{flex-direction:column}.wz-h h2{font-size:19px}.top h2{font-size:17px}.side .brand small{display:none}}
 .wrap.wzmode{grid-template-columns:1fr}.wrap.wzmode>aside{display:none}
 .docs button.pri{background:var(--navy)!important;color:#fff!important;border-color:var(--navy)!important}
+.nav i{font-style:normal}.more-m,.back-m{display:none!important}
+/* ===== Mode HP: bar atas ringkas + navigasi bawah (menu "Lainnya" jadi lembar dari bawah) ===== */
+@media(max-width:900px){
+  body{padding-bottom:calc(70px + env(safe-area-inset-bottom))}
+  .side{position:fixed!important;left:0;right:0;bottom:0;top:auto;width:auto;height:calc(64px + env(safe-area-inset-bottom));z-index:30;
+    flex-direction:row!important;flex-wrap:nowrap!important;align-items:stretch!important;justify-content:space-around;gap:2px!important;
+    padding:5px 6px calc(5px + env(safe-area-inset-bottom));overflow:hidden;box-shadow:0 -4px 16px #0002}
+  .side .brand,.side .sec,.side .foot,.side .nav{display:none!important}
+  .side .nav[data-v=berkas],.side .nav[data-v=baru],.side .nav[data-v=kalender],.side .more-m{display:flex!important;flex:1;flex-direction:column;gap:1px;
+    align-items:center;justify-content:center;margin:0!important;padding:4px 2px!important;font-size:10.5px!important;line-height:1.15;text-align:center;border-radius:14px;box-shadow:none!important}
+  .side .nav i{font-size:19px}
+  body.menu-m .side{height:auto;max-height:86vh;overflow:auto;flex-direction:column!important;border-radius:22px 22px 0 0;padding:8px 10px calc(12px + env(safe-area-inset-bottom))}
+  body.menu-m .side .nav:not([hidden]),body.menu-m .side .brand{display:flex!important;flex:none;flex-direction:row;gap:12px;font-size:15px!important;padding:13px 14px!important;justify-content:flex-start;text-align:left}
+  body.menu-m .side .sec:not([hidden]){display:block!important;padding:10px 14px 2px}
+  body.menu-m .side .foot{display:flex!important}
+  body.menu-m .side .nav i{font-size:17px;width:22px;text-align:center}
+  body.menu-m .side .nav:not([hidden]){margin:1px 0!important;min-height:0}
+  body.menu-m .side .more-m span{font-size:0}body.menu-m .side .more-m span::after{content:"Tutup menu";font-size:15px}
+  body.menu-m .side .more-m i{font-size:0}body.menu-m .side .more-m i::after{content:"✕";font-size:17px}
+  body.menu-m::after{content:"";position:fixed;inset:0;background:#0008;z-index:29}
+  .top{padding:10px 12px!important;gap:8px!important;flex-wrap:wrap}
+  .top .grow{flex:1;min-width:0}.top h2{font-size:17px!important;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #pgDate{display:none}
+  .top #q{order:5;width:100%;font-size:16px;padding:9px 12px}
+  #who{gap:6px}#who .uname{display:none}
+  .menubtn{font-size:0!important;padding:8px 11px!important}.menubtn::before{content:"👤";font-size:17px}
+  .wrap{padding:10px!important;gap:10px}
+  .card{padding:12px;border-radius:14px}
+  body.m-open .wrap>aside{display:none}
+  .back-m{display:inline-flex!important;align-items:center;gap:6px;margin:0 0 10px;padding:8px 12px;border-radius:10px;font-weight:700}
+  input,select,textarea{font-size:16px} /* iPhone tidak zoom otomatis */
+  .toast{bottom:calc(78px + env(safe-area-inset-bottom))!important}
+  .card,.item,.paper,.nav.on{box-shadow:none!important}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <nav class="side">
   <div class="brand"><img id="brandLogo" alt=""><div><b>BHP MEDAN</b><small>Dokumen Penyumpahan</small></div></div>
   <div class="sec">DASHBOARD</div>
-  <a class="nav on" data-v="berkas" onclick="goBerkas()">🏠 Daftar Berkas</a>
+  <a class="nav on" data-v="berkas" onclick="goBerkas()"><i>🏠</i> <span>Daftar Berkas</span></a>
   <div class="sec">PENYUMPAHAN</div>
-  <a class="nav" data-v="baru" onclick="wizard(1)">📑 Berkas Baru</a>
-  <a class="nav" data-v="kalender" onclick="bukaKalender()">📅 Jadwal Sumpah</a>
-  <a class="nav superOnly" onclick="imporSheetDlg()">📥 Impor dari Spreadsheet</a>
-  <label class="nav" data-v="csv">⬆ Impor CSV<input type="file" accept=".csv" hidden onchange="importCsv(this)"></label>
+  <a class="nav" data-v="baru" onclick="wizard(1)"><i>📑</i> <span>Berkas Baru</span></a>
+  <a class="nav" data-v="kalender" onclick="bukaKalender()"><i>📅</i> <span>Jadwal Sumpah</span></a>
+  <a class="nav superOnly" onclick="imporSheetDlg()"><i>📥</i> <span>Impor dari Spreadsheet</span></a>
+  <label class="nav" data-v="csv"><i>⬆</i> <span>Impor CSV</span><input type="file" accept=".csv" hidden onchange="importCsv(this)"></label>
   <div class="sec superOnly">ADMIN UTAMA</div>
-  <a class="nav superOnly" onclick="riwayatSemua()">🕘 Riwayat</a>
-  <a class="nav superOnly" onclick="kelolaPengguna()">👥 Pengguna</a>
-  <a class="nav superOnly" onclick="openSet()">⚙ Pengaturan</a>
+  <a class="nav superOnly" onclick="riwayatSemua()"><i>🕘</i> <span>Riwayat</span></a>
+  <a class="nav superOnly" onclick="kelolaPengguna()"><i>👥</i> <span>Pengguna</span></a>
+  <a class="nav superOnly" onclick="openSet()"><i>⚙</i> <span>Pengaturan</span></a>
+  <a class="nav more-m" onclick="menuM()"><i>☰</i> <span>Lainnya</span></a>
   <div class="foot"><span>© 2026 BHP Medan</span><button onclick="toggleTheme()" title="Tema">🌓</button></div>
 </nav>
 <div class="top"><div class="grow"><h2 id="pgTitle">Daftar Berkas</h2><small id="pgDate"></small></div><input id="q" placeholder="🔍 Cari nama…"><span id="who"></span></div>
@@ -297,10 +333,10 @@ const LOGO_DEF='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALAAAADGCAIAAAD9rp
 const kop=()=>`<table class="kop"><tr><td class="lg"><img src="${SET.logo||LOGO_DEF}" width="77" height="87" alt="logo"></td><td class="tx">${esc(SET.instansi)}<br>${esc(SET.kanwil)}<br><span class="b">${esc(SET.balai)}</span><br><span class="s">${esc(SET.alamat)}<br>${esc(SET.telp)}<br>${esc(SET.web)}</span></td></tr></table>`;
 /* ---------------- dokumen (sesuai template di folder Drive BHP Medan) ---------------- */
 const WA=()=>`<b>${esc(SET.wa)}</b>`;
-const ttdKepala=()=>`<p class="ni" style="margin-left:262pt;margin-top:20pt;text-align:left">Kepala,<br><br><br><br>${esc(SET.kepala)}</p>`;
+const ttdKepala=()=>`<p class="ni" data-keep="ttd" style="margin-left:262pt;margin-top:20pt;text-align:left">Kepala,<br><br><br><br>${esc(SET.kepala)}</p>`;
 const lurahNm=r=>{const k=String(r.kelurahan||'').trim().replace(/^(Lurah|Kelurahan)\s+/i,'');return /^Desa\s/i.test(k)?'Kepala '+V(k):'Lurah '+V(k)};
 const kanwil=r=>r.kanwilTembusan||SET.kanwilTembusan;
-const tembusan=(r,lurah=true)=>`<p class="ni" style="margin-top:22pt;font-size:10pt;line-height:1">Tembusan:</p><ol style="font-size:10pt;line-height:1"><li>Direktur Jenderal Administrasi Hukum Umum Kementerian Hukum RI;</li><li>Direktur Perdata Direktorat Jenderal Administrasi Hukum Umum;</li><li>${esc(kanwil(r))}${lurah?';':''}</li>${lurah?`<li>${lurahNm(r)}</li>`:''}</ol>`;
+const tembusan=(r,lurah=true)=>`<p class="ni" data-keep="1" style="margin-top:22pt;font-size:10pt;line-height:1">Tembusan:</p><ol data-keep="1" style="font-size:10pt;line-height:1"><li>Direktur Jenderal Administrasi Hukum Umum Kementerian Hukum RI;</li><li>Direktur Perdata Direktorat Jenderal Administrasi Hukum Umum;</li><li>${esc(kanwil(r))}${lurah?';':''}</li>${lurah?`<li>${lurahNm(r)}</li>`:''}</ol>`;
 const penetapan=r=>`Menindaklanjuti Penetapan ${esc(r.pengadilan)} Nomor: ${V(r.nomorPenetapan)} tertanggal ${tgl(r.tglPenetapan)} yang telah memperoleh kekuatan hukum tetap`;
 const blnThn=s=>{const d=pd(s);return d?`${BLN[d.getMonth()]} ${d.getFullYear()}`:'…'};
 const kota=r=>r.kotaPermohonan||((r.kelurahan||'').match(/(?:Kota|Kabupaten|Kab\.)\s+([^,]+)/i)||[])[1]||'Medan';
@@ -352,24 +388,7 @@ const DOCS_EXTRA={
       'Membawa meterai senilai Rp 10.000,- (Sepuluh Ribu Rupiah) sebanyak 4 (empat) lembar;',
       `Melakukan pembayaran Penerimaan Negara Bukan Pajak (PNBP) sebesar Rp 200.000,- (Dua Ratus Ribu Rupiah) untuk layanan Berita Acara Penyumpahan ${d.jenisTxt};`,
       'Mengenakan pakaian formal, rapi, dan sopan.'],[PNBP,BILLING])+
-`<p style="margin-top:10pt">Demikian surat undangan ini kami sampaikan. Untuk informasi lebih lanjut, ${s} dapat menghubungi WhatsApp Layanan Perwalian Pengampuan di nomor ${WA()}. Atas perhatian dan kehadiran ${s}, kami mengucapkan terima kasih.</p>`+ttdKepala()+tembusan(r,false)}},
-  desa:{nama:r=>GRUP.desa.nama(r),sty:{line:360},fn:r=>{const d=derive(r);
-    return kop()+head(r.nomorUndDesa,`Undangan Menghadiri Pengambilan Sumpah ${d.J}${r.zoom?' Secara Virtual':''}`,r)+yth(lurahNm(r),esc(r.alamatKelurahan||'Tempat'))+
-`<p>${penetapan(r)} terkait penunjukan Sdr. <b>${V(r.nama)}</b> sebagai ${d.J} atas ${d.w?'anak di bawah umur bernama':'Terampu bernama'} <b>${V(d.objek)}</b>, yang merupakan warga di lingkungan ${V(r.kelurahan)}.</p>
-<p>Sebagai institusi negara yang menjalankan fungsi ${d.J} Pengawas, Balai Harta Peninggalan Medan berkomitmen untuk bersinergi dengan aparatur pemerintahan desa/kelurahan guna memastikan perlindungan hak keperdataan dan kepentingan terbaik ${d.w?'anak':'Terampu'} di wilayah Bapak/Ibu. Sehubungan dengan hal tersebut, kami turut mengundang Bapak/Ibu beserta jajaran untuk hadir dan menyaksikan pelaksanaan Pengambilan Sumpah ${d.J}${r.zoom?' yang akan dilaksanakan secara virtual':''} pada:</p>`+tabelJadwal(r)+
-`<p>Kehadiran dan partisipasi Bapak/Ibu beserta jajaran sangat kami harapkan sebagai bentuk dukungan dan awal kolaborasi dalam kegiatan pengawasan (monitoring) ${d.jenisTxt.toLowerCase()} ini ke depannya.</p>
-<p>Demikian undangan ini kami sampaikan. Atas perhatian, kerja sama, dan kehadiran Bapak/Ibu, kami mengucapkan terima kasih.</p>`+ttdKepala()+tembusan(r,false)}},
-  terima:{nama:()=>'Tanda Terima Berkas',sty:{line:300},fn:r=>{const d=derive(r),m=d.madya;
-    const row=(a,b)=>`<tr><td style="width:90pt">${a}</td><td>:</td><td>${b}</td></tr>`;
-    return kop()+`<p class="ctr"><b><u>TANDA TERIMA BERKAS</u></b></p><br>
-<p>Pada hari ini, ${hari(r.tglSumpah)}, tanggal ${tgl(r.tglSumpah)}, bertempat di ${esc(r.tempat||'kediaman '+(r.nama||''))}, kami yang bertanda tangan di bawah ini:</p>
-${NP('1.',0,'<b>PIHAK PERTAMA (Yang Menyerahkan)</b>')}<table style="margin:0 0 8pt 18pt">${row('Nama',V(m.nama))}${row('NIP',V(m.nip))}${row('Jabatan',V(m.jabatan))}${row('Instansi','Balai Harta Peninggalan Medan')}</table>
-${NP('2.',0,'<b>PIHAK KEDUA (Yang Menerima)</b>')}<table style="margin:0 0 8pt 18pt">${row('Nama',V(r.nama))}${row('NIK',V(r.nik))}${row('Alamat',V(r.alamat))}${row('Kedudukan',`${d.J} berdasarkan Penetapan ${esc(r.pengadilan)} Nomor: ${V(r.nomorPenetapan)} tanggal ${tgl(r.tglPenetapan)}`)}</table>
-<p>Dengan ini menyatakan bahwa <b>PIHAK PERTAMA</b> telah menyerahkan kepada <b>PIHAK KEDUA</b>, dan <b>PIHAK KEDUA</b> telah menerima dari <b>PIHAK PERTAMA</b>, dokumen-dokumen asli yang diterbitkan dan telah ditandatangani oleh Pejabat pada Balai Harta Peninggalan Medan, dengan rincian sebagai berikut:</p>
-<ol style="margin-left:18pt"><li>1 (satu) rangkap <b>Asli Berita Acara Penyumpahan ${d.J}</b> atas nama <b>${V(r.nama)}</b> selaku ${d.J} dari <b>${V(d.objek)}</b>, dibubuhi tanda tangan saksi-saksi;</li><li>1 (satu) rangkap <b>Asli Berita Acara Inventarisasi Harta</b>; dan</li><li>1 (satu) rangkap <b>Asli Berita Acara Penghadapan ${d.J}</b>.</li></ol>
-<p>Dokumen-dokumen tersebut diserahkan dalam keadaan baik, utuh, dan telah dibubuhi tanda tangan basah serta cap instansi yang berwenang untuk dapat dipergunakan sebagaimana mestinya oleh <b>PIHAK KEDUA</b> dalam menjalankan tugasnya sebagai ${d.J}.</p>
-<p>Demikian Tanda Terima ini dibuat dengan sebenarnya dalam rangkap 2 (dua) yang mempunyai kekuatan hukum yang sama, 1 (satu) rangkap disimpan oleh <b>PIHAK PERTAMA</b> sebagai arsip instansi dan 1 (satu) rangkap diserahkan kepada <b>PIHAK KEDUA</b>.</p>`+
-    ttd2('Yang Menerima,<br>PIHAK KEDUA','Yang Menyerahkan,<br>PIHAK PERTAMA',V(r.nama),V(m.nama),'',m.nip)}}};
+`<p style="margin-top:10pt">Demikian surat undangan ini kami sampaikan. Untuk informasi lebih lanjut, ${s} dapat menghubungi WhatsApp Layanan Perwalian Pengampuan di nomor ${WA()}. Atas perhatian dan kehadiran ${s}, kami mengucapkan terima kasih.</p>`+ttdKepala()+tembusan(r,false)}}};
 const DOCS={
   permohonan:{nama:r=>'Surat Permohonan Penyumpahan',sty:{font:'Times New Roman',line:360,tline:360},fn:r=>{const d=derive(r);return `<p class="ni" style="text-align:right;margin-top:24pt">${tempatTgl(r)}</p><br>
 <p class="ni" style="margin-top:6pt"><b>Kepada Yth;</b><br>Kepala Balai Harta Peninggalan Medan<br>Jl. Listrik No. 10 Medan</p><br>
@@ -423,9 +442,9 @@ const DOCS={
 ${bapList(isi.length?r.isiBap:buatBap(r),r)}
 <p style="margin-top:8pt">Oleh karena tidak ada lagi yang perlu diterangkan dan dijelaskan, maka Berita Acara Penghadapan ini ditutup pada hari dan tanggal tersebut diatas, kemudian ditandatangani oleh saya dan penghadap.</p>`+
     ttd2(esc((p.jabatan||'').toUpperCase()),d.J.toUpperCase(),V(p.nama),V(r.nama),V(p.nip),'')+
-`<p class="ctr" style="margin-top:22pt"><b>P E R N Y A T A A N</b></p>
+`<p class="ctr" data-keep="1" style="margin-top:22pt"><b>P E R N Y A T A A N</b></p>
 <p style="margin-top:8pt">Saya yang bertanda tangan di bawah ini, dengan ini menyatakan bahwa keterangan-keterangan dan penjelasan tersebut diatas adalah keterangan dan penjelasan yang sebenarnya, bahwa saya mengetahui dan menyadari apabila keterangan-keterangan dan penjelasan tersebut tidak benar adanya, saya bersedia dituntut dihadapan Pengadilan dan menanggung segala akibatnya. Kemudian saya bertanggung jawab sepenuhnya terhadap ${d.w?'Anak di bawah umur yang berada di bawah perwalian':'Terampu yang berada di bawah pengampuan'} saya sebagaimana yang diamanatkan oleh peraturan perundang-undangan.</p>
-<p class="ni" style="margin-left:262pt;margin-top:14pt;text-align:left">${tempatTgl(r)}<br>Yang membuat pernyataan,<br><br><br><br><br><b>${V(r.nama)}</b></p>`+saksi(r)}},
+<p class="ni" data-keep="ttd" style="margin-left:262pt;margin-top:14pt;text-align:left">${tempatTgl(r)}<br>Yang membuat pernyataan,<br><br><br><br><br><b>${V(r.nama)}</b></p>`+saksi(r)}},
 
   ba:{nama:r=>`BA Penyumpahan ${derive(r).jenisTxt}`,sty:{line:276},fn:r=>{const d=derive(r),m=d.madya;
     return kop()+judulBA(`BERITA ACARA PENYUMPAHAN ${d.jenisTxt.toUpperCase()}`,noManual(r,'nomorBA'))+
@@ -451,9 +470,7 @@ ${NP('II.',18,'<b>PASSIVA</b>',';margin-top:10pt',1)}<p class="ni" style="margin
 /* kelompok dokumen: dua surat antar (bernomor SPS) + satu Dokumen Penyumpahan (tiap bagian halaman baru) */
 const GRUP={surat:{nama:r=>`Surat Antar ke ${derive(r).J}`,keys:['surat'],tahap:1},lurah:{nama:()=>'Surat Antar ke Lurah',keys:['lurah'],tahap:1},
   undangan:{nama:r=>`Undangan Sumpah ke ${derive(r).J}`,keys:['undangan'],tahap:1,ket:'Bila sumpah di kantor / Kanwil / virtual (Zoom)'},
-  desa:{nama:r=>`Undangan ke ${/^Desa\s/i.test(String(r.kelurahan||'').replace(/^(Lurah|Kelurahan)\s+/i,''))?'Kepala Desa':'Lurah'} (menyaksikan)`,keys:['desa'],tahap:1,ket:'Mengundang aparat desa/kelurahan menyaksikan sumpah'},
-  penyumpahan:{nama:()=>'Dokumen Penyumpahan',keys:['permohonan','bap','ba','harta'],tahap:2,ket:'Permohonan · BAP · BA Sumpah · BA Inventarisasi (tiap bagian halaman baru)'},
-  terima:{nama:()=>'Tanda Terima Berkas',keys:['terima'],tahap:3,ket:'Serah terima BA asli ke '+'pemohon setelah sumpah'}};
+  penyumpahan:{nama:()=>'Dokumen Penyumpahan',keys:['permohonan','bap','ba','harta'],tahap:2,ket:'Permohonan · BAP · BA Sumpah · BA Inventarisasi (tiap bagian halaman baru)'}};
 const TAHAP={1:'Sebelum sumpah',2:'Hari penyumpahan',3:'Setelah sumpah'};
 Object.assign(DOCS,DOCS_EXTRA);
 const kurangGrup=(g,r)=>[...new Set(GRUP[g].keys.flatMap(k=>kurang(k,r)))];
@@ -724,23 +741,23 @@ async function gdocCore(key,keys,judul){const blob=await buatDocx(keys);const b6
   const r=await api('apiBuatDokumen',cur.id,key,judul,b64);cur.dokumen=cur.dokumen||{};cur.dokumen[key]=r.dok;cur.folderUrl=r.folderUrl;cur._versi=r.versi;return r.dok}
 let PILIH=null;
 function pilihDefault(r){const sudah=g=>(r.dokumen||{})[g];const L=['surat','lurah','penyumpahan'].filter(g=>!sudah(g));
-  if(r.zoom||/kantor|kanwil|balai/i.test(r.tempat||''))['undangan','desa'].forEach(g=>{if(!sudah(g))L.push(g)});
-  if(r.tglSumpah&&r.tglSumpah<=today()&&!sudah('terima'))L.push('terima');return L.length?L:['penyumpahan']}
+  if(r.zoom||/kantor|kanwil|balai/i.test(r.tempat||''))['undangan'].forEach(g=>{if(!sudah(g))L.push(g)});
+  return L.length?L:['penyumpahan']}
 function paketBerkas(){const r=cur,P=PILIH||pilihDefault(r);PILIH=P;
   const siap=Object.keys(GRUP).filter(g=>(r.dokumen||{})[g]).length,tot=Object.keys(GRUP).length;
   return`<div class="paket"><div class="paket-h"><div><b>🧩 Paket Berkas</b><span class="hint"> — centang dokumen yang diperlukan, lalu buat sekaligus</span></div><div class="prog"><i style="width:${Math.round(siap/tot*100)}%"></i></div><small>${siap}/${tot} dibuat</small></div>
-  <div class="paket-g">${[1,2,3].map(t=>`<div class="paket-c"><h5>${t}. ${TAHAP[t]}</h5>${Object.entries(GRUP).filter(([g,o])=>o.tahap===t).map(([g,o])=>{const dk=(r.dokumen||{})[g],ku=kurangGrup(g,r);
+  <div class="paket-g">${[1,2,3].filter(t=>Object.values(GRUP).some(o=>o.tahap===t)).map(t=>`<div class="paket-c"><h5>${t}. ${TAHAP[t]}</h5>${Object.entries(GRUP).filter(([g,o])=>o.tahap===t).map(([g,o])=>{const dk=(r.dokumen||{})[g],ku=kurangGrup(g,r);
     return`<label class="pk ${dk?'ok':''}"><input type="checkbox" ${P.includes(g)?'checked':''} onchange="PILIH=this.checked?[...new Set([...PILIH,'${g}'])]:PILIH.filter(x=>x!=='${g}');$('#pkBtn').textContent='⚡ Buat '+PILIH.length+' dokumen terpilih'">
       <span><b>${esc(o.nama(r))}</b><small>${dk?`✅ Sudah dibuat · <a href="${dk.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">buka</a>`:ku.length?`<span style="color:#b45309">Kurang: ${esc(ku.slice(0,3).join(', '))}${ku.length>3?'…':''}</span>`:'Siap dibuat'}${NOMOR[g]?(r[NOMOR[g]]?` · No. ${esc(r[NOMOR[g]])}`:' · perlu nomor SPS'):''}</small></span></label>`}).join('')}</div>`).join('')}</div>
   <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px"><button class="pri" id="pkBtn" style="padding:11px 18px;border-radius:12px" onclick="prosesOtomatis()">⚡ Buat ${P.length} dokumen terpilih</button><span class="hint">Otomatis: cek data → ambil nomor SPS (untuk surat) → buat Google Doc di folder berkas.</span></div></div>`}
-async function prosesOtomatis(){if(!cur)return;clearTimeout(saveT);await flush();const P=PILIH||pilihDefault(cur);if(!P.length){toast('Centang minimal satu dokumen');return}
+async function prosesOtomatis(){if(!cur)return;clearTimeout(saveT);await flush();const P=(PILIH||pilihDefault(cur)).filter(g=>GRUP[g]);if(!P.length){toast('Centang minimal satu dokumen');return}
   const perlu=P.map(g=>[g,kurangGrup(g,cur)]).filter(x=>x[1].length);
   if(perlu.length){dlg(`<h3>⚡ Proses Otomatis</h3><p>Isian belum lengkap, lengkapi dulu agar nomor & dokumen tidak salah:</p><ul>${perlu.map(([g,m])=>`<li><b>${GRUP[g].nama(cur)}</b>: ${esc(m.join(', '))}</li>`).join('')}</ul><p style="text-align:right"><button class="pri" onclick="dlgClose()">Mengerti</button></p>`);return}
   const w=cekCetak(cur).map(x=>(x.lvl==='e'?'⛔ ':'⚠ ')+x.msg);const tanpa=Object.entries(NOMOR).filter(([k,f])=>P.includes(k)&&!cur[f]);
   dlg(`<h3>⚡ Proses Otomatis</h3>${boxCek(w)}<p>Langkah yang akan dijalankan:</p><ol><li>Simpan berkas</li>${tanpa.length?`<li>Ambil <b>${tanpa.length} nomor</b> dari SPS (tanggal hari ini, ${cur.jenis==='Perwalian'?'AH.06.02':'AH.06.03'}): ${tanpa.map(([k])=>DOCS[k].nama(cur)).join(', ')}</li>`:'<li>Semua dokumen sudah bernomor</li>'}<li>Buat <b>${P.length} Google Doc</b> di folder Drive berkas: ${P.map(g=>esc(GRUP[g].nama(cur))).join(', ')}</li></ol>
     <p class="hint">Nomor SPS yang sudah diambil tidak bisa dibatalkan dari aplikasi. Pastikan data sudah benar.</p>
     <p style="text-align:right;display:flex;gap:8px;justify-content:flex-end"><button onclick="dlgClose()">Batal</button><button class="pri" onclick="jalankanOtomatis()">${w.length?'Tetap lanjutkan':'Ya, proses sekarang'} →</button></p>`)}
-async function jalankanOtomatis(){const P=PILIH||pilihDefault(cur),tanpa=Object.entries(NOMOR).filter(([k,f])=>P.includes(k)&&!cur[f]);
+async function jalankanOtomatis(){const P=(PILIH||pilihDefault(cur)).filter(g=>GRUP[g]),tanpa=Object.entries(NOMOR).filter(([k,f])=>P.includes(k)&&!cur[f]);
   const L=[['simpan','Simpan berkas'],...tanpa.map(([k])=>['n_'+k,'Nomor SPS — '+DOCS[k].nama(cur)]),...P.map(g=>['d_'+g,'Google Doc — '+GRUP[g].nama(cur)])];
   dlg(`<h3>⚡ Memproses…</h3><div class="log">${L.map(([id,t])=>`<div class="logi" id="pr_${id}">⏳ ${esc(t)}</div>`).join('')}</div><p id="prEnd" style="text-align:right;margin-top:12px"></p>`,true);
   const set=(id,ok,t)=>{const e=$('#pr_'+id);if(e)e.innerHTML=(ok?'✅ ':'❌ ')+t};let gagal=false;
@@ -924,17 +941,21 @@ function tableXml(t){
   const cols=w.map(x=>tw(x||rest)),tot=cols.reduce((a,b)=>a+b,0);
   const body=rows.map((r,ri)=>{let i=0;const h=Math.max(...[...r.cells].map(c=>ptOf(c.style.height)),0);
     return `<w:tr><w:trPr><w:cantSplit/>${h?`<w:trHeight w:val="${tw(h)}"/>`:''}</w:trPr>${[...r.cells].map(c=>{const sp=c.colSpan||1,cw=cols.slice(i,i+sp).reduce((a,b)=>a+b,0);i+=sp;
-      return `<w:tc><w:tcPr><w:tcW w:w="${cw}" w:type="dxa"/>${sp>1?`<w:gridSpan w:val="${sp}"/>`:''}</w:tcPr>${para(c,{jc:ttd&&t.classList.contains('ctr')?'center':'left',noInd:1,after:ttd?0:40,line:STY.tline||276,keep:ttd&&ri<rows.length-1})}</w:tc>`}).join('')}</w:tr>`}).join('');
+      return `<w:tc><w:tcPr><w:tcW w:w="${cw}" w:type="dxa"/>${sp>1?`<w:gridSpan w:val="${sp}"/>`:''}</w:tcPr>${para(c,{jc:ttd&&t.classList.contains('ctr')?'center':'left',noInd:1,after:ttd?0:40,line:STY.tline||276,keep:ri<rows.length-1&&(ttd||rows.length<=8)})}</w:tc>`}).join('')}</w:tr>`}).join('');
   return (ptOf(t.style.marginTop)?spacer(ptOf(t.style.marginTop),ttd):'')+`<w:tbl><w:tblPr><w:tblW w:w="${tot}" w:type="dxa"/><w:tblInd w:w="${tw(indL)}" w:type="dxa"/><w:tblLayout w:type="fixed"/>${noBorders}<w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${cols.map(c=>`<w:gridCol w:w="${c}"/>`).join('')}</w:tblGrid>${body}</w:tbl>`+spacer(ptOf(t.style.marginBottom)||4)}
 function blocksXml(html){
   const root=new DOMParser().parseFromString(`<div>${html}</div>`,'text/html').body.firstChild;let x='';
   for(const el of root.childNodes){
     if(el.nodeType!==1)continue;
     if(el.tagName==='TABLE')x+=el.classList.contains('kop')?kopXml():tableXml(el);
-    else if(el.tagName==='P'&&el.dataset.n)x+=para(el,{left:18,hang:360,prefix:`<w:r>${rPr(el.dataset.b?{b:1}:{})}<w:t>${xe(el.dataset.n)}</w:t></w:r><w:r><w:tab/></w:r>`});
-    else if(el.tagName==='P'||el.tagName==='DIV'){const nx=el.nextElementSibling;x+=para(el,nx&&nx.tagName==='TABLE'&&nx.classList.contains('ttd')?{keep:1}:{})}
+    else if(el.tagName==='P'&&el.dataset.n)x+=para(el,{keep:el.dataset.b||/:\s*$/.test(el.textContent),left:18,hang:360,prefix:`<w:r>${rPr(el.dataset.b?{b:1}:{})}<w:t>${xe(el.dataset.n)}</w:t></w:r><w:r><w:tab/></w:r>`});
+    else if(el.tagName==='P'||el.tagName==='DIV'){const nx=el.nextElementSibling;
+      /* penutup ("Demikian …") tidak dipisah dari tanda tangan; tanda tangan tidak dipisah dari tembusan */
+      /* kalimat pengantar/judul yang berakhir titik dua ikut isi di bawahnya */
+      x+=para(el,el.dataset.keep||/:\s*$/.test(el.textContent)||(nx&&(nx.dataset.keep==='ttd'||nx.tagName==='TABLE'&&nx.classList.contains('ttd')))?{keep:1}:{})}
     else if(el.tagName==='OL'||el.tagName==='UL'){const lh=parseFloat(el.style.lineHeight)||0,sz=ptOf(el.style.fontSize),dash=el.classList.contains('dash');
-      [...el.children].forEach((li,i)=>x+=para(li,{noInd:1,left:18+ptOf(el.style.marginLeft),hang:360,after:0,sz,line:lh&&lh<5?Math.round(lh*240):0,prefix:`<w:r><w:t>${el.tagName==='OL'?(el.type==='a'?'abcdefghijklmnop'[i]:i+1)+'.':dash?'-':'•'}</w:t></w:r><w:r><w:tab/></w:r>`}))}
+      const kp=!!el.dataset.keep,nli=el.children.length;
+      [...el.children].forEach((li,i)=>x+=para(li,{keep:kp&&i<nli-1,noInd:1,left:18+ptOf(el.style.marginLeft),hang:360,after:0,sz,line:lh&&lh<5?Math.round(lh*240):0,prefix:`<w:r><w:t>${el.tagName==='OL'?(el.type==='a'?'abcdefghijklmnop'[i]:i+1)+'.':dash?'-':'•'}</w:t></w:r><w:r><w:tab/></w:r>`}))}
     else if(el.tagName==='BR')x+=spacer(12)}
   return x}
 async function buatDocx(keys){
@@ -1320,6 +1341,18 @@ try{document.documentElement.dataset.theme=localStorage.getItem('bhpTheme')||(ma
 $('#q').oninput=renderList;
 (async()=>{TOKEN=ss('bhpTok');if(!TOKEN){TOKEN=await tokenDariUrl();if(TOKEN)try{localStorage.setItem('bhpTok',TOKEN)}catch(e){}}
   if(TOKEN)$('#login').innerHTML='<div style="text-align:center;margin-top:30vh"><div class="spin"></div><b>Memuat data…</b></div>',$('#login').hidden=false;boot()})();
+
+/* ===== Mode HP ===== */
+function menuM(open){document.body.classList.toggle('menu-m',open===undefined?!document.body.classList.contains('menu-m'):open)}
+document.addEventListener('click',e=>{if(!document.body.classList.contains('menu-m'))return;const n=e.target.closest('.side .nav');
+  if(n&&!n.classList.contains('more-m'))menuM(false);else if(!e.target.closest('.side'))menuM(false)},true);
+// di HP, "Daftar Berkas" di navigasi bawah menutup berkas yang terbuka agar daftarnya terlihat
+document.addEventListener('click',e=>{if(cur&&matchMedia('(max-width:900px)').matches&&e.target.closest('.side .nav[data-v=berkas]')){clearTimeout(saveT);flush();cur=null}},true);
+function kembaliM(){if(cur){clearTimeout(saveT);flush()}cur=null;goBerkas();scrollTo(0,0)}
+(function(){const asli=renderMain;renderMain=function(){const r=asli.apply(this,arguments);
+  const buka=!!cur&&!WZ.on;document.body.classList.toggle('m-open',buka);
+  if(buka&&!document.querySelector('#main .back-m')){const b=document.createElement('button');b.className='back-m';b.textContent='← Daftar Berkas';b.onclick=kembaliM;$('#main').prepend(b)}
+  return r}})();
 </script>
 </body>
 </html>
