@@ -947,6 +947,14 @@ function tableXml(t){
   rows.forEach(r=>{let i=0;[...r.cells].forEach(c=>{if((c.colSpan||1)===1&&!w[i]){const p=ptOf(c.style.width);if(p)w[i]=p;else if(c.textContent.trim()===':')w[i]=12}i+=c.colSpan||1})});
   const free=w.filter(x=>!x).length,rest=Math.max(40,(avail-w.reduce((a,b)=>a+b,0))/(free||1));
   const cols=w.map(x=>tw(x||rest)),tot=cols.reduce((a,b)=>a+b,0);
+  /* blok tanda tangan: semua baris digabung jadi 1 baris tabel (cantSplit) agar tidak terbelah antar halaman di Word/Google Docs */
+  if(ttd&&rows.every(r=>r.cells.length===n&&[...r.cells].every(c=>(c.colSpan||1)===1))){
+    /* jumlah baris tiap sel diperkirakan agar baris kiri & kanan tetap sejajar */
+    const nb=(c,ci)=>c.innerHTML.split(/<br\s*\/?>/i).reduce((a,x)=>a+Math.max(1,Math.ceil(x.replace(/<[^>]+>/g,'').trim().length*6.6/(cols[ci]/20-4))),0);
+    const mx=rows.map(r=>Math.max(...[...r.cells].map((c,ci)=>c.textContent.trim()?nb(c,ci):1)));
+    const tc=[...Array(n)].map((_,ci)=>`<w:tc><w:tcPr><w:tcW w:w="${cols[ci]}" w:type="dxa"/></w:tcPr>${rows.map((r,ri)=>{const c=r.cells[ci],h=ptOf(r.cells[0].style.height)||ptOf(c.style.height),k=c.textContent.trim()?nb(c,ci):1;
+      return para(c,{jc:t.classList.contains('ctr')?'center':'left',noInd:1,after:0,line:STY.tline||276,keep:1})+(mx[ri]>k?spacer((mx[ri]-k)*(STY.tline||276)/240*12,1):'')+(h>14?spacer(h-14,1):'')}).join('')}</w:tc>`).join('');
+    return (ptOf(t.style.marginTop)?spacer(ptOf(t.style.marginTop),ttd):'')+`<w:tbl><w:tblPr><w:tblW w:w="${tot}" w:type="dxa"/><w:tblInd w:w="${tw(indL)}" w:type="dxa"/><w:tblLayout w:type="fixed"/>${noBorders}<w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${cols.map(c=>`<w:gridCol w:w="${c}"/>`).join('')}</w:tblGrid><w:tr><w:trPr><w:cantSplit/></w:trPr>${tc}</w:tr></w:tbl>`+spacer(ptOf(t.style.marginBottom)||4)}
   const body=rows.map((r,ri)=>{let i=0;const h=Math.max(...[...r.cells].map(c=>ptOf(c.style.height)),0);
     return `<w:tr><w:trPr><w:cantSplit/>${h?`<w:trHeight w:val="${tw(h)}"/>`:''}</w:trPr>${[...r.cells].map(c=>{const sp=c.colSpan||1,cw=cols.slice(i,i+sp).reduce((a,b)=>a+b,0);i+=sp;
       return `<w:tc><w:tcPr><w:tcW w:w="${cw}" w:type="dxa"/>${sp>1?`<w:gridSpan w:val="${sp}"/>`:''}</w:tcPr>${para(c,{jc:ttd&&t.classList.contains('ctr')?'center':'left',noInd:1,after:ttd?0:40,line:STY.tline||276,keep:ri<rows.length-1&&(ttd||rows.length<=8)})}</w:tc>`}).join('')}</w:tr>`}).join('');
