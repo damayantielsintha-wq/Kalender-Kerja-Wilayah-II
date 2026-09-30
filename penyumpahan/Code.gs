@@ -926,6 +926,33 @@ function ambilSipp_(dom, nomor) {
   const d = UrlFetchApp.fetch(u, opt);
   return { cari: teksHtml_(html), detail: teksHtml_(d.getContentText()), url: u, ada: true };
 }
+/** Ambil nama-nama asli dari halaman detail SIPP: daftar Pemohon (Para Pihak) + nama dalam Petitum (biasanya memuat nama anak/terampu). */
+const SIPP_BUANG_ = /^(PEMOHON|TERMOHON|PENGADILAN|AGAMA|NEGERI|REPUBLIK|INDONESIA|KOTA|KABUPATEN|PROVINSI|KECAMATAN|KELURAHAN|DESA|WALI|ANAK|MENETAPKAN|MENGABULKAN|PERMOHONAN|BIAYA|PERKARA|HUKUM|UNDANG|PASAL|NOMOR|TAHUN|LAKI|PEREMPUAN|ISLAM|KRISTEN|JALAN|JL|RT|RW|KANDUNG|PERWALIAN|PENGAMPUAN|PENGAMPU|TERAMPU|DAN|ATAU|YANG|DARI|SEBAGAI|DENGAN|UNTUK|PADA|BERNAMA|LAHIR|TANGGAL|BIN|BINTI|ALM|ALMARHUM|ALMARHUMAH|DAN|SUBSIDAIR|PRIMAIR|MEMBEBANKAN|RUPIAH|SELURUHNYA)$/;
+function namaSipp_(t) {
+  t = String(t || '');
+  const seg = function (a, b) { const i = t.search(a); if (i < 0) return ''; const r = t.slice(i); const j = r.slice(20).search(b); return j < 0 ? r.slice(0, 3000) : r.slice(0, j + 20); };
+  const pihak = seg(/Pemohon/i, /Termohon|Kuasa Hukum|Petitum|Riwayat|Jadwal Sidang|Status Perkara|Data Umum/i);
+  const petitum = seg(/Petitum/i, /Riwayat Perkara|Jadwal Sidang|Status Perkara|Saksi|Barang Bukti|Mediasi|Penetapan Majelis|Data Umum|Putusan/i).slice(0, 4000);
+  const ambil = function (x) {
+    const out = [], re = /\b([A-Z][A-Z'`.]{1,}(?![a-z])(?:\s+[A-Z][A-Z'`.]*(?![a-z])){0,6})/g; let m;
+    while ((m = re.exec(x))) {
+      const kata = m[1].replace(/\.$/, '').split(/\s+/), stop = function (w) { return SIPP_BUANG_.test(String(w).replace(/\./g, '')); };
+      while (kata.length && stop(kata[0])) kata.shift();
+      while (kata.length && (stop(kata[kata.length - 1]) || /^(BIN|BINTI|BR)$/.test(kata[kata.length - 1]))) kata.pop();
+      if (kata.some(function (w) { return stop(w) && !/^(BIN|BINTI)$/.test(w); })) continue;
+      const nm = kata.join(' ').trim();
+      if (kata.length === 1 && /\b(di|ke|kota|kab\.?|kabupaten|provinsi|kecamatan|kelurahan|desa)\s+(PENGADILAN\s+\S+\s+)?$/i.test(x.slice(Math.max(0, m.index - 30), m.index) + (m[1].indexOf(nm) > 0 ? m[1].slice(0, m[1].indexOf(nm)) : ''))) continue;
+      if (kata.length >= 1 && nm.replace(/[^A-Z]/g, '').length >= 4 && !/\*|X{3}/.test(nm) && out.indexOf(nm) < 0) out.push(nm);
+    }
+    return out;
+  };
+  const konteks = function (nm) { const i = petitum.indexOf(nm); return i < 0 ? '' : petitum.slice(Math.max(0, i - 60), i + nm.length + 80).trim(); };
+  return {
+    pemohon: ambil(pihak.replace(/^Pemohon/i, '')).slice(0, 6),
+    kandidat: ambil(petitum.replace(/^Petitum/i, '')).slice(0, 15).map(function (n) { return { nama: n, konteks: konteks(n) }; }),
+    petitum: petitum.slice(0, 1500)
+  };
+}
 /** Cek silang nama pemohon & anak/terampu satu berkas dengan data perkara di SIPP pengadilan terkait. */
 function cekSippRec_(d) {
   const nomor = String(d.nomorPenetapan || '').trim();
@@ -938,13 +965,14 @@ function cekSippRec_(d) {
   if (!s) { s = ambilSipp_(dom, nomor); try { cache.put(ck, JSON.stringify({ cari: s.cari.slice(0, 40000), detail: s.detail.slice(0, 50000), url: s.url, ada: s.ada }), 21600); } catch (e) {} }
   if (!s.ada) return { status: 'tidak_ada', domain: dom, url: s.url, pesan: 'Nomor perkara tidak ditemukan di SIPP ' + dom };
   const T = normNama_(s.cari + ' ' + s.detail);
+  const temu = namaSipp_(s.detail || s.cari);
   const nama = [];
   if (d.nama) nama.push({ peran: 'Pemohon', nama: d.nama });
   if (d.jenis === 'Perwalian') (d.anak || []).forEach(function (a) { if (a && a.nama) nama.push({ peran: 'Anak', nama: a.nama }); });
   else if (d.terampu && d.terampu.nama) nama.push({ peran: 'Terampu', nama: d.terampu.nama });
   const hasil = nama.map(function (x) { return { peran: x.peran, nama: x.nama, ada: adaNama_(x.nama, T) }; });
   const tidak = hasil.filter(function (x) { return x.ada === false; });
-  return { status: tidak.length ? 'beda' : 'cocok', domain: dom, url: s.url, hasil: hasil, disamarkan: /\bANAK\s*[0-9I]+\b|\bPEMOHON\b.*\bANAK\b/.test(T) && tidak.length > 0 };
+  return { status: tidak.length ? 'beda' : 'cocok', domain: dom, url: s.url, hasil: hasil, pemohon: temu.pemohon, kandidat: temu.kandidat, petitum: temu.petitum };
 }
 function apiCekSipp(token, ids) {
   const u = user_(token);
