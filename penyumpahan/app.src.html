@@ -389,8 +389,8 @@ const DOCS_EXTRA={
       'Mengenakan pakaian formal, rapi, dan sopan.'],[PNBP,BILLING])+
 `<p style="margin-top:10pt">Demikian surat undangan ini kami sampaikan. Untuk informasi lebih lanjut, ${s} dapat menghubungi WhatsApp Layanan Perwalian Pengampuan di nomor ${WA()}. Atas perhatian dan kehadiran ${s}, kami mengucapkan terima kasih.</p>`+ttdKepala()+tembusan(r,false)}}};
 const DOCS={
-  permohonan:{nama:r=>'Surat Permohonan Penyumpahan',sty:{font:'Times New Roman',line:360,tline:360},fn:r=>{const d=derive(r);return `<p class="ni" style="text-align:right;margin-top:24pt">${tempatTgl(r)}</p><br>
-<p class="ni" style="margin-top:6pt"><b>Kepada Yth;</b><br>Kepala Balai Harta Peninggalan Medan<br>Jl. Listrik No. 10 Medan</p><br>
+  permohonan:{nama:r=>'Surat Permohonan Penyumpahan',sty:{font:'Times New Roman',line:360,tline:360},fn:r=>{const d=derive(r);return `<p class="ni" style="text-align:right;margin-top:0">${tempatTgl(r)}</p>
+<p class="ni" style="margin-top:14pt"><b>Kepada Yth;</b><br>Kepala Balai Harta Peninggalan Medan<br>Jl. Listrik No. 10 Medan</p>
 <table style="margin-top:6pt;margin-bottom:12pt"><tr><td style="width:52pt">Perihal</td><td>:</td><td>Permohonan Penyumpahan ${d.w?'Wali<br>Anak Di Bawah Umur':'Pengampu'}</td></tr></table>
 <p class="ni" style="margin-top:6pt">Dengan hormat,<br>Saya yang bertanda tangan di bawah ini :</p>
 <table style="margin:8pt 0 12pt 12pt"><tr><td style="width:100pt">Nama</td><td>:</td><td>${V(r.nama)}</td></tr><tr><td>Usia</td><td>:</td><td>${usia(r.tglLahir,r.tglSumpah)}</td></tr>
@@ -398,7 +398,7 @@ const DOCS={
 <p class="ni" style="margin-top:6pt">${d.w?'Dengan ini memohon kepada Kepala Balai Harta Peninggalan Medan agar melakukan penyumpahan terhadap WALI atas anak di bawah umur. Bersama ini saya lampirkan surat-surat yang diperlukan untuk melengkapi syarat-syarat penyumpahan wali.'
   :'Dengan ini mengajukan permohonan kepada Kepala Balai Harta Peninggalan Medan agar melakukan penyumpahan atas nama tersebut di atas sebagai Pengampu terhadap Terampu. Bersama ini saya lampirkan surat-surat yang diperlukan untuk melengkapi syarat-syarat penyumpahan pengampu.'}</p>
 <p class="ni" style="margin-top:12pt">Demikian diajukan permohonan ini, dan atas perhatiannya, diucapkan terima kasih.</p>
-<p class="ni" style="margin-left:262pt;margin-top:24pt;text-align:left">Pemohon,<br><br><br><span style="font-size:7pt">Materai<br>10000</span><br><br><br>${V(r.nama)}</p>`}},
+<p class="ni" style="margin-left:262pt;margin-top:24pt;text-align:left">Pemohon,<br><br><span style="font-size:7pt">Materai<br>10000</span><br><br>${V(r.nama)}</p>`}},
 
   surat:{nama:r=>`Surat Antar ke ${derive(r).J}`,sty:{line:360},fn:r=>{const d=derive(r),s=d.sapa;
     if(d.w)return kop()+head(r.nomorSurat,'Pengambilan Sumpah Wali<br>Dan Inventarisasi Harta',r)+yth(`${s} ${V(r.nama)}`,V(r.alamat))+
@@ -931,7 +931,7 @@ function para(el,o={}){
   const tk=tokens(el,base,[]);if(jc==='both'&&tk.some(k=>k.br))jc='left';
   const r=(o.prefix?o.prefix.replace('<w:r><w:t>','<w:r>'+rPr(base)+'<w:t>'):'')+runs(tk);
   const ind=left||first||right||o.hang?`<w:ind w:left="${left}" w:right="${right}"${o.hang?` w:hanging="${o.hang}"`:` w:firstLine="${first}"`}/>`:'';
-  return `<w:p><w:pPr>${o.keep?'<w:keepNext/><w:keepLines/>':''}<w:spacing w:before="${tw(ptOf(s.marginTop))}" w:after="${o.after??tw(ptOf(s.marginBottom))}" w:line="${line}" w:lineRule="auto"/>${ind}<w:jc w:val="${jc}"/></w:pPr>${r}</w:p>`}
+  return `<w:p><w:pPr><w:widowControl/>${o.keep?'<w:keepNext/><w:keepLines/>':tk.some(k=>k.br)?'<w:keepLines/>':''}<w:spacing w:before="${tw(ptOf(s.marginTop))}" w:after="${o.after??tw(ptOf(s.marginBottom))}" w:line="${line}" w:lineRule="auto"/>${ind}<w:jc w:val="${jc}"/></w:pPr>${r}</w:p>`}
 const spacer=(pt,keep)=>`<w:p><w:pPr>${keep?'<w:keepNext/>':''}<w:spacing w:before="0" w:after="0" w:line="${Math.max(20,tw(pt))}" w:lineRule="exact"/></w:pPr><w:r><w:rPr><w:sz w:val="2"/></w:rPr><w:t></w:t></w:r></w:p>`;
 const noBorders='<w:tblBorders><w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="nil"/><w:right w:val="nil"/><w:insideH w:val="nil"/><w:insideV w:val="nil"/></w:tblBorders>';
 function kopXml(){
